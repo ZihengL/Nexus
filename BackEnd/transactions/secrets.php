@@ -1,0 +1,8 @@
+<?php
+
+// Stripe
+// 206108026@collegeahuntsic.qc.ca -> richweb2proj
+$stripeSecretKey = 'sk_test_51OMMCTFnn5trez7ReT645uyEsOJOF6xWiUDJpoQr4NYDbJSuFXrqoMvVimsCrEyCk1bKrQPc5d89HlnpuvNfmkxW00pftNK3LH';
+
+// 'pk_test_51OMMCTFnn5trez7RhpxezTvjlZziz1zXZ7Gzalkr5C6IWa66CCAW8MAuqVIQSFtdDv0RBtXoof9qA34au2A4FJno00BHDcIM70';
+// 'sk_test_51OMMCTFnn5trez7ReT645uyEsOJOF6xWiUDJpoQr4NYDbJSuFXrqoMvVimsCrEyCk1bKrQPc5d89HlnpuvNfmkxW00pftNK3LH';
