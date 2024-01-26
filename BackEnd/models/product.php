@@ -10,8 +10,6 @@ class ProductModel extends BaseModel {
 
         parent::__construct($pdo, $table, $fields);
     }
-
-    
     
     public function getProductByImages($images) {
         $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE images = ?");
