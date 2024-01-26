@@ -50,7 +50,7 @@ function updateSTRIPE($stripe, $products_DB) {
             //     ]);
     
             // $product_db['stripeID'] = $product_stripe->id;
-            // $controller->productsController->updateProduct($product_db['id'], $product_db);
+            // $controller->gamesController->updateProduct($product_db['id'], $product_db);
         }
     }
 }
@@ -62,14 +62,14 @@ require_once "$path/transactions/secrets.php";
 
 $stripe = new \Stripe\StripeClient($stripeSecretKey);
 
-$productsController = $controller->productsController;
+$gamesController = $controller->gamesController;
 
-updateDB($productsController, $productsController->getAllProducts());
-updateSTRIPE($stripe, $productsController->getAllProducts());
+updateDB($gamesController, $gamesController->getAllProducts());
+updateSTRIPE($stripe, $gamesController->getAllProducts());
 
 // $products_STRIPE = \Stripe\Product::all();
 
-// $products_DB = $controller->productsController->getAllProducts();
+// $products_DB = $controller->gamesController->getAllProducts();
 
 // foreach ($products_DB as $product_db) {
 //     if ($product_db['stripeID'] === null) {
@@ -88,7 +88,7 @@ updateSTRIPE($stripe, $productsController->getAllProducts());
 //             ]);
 
 //         $product_db['stripeID'] = $product_stripe->id;
-//         $controller->productsController->updateProduct($product_db['id'], $product_db);
+//         $controller->gamesController->updateProduct($product_db['id'], $product_db);
 //     }
 // }
 

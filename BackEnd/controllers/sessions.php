@@ -11,7 +11,7 @@ class SessionController {
     private $databaseManager;
     public $usersController;
     public $newslettersController;
-    public $productsController;
+    public $gamesController;
 
     private function __construct() {
         global $path;
@@ -22,7 +22,7 @@ class SessionController {
         $pdo = $this->databaseManager->getPDO();
         $this->usersController = new UsersController($pdo);
         $this->newslettersController = new NewslettersController($pdo);
-        $this->productsController = new ProductsController($pdo);
+        $this->gamesController = new GamesController($pdo);
     }
 
     public static function getInstance() {
@@ -43,8 +43,8 @@ class SessionController {
         return $this->newslettersController;
     }
 
-    public function getProductsController() {
-        return $this->productsController;
+    public function getGamesController() {
+        return $this->gamesController;
     }
 
     // USER
@@ -85,7 +85,7 @@ class SessionController {
         $products = [];
 
         foreach ($ids as $id) {
-            $product = $this->productsController->getProductById($id);
+            $product = $this->gamesController->getProductById($id);
 
             if ($product) {
                 array_push($products, $product);

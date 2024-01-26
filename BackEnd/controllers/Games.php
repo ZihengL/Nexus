@@ -1,12 +1,11 @@
 <?php
+require_once "$path/models/game.php";
 
-require_once "$path/models/product.php";
-
-class ProductsController {
+class GamesController {
     private $model;
 
     public function __construct($pdo) {
-        $this->model = new ProductModel($pdo);
+        $this->model = new GamesModel($pdo);
     }
 
     // GETTERS
