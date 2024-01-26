@@ -1,10 +1,12 @@
 // Composables
 import { createRouter, createWebHistory } from 'vue-router'
+import 'vuetify/dist/vuetify.css';
+
 
 const routes = [
   {
     path: '/',
-    //component: () => import('@/layouts/default/Default.vue'),
+    component: () => import('@/layouts/default/Default.vue'),
     children: [
       {
         path: '',
