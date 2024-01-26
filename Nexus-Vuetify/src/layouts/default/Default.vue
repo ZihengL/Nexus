@@ -2,7 +2,7 @@
   <v-app>
     <NavBar />
 
-    <default-view />
+    <default-view  style="margin-top: 5%;"/>
   </v-app>
 </template>
 

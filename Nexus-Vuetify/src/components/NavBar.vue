@@ -5,11 +5,20 @@
 			</div>
       <div class="link">
         <v-spacer></v-spacer>
-        <v-btn class="betweenLinks" text>Accueil</v-btn>
-        <v-btn class="betweenLinks" text>Boutique</v-btn>
-        <v-btn class="betweenLinks" text>A propos</v-btn>
+        <router-link to="/"  class="betweenLinks">
+          <v-btn class="link-btn" text>Accueil</v-btn>
+        </router-link>
+        <router-link to="/Store"  class="betweenLinks">
+          <v-btn class="link-btn" text>Boutique</v-btn>
+        </router-link>
+        <router-link to="/About"  class="betweenLinks">
+          <v-btn class="link-btn" text>A propos</v-btn>
+        </router-link>
+
         <v-spacer></v-spacer>
-        <v-btn text>Connexion</v-btn>
+        <router-link to="/Login">
+          <v-btn class="link-btn" text>Connexion</v-btn>
+        </router-link>
       </div>
     </v-app-bar>
 </template>
@@ -30,6 +39,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+  .link-btn {
+    color: black;
   }
   .link .betweenLinks {
     flex: 1;
