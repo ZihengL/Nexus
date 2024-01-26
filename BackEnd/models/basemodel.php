@@ -1,6 +1,6 @@
 <?php
 
-require_once "$path/models/db_manager.php";
+require_once "$path/models/dbmanager.php";
 require_once "$path/tools.php";
 
 function parseColumns($columns = [])
