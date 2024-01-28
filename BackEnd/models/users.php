@@ -2,15 +2,11 @@
 
 require_once "$path/models/basemodel.php";
 
-class UserModel extends BaseModel {
+class UsersModel extends BaseModel {
     public function __construct($pdo) {
         $table = "user";
 
         parent::__construct($pdo, $table);
-    }
-
-    public function userExists($email) {
-        return !empty($this->getOne('email', $email, ['email']));
     }
 
     public function create($data) {
@@ -22,12 +18,7 @@ class UserModel extends BaseModel {
     }
 
     public function formatData($data) {
-        $keys = array_keys($data);
-
-        // if (in_array('email', $keys)) {
-        //     $data['email'] = filter_var($data['email'], FILTER_VALIDATE_EMAIL);
-        // }
-        if (in_array('password', $keys)) {
+        if (in_array('password', array_keys($data))) {
             $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
         }
         

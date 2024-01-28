@@ -1,11 +1,24 @@
 <?php
 
 require_once "$path/models/dbmanager.php";
-require_once "$path/tools.php";
 
 function parseColumns($columns = [])
 {
     return empty($columns) ? "*" : implode(', ', $columns);
+}
+
+function getDataType($column)
+{
+    switch ($column) {
+        case is_null($column):
+            return PDO::PARAM_NULL;
+        case is_int($column):
+            return PDO::PARAM_INT;
+        case is_bool($column):
+            return PDO::PARAM_BOOL;
+        default:
+            return PDO::PARAM_STR;
+    }
 }
 
 class BaseModel
