@@ -190,4 +190,29 @@ class BaseModel
 
         return $params;
     }
+
+    public function applyFilters($sql, $filters = []) 
+    {
+        $validEntries = array_intersect(array_keys($filters), $this->columns);
+
+        $sql .= !empty($validEntries) ? ' WHERE 1 = 1' : '';
+        foreach ($validEntries as $column) {
+            $sql .= " AND $column = :$column";
+            $params[":$column"] = $filters[$column];
+        }
+
+        return ['sql' => $sql, 'params' => $params];
+    }
+
+    public function applySorting($sql, $sorting = []) 
+    {
+        $validEntries = array_intersect(array_keys($sorting), $this->columns);
+
+        $result = '';
+        foreach ($validEntries as $column => $order) {
+            $result .= $column . ($order? 'ASC' : 'DESC') . ', ';
+        }
+
+        return $sql . ' ORDER BY ' . $result;
+    }
 }
