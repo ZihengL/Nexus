@@ -51,11 +51,11 @@ class UsersController{
     public function deleteUser($id) {
         $user = $this->model->getById($id);
 
-        if ($this->isAuthenticated() && $user && $user['id'] === $_SESSION['user']) {
+        // if ($this->isAuthenticated() && $user && $user['id'] === $_SESSION['user']) {
             return $this->model->delete($id);
-        }
+        // }
 
-        return false;
+        // return false;
     }
 
     public function userExists($data) {
@@ -68,8 +68,9 @@ class UsersController{
         $user = $this->getUserByEmail($email);
 
         if ($this->verifyUser($user, $email, $password)) {
-            $_SESSION['user'] = $user['id'];
-            $_SESSION['authentified'] = true;
+            // TODO: REPLACE SESSIONS WITH WEB TOKENS(JWT).
+            // $_SESSION['user'] = $user['id'];
+            // $_SESSION['authentified'] = true;
 
             return $user;
         }
@@ -80,9 +81,9 @@ class UsersController{
 
     public function logout() {
         if ($this->isAuthenticated()) {
-            session_destroy();
-            session_unset();
-            session_write_close();
+            // session_destroy();
+            // session_unset();
+            // session_write_close();
         }
     }
 
@@ -93,12 +94,13 @@ class UsersController{
     }
 
     public function isAuthenticated() {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
+        // TODO: REPLACE SESSIONS WITH WEB TOKENS(JWT).
+        // if (session_status() !== PHP_SESSION_ACTIVE) {
+        //     session_start();
+        // }
 
-        return  isset($_SESSION['user']) &&
-                isset($_SESSION['authentified']) && 
-                $_SESSION['authentified'];
+        // return  isset($_SESSION['user']) &&
+        //         isset($_SESSION['authentified']) && 
+        //         $_SESSION['authentified'];
     }
 }
