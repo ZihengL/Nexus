@@ -67,3 +67,6 @@ bun run lint
 ### Customize configuration
 
 See [Configuration Reference](https://vitejs.dev/config/).
+npm install -g @vue/cli ## si le npm install ne marche pas
+npm install
+npm install @mdi/js

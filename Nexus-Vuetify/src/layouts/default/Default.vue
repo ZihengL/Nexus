@@ -1,8 +1,7 @@
 <template>
   <v-app>
-    <NavBar />
-    <HomeCarousel/>
-    <default-view />
+    <NavBar :isConnected="test"/>
+    <default-view  style="margin-top: 5%;"/>
   </v-app>
 </template>
 
@@ -11,4 +10,5 @@
   import HomeCarousel from '/src/components/HomeCarousel.vue';
   //import DefaultBar from './AppBar.vue'
   import DefaultView from './View.vue'
+  var test = 'bla bla';
 </script>

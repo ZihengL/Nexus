@@ -32,6 +32,14 @@
 <script>
 import Homecarousel from '../components/Homecarousel.vue'
 
+      <v-card-text>
+        This is content
+      </v-card-text>
+    </v-card>
+  </div>
+</template>
+
+<script setup>
 export default {
     data() {
       return {
