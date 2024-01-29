@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : lun. 29 jan. 2024 à 17:25
+-- Généré le : lun. 29 jan. 2024 à 18:58
 -- Version du serveur : 10.4.28-MariaDB
 -- Version de PHP : 8.0.28
 
@@ -52,18 +52,20 @@ CREATE TABLE `games` (
   `description` varchar(1000) NOT NULL,
   `filesEXE` varchar(100) NOT NULL,
   `images` set('a','b') NOT NULL,
-  `videos` set('pathVideo') NOT NULL
+  `videos` set('pathVideo') NOT NULL,
+  `Genre` varchar(100) NOT NULL,
+  `DateSortie` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `games`
 --
 
-INSERT INTO `games` (`id`, `developperID`, `name`, `description`, `filesEXE`, `images`, `videos`) VALUES
-(1, 1, 'Super Game', 'An amazing game', 'game.exe', 'a', ''),
-(2, 3, 'Fantastic Adventure', 'Embark on an epic journey', 'adventure.exe', 'b', ''),
-(3, 4, 'Space Odyssey', 'Explore the depths of outer space', 'space.exe', 'a,b', ''),
-(4, 2, 'Medieval Kingdoms', 'Rule your own kingdom', 'kingdoms.exe', 'a', '');
+INSERT INTO `games` (`id`, `developperID`, `name`, `description`, `filesEXE`, `images`, `videos`, `Genre`, `DateSortie`) VALUES
+(1, 1, 'Super Game', 'An amazing game', 'game.exe', 'a', '', '', NULL),
+(2, 3, 'Fantastic Adventure', 'Embark on an epic journey', 'adventure.exe', 'b', '', '', NULL),
+(3, 4, 'Space Odyssey', 'Explore the depths of outer space', 'space.exe', 'a,b', '', '', NULL),
+(4, 2, 'Medieval Kingdoms', 'Rule your own kingdom', 'kingdoms.exe', 'a', '', '', NULL);
 
 -- --------------------------------------------------------
 
