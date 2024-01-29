@@ -1,6 +1,7 @@
 <?php
 
-class DBManager {
+class DBManager
+{
     private static $host = "localhost";
     private static $database = "rich_ricasso";
     private static $instance = null;
@@ -9,7 +10,8 @@ class DBManager {
 
     // CONSTRUCTORS
 
-    private function __construct($user, $password) {
+    private function __construct($user, $password)
+    {
         $host = self::$host;
         $database = self::$database;
         $connectionString = "mysql:host=$host;dbname=$database";
@@ -20,7 +22,8 @@ class DBManager {
 
     // STATIC
 
-    public static function getInstance($user, $password) {
+    public static function getInstance($user, $password)
+    {
         if (self::$instance == null) {
             self::$instance = new DBManager($user, $password);
         }
@@ -30,7 +33,8 @@ class DBManager {
 
     // PRIVATE
 
-    public function query($sql) {
+    public function query($sql)
+    {
         try {
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
@@ -41,11 +45,12 @@ class DBManager {
         }
     }
 
-    public function bindingQuery($sql, $params = []) {
+    public function bindingQuery($sql, $params = [])
+    {
         try {
             $stmt = $this->pdo->prepare($sql);
 
-            foreach($params as $param => $value) {
+            foreach ($params as $param => $value) {
                 $stmt->bindValue(":$param", $value, $this->getDataType($value));
             }
             $stmt->execute();
@@ -58,11 +63,13 @@ class DBManager {
 
     // PUBLIC
 
-    public function getPDO() {
+    public function getPDO()
+    {
         return $this->pdo;
     }
 
-    public function getDataType($column) {
+    public function getDataType($column)
+    {
         switch ($column) {
             case is_null($column):
                 return PDO::PARAM_NULL;
@@ -75,15 +82,17 @@ class DBManager {
         }
     }
 
-    public function getTables() {
+    public function getTables()
+    {
         $result = $this->query("SHOW TABLES");
 
         return $result->fetchAll(PDO::FETCH_COLUMN);
     }
 
-    public function getColumnsFromTable($table) {
+    public function getColumnsFromTable($table)
+    {
         $sql = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = :tableName";
-        
+
         return $this->bindingQuery($sql, ['tableName' => $table]);
     }
 }
