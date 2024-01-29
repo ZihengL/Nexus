@@ -1,5 +1,5 @@
 <template>
-    <v-app-bar :elevation="21" rounded>
+    <v-app-bar :elevation="21" rounded class="NavBar">
       <div class="logo">
 				<img :src="logoURL" alt="Vue" />
 			</div>
@@ -55,7 +55,15 @@
 <!--<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" /> -->
 <style scoped>
 
-
+  .NavBar {
+    /* From https://css.glass */
+    background: rgba(255, 255, 255, 0.09);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
 .router-link-exact-active{
     /*background-color: rgba(198, 198, 198, 0.112);*/
     border-bottom: 4px solid rgba(163, 163, 163, 0.634);
