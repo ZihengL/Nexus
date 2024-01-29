@@ -1,5 +1,4 @@
-<template>  
-  <HomeCarousel class="carousel"/>
+<template> 
   <Info/>
   <h1 class="title-page">Trending game</h1> 
   <Card/>
@@ -7,12 +6,10 @@
 </template>
 
 <script scoped>
-import HomeCarousel from '../components/Homecarousel.vue';
 import  Card from '../components/Card.vue';
 import Info from '../components/Text.vue';
 export default {
   components: {
-    HomeCarousel,
     Card,
     Info,
   },
