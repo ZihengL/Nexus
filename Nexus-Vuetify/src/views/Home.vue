@@ -1,23 +1,27 @@
-<template> 
-  <Info/>
-  <h1 class="title-page">Trending game</h1> 
-  <Card/>
-  
+<template>
+  <Homecarrousel />
+  <Info />
+
+  <h1 class="title-page">Trending game</h1>
+
+  <Card />
 </template>
 
 <script scoped>
-import  Card from '../components/Card.vue';
+import Card from '../components/Card.vue';
+import Homecarrousel from '../components/Homecarrousel.vue';
 import Info from '../components/Text.vue';
 export default {
   components: {
     Card,
     Info,
+    Homecarrousel
   },
 };
 </script>
 
 <style scoped>
-.title-page{
+.title-page {
   margin-top: 2%;
 }
 
@@ -27,7 +31,7 @@ export default {
 
 .title-page {
   font-size: 100px;
-  color:blueviolet;
+  color: blueviolet;
   text-align: center;
   font-family: 'Times New Roman', Times, serif;
 }
