@@ -33,12 +33,10 @@
     </div>
   </footer>
 </template>
-
 <script scoped>
 
 
 export default {
-
   name: 'Footer'
 }
 
