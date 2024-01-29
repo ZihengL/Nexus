@@ -26,14 +26,6 @@ class UsersController{
         return $this->model->get('lastname', $lastname, $columns);
     }
 
-    public function getUsersByGender($gender, $columns = []) {
-        return $this->model->get('gender', $gender, $columns);
-    }
-
-    public function getUsersByBirthday($birthday, $columns = []) {
-        return $this->model->get('birthday', $birthday, $columns);
-    }
-
     // ONLY FOR TESTING, DELETE IN FUTURE
     public function getAllUsers($columns = []) {
         return $this->model->getAll();

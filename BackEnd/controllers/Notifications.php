@@ -1,12 +1,12 @@
  <?php
 
-require_once "$path/models/newsletter.php";
+require_once "$path/models/notifications.php";
 
-class NewslettersController {
+class NotificationsController {
     private $model;
 
     public function __construct($pdo) {
-        $this->model = new NewsletterModel($pdo);
+        $this->model = new NotificationsModel($pdo);
     }
 
     public function getSubscriberById($id, $columns = []) {
