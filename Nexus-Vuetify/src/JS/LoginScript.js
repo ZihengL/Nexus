@@ -2,11 +2,11 @@
 
 const loginScript = {
   init(vm) {
-    const loginText = document.querySelector("div.login");
+    const loginText = document.querySelector(".login");
     const loginForm = document.querySelector("form.login");
     const loginBtn = document.querySelector("label.login");
     const signupBtn = document.querySelector("label.signup");
-    const signupLink = document.querySelector("form .signup-link a");
+    const signupLink = document.querySelector(".signup-link");
 
     signupBtn.addEventListener("click", () => {
       vm.toggleSignup();
@@ -20,9 +20,10 @@ const loginScript = {
       loginText.style.marginLeft = "0%";
     });
 
-    signupLink.addEventListener("click", (event) => {
+    signupLink.addEventListener("click", () => {
       vm.toggleSignup();
-      event.preventDefault();
+      loginForm.style.marginLeft = "-50%";
+      loginText.style.marginLeft = "-50%";
     });
   },
 };
