@@ -16,6 +16,7 @@ require_once "$path/controllers/games.php";
 // + deleteGame(int): bool
 // + filterGames()
 
+
 class GamesModel extends BaseModel {
     public function __construct($pdo) {
         $table = "games";
@@ -60,9 +61,9 @@ class GamesModel extends BaseModel {
         return $stmt->fetch();
     }
     
-    public function getByDevs($devName){
+    public function getByDevs($devNames){
         $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE devName = ?");
-        $stmt->execute([$devName]);
+        $stmt->execute([$devNames]);
 
         return $stmt->fetch();
     }

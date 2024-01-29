@@ -7,12 +7,12 @@ class GamesController {
     private $tags = "tags";
     private $price = "price";
     private $images = "images";
+    private $devNames = "devNames";
     private $releaseDate = "releaseDate"; 
     private $description = "description";
     private $stripeID = "stripeID";
+    
   
-
-
     public function __construct($pdo) {
         $this->model = new GamesModel($pdo);
     }
@@ -42,6 +42,10 @@ class GamesController {
 
     public function getProductByPrice($price) {
         return $this->model->get($this->price, $price);
+    }
+
+    public function getByDevs($devNames) {
+        return $this->model->get($this->devNames, $devNames);
     }
 
     public function getByImages($images) {
