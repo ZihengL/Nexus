@@ -3,9 +3,22 @@
 require_once "$path/models/base_model.php";
 require_once "$path/controllers/games.php";
 
+
+// + Construct()
+// + getById(id): Game
+// + getByReleaseDate(Date): [Game]
+// + getByTags([String]): [Game]
+// + getByDescription(String): [Game]
+// + getByImages(String): [Game]
+// + getByDevs([User]): [Game]
+// + addGame(data): bool
+// + updateGame(int, data): bool
+// + deleteGame(int): bool
+// + filterGames()
+
 class GamesModel extends BaseModel {
     public function __construct($pdo) {
-        $table = "product";
+        $table = "games";
         // $fields = ["name", "type", "color", "size", "price", "images", "description"];
 
         parent::__construct($pdo, $table);
@@ -62,6 +75,13 @@ class GamesModel extends BaseModel {
         return "$minPrice, $maxPrice";
     }
 
+    public function getAll() {
+        $stmt = $this->pdo->prepare("SELECT * FROM $this->table");
+        $stmt->execute();
+
+        return $stmt->fetch();
+    }
+
 
     //Other Cruds
 
@@ -93,32 +113,32 @@ class GamesModel extends BaseModel {
         return $stmt->fetch();
     }
 
-    public function filter($filters = [], $columns = []) {
-        $priceRange = $this->getPriceRange($filters);
-        unset($filters['minprice'], $filters['maxprice']);
+    // public function filter($filters = [], $columns = []) {
+    //     $priceRange = $this->getPriceRange($filters);
+    //     unset($filters['minprice'], $filters['maxprice']);
 
-        $filters = array_filter($filters, fn($filter) => !empty($filter));
-        $mappedKeys = $this->implodeFiltersMap($filters);
+    //     $filters = array_filter($filters, fn($filter) => !empty($filter));
+    //     $mappedKeys = $this->implodeFiltersMap($filters);
 
-        $sql =  "SELECT " . parseColumns($columns) . " FROM $this->table" .
-                (!empty($mappedKeys) || !empty($priceRange) ? " WHERE " : "");
+    //     $sql =  "SELECT " . parseColumns($columns) . " FROM $this->table" .
+    //             (!empty($mappedKeys) || !empty($priceRange) ? " WHERE " : "");
 
-        if (!empty($mappedKeys)) {
-            $sql .= $mappedKeys . (!empty($priceRange) ? " AND " : "");
-        }
-        $sql .= $priceRange;
+    //     if (!empty($mappedKeys)) {
+    //         $sql .= $mappedKeys . (!empty($priceRange) ? " AND " : "");
+    //     }
+    //     $sql .= $priceRange;
 
-        // TO DELETE
-        // print($sql . "<br>");
+    //     // TO DELETE
+    //     // print($sql . "<br>");
 
-        return $this->bindingQuery($sql, $filters);
-    }
+    //     return $this->bindingQuery($sql, $filters);
+    // }
 
-    public function implodeFiltersMap($filters) {
-        $mappedKeys = array_map(fn($filter) => $filter . " = :$filter", array_keys($filters));
+    // public function implodeFiltersMap($filters) {
+    //     $mappedKeys = array_map(fn($filter) => $filter . " = :$filter", array_keys($filters));
 
-        return implode(' AND ', $mappedKeys);
-    }
+    //     return implode(' AND ', $mappedKeys);
+    // }
 
 
     

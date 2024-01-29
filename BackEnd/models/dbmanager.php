@@ -3,7 +3,7 @@
 class DBManager
 {
     private static $host = "localhost";
-    private static $database = "rich_ricasso";
+    private static $database = "nexus";
     private static $instance = null;
 
     private $pdo;

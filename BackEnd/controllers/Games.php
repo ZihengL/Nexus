@@ -3,24 +3,21 @@ require_once "$path/models/game.php";
 
 class GamesController {
     private $model;
+    private $name = "name";
+    private $tags = "tags";
+    private $price = "price";
+    private $images = "images";
+    private $releaseDate = "releaseDate"; 
+    private $description = "description";
+    private $stripeID = "stripeID";
+  
+
 
     public function __construct($pdo) {
         $this->model = new GamesModel($pdo);
     }
 
     // GETTERS
-
-    public function getAllFields() {
-        return $this->model->fields;
-    }
-
-    public function getField($fieldIndex) {
-        if ($fieldIndex < count($this->model->fields)) {
-            return $this->model->fields[$fieldIndex];
-        }
-
-        return null;
-    }
 
     public function getAllProducts() {
         return $this->model->getAll();
@@ -30,62 +27,72 @@ class GamesController {
         return $this->model->getById($id);
     }
 
-    public function getProductsByGender($gender) {
-        return $this->model->get('gender', $gender);
-    }
 
     public function getProductByName($name) {
-        return $this->model->get('name', $name);
+        return $this->model->get($this->name, $name);
     }
 
-    public function getProductByType($type) {
-        return $this->model->get('type', $type);
-    }
+    public function getByTags($tags) {
+        if (is_array($tags)) {
+            return $this->model->get($this->tags, $tags);
+        }
 
-    public function getProductByColor($color) {
-        return $this->model->get('color', $color);
-    }
-
-    public function getProductBySize($size) {
-        return $this->model->get('size', $size);
+        return false;
     }
 
     public function getProductByPrice($price) {
-        return $this->model->get('price', $price);
+        return $this->model->get($this->price, $price);
     }
 
-    public function getProductByImages($images) {
-        return $this->model->get('images', $images);
+    public function getByImages($images) {
+        return $this->model->get($this->images, $images);
     }
 
-    public function getProductByDescription($description) {
-        return $this->model->get('description', $description);
+    public function getByDescription($description) {
+        return $this->model->get($this->description, $description);
+    }
+
+    public function getByReleaseDate($releaseDate) {
+        return $this->model->get($this->releaseDate, $releaseDate);
     }
 
     public function getProductByStripeID($stripeID) {
-        return $this->model->get('stripeID', $stripeID);
+        return $this->model->get($this->stripeID, $stripeID);
     }
 
     // OTHER CRUDS
 
-    public function createProduct($data) {
+    public function addGame($data) {
         return $this->model->create($data);
     }
 
-    public function updateProduct($id, $data) {
+    public function updateGame($id, $data) {
         return $this->model->update($id, $data);
     }
 
-    public function deleteProduct($id) {
+    public function deleteGame($id) {
         return $this->model->delete($id);
     }
 
-    public function filter($filters, $columns = []) {
-        return $this->model->filter($filters, $columns);
+    public function filterGames($filters, $columns = []) {
+        return $this->model->filterGames($filters, $columns);
     }
 
-    // public function filterProducts($type, $color, $size, $minprice, $maxprice) {
-    //     return $this->model->filterProduct($type, $color, $size, $minprice, $maxprice);
+
+    // public function getAllFields() {
+    //     return $this->model->fields;
+    // }
+
+    // public function getField($fieldIndex) {
+    //     if ($fieldIndex < count($this->model->fields)) {
+    //         return $this->model->fields[$fieldIndex];
+    //     }
+
+    //     return null;
+    // }
+
+    // public function filterProducts($tags, $color, $size, $minprice, $maxprice) {
+    //     return $this->model->filterProduct($tags, $color, $size, $minprice, $maxprice);
     // }
 
     // public function getFilterMap() {
