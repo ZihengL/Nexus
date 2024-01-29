@@ -1,7 +1,8 @@
 <template>
-<Homecarousel class="carousel"/>
-<h2 class="title-page">Trending game</h2>
-<v-container fluid>
+  <div>
+    <Homecarousel class="carousel"/>
+    <h2 class="title-page">Trending game</h2>
+    <v-container fluid>
       <v-row>
         <v-col
           v-for="(game, index) in games"
@@ -26,20 +27,12 @@
         </v-col>
       </v-row>
     </v-container>
-
-</template>
-
-<script>
-import Homecarousel from '../components/Homecarousel.vue'
-
-      <v-card-text>
-        This is content
-      </v-card-text>
-    </v-card>
   </div>
 </template>
 
-<script setup>
+
+<script >
+import Homecarousel from '../components/Homecarousel.vue'
 export default {
     data() {
       return {
@@ -64,7 +57,7 @@ export default {
             image: '../src/assets/img/palworld.png',
             price: 'C$50.73',
             discount: '-61%'
-          },  
+          },
           {
             title: 'Tekken 8',
             subtitle: null,
@@ -78,6 +71,7 @@ export default {
     }
   };
 </script>
+
 <style scoped>
 body{
   background-color: blue;
@@ -91,4 +85,18 @@ body{
   text-align: center;
   font-family: 'Times New Roman', Times, serif;
 }
+</style>
+<style scoped>
+  body{
+    background-color: blue;
+  }
+  .carousel{
+    border-top:  100px;
+  }
+  .title-page{
+    font-size: 100px;
+    color: blue;
+    text-align: center;
+    font-family: 'Times New Roman', Times, serif;
+  }
 </style>
