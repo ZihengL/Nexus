@@ -1,5 +1,5 @@
 <template>
- <h3 class="title">Bienvenue chez Nexus, votre destination ultime pour les jeux vidéo !</h3>
+ <h2 class="title">Bienvenue chez Nexus, votre destination ultime pour les jeux vidéo !</h2>
  <p class="text">
     Chez Nexus, nous partageons votre passion pour le gaming. Notre plateforme est le paradis des joueurs, 
     offrant une vaste sélection de jeux vidéo pour tous les goûts et tous les âges. Que vous soyez un fan de 
@@ -10,9 +10,16 @@
 
 <style scoped>
 .title{
+   margin-top: 2%;
+   margin-bottom: 1%;
+   text-align: center;
+   color: blueviolet;
 
 }
 .text{
-    
+   font-size: 150%; 
+   margin-left: 3%;
+   margin-right: 3%;
+   text-align: center;
 }
 </style>
