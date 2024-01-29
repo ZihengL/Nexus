@@ -78,14 +78,6 @@ class BaseModel
         return $this->query($sql, [$value])->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getWithFilters($pairs = [], $columns = [])
-    {
-        $sql = "SELECT " . parseColumns($columns) . " FROM $this->table WHERE $column = ?";
-
-        return $this->query($sql, [$value])->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-
     //  Explicitement retour d'une seule valeur.
     public function getOne($column, $value, $columns = [])
     {
