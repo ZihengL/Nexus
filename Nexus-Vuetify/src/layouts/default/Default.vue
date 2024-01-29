@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <NavBar />
+    <NavBar :isConnected="test"/>
 
     <default-view  style="margin-top: 5%;"/>
   </v-app>
@@ -10,4 +10,5 @@
   import NavBar from '/src/components/NavBar.vue';
   //import DefaultBar from './AppBar.vue'
   import DefaultView from './View.vue'
+  var test = 'bla bla';
 </script>

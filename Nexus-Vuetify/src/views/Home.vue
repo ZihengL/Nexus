@@ -40,3 +40,14 @@
     </v-card>
   </div>
 </template>
+
+<script setup>
+    // Utiliser la valeur du stockage local ou attribuer false par défaut
+    
+    import { ref } from 'vue';
+    const storedIsConnected = localStorage.getItem('isConnected');
+    var isUserConnected = ref(storedIsConnected !== null ? storedIsConnected: false);
+    //isUserConnected = false;
+    //ilocalStorage.setItem("isConnected", isUserConnected.toString());
+    console.log(isUserConnected.value)
+</script>
