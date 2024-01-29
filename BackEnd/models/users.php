@@ -17,6 +17,10 @@ class UsersModel extends BaseModel {
         return parent::create($data);
     }
 
+    public function userExists($email) {
+        return !empty($this->getOne('email', $email, ['email']));
+    }
+
     public function formatData($data) {
         if (in_array('password', array_keys($data))) {
             $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
