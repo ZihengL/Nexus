@@ -16,47 +16,12 @@ export default {
     Card,
     Info,
   },
-  games: [
-      {
-          title: 'Tekken 8',
-          subtitle: null,
-          image: '../src/assets/img/tekken.png',
-          price: 'C$67.69',
-          discount: '-34%'
-        },
-        {
-          title: 'Ready or Not',
-          subtitle: null,
-          image: '../src/assets/img/zomboid.png',
-          price: 'C$53.99',
-          discount: '-26%'
-        },
-        {
-          title: 'Cyberpunk 2077: Ultimate Edition',
-          subtitle: null,
-          image: '../src/assets/img/palworld.png',
-          price: 'C$50.73',
-          discount: '-61%'
-        },
-        {
-          title: 'Tekken 8',
-          subtitle: null,
-          image: '../src/assets/img/elden_ring.png',
-          price: 'C$67.69',
-          discount: '-34%'
-        },
-        // ...more games
-      ]
-    };
+};
 </script>
 
 <style scoped>
-<<<<<<< HEAD
 .title-page{
   margin-top: 2%;
-}
-body {
-  background-color: blue;
 }
 
 .carousel {
@@ -65,26 +30,11 @@ body {
 
 .title-page {
   font-size: 100px;
-  color: blue;
+  color:blueviolet;
   text-align: center;
   font-family: 'Times New Roman', Times, serif;
 }
 </style>
-<style scoped>
-body {
-  background-color: blue;
-}
 
-.carousel {
-  border-top: 100px;
-}
-
-.title-page {
-  font-size: 100px;
-  color: blue;
-  text-align: center;
-  color: blueviolet;
-}
-</style>
 
 
