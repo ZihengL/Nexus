@@ -15,9 +15,6 @@
 export default {
   data: () => ({
     items: [
-      { src: './src/assets/BG_IMG/img2.jpg' },
-      { src: './src/assets/BG_IMG/logo_shop.png' },
-      // Add as many images as you want
       { src: '../src/assets/img/palworld.png' },
       { src: '../src/assets/img/tekken.png' },
       { src: '../src/assets/img/zomboid.png' },
