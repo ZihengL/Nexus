@@ -27,12 +27,14 @@
         </v-col>
       </v-row>
     </v-container>
+    <Footer></Footer>
   </div>
 </template>
 
 
 <script >
 import Homecarousel from '../components/Homecarousel.vue'
+import Footer from "../components/Footer.vue"
 export default {
     data() {
       return {
