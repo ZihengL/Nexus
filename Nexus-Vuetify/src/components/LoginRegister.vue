@@ -35,7 +35,7 @@
                <input type="submit" value="Login">
             </div>-->
             <v-btn density="default" class="field btn">
-                  Signup
+                  Se connecter
             </v-btn>
             <div class="signup-link">
               Pas encore inscris ? <a href="">S'inscrire</a>
@@ -54,7 +54,7 @@
                <input type="password" placeholder="Confirmer le mot de passe" required>
             </div>
             <v-btn density="default" class="field btn">
-                  Signup
+                  S'inscrire
             </v-btn>
             <!--<div class="field btn">
                <div class="btn-layer"></div>
