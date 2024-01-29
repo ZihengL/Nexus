@@ -1,19 +1,20 @@
 <template>
+   <!-- Created By CodingNepal -->
    <div class="wrapper">
      <div class="title-text">
        <div class="title login" v-show="isLogin">
-         Login Form
+         Se connecter
        </div>
        <div class="title signup" v-show="!isLogin">
-         Signup Form
+         S'inscrire
        </div>
      </div>
      <div class="form-container">
        <div class="slide-controls">
          <input type="radio" name="slide" id="login" v-model="isLogin" value="true" checked>
          <input type="radio" name="slide" id="signup" v-model="isLogin" value="false">
-         <label for="login" class="slide login">Login</label>
-         <label for="signup" class="slide signup">Signup</label>
+         <label for="login" class="slide login">Connexion</label>
+         <label for="signup" class="slide signup">Inscription</label>
          <div class="slider-tab"></div>
        </div>
        <div class="form-inner">
@@ -21,38 +22,48 @@
          <form action="#" class="login" v-show="isLogin">
            <!-- ... Login form content ... -->
             <div class="field">
-               <input type="text" placeholder="Email Address" required>
+               <input type="text" placeholder="Addresse email" required>
             </div>
             <div class="field">
-               <input type="password" placeholder="Password" required>
+               <input type="password" placeholder="Mot de passe" required>
             </div>
             <div class="pass-link">
-               <a href="#">Forgot password?</a>
+               <a href="#">Mot de passe oublier ?</a>
             </div>
-            <div class="field btn">
+            <!--<div class="field btn">
                <div class="btn-layer"></div>
                <input type="submit" value="Login">
-            </div>
+            </div>-->
+            <v-btn density="default" class="field btn">
+                  Signup
+            </v-btn>
             <div class="signup-link">
-               Not a member? <a href="">Signup now</a>
+              Pas encore inscris ? <a href="">S'inscrire</a>
             </div>
          </form>
 
          <form action="#" class="signup" v-show="!isLogin">
            <!-- ... Signup form content ... -->
            <div class="field">
-               <input type="text" placeholder="Email Address" required>
+               <input type="text" placeholder="Email" required>
             </div>
             <div class="field">
-               <input type="password" placeholder="Password" required>
+               <input type="password" placeholder="Mot de passe" required>
             </div>
             <div class="field">
-               <input type="password" placeholder="Confirm password" required>
+               <input type="password" placeholder="Confirmer le mot de passe" required>
             </div>
-            <div class="field btn">
+            <v-btn density="default" class="field btn">
+                  Signup
+            </v-btn>
+            <!--<div class="field btn">
                <div class="btn-layer"></div>
-               <input type="submit" value="Signup">
-            </div>
+               <v-btn density="default">
+                  Signup
+               </v-btn>
+                  <input type="submit" value="Signup">
+               
+            </div>-->
          </form>
 
        </div>
