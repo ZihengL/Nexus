@@ -7,7 +7,7 @@ class UsersController{
     private $model;
 
     public function __construct($pdo) {
-        $this->model = new UserModel($pdo);
+        $this->model = new UsersModel($pdo);
     }
 
     public function getUserById($id, $columns = []) {
@@ -66,12 +66,8 @@ class UsersController{
         return false;
     }
 
-    public function accountExists($data) {
-        if (!isset($data['email'])) {
-            throw new Exception('Email must be set.');
-        }
-
-        return !empty($this->getUserByEmail($data['email'], ['email']));
+    public function userExists($data) {
+        return isset($data['email']) && !empty($this->getUserByEmail($data['email'], ['email']));
     }
 
     // SESSION
@@ -88,21 +84,6 @@ class UsersController{
 
         return false;
     }
-
-
-    // public function login($email, $password) {
-    //     $user = $this->getUserByEmail($email);
-
-    //     if ($user != null) {
-    //         $isGoodPassword = password_verify($password, $user['password']);
-    //         //  $isGoodPassord = $password == $user['password'];
-    //         // print($isGoodPassord);
-    //         if($isGoodPassword){
-    //             return $user;
-    //         }
-    //     }
-    //     return false;
-    // }
 
 
     public function logout() {
@@ -127,9 +108,5 @@ class UsersController{
         return  isset($_SESSION['user']) &&
                 isset($_SESSION['authentified']) && 
                 $_SESSION['authentified'];
-    }
-
-    public function getColumns() {
-        return $this->model->getColumns();
     }
 }

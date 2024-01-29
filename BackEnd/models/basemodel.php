@@ -1,12 +1,26 @@
 <?php
 
 require_once "$path/models/dbmanager.php";
-require_once "$path/tools.php";
 
 function parseColumns($columns = [])
 {
     return empty($columns) ? "*" : implode(', ', $columns);
 }
+
+function getDataType($column)
+{
+    switch ($column) {
+        case is_null($column):
+            return PDO::PARAM_NULL;
+        case is_int($column):
+            return PDO::PARAM_INT;
+        case is_bool($column):
+            return PDO::PARAM_BOOL;
+        default:
+            return PDO::PARAM_STR;
+    }
+}
+
 
 class BaseModel
 {
@@ -20,8 +34,6 @@ class BaseModel
         $this->table = $table;
         $this->columns = $this->getColumns();
     }
-
-    // QUERIES WITH CATCH
 
     protected function query($sql, $params = [])
     {
@@ -58,18 +70,28 @@ class BaseModel
 
     // GETTERS/READ
 
-    public function getOne($column, $value, $columns = [])
-    {
-        $sql = "SELECT " . parseColumns($columns) . " FROM $this->table WHERE $column = ?";
-
-        return $this->query($sql, [$value])->fetch(PDO::FETCH_ASSOC);
-    }
-
+    // Retourne un tableau avec tous les resultats comprenant la valeur.
     public function get($column, $value, $columns = [])
     {
         $sql = "SELECT " . parseColumns($columns) . " FROM $this->table WHERE $column = ?";
 
         return $this->query($sql, [$value])->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getWithFilters($pairs = [], $columns = [])
+    {
+        $sql = "SELECT " . parseColumns($columns) . " FROM $this->table WHERE $column = ?";
+
+        return $this->query($sql, [$value])->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
+    //  Explicitement retour d'une seule valeur.
+    public function getOne($column, $value, $columns = [])
+    {
+        $sql = "SELECT " . parseColumns($columns) . " FROM $this->table WHERE $column = ?";
+
+        return $this->query($sql, [$value])->fetch(PDO::FETCH_ASSOC);
     }
 
     public function getAll($columns = [])
@@ -107,7 +129,6 @@ class BaseModel
         $formattedData['id'] = $id;
 
         $sql = "UPDATE $this->table SET $pairs WHERE id = ?";
-        // print_r($sql);
         if ($this->query($sql, $formattedData)) {
             return true;
         } else {
@@ -122,7 +143,7 @@ class BaseModel
         return $this->query($sql, [$id]);
     }
 
-    // FILTERING
+    // FILTERS
 
     public function filterByExactValues($data)
     {

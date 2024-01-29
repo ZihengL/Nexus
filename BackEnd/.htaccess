@@ -1,0 +1,5 @@
+RewriteEngine On
+RewriteBase /Nexus/
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.+)$ /Nexus/index.php [QSA,L]
