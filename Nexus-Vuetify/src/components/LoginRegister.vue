@@ -34,7 +34,7 @@
                   Se connecter
             </v-btn>
             <div class="signup-link">
-              Pas encore inscris ? <a href="">S'inscrire</a>
+              Pas encore inscris ? <a style=" cursor: pointer;">S'inscrire</a>
             </div>
          </form>
 
