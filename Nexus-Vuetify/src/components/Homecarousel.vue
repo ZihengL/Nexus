@@ -1,5 +1,6 @@
 <template>
   <v-carousel 
+    hide-delimiters 
     cycle 
     height="400" 
     show-arrows-on-hover
@@ -14,28 +15,10 @@
 export default {
   data: () => ({
     items: [
-      { src: '../src/assets/img/palworld.png' },
-      { src: '../src/assets/img/elden_ring.png' },
-      { src: '../src/assets/img/zomboid.png' },
-      { src: '../src/assets/img/tekken.png' },
+      { src: './src/assets/BG_IMG/img2.jpg' },
+      { src: './src/assets/BG_IMG/logo_shop.png' },
       // Add as many images as you want
     ],
   }),
 };
 </script>
-
-<style scoped>
-body {
-  background-color: blue;
-}
-.carousel {
-
-}
-.title-page {
-  font-size: 75px;
-  color: blue;
-  margin-top: 1%;
-  text-align: center;
-  font-family: 'Times New Roman', Times, serif;
-}
-</style>
