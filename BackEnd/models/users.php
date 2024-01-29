@@ -38,4 +38,4 @@ class UsersModel extends BaseModel {
 
         return true;
     }
-} 
+}
