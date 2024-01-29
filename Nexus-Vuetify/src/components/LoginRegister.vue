@@ -2,10 +2,10 @@
    <!-- Created By CodingNepal -->
    <div class="wrapper">
      <div class="title-text">
-       <div class="title login" v-show="isLogin">
+       <div class="title login">
          Se connecter
        </div>
-       <div class="title signup" v-show="!isLogin">
+       <div class="title signup">
          S'inscrire
        </div>
      </div>
@@ -19,7 +19,7 @@
        </div>
        <div class="form-inner">
 
-         <form action="#" class="login" v-show="isLogin">
+         <form action="#" class="login" >
            <!-- ... Login form content ... -->
             <div class="field">
                <input type="text" placeholder="Addresse email" required>
@@ -30,10 +30,6 @@
             <div class="pass-link">
                <a href="#">Mot de passe oublier ?</a>
             </div>
-            <!--<div class="field btn">
-               <div class="btn-layer"></div>
-               <input type="submit" value="Login">
-            </div>-->
             <v-btn density="default" class="field btn">
                   Se connecter
             </v-btn>
@@ -42,7 +38,7 @@
             </div>
          </form>
 
-         <form action="#" class="signup" v-show="!isLogin">
+         <form action="#" class="signup" >
            <!-- ... Signup form content ... -->
            <div class="field">
                <input type="text" placeholder="Email" required>
@@ -56,14 +52,6 @@
             <v-btn density="default" class="field btn">
                   S'inscrire
             </v-btn>
-            <!--<div class="field btn">
-               <div class="btn-layer"></div>
-               <v-btn density="default">
-                  Signup
-               </v-btn>
-                  <input type="submit" value="Signup">
-               
-            </div>-->
          </form>
 
        </div>
