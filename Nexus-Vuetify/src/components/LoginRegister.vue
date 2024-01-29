@@ -37,7 +37,7 @@
               Pas encore inscris ? <a>S'inscrire</a>
             </div>
          </form>
-
+         
          <form action="#" class="signup" >
            <!-- ... Signup form content ... -->
            <div class="field">

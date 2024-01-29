@@ -10,7 +10,7 @@ const loginScript = {
 
     signupBtn.addEventListener("click", () => {
       vm.toggleSignup();
-      loginForm.style.marginLeft = "-50%";
+      loginForm.style.marginLeft = "-51%";
       loginText.style.marginLeft = "-50%";
     });
 
