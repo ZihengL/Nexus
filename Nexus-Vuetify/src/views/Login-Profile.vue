@@ -10,5 +10,6 @@
   .loginContainer {
     border: 2px solid black;
     text-align: center;
+    padding: 1% 0% 2% 0%;
   }
 </style>
