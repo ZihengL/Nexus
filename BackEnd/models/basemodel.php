@@ -183,7 +183,7 @@ class BaseModel
         return $params;
     }
 
-    public function applyFilters($sql, $filters = []) 
+    public function applyFilters($sql, $filters = [], )
     {
         $params = [];
         $validEntries = array_intersect(array_keys($filters), $this->columns);

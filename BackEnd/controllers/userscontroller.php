@@ -3,7 +3,7 @@
 // require_once "$path/controllers/base_controller.php";
 require_once "$path/models/usermodel.php";
 
-class UsersController{
+class UsersController {
     private $model;
 
     public function __construct($pdo) {
