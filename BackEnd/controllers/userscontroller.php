@@ -1,13 +1,13 @@
 <?php
 
 // require_once "$path/controllers/base_controller.php";
-require_once "$path/models/user.php";
+require_once "$path/models/usermodel.php";
 
 class UsersController{
     private $model;
 
     public function __construct($pdo) {
-        $this->model = new UsersModel($pdo);
+        $this->model = new UserModel($pdo);
     }
 
     public function getUserById($id, $columns = []) {

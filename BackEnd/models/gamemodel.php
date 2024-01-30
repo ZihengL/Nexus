@@ -1,6 +1,6 @@
 <?php
 
-require_once "$path/models/basemodel.php";
+// require_once "$path/models/basemodel.php";
 require_once "$path/controllers/games.php";
 
 class GameModel extends BaseModel {

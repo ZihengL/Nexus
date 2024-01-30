@@ -1,11 +1,12 @@
 <?php
 
-require_once "$path/models/db_manager.php";
-require_once "$path/controllers/reviews.php";
-require_once "$path/controllers/notifications.php";
-require_once "$path/controllers/games.php";
-require_once "$path/controllers/users.php";
-require_once "$path/controllers/secrets.php";
+require_once "$path/controllers/database.php";
+// require_once "$path/controllers/reviews.php";
+// require_once "$path/controllers/notifications.php";
+require_once "$path/controllers/gamescontroller.php";
+require_once "$path/controllers/userscontroller.php";
+
+require_once "$path/remote/secrets.php";
 
 class CentralController {
     private static $instance = null;
@@ -22,7 +23,7 @@ class CentralController {
         $this->databaseManager = DBManager::getInstance($dbUsername, $dbPassword);
         $pdo = $this->databaseManager->getPDO();
         $this->usersController = new UsersController($pdo);
-        $this->newslettersController = new NotificationsController($pdo);
+        // $this->newslettersController = new NotificationsController($pdo);
         $this->gamesController = new GamesController($pdo);
     }
 
