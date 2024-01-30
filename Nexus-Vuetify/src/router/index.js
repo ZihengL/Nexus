@@ -25,6 +25,22 @@ const routes = [
         component: () => import('@/views/Store.vue'),
       },
       {
+        path: '/Cart',
+        name: 'Cart',
+        // route level code-splitting
+        // this generates a separate chunk (Home-[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () => import('@/views/Cart.vue'),
+      },
+      {
+        path: '/Profile',
+        name: 'Profile',
+        // route level code-splitting
+        // this generates a separate chunk (Home-[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () => import('@/views/FullProfilePage.vue'),
+      },
+      {
         path: '/About',
         name: 'About',
         // route level code-splitting

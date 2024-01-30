@@ -1,0 +1,80 @@
+.wrapper {
+    overflow: hidden;
+    width: 50%;
+    padding: 30px;
+    background: #fff;
+    border-radius: 5px;
+    margin: auto;
+    border: 2px solid black;
+    box-shadow: 0px 15px 20px rgba(0,0,0,0.1);
+  
+    /* From https://css.glass */
+    background: rgba(255, 255, 255, 0.09);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+h3, .router, .btn {
+    display: block;
+    margin: 1% auto;
+    width: 60%;
+
+    height: 50px;
+    width: 100%;
+    margin: 5% auto;
+}
+h3 {
+    font-size: 2rem;
+}
+.router {
+    text-decoration: none;
+    color: black;
+    background: rgb(196,196,196);
+    background: linear-gradient(90deg, rgba(196,196,196,0) 0%, rgba(196,196,196,0.4150910364145658) 50%, rgba(196,196,196,0) 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    gap: 5%;
+}
+.router:hover {
+    font-weight: bold;
+    background: rgb(196,196,196);
+    background: linear-gradient(90deg, rgba(196, 196, 196, 0.072) 0%, rgba(196, 196, 196, 0.775) 50%, rgba(196,196,196,0.072) 100%);
+}
+
+.wrapper .btn{
+    height: 50px;
+    width: 100%;
+    border-radius: 5px;
+    position: relative;
+    overflow: hidden;
+}
+.wrapper .btn .btn-layer{
+    height: 100%;
+    width: 300%;
+    position: absolute;
+    left: -100%;
+    background: -webkit-linear-gradient(right, rgb(153, 54, 175), rgb(0, 0, 86), rgb(153, 54, 175), rgb(0, 0, 86));
+    border-radius: 5px;
+    transition: all 0.4s ease;;
+}
+.wrapper .btn:hover .btn-layer{
+    left: 0;
+}
+.wrapper .btn .submit{
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    position: relative;
+    background: none;
+    border: none;
+    color: #fff;
+    padding-left: 0;
+    border-radius: 5px;
+    font-size: 20px;
+    font-weight: 500;
+    cursor: pointer;
+}
