@@ -1,23 +1,9 @@
 <?php
 
-require_once "$path/models/base_model.php";
+require_once "$path/models/basemodel.php";
 require_once "$path/controllers/games.php";
 
-
-// + Construct()
-// + getById(id): Game
-// + getByReleaseDate(Date): [Game]
-// + getByTags([String]): [Game]
-// + getByDescription(String): [Game]
-// + getByImages(String): [Game]
-// + getByDevs([User]): [Game]
-// + addGame(data): bool
-// + updateGame(int, data): bool
-// + deleteGame(int): bool
-// + filterGames()
-
-
-class GamesModel extends BaseModel {
+class GameModel extends BaseModel {
     public function __construct($pdo) {
         $table = "games";
         // $fields = ["name", "type", "color", "size", "price", "images", "description"];
@@ -61,9 +47,9 @@ class GamesModel extends BaseModel {
         return $stmt->fetch();
     }
     
-    public function getByDevs($devNames){
+    public function getByDevs($devName){
         $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE devName = ?");
-        $stmt->execute([$devNames]);
+        $stmt->execute([$devName]);
 
         return $stmt->fetch();
     }

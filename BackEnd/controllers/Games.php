@@ -14,7 +14,7 @@ class GamesController {
     
   
     public function __construct($pdo) {
-        $this->model = new GamesModel($pdo);
+        $this->model = new GameModel($pdo);
     }
 
     // GETTERS
