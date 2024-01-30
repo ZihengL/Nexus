@@ -185,9 +185,10 @@ class BaseModel
 
     public function applyFilters($sql, $filters = []) 
     {
+        $params = [];
         $validEntries = array_intersect(array_keys($filters), $this->columns);
-
         $sql .= !empty($validEntries) ? ' WHERE 1 = 1' : '';
+
         foreach ($validEntries as $column) {
             $sql .= " AND $column = :$column";
             $params[":$column"] = $filters[$column];
