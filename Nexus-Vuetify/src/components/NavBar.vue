@@ -39,7 +39,7 @@
 
 <script setup>
   import { ref, defineProps } from 'vue';
-  import logoURL from '/src/assets/logo golden transparent.png'
+  import logoURL from '/src/assets/logoNexus.png'
 
 
     const props = defineProps(['isConnected']);
@@ -54,7 +54,7 @@
   console.log("nav " + isConnected.value);
   localStorage.setItem("isConnected", isConnected.value.toString());
   //var isConnected = ref(localStorage.getItem("isConnected") === "false")*/
-  
+
 </script>
 
 <style src="../styles/NavBarStyle.css" scoped></style>

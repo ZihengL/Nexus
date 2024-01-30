@@ -35,28 +35,48 @@ export default {
             subtitle: null,
             image: '../src/assets/img/tekken.png',
             price: 'C$67.69',
-            discount: '-34%'
+            Genre: 'Combat'
           },
           {
             title: 'Ready or Not',
             subtitle: null,
             image: '../src/assets/img/zomboid.png',
             price: 'C$53.99',
-            discount: '-26%'
+            Genre: 'FPS'
           },
           {
-            title: 'Cyberpunk 2077: Ultimate Edition',
+            title: 'Palworld',
             subtitle: null,
             image: '../src/assets/img/palworld.png',
             price: 'C$50.73',
-            discount: '-61%'
-          },  
+            Genre: 'Adventure'
+          }, 
           {
-            title: 'Tekken 8',
+            title: 'Apex',
             subtitle: null,
-            image: '../src/assets/img/elden_ring.png',
+            image: '../src/assets/img/apex.png',
+            price: 'Gratuit',
+            Genre: 'FPS'
+          }, 
+          {
+            title: 'dontstarve',
+            subtitle: null,
+            image: '../src/assets/img/dontstarve.png',
             price: 'C$67.69',
-            discount: '-34%'
+            Genre: 'Survival'
+          },
+          {
+            title: 'satisfactory',
+            subtitle: null,
+            image: '../src/assets/img/satisfactory.png',
+            price: 'C$80.69',
+            Genre: 'Solo'
+          },
+          {
+            title: 'Solo Leveling Arise',
+            subtitle: null,
+            image: '../src/assets/img/solo_leveling.png',
+            price: 'Farming',
           },
           // ...more games
         ]

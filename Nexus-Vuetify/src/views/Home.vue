@@ -1,9 +1,7 @@
 <template>
   <Homecarrousel />
   <Info />
-
   <h1 class="title-page">Trending game</h1>
-
   <Card />
 </template>
 
