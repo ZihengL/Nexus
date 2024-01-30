@@ -8,7 +8,7 @@
 
 <script setup>
   import NavBar from '/src/components/NavBar.vue';
-  //import DefaultBar from './AppBar.vue'
+  import Footer from '/src/components/Footer.vue';
   import DefaultView from './View.vue'
   var test = 'bla bla';
 </script>

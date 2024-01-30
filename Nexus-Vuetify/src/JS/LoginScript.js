@@ -2,11 +2,11 @@
 
 const loginScript = {
   init(vm) {
-    const loginText = document.querySelector("div.login");
+    const loginText = document.querySelector(".title-text .login");
     const loginForm = document.querySelector("form.login");
     const loginBtn = document.querySelector("label.login");
     const signupBtn = document.querySelector("label.signup");
-    const signupLink = document.querySelector(".signup-link ");
+    const signupLink = document.querySelector("form .signup-link a");
 
     signupBtn.addEventListener("click", () => {
       vm.toggleSignup();

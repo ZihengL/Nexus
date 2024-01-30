@@ -30,9 +30,12 @@
             <div class="pass-link">
                <a href="#">Mot de passe oublier ?</a>
             </div>
-            <v-btn density="default" class="field btn">
+            <div class="field btn">
+              <div class="btn-layer"></div>
+              <v-btn density="default" class="submit" @click="toggleProfile">
                   Se connecter
-            </v-btn>
+              </v-btn>
+            </div>
             <div class="signup-link">
               Pas encore inscris ? <a style=" cursor: pointer;">S'inscrire</a>
             </div>
@@ -49,9 +52,12 @@
             <div class="field">
                <input type="password" placeholder="Confirmer le mot de passe" required>
             </div>
-            <v-btn density="default" class="field btn">
+            <div class="field btn">
+              <div class="btn-layer"></div>
+              <v-btn density="default" class="submit" @click="toggleProfile">
                   S'inscrire
-            </v-btn>
+              </v-btn>
+            </div>
          </form>
 
        </div>
@@ -78,11 +84,12 @@
      toggleSignup() {
        this.isLogin = false;
      },
+     toggleProfile() {
+       this.$emit('showProfile')
+     },
    },
  };
  </script>
  
- <style src="../styles/Login.css" scoped>
-   /* Add your styles here */
- </style>
+ <style src="../styles/SignRegisterStyle.css" scoped></style>
  
