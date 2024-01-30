@@ -2,12 +2,13 @@
 require_once 'vendor/autoload.php';
 
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 const SECRET_KEY = 'random-key123';
 const ISSUER = 'nexus';
 const AUDIENCE = 'idk';
+const ALGORITHM = 'HS256';
 
-// Validating credentials and generating token
 function generateToken($user) {
     $payload = [
         'iss' => ISSUER,
@@ -17,16 +18,15 @@ function generateToken($user) {
         'sub' => $user['id']
     ];
 
-    $jwt = JWT::encode($payload, SECRET_KEY);
+    $jwt = JWT::encode($payload, SECRET_KEY, ALGORITHM);
     return $jwt;
 }
 
 function validateToken($jwt) {
     try {
-        $decoded = JWT::decode($jwt, SECRET_KEY, array('HS256'));
+        $decoded = JWT::decode($jwt, new Key(SECRET_KEY, ALGORITHM));
         return $decoded;
     } catch (Exception $e) {
-        // Handle token validation error, e.g., log or return false
         return false;
     }
 }
