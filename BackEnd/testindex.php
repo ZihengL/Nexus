@@ -1,35 +1,56 @@
 <?php
-// Database initialization
-$dbHost = 'localhost';
-$dbName = 'your_db';
-$dbUser = 'your_username';
-$dbPass = 'your_password';
 
-try {
-    $pdo = new PDO("mysql:host=$dbHost;dbname=$dbName", $dbUser, $dbPass);
-    // Set the PDO error mode to exception
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch(PDOException $e) {
-    die("ERROR: Could not connect. " . $e->getMessage());
+function printer($content, $index = 0, $title = 'ARRAY START') {
+    if (is_array($content)) {
+        echo '<hr><h5>' . $title . '</h5><br>';
+
+        $index = 0;
+        if (array_keys($content) !== range(0, count($content) - 1)) {
+            foreach ($content as $element => $value) {
+                printer("$element: $value", $index);
+                $index++;
+            }
+        } else {
+            foreach ($content as $element) {
+                printer($element, $index);
+                $index++;
+            }
+        }
+
+        echo '<br>';
+    } else {
+        echo "$index - $content<br>";
+    }
 }
 
-// Get the URL from the rewrite rule
+global $path;
+$path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd';
+
+// ----- DatabaseManager, PDO & CentralController init
+require_once $path . '/controllers/database.php';
+require_once $path . '/controllers/centralController.php';
+
+$databaseManager = DatabaseManager::getInstance();
+$centralController = CentralController::getInstance();
+
+
+// ----- Request URL & Routing
 $requestUrl = $_GET['url'] ?? '';
 
-// Basic routing
 switch ($requestUrl) {
-    case 'user':
-        // Handle user route
+    case 'users':
         break;
-    case 'product':
-        // Handle product route
+    case 'games':
         break;
-    // Add more cases as needed
     default:
-        // Handle default case
-        echo "API endpoint not found";
+        printer("API endpoint not found");
         break;
 }
 
-// Close the connection (optional, as PHP closes it automatically at the end of the script)
-$pdo = null;
+
+// ----- Test zone; delete later.
+$usersCtrl = $centralController->usersController;
+$user = $usersCtrl->getUserById(1);
+printer($user, 0, 'USER FETCH TEST');
+
+// TODO: Creating and reading backup of database as part of api launch routine.

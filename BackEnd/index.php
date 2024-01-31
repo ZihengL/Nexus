@@ -175,6 +175,3 @@ if ($method === 'GET') {
 if ($result) {
     echo json_encode($result);
 }
-
-?>
-

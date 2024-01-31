@@ -1,7 +1,7 @@
 <?php
 
-// require_once "$path/models/basemodel.php";
-require_once "$path/controllers/games.php";
+require_once "$path/models/basemodel.php";
+// require_once "$path/controllers/gamesco.php";
 
 class GameModel extends BaseModel {
     public function __construct($pdo) {
@@ -11,7 +11,7 @@ class GameModel extends BaseModel {
         parent::__construct($pdo, $table);
     }
 
-    public function getById($id) {
+    public function getById($id, $columns = []) {
         $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE id = ?");
         $stmt->execute([$id]);
 
@@ -62,12 +62,12 @@ class GameModel extends BaseModel {
         return "$minPrice, $maxPrice";
     }
 
-    public function getAll() {
-        $stmt = $this->pdo->prepare("SELECT * FROM $this->table");
-        $stmt->execute();
+    // public function getAll() {
+    //     $stmt = $this->pdo->prepare("SELECT * FROM $this->table");
+    //     $stmt->execute();
 
-        return $stmt->fetch();
-    }
+    //     return $stmt->fetch();
+    // }
 
 
     //Other Cruds
