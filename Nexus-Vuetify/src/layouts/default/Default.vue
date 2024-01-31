@@ -22,14 +22,9 @@
     flex-direction: column;
     width: 100%;
     min-height: 100svh;
-    border: 2px solid red;
     margin-top: 5%;
 }
-Footer {
-  border: 2px solid blue;
-}
 .vue {
-  border: 2px solid rgb(0, 255, 94);
   width: 100%;
 }
 </style>
