@@ -10,44 +10,33 @@ require_once "$path/remote/secrets.php";
 
 class CentralController {
     private static $instance = null;
-
     private $databaseManager;
     public $usersController;
-    public $notificationsController;
-    public $reviewsController;
     public $gamesController;
 
-    private function __construct($dbUsername, $dbPassword) {
-        global $path;
-        
-        $this->databaseManager = DBManager::getInstance($dbUsername, $dbPassword);
+    private function __construct() {
+        $this->databaseManager = DatabaseManager::getInstance();
         $pdo = $this->databaseManager->getPDO();
+
         $this->usersController = new UsersController($pdo);
-        // $this->newslettersController = new NotificationsController($pdo);
         $this->gamesController = new GamesController($pdo);
     }
 
-    public static function getInstance($dbUsername, $dbPassword) {
+    public static function getInstance() {
         if (self::$instance == null) {
-            self::$instance = new centralController($dbUsername, $dbPassword);
+            self::$instance = new centralController();
         }
 
         return self::$instance;
     }
 
-    //
+    public function getUsersController() {
+        return $this->usersController;
+    }
 
-    // public function getUsersController() {
-    //     return $this->usersController;
-    // }
-
-    // public function getNewslettersController() {
-    //     return $this->newslettersController;
-    // }
-
-    // public function getGamesController() {
-    //     return $this->gamesController;
-    // }
+    public function getGamesController() {
+        return $this->gamesController;
+    }
 
     // // USER
 

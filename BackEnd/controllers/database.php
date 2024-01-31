@@ -1,31 +1,31 @@
 <?php
 
-class DBManager
+class DatabaseManager
 {
-    private static $host = "localhost";
-    private static $database = "nexus";
     private static $instance = null;
+    private static $host = 'localhost';
+    private static $database = 'nexus';
+    private static $username = 'pma';
+    private static $password = '';
 
     private $pdo;
 
     // CONSTRUCTORS
 
-    private function __construct($user, $password)
+    private function __construct()
     {
-        $host = self::$host;
-        $database = self::$database;
-        $connectionString = "mysql:host=$host;dbname=$database";
+        $connectionString = 'mysql:host=' . self::$host . ';dbname=' . self::$database;
 
-        $this->pdo = new PDO($connectionString, $user, $password);
+        $this->pdo = new PDO($connectionString, self::$username, self::$password);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
     // STATIC
 
-    public static function getInstance($user, $password)
+    public static function getInstance()
     {
         if (self::$instance == null) {
-            self::$instance = new DBManager($user, $password);
+            self::$instance = new DatabaseManager();
         }
 
         return self::$instance;

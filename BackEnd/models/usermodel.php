@@ -92,9 +92,12 @@ class UserModel extends BaseModel
             return false;
         }
 
+
         return parent::create($data);
     }
 
+    public function userExists($email)
+    {
     public function userExists($email)
     {
         return !empty($this->getOne('email', $email, ['email']));
@@ -102,13 +105,18 @@ class UserModel extends BaseModel
 
     public function formatData($data)
     {
+    public function formatData($data)
+    {
         if (in_array('password', array_keys($data))) {
             $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
         }
 
+
         return parent::formatData($data);
     }
 
+    public function validateData($data)
+    {
     public function validateData($data)
     {
         foreach ($data as $key => $value) {
