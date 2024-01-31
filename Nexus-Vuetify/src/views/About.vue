@@ -1,10 +1,4 @@
 <template>
-<<<<<<< Updated upstream
-    <h1>A propos</h1>
-</template>
-<style scoped>
-</style>
-=======
   <h1>A propos</h1>
   <div id="app">
     <!-- Barre de navigation latérale -->
@@ -44,12 +38,18 @@
 
 </template>
 <script scoped>
-import Zi from  '../components/Zi';
+import Zi from  '../components/Zi.vue';
+import Thomas from '../components/Thomas.vue';
+import  Debraise from "../components/Debraise.vue";
+import  Amazigh from "../components/Amazigh.vue";
+import Rebecca  from "../components/Rebecca.vue";
 export default{
+
   data(){
     return{
       selectedTab: '',
 Zi,
+Thomas,Amazigh,Debraise,Rebecca
     }
   }
 }
@@ -85,4 +85,3 @@ Zi,
 </style>
 
 
->>>>>>> Stashed changes
