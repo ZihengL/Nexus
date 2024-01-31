@@ -1,6 +1,7 @@
 <template>
     <Search/>
     <Filter/>
+    <h1>Boutique</h1>
     <Card/>
 </template>
 <script scoped>

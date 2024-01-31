@@ -1,0 +1,58 @@
+.NavBar {
+    /* From https://css.glass */
+    background: rgba(255, 255, 255, 0.09);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+
+    
+    border-bottom-right-radius: 16px;
+    border-bottom-left-radius: 16px;
+  }
+.router-link-exact-active{
+    /*background-color: rgba(198, 198, 198, 0.112);*/
+    border-bottom: 4px solid rgba(163, 163, 163, 0.634);
+    font-weight: bolder;
+}
+  .logo {
+    width: 10%;
+    text-align: center;
+    margin-left: 2%;
+  }
+  .logo > img {
+    width: 75%;
+  }
+  .link {
+    width: 100%;
+    height: 100%;
+    padding: 0%;
+    display: flex;
+    align-items: center;
+    gap: 1%;
+    margin: 0%;
+  }
+  .link .link-btn {
+    margin: auto;
+    color: black;
+  }
+  .link .router {
+    flex: 1;
+    margin: 0%;
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 3px;
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+  }
+  .link .router:hover {
+    background-color: rgba(128, 128, 128, 0.306);
+    border-bottom: 4px solid rgba(128, 128, 128, 0.634);
+    font-weight: bolder;
+  }
+  .link .router .conectedIcon {
+    font-size: 3rem;
+  }
