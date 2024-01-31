@@ -1,73 +1,88 @@
 <?php
 
-// require_once "$path/models/basemodel.php";
-require_once "$path/controllers/games.php";
+require_once "$path/models/basemodel.php";
+// require_once "$path/controllers/games.php";
 
 class GameModel extends BaseModel {
+
+    protected $model;
+    protected $id = "id";
+    protected $name = "name";
+    protected $rating = "rating";
+    protected $tags = "tags";
+    protected $price = "price";
+    protected $images = "images";
+    protected $devNames = "devNames";
+    protected $releaseDate = "releaseDate"; 
+    protected $description = "description";
+    protected $stripeID = "stripeID";
+    protected $tableName = "games";
+
+    // $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE devName = ?");
+    // $stmt->execute([$devName]);
+
+
     public function __construct($pdo) {
-        $table = "games";
+      
         // $fields = ["name", "type", "color", "size", "price", "images", "description"];
 
-        parent::__construct($pdo, $table);
+        parent::__construct($pdo, $this->tableName);
     }
 
     public function getById($id) {
-        $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE id = ?");
-        $stmt->execute([$id]);
-
-        return $stmt->fetch();
+        return parent::getOne($this->id, $id);
     }
     
     public function getByReleaseDate($date){
-        $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE date = ?");
-        $stmt->execute([$date]);
-
-        return $stmt->fetch();
+        return parent::getAll($this->releaseDate, $date);
     }
 
     public function getByTags($tags) {
-        $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE tags = ?");
-        $stmt->execute([$tags]);
-
-        return $stmt->fetch();
+        return parent::getAll($this->tags, $tags);
     }
     
     public function getByDescription($description){
-        $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE description = ?");
-        $stmt->execute([$description]);
-
-        return $stmt->fetch();
+        return parent::getAll($this->description, $description);
     }
 
-    
     public function getByImages($img) {
-        $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE imgs = ?");
-        $stmt->execute([$img]);
-
-        return $stmt->fetch();
+        return parent::getAll($this->images, $img);
     }
     
     public function getByDevs($devName){
-        $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE devName = ?");
-        $stmt->execute([$devName]);
-
-        return $stmt->fetch();
+        return parent::getAll($this->devNames, $devName);
     }
 
-    
-    public function getPriceRange($filters) {
-        $minPrice = intval($filters['minprice']);
-        $maxPrice = intval($filters['maxprice']) === 0 ? 999999 : $filters['maxprice'];
-    
-        return "$minPrice, $maxPrice";
+    public function getAllGames() {
+        return parent::getAll();
     }
 
-    public function getAll() {
-        $stmt = $this->pdo->prepare("SELECT * FROM $this->table");
+    public function getMinMaxPrice() {
+        $sql = "SELECT MIN(price) AS minPrice, MAX(price) AS maxPrice FROM $this->tableName";
+        $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
-
-        return $stmt->fetch();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        if ($result) {
+            return [
+                'minPrice' => $result['minPrice'],
+                'maxPrice' => $result['maxPrice']
+            ];
+        } else {
+            return [
+                'minPrice' => null,
+                'maxPrice' => null
+            ];
+        }
     }
+    
+    
+    // public function getPriceRange($filters) {
+    //     $minPrice = intval($filters['minprice']);
+    //     $maxPrice = intval($filters['maxprice']) === 0 ? 999999 : $filters['maxprice'];
+    
+    //     return "$minPrice, $maxPrice";
+    // }
 
 
     //Other Cruds
@@ -94,10 +109,11 @@ class GameModel extends BaseModel {
     }
 
     public function deleteGame($id){
-        $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE id = ?");
-        $stmt->execute([$id]);
+        return parent::delete($id);
+        // $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE id = ?");
+        // $stmt->execute([$id]);
 
-        return $stmt->fetch();
+        // return $stmt->fetch();
     }
 
     // public function filter($filters = [], $columns = []) {

@@ -2,85 +2,63 @@
 require_once "$path/models/gamemodel.php";
 
 class GamesController {
-    private $model;
-    private $name = "name";
-    private $tags = "tags";
-    private $price = "price";
-    private $images = "images";
-    private $devNames = "devNames";
-    private $releaseDate = "releaseDate"; 
-    private $description = "description";
-    private $stripeID = "stripeID";
-    
-  
+    protected $model;
+
     public function __construct($pdo) {
         $this->model = new GameModel($pdo);
     }
 
     // GETTERS
 
-    public function getAllProducts() {
-        return $this->model->getAll();
-    }
-
-    public function getProductById($id) {
+    public function getById($id) {
         return $this->model->getById($id);
     }
 
-
-    public function getProductByName($name) {
-        return $this->model->get($this->name, $name);
+    public function getByReleaseDate($releaseDate) {
+        return $this->model->getByReleaseDate($releaseDate);
     }
 
     public function getByTags($tags) {
-        if (is_array($tags)) {
-            return $this->model->get($this->tags, $tags);
-        }
-
-        return false;
-    }
-
-    public function getProductByPrice($price) {
-        return $this->model->get($this->price, $price);
-    }
-
-    public function getByDevs($devNames) {
-        return $this->model->get($this->devNames, $devNames);
-    }
-
-    public function getByImages($images) {
-        return $this->model->get($this->images, $images);
+        return $this->model->getByTags($tags);
     }
 
     public function getByDescription($description) {
-        return $this->model->get($this->description, $description);
+        return $this->model->getByDescription($description);
     }
 
-    public function getByReleaseDate($releaseDate) {
-        return $this->model->get($this->releaseDate, $releaseDate);
+    public function getByImages($images) {
+        return $this->model->getByImages($images);
     }
 
-    public function getProductByStripeID($stripeID) {
-        return $this->model->get($this->stripeID, $stripeID);
+    public function getByDevs($devName) {
+        return $this->model->getByDevs($devName);
     }
 
-    // OTHER CRUDS
+    public function getMinMaxPrice() {
+        return $this->model->getMinMaxPrice();
+    }
+    
+    public function getAllGames() {
+        return $this->model->getAllGames();
+    }
 
+
+    // Other CRUDs 
     public function addGame($data) {
-        return $this->model->create($data);
+        return $this->model->addGame($data);
     }
 
     public function updateGame($id, $data) {
-        return $this->model->update($id, $data);
+        return $this->model->updateGame($id, $data);
     }
 
     public function deleteGame($id) {
-        return $this->model->delete($id);
+        return $this->model->deleteGame($id);
     }
 
-    public function filterGames($filters, $columns = []) {
-        return $this->model->filterGames($filters, $columns);
-    }
+    // public function filterGames($filters, $columns = []) {
+    //     return $this->model->filterGames($filters, $columns);
+    // }
 
 
     // public function getAllFields() {

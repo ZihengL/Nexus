@@ -52,27 +52,32 @@ class BaseModel
         }
     }
 
-    protected function bindingQuery($sql, $params = [])
-    {
-        try {
-            $stmt = $this->pdo->prepare($sql);
+    // protected function bindingQuery($sql, $params = [])
+    // {
+    //     try {
+    //         $stmt = $this->pdo->prepare($sql);
 
-            foreach ($params as $param => $value) {
-                $stmt->bindValue(":$param", $value, getDataType($value));
-            }
-            $stmt->execute();
+    //         foreach ($params as $param => $value) {
+    //             $stmt->bindValue(":$param", $value, getDataType($value));
+    //         }
+    //         $stmt->execute();
 
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $exception) {
-            return $exception;
-        }
-    }
+    //         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    //     } catch (PDOException $exception) {
+    //         return $exception;
+    //     }
+    // }
 
     // GETTERS/READ
 
     // Retourne un tableau avec tous les resultats comprenant la valeur.
-    public function get($column, $value, $columns = [])
+    public function getAll($column = null, $value = null, $columns = [])
     {
+        if (!$column && !$value) {
+            $sql = "SELECT " . parseColumns($columns) . " FROM $this->table";
+            return $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        }
+
         $sql = "SELECT " . parseColumns($columns) . " FROM $this->table WHERE $column = ?";
 
         return $this->query($sql, [$value])->fetchAll(PDO::FETCH_ASSOC);
@@ -86,36 +91,60 @@ class BaseModel
         return $this->query($sql, [$value])->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getAll($columns = [])
-    {
-        $stmt = $this->pdo->query("SELECT " . parseColumns($columns) . " FROM $this->table");
+    // public function get($columns = [])
+    // {
+    //     $stmt = $this->pdo->query("SELECT " . parseColumns($columns) . " FROM $this->table");
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // }
 
-    public function getById($id, $columns = [])
-    {
-        return $this->getOne('id', $id, $columns);
-    }
+    // public function getById($id, $columns = [])
+    // {
+    //     return $this->getOne('id', $id, $columns);
+    // }
+
+
 
     // OTHER CRUDS
 
+    // public function create($data)
+    // {
+    //     $columns = implode(', ', $this->columns);
+    //     $placeholders = substr(str_repeat(",?", count($this->columns)), 1);
+
+    //     $sql = "INSERT INTO $this->table ($columns) VALUES ($placeholders)";
+
+    //     if ($this->query($sql, $this->formatData($data))) {
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // }
+
     public function create($data)
     {
-        $columns = implode(', ', $this->columns);
-        $placeholders = substr(str_repeat(",?", count($this->columns)), 1);
 
-        $sql = "INSERT INTO $this->table ($columns) VALUES ($placeholders)";
+        $this->columns = $this->getColumns(false);
+        $formattedData = $this->formatData($data);
+        $columnNames = array_intersect($this->columns, array_keys($data));
+        $placeholders = substr(str_repeat(",?", count($columnNames)), 1);
 
-        if ($this->query($sql, $this->formatData($data))) {
+
+        $sql = "INSERT INTO $this->table (" . implode(', ', $columnNames) . ") VALUES ($placeholders)";
+
+
+        if ($this->query($sql, array_values(array_intersect_key($data, array_flip($columnNames))))) {
             return true;
         } else {
             return false;
         }
     }
 
+
+
     public function update($id, $data)
     {
+        $this->columns = $this->getColumns(false);
         $formattedData = $this->formatData($data);
         $pairs = implode(' = ?, ', array_keys($formattedData)) . ' = ?';
         $formattedData['id'] = $id;
@@ -158,6 +187,7 @@ class BaseModel
         });
     }
 
+
     public function formatData($data)
     {
         $formattedData = [];
@@ -169,6 +199,18 @@ class BaseModel
         }
         return $formattedData;
     }
+
+    // public function formatData($data)
+    // {
+    //     $formattedData = [];
+
+    //     foreach ($this->columns as $column) {
+    //         if (in_array($column, array_keys($data))) {
+    //             $formattedData[$column] = $data[$column];
+    //         }
+    //     }
+    //     return $formattedData;
+    // }
 
     public function bindParams($data)
     {
@@ -183,7 +225,7 @@ class BaseModel
         return $params;
     }
 
-    public function applyFilters($sql, $filters = []) 
+    public function applyFilters($sql, $filters = [])
     {
         $params = [];
         $validEntries = array_intersect(array_keys($filters), $this->columns);
@@ -197,13 +239,13 @@ class BaseModel
         return ['sql' => $sql, 'params' => $params];
     }
 
-    public function applySorting($sql, $sorting = []) 
+    public function applySorting($sql, $sorting = [])
     {
         $validEntries = array_intersect(array_keys($sorting), $this->columns);
 
         $result = '';
         foreach ($validEntries as $column => $order) {
-            $result .= $column . ($order? 'ASC' : 'DESC') . ', ';
+            $result .= $column . ($order ? 'ASC' : 'DESC') . ', ';
         }
 
         return $sql . ' ORDER BY ' . $result;
