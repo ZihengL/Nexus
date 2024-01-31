@@ -37,6 +37,7 @@
   .loginContainer {
     text-align: center;
     padding: 1% 0% 2% 0%;
+    border: 2px solid black;
   }
   
 </style>
