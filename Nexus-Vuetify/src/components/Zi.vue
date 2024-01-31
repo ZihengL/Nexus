@@ -1,15 +1,9 @@
 <template>
-  <v-container>
-    <p>
-      allo n=moi c'est Zi
-    </p>
-  </v-container>
+  <h1>
+    alllllo
+  </h1>
+  <p>
+    allo n=moi c'est Zi
+  </p>
 </template>
-<script>
-export default {
-  data() {
-    return ;
-  }
-}
-</script>
-<style></style>
+

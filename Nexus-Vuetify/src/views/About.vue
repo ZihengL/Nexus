@@ -4,8 +4,8 @@
     <!-- Barre de navigation latérale -->
     <div class="sidebar">
       <ul>
-        <li @click="selectedTab = 'Zi'">Zi</li>
-        <li @click="selectedTab = 'Rebecca'">Rebecca</li>
+        <li @click="selectedTab = 'Zi'">Zi Heng Liu</li>
+        <li @click="selectedTab = 'Rebecca'">Rebecca </li>
         <li @click="selectedTab = 'Thomas'">Thomas</li>
         <li @click="selectedTab = 'Debraise'">Debraise</li>
         <li @click="selectedTab = 'Amazigh'">Amazigh</li>
@@ -15,11 +15,10 @@
     <!-- Contenu changeant en fonction de la navigation -->
     <div class="content">
       <div v-if="selectedTab === 'Zi'">
-        <Zi/>
+        <ZiH/>
       </div>
       <div v-else-if="selectedTab === 'Rebecca'">
-        <h1>À propos de nous</h1>
-        <p>Nous sommes une entreprise formidable.</p>
+        <RebeccaM />
       </div>
       <div v-else-if="selectedTab === 'Thomas'">
         <h1>Contactez-nous</h1>
@@ -38,18 +37,18 @@
 
 </template>
 <script scoped>
-import Zi from  '../components/Zi.vue';
-import Thomas from '../components/Thomas.vue';
-import  Debraise from "../components/Debraise.vue";
-import  Amazigh from "../components/Amazigh.vue";
-import Rebecca  from "../components/Rebecca.vue";
+import ZiH from  '../components/Zi.vue';
+import ThomasP from '../components/Thomas.vue';
+import  DebraiseM from "../components/Debraise.vue";
+import  AmazighM from "../components/Amazigh.vue";
+import RebeccaM  from "../components/Rebecca.vue";
 export default{
 
   data(){
     return{
       selectedTab: '',
-Zi,
-Thomas,Amazigh,Debraise,Rebecca
+ZiH,
+ThomasP,AmazighM,DebraiseM,RebeccaM
     }
   }
 }
