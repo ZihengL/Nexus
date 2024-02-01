@@ -76,7 +76,8 @@ export default {
             title: 'Solo Leveling Arise',
             subtitle: null,
             image: '../src/assets/img/solo_leveling.png',
-            price: 'Farming',
+            price: 'Gratuit',
+            Genre: 'Farming',
           },
           // ...more games
         ]

@@ -11,8 +11,8 @@ a{
 }
 /* carousel */
 .carousel{
-    height: 100vh;
-    margin-top: -4%;
+    height: 90svh;
+    margin-top: -6%;
     width: 100vw;
     overflow: hidden;
     position: relative;
