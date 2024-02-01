@@ -18,8 +18,7 @@ class GameModel extends BaseModel {
     protected $stripeID = "stripeID";
     protected $tableName = "games";
 
-    // $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE devName = ?");
-    // $stmt->execute([$devName]);
+   
 
 
     public function __construct($pdo) {

@@ -62,7 +62,6 @@ class UserModel extends BaseModel
         return parent::getAll($this->descriptionColumn, $description);
     }
 
-
     //other cruds
 
     public function updateUser($id, $data)
@@ -98,13 +97,9 @@ class UserModel extends BaseModel
 
     public function userExists($email)
     {
-    public function userExists($email)
-    {
         return !empty($this->getOne('email', $email, ['email']));
     }
 
-    public function formatData($data)
-    {
     public function formatData($data)
     {
         if (in_array('password', array_keys($data))) {
@@ -115,8 +110,6 @@ class UserModel extends BaseModel
         return parent::formatData($data);
     }
 
-    public function validateData($data)
-    {
     public function validateData($data)
     {
         foreach ($data as $key => $value) {

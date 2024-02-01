@@ -52,21 +52,21 @@ class BaseModel
         }
     }
 
-    // protected function bindingQuery($sql, $params = [])
-    // {
-    //     try {
-    //         $stmt = $this->pdo->prepare($sql);
+    protected function bindingQuery($sql, $params = [])
+    {
+        try {
+            $stmt = $this->pdo->prepare($sql);
 
-    //         foreach ($params as $param => $value) {
-    //             $stmt->bindValue(":$param", $value, getDataType($value));
-    //         }
-    //         $stmt->execute();
+            foreach ($params as $param => $value) {
+                $stmt->bindValue(":$param", $value, getDataType($value));
+            }
+            $stmt->execute();
 
-    //         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    //     } catch (PDOException $exception) {
-    //         return $exception;
-    //     }
-    // }
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $exception) {
+            return $exception;
+        }
+    }
 
     // GETTERS/READ
 
@@ -107,40 +107,25 @@ class BaseModel
 
     // OTHER CRUDS
 
-    // public function create($data)
-    // {
-    //     $columns = implode(', ', $this->columns);
-    //     $placeholders = substr(str_repeat(",?", count($this->columns)), 1);
-
-    //     $sql = "INSERT INTO $this->table ($columns) VALUES ($placeholders)";
-
-    //     if ($this->query($sql, $this->formatData($data))) {
-    //         return true;
-    //     } else {
-    //         return false;
-    //     }
-    // }
-
     public function create($data)
     {
+        $columns = implode(', ', $this->columns);
+        $placeholders = substr(str_repeat(",?", count($this->columns)), 1);
 
-        $this->columns = $this->getColumns(false);
-        $formattedData = $this->formatData($data);
-        $columnNames = array_intersect($this->columns, array_keys($data));
-        $placeholders = substr(str_repeat(",?", count($columnNames)), 1);
+        $sql = "INSERT INTO $this->table ($columns) VALUES ($placeholders)";
 
-
-        $sql = "INSERT INTO $this->table (" . implode(', ', $columnNames) . ") VALUES ($placeholders)";
-
-
-        if ($this->query($sql, array_values(array_intersect_key($data, array_flip($columnNames))))) {
+        if ($this->query($sql, $this->formatData($data))) {
             return true;
         } else {
             return false;
         }
     }
 
+    
+    // $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE devName = ?");
+    // $stmt->execute([$devName]);
 
+    // $sql = "INSERT INTO users (first_name, last_name, email) VALUES ('$firstName', '$lastName', '$email')";
 
     public function update($id, $data)
     {
@@ -187,7 +172,6 @@ class BaseModel
         });
     }
 
-
     public function formatData($data)
     {
         $formattedData = [];
@@ -199,18 +183,6 @@ class BaseModel
         }
         return $formattedData;
     }
-
-    // public function formatData($data)
-    // {
-    //     $formattedData = [];
-
-    //     foreach ($this->columns as $column) {
-    //         if (in_array($column, array_keys($data))) {
-    //             $formattedData[$column] = $data[$column];
-    //         }
-    //     }
-    //     return $formattedData;
-    // }
 
     public function bindParams($data)
     {
@@ -250,4 +222,8 @@ class BaseModel
 
         return $sql . ' ORDER BY ' . $result;
     }
+
+    // SECTION
+
+
 }

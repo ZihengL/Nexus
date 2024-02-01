@@ -53,4 +53,6 @@ $usersCtrl = $centralController->usersController;
 $user = $usersCtrl->getUserById(1);
 printer($user, 0, 'USER FETCH TEST');
 
+$
+
 // TODO: Creating and reading backup of database as part of api launch routine.
