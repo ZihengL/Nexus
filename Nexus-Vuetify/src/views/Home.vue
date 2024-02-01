@@ -7,7 +7,7 @@
 
 <script scoped>
 import Card from '../components/Card.vue';
-import Homecarrousel from '../components/Homecarrousel.vue';
+import Homecarrousel from '../components/HomeCarrousel2.vue';
 import Info from '../components/Text.vue';
 export default {
   components: {

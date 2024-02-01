@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <NavBar :isConnected="test"/>
-    <div class="content">
+    <div class="contentPage">
       <default-view  class="vue"/>
       <Footer/>
     </div>
@@ -15,14 +15,14 @@
   var test = 'bla bla';
 </script>
 <style>
-.content {
+.contentPage {
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-direction: column;
     width: 100%;
     min-height: 100svh;
-    margin-top: 5%;
+    margin-top: 2%;
 }
 .vue {
   width: 100%;
