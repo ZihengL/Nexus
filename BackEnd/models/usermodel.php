@@ -4,6 +4,8 @@ require_once "$path/models/basemodel.php";
 
 class UserModel extends BaseModel
 {
+    
+
     public function __construct($pdo)
     {
         $table = "user";

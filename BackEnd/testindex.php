@@ -1,13 +1,15 @@
 <?php
 
-function printer($content, $index = 0, $title = 'ARRAY START') {
+function printer($content, $index = 0, $title = 'ARRAY START')
+{
     if (is_array($content)) {
         echo '<hr><h5>' . $title . '</h5><br>';
 
         $index = 0;
         if (array_keys($content) !== range(0, count($content) - 1)) {
             foreach ($content as $element => $value) {
-                printer("$element: $value", $index);
+                $subcontent = "$element: <b>$value</b>";
+                printer($subcontent, $index);
                 $index++;
             }
         } else {
@@ -52,5 +54,7 @@ switch ($requestUrl) {
 $usersCtrl = $centralController->usersController;
 $user = $usersCtrl->getUserById(1);
 printer($user, 0, 'USER FETCH TEST');
+
+
 
 // TODO: Creating and reading backup of database as part of api launch routine.
