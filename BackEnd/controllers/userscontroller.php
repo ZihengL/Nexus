@@ -118,4 +118,9 @@ class UsersController
         //         isset($_SESSION['authentified']) && 
         //         $_SESSION['authentified'];
     }
+
+    public function FILTERTEST($filter)
+    {
+        return $this->model->FILTERTEST($filter);
+    }
 }
