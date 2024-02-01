@@ -13,42 +13,45 @@
     </div>
 
     <!-- Contenu changeant en fonction de la navigation -->
-    <div class="content">
+    <div class="content1">
       <div v-if="selectedTab === 'Zi'">
-        <ZiH/>
+        <ZiH>
+          <p>Je suis Zi Heng Liu, ingénieur en informatique et je suis chargé du développement frontend de l'application.
+            Pour plus d'informations </p>
+        </ZiH>
       </div>
       <div v-else-if="selectedTab === 'Rebecca'">
-        <RebeccaM />
+        <RebeccaM>
+          <p>Reb</p>
+        </RebeccaM>
       </div>
       <div v-else-if="selectedTab === 'Thomas'">
-        <h1>Contactez-nous</h1>
-        <p>Vous pouvez nous contacter à l'adresse email@example.com.</p>
+        <ThomasP>
+          <p>thom</p>
+        </ThomasP>
       </div>
       <div v-else-if="selectedTab === 'Debraise'">
-        <h1>Contactez-nous</h1>
-        <p>Vous pouvez nous contacter à l'adresse email@example.com.</p>
+        <p>debraise</p>
       </div>
       <div v-else-if="selectedTab === 'Amazigh'">
-        <h1>Contactez-nous</h1>
-        <p>test.</p>
+        <p>amazon</p>
       </div>
     </div>
   </div>
-
 </template>
 <script scoped>
-import ZiH from  '../components/Zi.vue';
+import AmazighM from "../components/Amazigh.vue";
+import DebraiseM from "../components/Debraise.vue";
+import RebeccaM from "../components/Rebecca.vue";
 import ThomasP from '../components/Thomas.vue';
-import  DebraiseM from "../components/Debraise.vue";
-import  AmazighM from "../components/Amazigh.vue";
-import RebeccaM  from "../components/Rebecca.vue";
-export default{
+import ZiH from '../components/Zi.vue';
+export default {
 
-  data(){
-    return{
+  data() {
+    return {
       selectedTab: '',
-ZiH,
-ThomasP,AmazighM,DebraiseM,RebeccaM
+      ZiH,
+      ThomasP, AmazighM, DebraiseM, RebeccaM
     }
   }
 }
@@ -77,7 +80,7 @@ ThomasP,AmazighM,DebraiseM,RebeccaM
   background-color: #ddd;
 }
 
-.content {
+.content1 {
   margin-left: 220px;
   padding: 20px;
 }
