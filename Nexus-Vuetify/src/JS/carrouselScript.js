@@ -1,54 +1,47 @@
 const carouselScript = {
-    init(){
-        let nextDom = document.getElementById('next');
-        let prevDom = document.getElementById('prev');
-    
-        let carouselDom = document.querySelector('.carousel');
-        let SliderDom = carouselDom.querySelector('.carousel .list');
-        let thumbnailBorderDom = document.querySelector('.carousel .thumbnail');
-        let thumbnailItemsDom = thumbnailBorderDom.querySelectorAll('.item');
-        let timeDom = document.querySelector('.carousel .time');
-    
-        thumbnailBorderDom.appendChild(thumbnailItemsDom[0]);
-        let timeRunning = 3000;
-        let timeAutoNext = 7000;
-    
-        nextDom.onclick = function(){
-            showSlider('next');    
+    init() {
+        const nextDom = document.getElementById('next');
+        const prevDom = document.getElementById('prev');
+
+        const carouselDom = document.querySelector('.carousel');
+        const SliderDom = carouselDom.querySelector('.list');
+        const thumbnailBorderDom = document.querySelector('.thumbnail');
+        const thumbnailItemsDom = thumbnailBorderDom.querySelectorAll('.item');
+
+        if (thumbnailItemsDom.length > 0) {
+            thumbnailBorderDom.appendChild(thumbnailItemsDom[0].cloneNode(true));
         }
-    
-        prevDom.onclick = function(){
-            showSlider('prev');    
-        }
-        let runTimeOut;
-        let runNextAuto = setTimeout(() => {
-            next.click();
-        }, timeAutoNext)
-        function showSlider(type){
-            let  SliderItemsDom = SliderDom.querySelectorAll('.carousel .list .item');
-            let thumbnailItemsDom = document.querySelectorAll('.carousel .thumbnail .item');
-            
-            if(type === 'next'){
+
+        let runNextAuto;
+        const timeAutoNext = 7000; // Délai pour le changement automatique
+
+        function showSlider(type) {
+            const SliderItemsDom = SliderDom.querySelectorAll('.item');
+            const currentThumbnailItemsDom = document.querySelectorAll('.thumbnail .item');
+
+            if (type === 'next') {
                 SliderDom.appendChild(SliderItemsDom[0]);
-                thumbnailBorderDom.appendChild(thumbnailItemsDom[0]);
-                carouselDom.classList.add('next');
-            }else{
+                thumbnailBorderDom.appendChild(currentThumbnailItemsDom[0].cloneNode(true));
+            } else {
                 SliderDom.prepend(SliderItemsDom[SliderItemsDom.length - 1]);
-                thumbnailBorderDom.prepend(thumbnailItemsDom[thumbnailItemsDom.length - 1]);
-                carouselDom.classList.add('prev');
+                thumbnailBorderDom.prepend(currentThumbnailItemsDom[currentThumbnailItemsDom.length - 1].cloneNode(true));
             }
-            clearTimeout(runTimeOut);
-            runTimeOut = setTimeout(() => {
-                carouselDom.classList.remove('next');
-                carouselDom.classList.remove('prev');
-            }, timeRunning);
-    
+
+            // Redémarrer le changement automatique après action manuelle
             clearTimeout(runNextAuto);
             runNextAuto = setTimeout(() => {
-                next.click();
-            }, timeAutoNext)
+                nextDom.click();
+            }, timeAutoNext);
         }
-    }
 
-}
+        nextDom.addEventListener('click', () => showSlider('next'));
+        prevDom.addEventListener('click', () => showSlider('prev'));
+
+        // Initialiser le changement automatique
+        runNextAuto = setTimeout(() => {
+            nextDom.click();
+        }, timeAutoNext);
+    }
+};
+
 export default carouselScript;
