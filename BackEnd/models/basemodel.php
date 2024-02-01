@@ -21,7 +21,6 @@ function getDataType($column)
     }
 }
 
-
 class BaseModel
 {
     protected $pdo;
@@ -91,22 +90,23 @@ class BaseModel
         return $this->query($sql, [$value])->fetch(PDO::FETCH_ASSOC);
     }
 
-    // public function get($columns = [])
-    // {
-    //     $stmt = $this->pdo->query("SELECT " . parseColumns($columns) . " FROM $this->table");
+    public function get($columns = [])
+    {
+        $stmt = $this->pdo->query("SELECT " . parseColumns($columns) . " FROM $this->table");
 
-    //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    // }
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
-    // public function getById($id, $columns = [])
-    // {
-    //     return $this->getOne('id', $id, $columns);
-    // }
-
-
+    public function getById($id, $columns = [])
+    {
+        return $this->getOne('id', $id, $columns);
+    }
 
     // OTHER CRUDS
 
+    // $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE devName = ?");
+    // $stmt->execute([$devName]);
+    // $sql = "INSERT INTO users (first_name, last_name, email) VALUES ('$firstName', '$lastName', '$email')";
     public function create($data)
     {
         $columns = implode(', ', $this->columns);
@@ -121,20 +121,15 @@ class BaseModel
         }
     }
 
-    
-    // $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE devName = ?");
-    // $stmt->execute([$devName]);
-
-    // $sql = "INSERT INTO users (first_name, last_name, email) VALUES ('$firstName', '$lastName', '$email')";
-
     public function update($id, $data)
     {
-        $this->columns = $this->getColumns(false);
         $formattedData = $this->formatData($data);
         $pairs = implode(' = ?, ', array_keys($formattedData)) . ' = ?';
         $formattedData['id'] = $id;
 
         $sql = "UPDATE $this->table SET $pairs WHERE id = ?";
+        echo "<br>UPDATE SQL<br>$sql<br>";
+        
         if ($this->query($sql, $formattedData)) {
             return true;
         } else {
@@ -222,8 +217,4 @@ class BaseModel
 
         return $sql . ' ORDER BY ' . $result;
     }
-
-    // SECTION
-
-
 }

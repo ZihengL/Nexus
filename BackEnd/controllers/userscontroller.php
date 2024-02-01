@@ -38,6 +38,11 @@ class UsersController
         return $this->model->getAll();
     }
 
+    public function getById($id)
+    {
+        return $this->model->getById($id);
+    }
+
     // OTHER CRUDS
 
     public function createUser($data)

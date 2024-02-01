@@ -79,7 +79,6 @@ class UserModel extends BaseModel
         }
     }
 
-
     public function deleteUser($id)
     {
         return parent::delete($id);

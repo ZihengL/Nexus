@@ -1,6 +1,7 @@
 <?php
 
-function printer($content, $index = 0, $title = 'ARRAY START') {
+function printer($content, $index = 0, $title = 'ARRAY START')
+{
     if (is_array($content)) {
         echo '<hr><h5>' . $title . '</h5><br>';
 
@@ -53,6 +54,16 @@ $usersCtrl = $centralController->usersController;
 $user = $usersCtrl->getUserById(1);
 printer($user, 0, 'USER FETCH TEST');
 
-$
+printer(implode(' // ', $user), "implode test");
+
+// $updated_user = $user;
+// $updated_user['user'] = 'updated username';
+
+// UPDATE user SET user = ?, password = ?, email = ?, phoneNumber = ?, picture = ?, IsAdmin = ?, IsOnline = ?, description = ?, name = ?, lastName = ?, creationDate = ? WHERE id = ?
+// $usersCtrl->updateUser($user['id'], $updated_user);
+// $result = $usersCtrl->getById($user['id']);
+// printer($result, 'UPDATED USER RESULT');
+
+
 
 // TODO: Creating and reading backup of database as part of api launch routine.
