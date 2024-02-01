@@ -1,6 +1,9 @@
 <template>
-  <p>bienvenue thom</p>
-</template>
-<scrip>
-</scrip>
-<style scoped></style>
+  <slot>
+
+  </slot>
+  </template>
+<style>
+</style>
+<script>
+</script>

@@ -1,9 +1,9 @@
 <template>
-  <h1>
-    alllllo
-  </h1>
-  <p>
-    allo n=moi c'est Zi
-  </p>
-</template>
+  <slot>
 
+  </slot>
+  </template>
+<style>
+</style>
+<script>
+</script>
