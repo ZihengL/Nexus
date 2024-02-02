@@ -31,10 +31,14 @@
         </ThomasP>
       </div>
       <div v-else-if="selectedTab === 'Debraise'">
-        <p>debraise</p>
+        <DebraiseM>
+          <p>debraise</p>
+        </DebraiseM>
       </div>
       <div v-else-if="selectedTab === 'Amazigh'">
-        <p>amazon</p>
+        <AmazighM>
+          <p>amazon</p>
+        </AmazighM>
       </div>
     </div>
   </div>
