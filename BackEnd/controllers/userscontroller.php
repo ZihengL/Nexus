@@ -32,6 +32,11 @@ class UsersController
         return $this->model->get('lastname', $lastname, $columns);
     }
 
+    public function applyFiltersAndSorting($sql, $filters, $sorting)
+    }
+
+    
+
     // ONLY FOR TESTING, DELETE IN FUTURE
     public function getAllUsers($columns = [])
     {

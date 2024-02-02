@@ -64,6 +64,18 @@ printer(implode(' // ', $user), "implode test");
 // $result = $usersCtrl->getById($user['id']);
 // printer($result, 'UPDATED USER RESULT');
 
+// Base SQL before applying filters and sorting
+$sql = "SELECT * FROM user";
 
+// Define filters and sorting criteria
+$filters = [
+    'name' => "john_doe"
+];
+$sorting = [
+    'phoneNumber' => 'ASC'
+];
+
+// Apply filters and sorting to the base SQL
+$result = $centralController->usersController->applyFiltersAndSorting($sql, $filters, $sorting);
 
 // TODO: Creating and reading backup of database as part of api launch routine.

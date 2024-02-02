@@ -129,7 +129,7 @@ class BaseModel
 
         $sql = "UPDATE $this->table SET $pairs WHERE id = ?";
         echo "<br>UPDATE SQL<br>$sql<br>";
-        
+
         if ($this->query($sql, $formattedData)) {
             return true;
         } else {
@@ -216,5 +216,46 @@ class BaseModel
         }
 
         return $sql . ' ORDER BY ' . $result;
+    }
+
+    // public function applySorting($sql, $sorting = [])
+    // {
+    //     $validEntries = array_intersect(array_keys($sorting), $this->columns);
+    
+    //     $result = '';
+    //     foreach ($validEntries as $column => $order) {
+    //         if (!empty($column) && in_array($column, $this->columns)) {
+    //             $direction = strtoupper($order) === 'DESC' ? 'DESC' : 'ASC'; // Default to ASC if not DESC
+    //             $result .= "$column $direction, ";
+    //         }
+    //     }
+    
+    //     $result = rtrim($result, ', '); // Remove the trailing comma and space
+    
+    //     if (!empty($result)) {
+    //         $sql .= ' ORDER BY ' . $result;
+    //     }
+    
+    //     return $sql;
+    // }
+
+    public function applyFiltersAndSorting($sql, $filters = [], $sorting = [])
+    {
+        $filterResult = $this->applyFilters($sql, $filters);
+        $sqlWithFilters = $filterResult['sql'];
+        $params = $filterResult['params'];
+
+        $sqlWithFiltersAndSorting = $this->applySorting($sqlWithFilters, $sorting);
+
+        echo "<br>Final SQL: " . htmlspecialchars($sqlWithFiltersAndSorting) . "<br>\n";
+        echo "<br>Parameters: " . print_r($params) . "</pre>";
+        $stmt = $this->pdo->prepare($sqlWithFiltersAndSorting);
+
+        $stmt->execute($params);
+
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+        return $results;
     }
 }

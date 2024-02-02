@@ -32,7 +32,7 @@ global $centralController;
 $dbUsername = "nexus";
 $dbPassword = "123";
 
-$path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus';
+$path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd';
 $baseURL = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]/Nexus";
 
 // $path = "$_SERVER[DOCUMENT_ROOT]/zi_htdocs/RichRicasso";
@@ -40,7 +40,7 @@ $baseURL = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOS
 
 // Pathing and URL
 // require_once "$path/transactions/routines.php";
-require_once "$path/models/db_manager.php";
+require_once "$path/controllers/database.php";
 require_once "$path/controllers/centralController.php";
 
 
