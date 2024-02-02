@@ -1,6 +1,8 @@
 <template>
-  <Homecarrousel />
-  <Info />
+  <div>
+    <Homecarrousel />
+    <Info />
+  </div>
 </template>
 
 <script scoped>

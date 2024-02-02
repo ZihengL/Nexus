@@ -8,7 +8,7 @@
             <img :src="item.image">
             <div class="content">
               <div class="title">{{ item.title }}</div>
-              <button>SUBSCRIBE</button>
+              <button>Voir le jeu</button>
             </div>
           </div>
         </div>

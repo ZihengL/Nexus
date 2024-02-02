@@ -1,4 +1,5 @@
-<template><v-container fluid>
+<template>
+  <v-container fluid class="card">
     <v-row>
       <v-col
         v-for="(game, index) in games"
@@ -8,7 +9,7 @@
         md="4"
         lg="3"
       >
-        <v-card>
+        <v-card class="unJeu">
           <v-img :src="game.image" aspect-ratio="1.7">
             <v-row class="fill-height ma-0" align="end" justify="start">
               <span class="discount" v-if="game.discount">{{ game.discount }}</span>
@@ -86,4 +87,7 @@ export default {
   };
 </script>
 <style scoped>
+  .card .unJeu:hover{
+    background-color: rgba(128, 128, 128, 0.176);
+  }
 </style>
