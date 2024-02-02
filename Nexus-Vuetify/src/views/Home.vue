@@ -1,21 +1,21 @@
 <template>
-  <Homecarrousel />
-  <Info />
-  <h1 class="title-page">Trending game</h1>
-  <Card />
+  <div>
+    <Homecarrousel />
+    <Info />
+  </div>
 </template>
 
 <script scoped>
-import Card from '../components/Card.vue';
-import Homecarrousel from '../components/HomeCarrousel2.vue';
-import Info from '../components/Text.vue';
-export default {
-  components: {
-    Card,
-    Info,
-    Homecarrousel
-  },
-};
+  //import Card from '../components/Card.vue';
+  import Homecarrousel from '../components/HomeCarrousel2.vue';
+  import Info from '../components/Text.vue';
+  export default {
+    components: {
+      //Card,
+      Info,
+      Homecarrousel
+    },
+  };
 </script>
 
 <style scoped>

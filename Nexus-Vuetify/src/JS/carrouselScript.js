@@ -1,47 +1,67 @@
-const carouselScript = {
-    init() {
-        const nextDom = document.getElementById('next');
-        const prevDom = document.getElementById('prev');
-
-        const carouselDom = document.querySelector('.carousel');
-        const SliderDom = carouselDom.querySelector('.list');
-        const thumbnailBorderDom = document.querySelector('.thumbnail');
-        const thumbnailItemsDom = thumbnailBorderDom.querySelectorAll('.item');
-
-        if (thumbnailItemsDom.length > 0) {
-            thumbnailBorderDom.appendChild(thumbnailItemsDom[0].cloneNode(true));
+export default {
+    data() {
+      return {
+        carouselItems: [
+          {
+            image: "./src/assets/image/img1.png",
+            author: "LUNDEV",
+            title: "DESIGN SLIDER",
+            topic: "ANIMAL",
+            description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit...",
+            thumbnailTitle: "Name Slider",
+            thumbnailDescription: "Description",
+          },        {
+            image: "./src/assets/image/img2.png",
+            author: "LUNDEV",
+            title: "DESIGN SLIDER",
+            topic: "ANIMAL",
+            description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit...",
+            thumbnailTitle: "Name Slider",
+            thumbnailDescription: "Description",
+          },        {
+            image: "./src/assets/image/img3.png",
+            author: "LUNDEV",
+            title: "DESIGN SLIDER",
+            topic: "ANIMAL",
+            description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit...",
+            thumbnailTitle: "Name Slider",
+            thumbnailDescription: "Description",
+          },        {
+            image: "./src/assets/image/img4.png",
+            author: "LUNDEV",
+            title: "DESIGN SLIDER",
+            topic: "ANIMAL",
+            description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit...",
+            thumbnailTitle: "Name Slider",
+            thumbnailDescription: "Description",
+          },
+          // Add more items as needed
+        ],
+        timeRunning: 3000,
+        timeAutoNext: 5000,
+        runTimeOut: null,
+        runNextAuto: null,
+      };
+    },
+    methods: {
+      showSlider(type) {
+        if (type === "next") {
+          this.carouselItems.push(this.carouselItems.shift());
+        } else {
+          this.carouselItems.unshift(this.carouselItems.pop());
         }
-
-        let runNextAuto;
-        const timeAutoNext = 7000; // Délai pour le changement automatique
-
-        function showSlider(type) {
-            const SliderItemsDom = SliderDom.querySelectorAll('.item');
-            const currentThumbnailItemsDom = document.querySelectorAll('.thumbnail .item');
-
-            if (type === 'next') {
-                SliderDom.appendChild(SliderItemsDom[0]);
-                thumbnailBorderDom.appendChild(currentThumbnailItemsDom[0].cloneNode(true));
-            } else {
-                SliderDom.prepend(SliderItemsDom[SliderItemsDom.length - 1]);
-                thumbnailBorderDom.prepend(currentThumbnailItemsDom[currentThumbnailItemsDom.length - 1].cloneNode(true));
-            }
-
-            // Redémarrer le changement automatique après action manuelle
-            clearTimeout(runNextAuto);
-            runNextAuto = setTimeout(() => {
-                nextDom.click();
-            }, timeAutoNext);
-        }
-
-        nextDom.addEventListener('click', () => showSlider('next'));
-        prevDom.addEventListener('click', () => showSlider('prev'));
-
-        // Initialiser le changement automatique
-        runNextAuto = setTimeout(() => {
-            nextDom.click();
-        }, timeAutoNext);
-    }
-};
-
-export default carouselScript;
+  
+        clearTimeout(this.runTimeOut);
+        this.runTimeOut = setTimeout(() => {
+          // Reset animation classes
+          this.$el.classList.remove("next");
+          this.$el.classList.remove("prev");
+        }, this.timeRunning);
+  
+        clearTimeout(this.runNextAuto);
+        this.runNextAuto = setTimeout(() => {
+          this.showSlider("next");
+        }, this.timeAutoNext);
+      },
+    },
+  };
