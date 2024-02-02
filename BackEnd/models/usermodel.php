@@ -46,11 +46,4 @@ class UserModel extends BaseModel
 
         return true;
     }
-
-    public function FILTERTEST($filters) {
-        $sql = "SELECT * FROM $this->table";
-        $sql = $this->applyFilters($sql, $filters);
-
-        return $this->query($sql, array_values($filters))->fetchAll(PDO::FETCH_ASSOC);
-    }
 }

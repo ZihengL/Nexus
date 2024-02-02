@@ -1,7 +1,8 @@
 <?php
 
 // require_once "$path/controllers/base_controller.php";
-require_once "$path/models/usermodel.php";
+require_once $path . '/models/usermodel.php';
+require_once $path . '/controllers/webtokens.php';
 
 class UsersController
 {
@@ -91,36 +92,33 @@ class UsersController
     }
 
 
-    public function logout()
+    public function logout($refreshToken)
     {
-        if ($this->isAuthenticated()) {
-            // session_destroy();
-            // session_unset();
-            // session_write_close();
+        if ($this->isAuthenticated($refreshToken)) {
+            // TODO: Revoke token
         }
     }
 
     private function verifyUser($user, $email, $password)
     {
-        return  $user &&
+        return $user &&
             $user['email'] === $email &&
             password_verify($password, $user['password']);
     }
 
-    public function isAuthenticated()
+    public function isAuthenticated($refreshToken)
     {
-        // TODO: REPLACE SESSIONS WITH WEB TOKENS(JWT).
-        // if (session_status() !== PHP_SESSION_ACTIVE) {
-        //     session_start();
-        // }
-
-        // return  isset($_SESSION['user']) &&
-        //         isset($_SESSION['authentified']) && 
-        //         $_SESSION['authentified'];
+        return WebTokens::validateRefreshToken($refreshToken);
     }
 
-    public function FILTERTEST($filter)
-    {
-        return $this->model->FILTERTEST($filter);
-    }
+    // public function isAuthenticated($token)
+    // {
+    //     if (session_status() !== PHP_SESSION_ACTIVE) {
+    //         session_start();
+    //     }
+
+    //     return  isset($_SESSION['user']) &&
+    //             isset($_SESSION['authentified']) && 
+    //             $_SESSION['authentified'];
+    // }
 }

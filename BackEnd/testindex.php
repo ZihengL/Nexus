@@ -1,27 +1,26 @@
 <?php
 
-function printer($content, $index = 0, $title = 'ARRAY START')
+function printer($content, $title = '')
 {
-    if (is_array($content)) {
+    if (strlen($title) > 0) {
         echo '<hr><h5>' . $title . '</h5><br>';
+    }
 
-        $index = 0;
+    if (is_array($content)) {
         if (array_keys($content) !== range(0, count($content) - 1)) {
             foreach ($content as $element => $value) {
                 $subcontent = "$element: <b>$value</b>";
-                printer($subcontent, $index);
-                $index++;
+                printer($subcontent);
             }
         } else {
             foreach ($content as $element) {
-                printer($element, $index);
-                $index++;
+                printer($element);
             }
         }
 
         echo '<br>';
     } else {
-        echo "$index - $content<br>";
+        echo "$content<br>";
     }
 }
 
@@ -39,24 +38,32 @@ $centralController = CentralController::getInstance();
 // ----- Request URL & Routing
 $requestUrl = $_GET['url'] ?? '';
 
-switch ($requestUrl) {
-    case 'users':
-        break;
-    case 'games':
-        break;
-    default:
-        printer("API endpoint not found");
-        break;
-}
+// switch ($requestUrl) {
+//     case 'users':
+//         break;
+//     case 'games':
+//         break;
+//     default:
+//         printer("API endpoint not found");
+//         break;
+// }
 
 
 // ----- Test zone; delete later.
 $usersCtrl = $centralController->usersController;
 $user = $usersCtrl->getUserById(1);
-printer($user, 0, 'USER FETCH TEST');
+printer($user, 'User fetch test');
 
-$filters = [
-    
-];
+// Importing webtokens
+require_once $path . '/controllers/webtokens.php';
+
+// Token is stored client-side with local storage, session storage, or cookies.
+// TODO: Store token locally, and send token in the url header.
+$token = WebTokens::generateToken($user);
+printer($token, 'Token generation test');
+
+// Token validation test
+$tokenValidation = WebTokens::validateToken($token);
+printer($tokenValidation, 'Token validation test');
 
 // TODO: Creating and reading backup of database as part of api launch routine.
