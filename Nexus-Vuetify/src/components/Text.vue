@@ -10,22 +10,24 @@
    </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 div {
    border-radius: 16px;
    margin: 1% 0% 2% 0%;
    padding: 1% 0% 3% 0%;
-}
-.title{
-   margin-bottom: 1%;
-   text-align: center;
-   color: blueviolet;
 
+   .title{
+      margin-bottom: 1%;
+      text-align: center;
+      color: var(--purple);
+   }
+   .text{
+      font-size: 150%; 
+      margin-left: 3%;
+      margin-right: 3%;
+      text-align: center;
+      color: var(--dark);
+   }
 }
-.text{
-   font-size: 150%; 
-   margin-left: 3%;
-   margin-right: 3%;
-   text-align: center;
-}
+
 </style>

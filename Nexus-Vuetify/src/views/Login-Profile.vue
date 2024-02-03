@@ -1,5 +1,5 @@
 <template>
-  <div class="loginContainer">
+  <div class="loginProfile">
     <LoginRegister v-if="isProfileVisible" @showProfile="toggleProfileForm "/>
     <Profile  v-else @showLogin="toggleLoginForm"/>
   </div>
@@ -33,8 +33,8 @@
 </script>
 
 
-<style scoped>
-  .loginContainer {
+<style lang="scss" scoped>
+  .loginProfile {
     text-align: center;
     padding: 1% 0% 2% 0%;
   }

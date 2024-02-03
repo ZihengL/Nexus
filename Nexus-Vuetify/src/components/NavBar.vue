@@ -1,23 +1,19 @@
 <template>
-    <v-app-bar :elevation="21" class="NavBar">
+    <v-app-bar :elevation="21" class="NavBar roundBorderBottom">
       <div class="logo">
 				<img :src="logoURL" alt="Vue" />
 			</div>
       <div class="link">
         <v-spacer></v-spacer>
-        <router-link to="/"  class="betweenLinks router">
+        <router-link to="/"  class="router">
           <v-icon icon="mdi-home" />
           <span class="link-btn" text>Accueil</span>
         </router-link>
-        <router-link to="/Store"  class="betweenLinks router">
+        <router-link to="/Store"  class="router">
           <v-icon icon=mdi-gamepad />
           <span class="link-btn" text>Boutique</span>
         </router-link>
-        <router-link to="/Cart"  class="betweenLinks router">
-          <v-icon icon=mdi-cart />
-          <span class="link-btn" text>Panier</span>
-        </router-link>
-        <router-link to="/About"  class="betweenLinks router">
+        <router-link to="/About"  class="router">
           <v-icon icon="mdi-information" />
           <span class="link-btn" >A propos</span>
         </router-link>
@@ -57,4 +53,4 @@
 
 </script>
 
-<style src="../styles/NavBarStyle.css" scoped></style>
+<style src="../styles/NavBarStyle.scss" scoped></style>
