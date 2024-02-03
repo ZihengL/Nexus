@@ -1,20 +1,36 @@
 <template>
   <div>
-      <Search/>
-      <Filteer/>
-      <h1>Boutique</h1>
       <Card/>
   </div>
 </template>
+
 <script scoped>
   import Card from '../components/Card.vue';
-  import Search from '../components/Searchbar.vue';
-  import Filteer from '../components/Filter.vue';
+  
   export default {
     components: {
       Card,
-      Search,
-      Filteer,
+    },
+    data() {
+      return {
+        searchQuery: '',
+      };
+    },
+    methods: {
+      // Define the method to handle icon click
+      onSearchClick() {
+        if (this.searchQuery.trim()) {
+          // Implement your search logic here or call it if defined elsewhere
+          console.log('Searching for:', this.searchQuery);
+          // You can also add routing or other logic to perform the search
+        }
+      },
+    },
+    watch: {
+      searchQuery(newValue) {
+        // If you want to perform search on input change, keep this logic
+        console.log('Searching for:', newValue);
+      },
     },
   };
 </script>
