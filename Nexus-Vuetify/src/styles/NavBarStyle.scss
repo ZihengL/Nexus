@@ -1,22 +1,22 @@
-.NavBar {
-  /* From https://css.glass */
-  background: rgba(255, 255, 255, 0.09);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-
+.navBar {
   .logo {
     width: 10%;
-    text-align: center;
-    margin-left: 2%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     img {
-      width: 75%;
+      width: 90%;
+    }
+  }
+  .logo:hover {
+    img{
+      cursor: pointer;
     }
   }
 
   .link {
-    width: 100%;
+    width: 90%;
     height: 100%;
     padding: 0%;
     display: flex;
@@ -36,6 +36,7 @@
       text-decoration: none;
       color: black;
       font-weight: bold;
+      font-size: 1rem;
 
       .link-btn {
         margin: auto;
@@ -46,14 +47,16 @@
         font-size: 3rem;
       }
     }
-    .router:hover {
-      background-color: var(--light-dark-gray-trans);
-      border-bottom: 4px solid var(--light-gray-trans);
+    .router:hover, .router-link-exact-active {
       font-weight: bolder;
+      font-size: 1.3rem;
     }
     .router-link-exact-active{
-      border-bottom: 4px solid var(--light-gray-trans);
-      font-weight: bolder;
+      text-decoration: underline;
+      color: var(--purple);
+      .link-btn {
+        color: var(--purple);
+      }
     }
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <v-app class="app">
-    <NavBar :isConnected="test"/>
+    <NavBar class="leNav"/>
     <div class="contentPage">
       <default-view  class="vue"/>
       <Footer/>
@@ -9,10 +9,9 @@
 </template>
 
 <script setup>
-  import NavBar from '/src/components/NavBar.vue';
-  import Footer from '/src/components/Footer.vue';
+  import NavBar from '../../components/NavBar.vue';
+  import Footer from '../../components/Footer.vue';
   import DefaultView from './View.vue'
-  var test = 'bla bla';
 </script>
 
 <style src="../../styles//settings.scss"></style>

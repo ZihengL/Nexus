@@ -8,7 +8,10 @@
             <img :src="item.image">
             <div class="content">
               <div class="title">{{ item.title }}</div>
-              <button>Voir le jeu</button>
+              <div class="buttons">
+                <button>Voir le jeu</button>
+                <button>Decouvrir le developeur</button>
+              </div>
             </div>
           </div>
         </div>

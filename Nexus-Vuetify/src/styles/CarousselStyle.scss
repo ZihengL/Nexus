@@ -38,6 +38,34 @@ a{
                     font-weight: bold;
                     line-height: 1.3em;
                 }
+                .buttons{
+                    display: flex;
+                    flex-direction: row;
+                    gap: 5%;
+                    margin-top: 20px;
+
+                    button{
+                        border: none;
+                        background-color: #eee;
+                        padding: 2% 1%;
+                        letter-spacing: 3px;
+                        font-family: Poppins;
+                        font-weight: 500;
+                        color: black;
+                    }
+                    button:hover{
+                        background-color: #eeeeee55;
+                    }
+                    button:nth-child(2){
+                        background-color: transparent;
+                        border: 1px solid #fff;
+                        color: #eee;
+                    }
+                    button:nth-child(2):hover{
+                        background-color: rgba(128, 128, 128, 0.348);
+                    }
+                }
+                /*
                 button{
                     letter-spacing: 3px;
                     font-family: Poppins;
@@ -49,7 +77,7 @@ a{
                 }
                 button:hover {
                     background-color: var(--very-light-gray-trans);
-                }
+                }*/
             }
         }
     }
