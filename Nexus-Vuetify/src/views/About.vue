@@ -46,11 +46,11 @@
 </template>
 
 <script scoped>
-  import AmazighM from "../components/Amazigh.vue";
-  import DebraiseM from "../components/Debraise.vue";
-  import RebeccaM from "../components/Rebecca.vue";
-  import ThomasP from '../components/Thomas.vue';
-  import ZiH from '../components/Zi.vue';
+  import AmazighM from "../components/Devs/Amazigh.vue";
+  import DebraiseM from "../components/Devs/Debraise.vue";
+  import RebeccaM from "../components/Devs/Rebecca.vue";
+  import ThomasP from '../components/Devs/Thomas.vue';
+  import ZiH from '../components/Devs/Zi.vue';
   export default {
 
     data() {
