@@ -13,13 +13,8 @@
       </div>
       <div>
         <h2>Activité Récente</h2>
-        <div style="display: flex;align-content: space-around;border: 10px;">
-          <img alt="image jeu">
-          <div style="margin-left: 40px;">
-            <span>Joué à Super Mario Bros le 17/04/2022</span><br />
-            <button style="background-color: blue;padding: 10px;">Voir Plus</button>
-          </div>
-        </div>
+        <liste-de-jeu />
+        
       </div>
     </div>
     <div class="wrapper" style="flex-basis: 50%;">
@@ -40,6 +35,8 @@
 
 
 <script setup>
+import ListeDeJeu from './ListeDeJeu.vue';
+
 </script>
 
 <style src="../styles/ProfileStyle.scss"></style>

@@ -1,0 +1,11 @@
+<template>
+  <!-- <div v-for="activity in activities" :key="activity.id" class="activities">-->
+  <div style="display: flex;align-content: space-around;border: 10px;">
+    <img alt="image jeu">
+    <div style="margin-left: 40px;">
+      <span>Joué à Super Mario Bros le 17/04/2022</span><br />
+      <button style="background-color: blue;padding: 10px;">Voir Plus</button>
+    </div>
+  </div>
+  <!--</div>-->
+</template>
