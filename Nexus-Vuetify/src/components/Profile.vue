@@ -13,7 +13,7 @@
           	<span class="link-btn" >Gerer son profil</span>
         </router-link>
 
-		<div class="field btn">
+		<div class="field">
 			<div class="btn-layer"></div>
 			<v-btn density="default" class="submit" @click="$emit('showLogin')">
 				Se deconnecter
@@ -26,4 +26,4 @@
 <script setup>
 </script>
 
-<style src="../styles/ProfileStyle.css" scoped></style>
+<style src="../styles/ProfileStyle.scss"></style>

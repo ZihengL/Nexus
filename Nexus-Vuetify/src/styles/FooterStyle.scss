@@ -1,0 +1,27 @@
+footer {
+    width: 100%;
+    text-align: center;
+
+    ul {   
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5%;
+        padding: 1% 0%;
+        font-size: var(--footer-text-size);
+        background-color: var(--light-gray-trans);
+
+        .footerLink{
+            color: var(--dark);
+        }
+        .footerLink:hover, .router-link-exact-active {
+            font-weight: bold;
+        }
+        a {
+            text-decoration: none;
+        }
+    }
+    p {
+        padding: 1% 0%;
+    }
+}

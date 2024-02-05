@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="home">
     <Homecarrousel />
     <Info />
   </div>
@@ -7,7 +7,7 @@
 
 <script scoped>
   //import Card from '../components/Card.vue';
-  import Homecarrousel from '../components/HomeCarrousel2.vue';
+  import Homecarrousel from '../components/HomeCarrousel.vue';
   import Info from '../components/Text.vue';
   export default {
     components: {
@@ -18,21 +18,7 @@
   };
 </script>
 
-<style scoped>
-.title-page {
-  margin-top: 2%;
-}
-
-.carousel {
-  border-top: 100px;
-}
-
-.title-page {
-  font-size: 100px;
-  color: blueviolet;
-  text-align: center;
-  font-family: 'Times New Roman', Times, serif;
-}
+<style lang="scss" scoped>
 </style>
 
 

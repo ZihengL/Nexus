@@ -1,6 +1,6 @@
 <template>
-  <h1>A propos</h1>
-  <div id="app">
+  <div class="about">
+
     <!-- Barre de navigation latérale -->
     <div class="sidebar">
       <ul>
@@ -41,53 +41,56 @@
         </AmazighM>
       </div>
     </div>
+
   </div>
 </template>
-<script scoped>
-import AmazighM from "../components/Amazigh.vue";
-import DebraiseM from "../components/Debraise.vue";
-import RebeccaM from "../components/Rebecca.vue";
-import ThomasP from '../components/Thomas.vue';
-import ZiH from '../components/Zi.vue';
-export default {
 
-  data() {
-    return {
-      selectedTab: '',
-      ZiH,
-      ThomasP, AmazighM, DebraiseM, RebeccaM
+<script scoped>
+  import AmazighM from "../components/Amazigh.vue";
+  import DebraiseM from "../components/Debraise.vue";
+  import RebeccaM from "../components/Rebecca.vue";
+  import ThomasP from '../components/Thomas.vue';
+  import ZiH from '../components/Zi.vue';
+  export default {
+
+    data() {
+      return {
+        selectedTab: '',
+        ZiH,
+        ThomasP, AmazighM, DebraiseM, RebeccaM
+      }
     }
   }
-}
 </script>
-<style>
-/* Style pour la navigation */
-.sidebar {
-  width: 200px;
-  height: 100%;
-  background-color: #f0f0f0;
-  float: left;
-}
+<style lang="scss">
+  .about {
+    /* Style pour la navigation */
+    .sidebar {
+      width: 200px;
+      height: 100%;
+      background-color: #f0f0f0;
+      float: left;
 
-.sidebar ul {
-  list-style-type: none;
-  padding: 0;
-}
+      ul {
+        list-style-type: none;
+        padding: 0;
 
-.sidebar li {
-  padding: 10px;
-  cursor: pointer;
-  border-bottom: 1px solid #ccc;
-}
+        li {
+          padding: 10px;
+          cursor: pointer;
+          border-bottom: 1px solid #ccc;
+        }
 
-.sidebar li:hover {
-  background-color: #ddd;
-}
-
-.content1 {
-  margin-left: 220px;
-  padding: 20px;
-}
+        li:hover {
+          background-color: #ddd;
+        }
+      }
+    }
+    .content1 {
+      margin-left: 220px;
+      padding: 20px;
+    }
+  }
 </style>
 
 

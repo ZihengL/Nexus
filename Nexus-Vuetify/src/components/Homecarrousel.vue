@@ -1,24 +1,37 @@
 <template>
-  <v-carousel
-    cycle
-    height="400"
-    show-arrows-on-hover
-  >
-    <v-carousel-item v-for="(item, i) in items" :key="i">
-      <v-img :src="item.src"></v-img>
-    </v-carousel-item>
-  </v-carousel>
-</template>
-
-<script>
-export default {
-  data: () => ({
-    items: [
-      { src: '../src/assets/img/palworld.png' },
-      { src: '../src/assets/img/tekken.png' },
-      { src: '../src/assets/img/zomboid.png' },
-      // Add as many images as you want
-    ],
-  }),
-};
+    <div>
+      <!-- carousel -->
+      <div class="carousel">
+        <!-- list item -->
+        <div class="list">
+          <div v-for="(item, index) in carouselItems" :key="index" class="item">
+            <img :src="item.image">
+            <div class="content">
+              <div class="title">{{ item.title }}</div>
+              <button>Voir le jeu</button>
+            </div>
+          </div>
+        </div>
+        <!-- list thumbnail -->
+        <div class="thumbnail">
+          <div v-for="(item, index) in carouselItems" :key="index" class="item">
+            <img :src="item.image">
+            <div class="content">
+              <div class="title">{{ item.thumbnailTitle }}</div>
+              <div class="description">{{ item.thumbnailDescription }}</div>
+            </div>
+          </div>
+        </div>
+        <!-- next prev -->
+        <div class="arrows">
+          <button @click="showSlider('prev')"><</button>
+          <button @click="showSlider('next')">></button>
+        </div>
+        <!-- time running -->
+        <div class="time"></div>
+      </div>
+    </div>
+  </template>
+<script src="../JS/carrouselScript.js">
 </script>
+<style src="../styles/CarousselStyle.scss" scoped></style>

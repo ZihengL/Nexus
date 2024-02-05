@@ -9,7 +9,9 @@
          S'inscrire
        </div>
      </div>
+
      <div class="form-container">
+
        <div class="slide-controls">
          <input type="radio" name="slide" id="login" v-model="isLogin" value="true" checked>
          <input type="radio" name="slide" id="signup" v-model="isLogin" value="false">
@@ -17,6 +19,7 @@
          <label for="signup" class="slide signup">Inscription</label>
          <div class="slider-tab"></div>
        </div>
+
        <div class="form-inner">
 
          <form action="#" class="login" >
@@ -61,7 +64,9 @@
          </form>
 
        </div>
+
      </div>
+     
    </div>
  </template>
  
@@ -91,5 +96,5 @@
  };
  </script>
  
- <style src="../styles/SignRegisterStyle.css" scoped></style>
+ <style src="../styles/SignRegisterStyle.scss" scoped></style>
  
