@@ -9,8 +9,8 @@
             <div class="content">
               <div class="title">{{ item.title }}</div>
               <div class="buttons">
-                <button>Voir le jeu</button>
-                <button>Decouvrir le developeur</button>
+                <router-link to="/Game" class="btn">Voir le jeu</router-link>
+                <router-link to="/Dev" class="btn">Decouvrir le developeur</router-link>
               </div>
             </div>
           </div>

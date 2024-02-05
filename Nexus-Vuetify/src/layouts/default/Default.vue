@@ -1,9 +1,11 @@
 <template>
   <v-app class="app">
-    <NavBar class="leNav"/>
-    <div class="contentPage">
-      <default-view  class="vue"/>
-      <Footer/>
+    <div class="all">
+      <NavBar class="leNav"/>
+      <div class="contentPage">
+        <default-view  class="vue"/>
+        <Footer/>
+      </div>
     </div>
   </v-app>
 </template>

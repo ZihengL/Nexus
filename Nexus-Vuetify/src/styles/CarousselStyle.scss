@@ -4,18 +4,16 @@ a{
 }
 /* carousel */
 .carousel{
-    height: 90svh;
+    height: 70svh;
     margin-top: -6%;
-    width: 100vw;
+    width: 70%;
+    margin: auto;
     overflow: hidden;
     position: relative;
 
     .list {
         .item{
             width: 100%;
-            height: 100%;
-            position: absolute;
-            inset: 0 0 0 0;
 
             img{
                 width: 100%;
@@ -24,17 +22,18 @@ a{
             }
             .content{
                 position: absolute;
-                top: 20%;
+                top: 10%;
                 width: 1140px;
                 max-width: 80%;
-                left: 50%;
+                left: 45%;
                 transform: translateX(-50%);
                 padding-right: 30%;
                 box-sizing: border-box;
                 color: var(--light);
                 text-shadow: 0 5px 10px #0004;
                 .title{
-                    font-size: 5em;
+                    font-size: 3em;
+                    text-align: left;
                     font-weight: bold;
                     line-height: 1.3em;
                 }
@@ -44,7 +43,7 @@ a{
                     gap: 5%;
                     margin-top: 20px;
 
-                    button{
+                    .btn{
                         border: none;
                         background-color: #eee;
                         padding: 2% 1%;
@@ -53,47 +52,35 @@ a{
                         font-weight: 500;
                         color: black;
                     }
-                    button:hover{
-                        background-color: #eeeeee55;
+                    .btn:nth-child(1):hover{
+                        background-color: rgba(114, 114, 114, 0.2);
                     }
-                    button:nth-child(2){
+                    .btn:nth-child(2){
                         background-color: transparent;
                         border: 1px solid #fff;
                         color: #eee;
                     }
-                    button:nth-child(2):hover{
+                    .btn:nth-child(2):hover{
                         background-color: rgba(128, 128, 128, 0.348);
                     }
                 }
-                /*
-                button{
-                    letter-spacing: 3px;
-                    font-family: Poppins;
-                    font-weight: 500;
-                    padding: 1%;
-                    background-color: transparent;
-                    border: 1px solid var(--light);
-                    color: var(--light);
-                }
-                button:hover {
-                    background-color: var(--very-light-gray-trans);
-                }*/
             }
         }
     }
     /* thumbail */
     .thumbnail{
         position: absolute;
-        bottom: 50px;
-        left: 50%;
+        bottom: 5%;
+        left: 51%;
         width: max-content;
         z-index: 100;
-        display: flex;
         gap: 20px;
+        display: flex; 
+        flex-direction: row;
 
         .item{
-            width: 150px;
-            height: 220px;
+            width: 120px;
+            height: 170px;
             flex-shrink: 0;
             position: relative;
 
@@ -122,12 +109,13 @@ a{
     /* arrows */
     .arrows{
         position: absolute;
-        top: 80%;
+        top: 87%;
         right: 52%;
         z-index: 100;
-        width: 300px;
+        width: 10%;
         max-width: 30%;
         display: flex;
+        justify-content: space-between;
         gap: 10px;
         align-items: center;
 
