@@ -6,6 +6,13 @@ require_once "$path/models/usermodel.php";
 class UsersController
 {
     private $model;
+    protected $tableName = "user";
+    protected $emailColumn = "email";
+    protected $nameColumn = "name";
+    protected $lastNameColumn = "lastname";
+    protected $phoneNumberColumn = "phone_number";
+    protected $privilegeColumn = "privilege";
+    protected $descriptionColumn = "description";
 
     public function __construct($pdo)
     {
@@ -14,22 +21,22 @@ class UsersController
 
     public function getUserById($id, $columns = [])
     {
-        return $this->model->getById($id, $columns);
+        return $this->model->getById($id);
     }
 
-    public function getUserByEmail($email, $columns = [])
+    public function getUserByEmail($email, $columnName)
     {
-        return $this->model->getOne('email', $email, $columns);
+        return $this->model->getOne($this->emailColumn, $email);
     }
 
-    public function getUsersByName($name, $columns = [])
+    public function getUsersByName($name, $columnName)
     {
-        return $this->model->get('name', $name, $columns);
+        return $this->model->get($this->nameColumn, $name);
     }
 
-    public function getUsersByLastName($lastname, $columns = [])
+    public function getUsersByLastName($lastname, $columnName)
     {
-        return $this->model->get('lastname', $lastname, $columns);
+        return $this->model->get($this->lastName, $lastname);
     }
 
     public function applyFiltersAndSorting($sql, $filters, $sorting)
@@ -52,7 +59,6 @@ class UsersController
 
     public function createUser($data)
     {
-
         return $this->model->create($data);
     }
 

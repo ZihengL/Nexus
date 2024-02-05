@@ -5,20 +5,7 @@ require_once "$path/models/basemodel.php";
 
 class GameModel extends BaseModel {
 
-    protected $model;
-    protected $id = "id";
-    protected $name = "name";
-    protected $rating = "rating";
-    protected $tags = "tags";
-    protected $price = "price";
-    protected $images = "images";
-    protected $devNames = "devNames";
-    protected $releaseDate = "releaseDate"; 
-    protected $description = "description";
-    protected $stripeID = "stripeID";
-    protected $tableName = "games";
-
-   
+  
 
 
     public function __construct($pdo) {
@@ -32,24 +19,24 @@ class GameModel extends BaseModel {
     //     return parent::getOne($this->id, $id);
     // }
     
-    public function getByReleaseDate($date){
-        return parent::getAll($this->releaseDate, $date);
+    public function getByReleaseDate($columnName, $date){
+        return parent::getAll($columnName, $date);
     }
 
-    public function getByTags($tags) {
-        return parent::getAll($this->tags, $tags);
+    public function getByTags($columnName, $tags) {
+        return parent::getAll($columnName, $tags);
     }
     
-    public function getByDescription($description){
-        return parent::getAll($this->description, $description);
+    public function getByDescription($columnName, $description){
+        return parent::getAll($columnName, $description);
     }
 
-    public function getByImages($img) {
-        return parent::getAll($this->images, $img);
+    public function getByImages($columnName, $img) {
+        return parent::getAll($columnName, $img);
     }
     
-    public function getByDevs($devName){
-        return parent::getAll($this->devNames, $devName);
+    public function getByDevs($columnName, $devName){
+        return parent::getAll($columnName, $devName);
     }
 
     public function getAllGames() {

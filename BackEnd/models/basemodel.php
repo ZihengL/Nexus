@@ -2,25 +2,6 @@
 
 // require_once "$path/models/dbmanager.php";
 
-function parseColumns($columns = [])
-{
-    return empty($columns) ? "*" : implode(', ', $columns);
-}
-
-function getDataType($column)
-{
-    switch ($column) {
-        case is_null($column):
-            return PDO::PARAM_NULL;
-        case is_int($column):
-            return PDO::PARAM_INT;
-        case is_bool($column):
-            return PDO::PARAM_BOOL;
-        default:
-            return PDO::PARAM_STR;
-    }
-}
-
 class BaseModel
 {
     protected $pdo;
@@ -158,6 +139,11 @@ class BaseModel
 
     // TOOLS
 
+    function parseColumns($columns = [])
+    {
+        return empty($columns) ? "*" : implode(', ', $columns);
+    }
+
     public function getColumns($includeID = false)
     {
         $result = $this->query("DESCRIBE $this->table")->fetchAll(PDO::FETCH_COLUMN);
@@ -178,6 +164,7 @@ class BaseModel
         }
         return $formattedData;
     }
+
 
     public function bindParams($data)
     {
@@ -221,7 +208,7 @@ class BaseModel
     // public function applySorting($sql, $sorting = [])
     // {
     //     $validEntries = array_intersect(array_keys($sorting), $this->columns);
-    
+
     //     $result = '';
     //     foreach ($validEntries as $column => $order) {
     //         if (!empty($column) && in_array($column, $this->columns)) {
@@ -229,13 +216,13 @@ class BaseModel
     //             $result .= "$column $direction, ";
     //         }
     //     }
-    
+
     //     $result = rtrim($result, ', '); // Remove the trailing comma and space
-    
+
     //     if (!empty($result)) {
     //         $sql .= ' ORDER BY ' . $result;
     //     }
-    
+
     //     return $sql;
     // }
 
@@ -255,7 +242,27 @@ class BaseModel
 
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-
         return $results;
     }
 }
+
+
+
+// function parseColumns($columns = [])
+// {
+//     return empty($columns) ? "*" : implode(', ', $columns);
+// }
+
+// function getDataType($column)
+// {
+//     switch ($column) {
+//         case is_null($column):
+//             return PDO::PARAM_NULL;
+//         case is_int($column):
+//             return PDO::PARAM_INT;
+//         case is_bool($column):
+//             return PDO::PARAM_BOOL;
+//         default:
+//             return PDO::PARAM_STR;
+//     }
+// }

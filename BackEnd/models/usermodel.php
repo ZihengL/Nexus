@@ -16,13 +16,7 @@ class UserModel extends BaseModel
     // + updateUser(int, data): Bool
     // + deleteUser(int): Bool
 
-    protected $tableName = "user";
-    protected $emailColumn = "email";
-    protected $nameColumn = "name";
-    protected $lastNameColumn = "lastname";
-    protected $phoneNumberColumn = "phone_number";
-    protected $privilegeColumn = "privilege";
-    protected $descriptionColumn = "description";
+
 
     public function __construct($pdo)
     {
@@ -32,34 +26,34 @@ class UserModel extends BaseModel
     }
 
     //Gets
-    public function getByEmail($email)
+    public function getByEmail($email, $columnName)
     {
-        return parent::getAll($this->emailColumn, $email);
+        return parent::getAll($columnName, $email, parent::getColumns(true));
     }
 
-    public function getByName($name)
+    public function getByName( $name, $columnName)
     {
-        return parent::getAll($this->nameColumn, $name);
+        return parent::getAll( $columnName, $name, parent::getColumns(true));
     }
 
-    public function getByLastname($lastname)
+    public function getByLastname($columnName, $lastname)
     {
-        return parent::getAll($this->lastNameColumn, $lastname);
+        return parent::getAll( $columnName, $lastname, parent::getColumns(true));
     }
 
-    public function getByPhoneNumber($phoneNumber)
+    public function getByPhoneNumber($columnName, $phoneNumber)
     {
-        return parent::getAll($this->phoneNumberColumn, $phoneNumber);
+        return parent::getAll( $columnName, $phoneNumber, parent::getColumns(true));
     }
 
-    public function getByPrivilege($privilege)
+    public function getByPrivilege($columnName, $privilege)
     {
-        return parent::getAll($this->privilegeColumn, $privilege);
+        return parent::getAll( $columnName, $privilege, parent::getColumns(true));
     }
 
-    public function getByDescription($description)
+    public function getByDescription($columnName, $description)
     {
-        return parent::getAll($this->descriptionColumn, $description);
+        return parent::getAll($columnName, $description, parent::getColumns(true));
     }
 
     //other cruds
