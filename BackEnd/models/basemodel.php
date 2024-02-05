@@ -54,11 +54,11 @@ class BaseModel
     public function getAll($column = null, $value = null, $columns = [])
     {
         if (!$column && !$value) {
-            $sql = "SELECT " . parseColumns($columns) . " FROM $this->table";
+            $sql = "SELECT " . $this->parseColumns($columns) . " FROM $this->table";
             return $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
         }
 
-        $sql = "SELECT " . parseColumns($columns) . " FROM $this->table WHERE $column = ?";
+        $sql = "SELECT " . $this->parseColumns($columns) . " FROM $this->table WHERE $column = ?";
 
         return $this->query($sql, [$value])->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -66,21 +66,21 @@ class BaseModel
     //  Explicitement retour d'une seule valeur.
     public function getOne($column, $value, $columns = [])
     {
-        $sql = "SELECT " . parseColumns($columns) . " FROM $this->table WHERE $column = ?";
+        $sql = "SELECT " . $this->parseColumns($columns) . " FROM $this->table WHERE $column = ?";
 
         return $this->query($sql, [$value])->fetch(PDO::FETCH_ASSOC);
     }
 
     public function get($columns = [])
     {
-        $stmt = $this->pdo->query("SELECT " . parseColumns($columns) . " FROM $this->table");
+        $stmt = $this->pdo->query("SELECT " . $this->parseColumns($columns) . " FROM $this->table");
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getById($id, $columns = [])
+    public function getById($id)
     {
-        return $this->getOne('id', $id, $columns);
+        return $this->getOne('id', $id, $this->columns);
     }
 
     // OTHER CRUDS
@@ -179,8 +179,88 @@ class BaseModel
         return $params;
     }
 
+
+    // function getClothesByCriteria($pdo, $minPrice, $maxPrice, $size, $color, $type) {
+    //     $sql = "SELECT * FROM clothes WHERE 1 = 1";
+    //     $params = [];
+    
+    //     // Add price range filter if both minPrice and maxPrice are provided
+    //     if ($minPrice !== null && $maxPrice !== null) {
+    //         $sql .= " AND price BETWEEN :minPrice AND :maxPrice";
+    //         $params[':minPrice'] = $minPrice;
+    //         $params[':maxPrice'] = $maxPrice;
+    //     }
+    
+    //     // Add size filter if provided
+    //     if ($size !== null) {
+    //         $sql .= " AND size = :size";
+    //         $params[':size'] = $size;
+    //     }
+    
+    //     // Add color filter if provided
+    //     if ($color !== null) {
+    //         $sql .= " AND color = :color";
+    //         $params[':color'] = $color;
+    //     }
+    
+    //     // Add type filter if provided
+    //     if ($type !== null) {
+    //         $sql .= " AND type = :type";
+    //         $params[':type'] = $type;
+    //     }
+    
+    //     // Prepare and execute the SQL statement with the parameters
+    //     $stmt = $pdo->prepare($sql);
+    //     $stmt->execute($params);
+    
+    //     // Fetch and return the results
+    //     return $stmt->fetchAll();
+    // }
+
+
+
+//     $sql = "SELECT * FROM clothes WHERE 1 = 1" .
+//        (isset($filters['minPrice'], $filters['maxPrice']) ? " AND price BETWEEN :minPrice AND :maxPrice" : "") .
+//        (isset($filters['size']) ? " AND size = :size" : "") .
+//        (isset($filters['color']) ? " AND color = :color" : "") .
+//        (isset($filters['type']) ? " AND type = :type" : "");
+
+// $params = array_filter([
+//     ':minPrice' => $filters['minPrice'] ?? null,
+//     ':maxPrice' => $filters['maxPrice'] ?? null,
+//     ':size' => $filters['size'] ?? null,
+//     ':color' => $filters['color'] ?? null,
+//     ':type' => $filters['type'] ?? null,
+// ], function($value) { return !is_null($value); });
+
     public function applyFilters($sql, $filters = [])
     {
+
+        // public function filtrerProduits($type, $couleur, $taille, $minPrice, $maxPrice)
+        // {
+        //     // echo "Type: " . $type . "<br>" . "Couleur: " .
+        //     //  $couleur . "<br>" . "Minimum Price: " .
+        //     // $minPrice . "<br>"
+        //     // . "Maximum Price: " . $maxPrice . "<br>";
+           
+        //     $typePart = $type ? "type = '$type'" : '1'; 
+        //     $couleurPart = $couleur ? "FIND_IN_SET('$couleur', couleur) > 0" : '1';
+        //     $taillePart = $taille ? "FIND_IN_SET('$taille', taille) > 0" : '1'; 
+        //     $minPricePart = $minPrice ? "prix >= $minPrice" : '1';
+        //     $maxPricePart = $maxPrice ? "prix <= $maxPrice" : '1';
+    
+        //     $sql = "SELECT * FROM produit WHERE $typePart AND $couleurPart AND $taillePart AND $minPricePart AND $maxPricePart";
+    
+        //     $result = $this->db->prepare($sql);
+        //     $result->execute();
+    
+        //     // print_r($result);
+        //     return $result->fetchAll(PDO::FETCH_ASSOC);
+        // }
+    
+
+        // sql = 'SELECT * FROM users WHERE username = :username AND password = :password';
+
         $params = [];
         $validEntries = array_intersect(array_keys($filters), $this->columns);
         $sql .= !empty($validEntries) ? ' WHERE 1 = 1' : '';
