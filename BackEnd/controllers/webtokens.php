@@ -4,6 +4,10 @@ require_once 'vendor/autoload.php';
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
 class WebTokens
 {
@@ -11,18 +15,17 @@ class WebTokens
     // TODO: Create encrypted key
 
     // Access = authorized AKA access given
-    private static const ACCESS_KEY = 'temp-access-key';
-    private static const ACCESS_TIME = 3600;
+    private const ACCESS_KEY = 'temp-access-key';
+    private const ACCESS_TIME = 3600;
 
     // Refresh = authentified AKA not necessarily logged in, but can be given access
-    private static const REFRESH_KEY = 'temp-refresh-key';
-    private static const REFRESH_TIME = 604800;
+    private const REFRESH_KEY = 'temp-refresh-key';
+    private const REFRESH_TIME = 604800;
 
     // Other stuff - figure out later
-    private static const ISSUER = 'nexus';
-    private static const AUDIENCE = 'temp-audience';
-    private static const ALGORITHM = 'HS256';
-
+    private const ISSUER = 'nexus';
+    private const AUDIENCE = 'temp-audience';
+    private const ALGORITHM = 'HS256';
 
 
     //--- PRIVATE
@@ -74,37 +77,8 @@ class WebTokens
         return self::generateToken($decoded->user, self::ACCESS_TIME, self::ACCESS_KEY);
     }
 
-
-
-    //--- PUBLIC NON-MODULAR
-
-    // Access Token: Short-lived
-    public static function generateAccessToken($user)
+    public static function generateAccessToken($forUser)
     {
-        $payload = [
-            'iss' => self::ISSUER,
-            'aud' => self::AUDIENCE,
-            'iat' => time(),
-            'exp' => time() + 3600,
-            'sub' => $user['id']
-        ];
-
-        $jwt = JWT::encode($payload, self::ACCESS_KEY, self::ALGORITHM);
-        return $jwt;
-    }
-
-    // Refresh Token: Long-lived
-    public static function generateRefreshToken($user)
-    {
-        $payload = [
-            'iss' => self::ISSUER,
-            'aud' => self::AUDIENCE,
-            'iat' => time(),
-            'exp' => time() + 604800,
-            'sub' => $user['id']
-        ];
-
-        return JWT::encode($payload, self::REFRESH_KEY, self::ALGORITHM);
     }
 
     public static function validateRefreshToken($refreshToken)
@@ -117,4 +91,35 @@ class WebTokens
             return null;
         }
     }
+
+    //--- PUBLIC NON-MODULAR
+
+    // Access Token: Short-lived
+    // public static function generateAccessToken($user)
+    // {
+    //     $payload = [
+    //         'iss' => self::ISSUER,
+    //         'aud' => self::AUDIENCE,
+    //         'iat' => time(),
+    //         'exp' => time() + 3600,
+    //         'sub' => $user['id']
+    //     ];
+
+    //     $jwt = JWT::encode($payload, self::ACCESS_KEY, self::ALGORITHM);
+    //     return $jwt;
+    // }
+
+    // Refresh Token: Long-lived
+    // public static function generateRefreshToken($user)
+    // {
+    //     $payload = [
+    //         'iss' => self::ISSUER,
+    //         'aud' => self::AUDIENCE,
+    //         'iat' => time(),
+    //         'exp' => time() + 604800,
+    //         'sub' => $user['id']
+    //     ];
+
+    //     return JWT::encode($payload, self::REFRESH_KEY, self::ALGORITHM);
+    // }
 }

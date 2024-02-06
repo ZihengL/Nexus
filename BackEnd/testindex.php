@@ -59,11 +59,11 @@ require_once $path . '/controllers/webtokens.php';
 
 // Token is stored client-side with local storage, session storage, or cookies.
 // TODO: Store token locally, and send token in the url header.
-$token = WebTokens::generateToken($user);
+$token = WebTokens::generateAccessToken($user);
 printer($token, 'Token generation test');
 
 // Token validation test
-$tokenValidation = WebTokens::validateToken($token);
+$tokenValidation = WebTokens::validateRefreshToken($token);
 printer($tokenValidation, 'Token validation test');
 
 // TODO: Creating and reading backup of database as part of api launch routine.
