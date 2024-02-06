@@ -15,30 +15,19 @@
     <!-- Contenu changeant en fonction de la navigation -->
     <div class="content1">
       <div v-if="selectedTab === 'Zi'">
-        <ZiH>
-          <p>Je suis Zi Heng Liu, ingénieur en informatique et je suis chargé du développement frontend de l'application.
-            Pour plus d'informations </p>
-        </ZiH>
+        <Zi/>
       </div>
       <div v-else-if="selectedTab === 'Rebecca'">
-        <RebeccaM>
-          <p>Reb</p>
-        </RebeccaM>
+        <Rebecca/>
       </div>
       <div v-else-if="selectedTab === 'Thomas'">
-        <ThomasP>
-          <p>thom</p>
-        </ThomasP>
+        <Thomas/>
       </div>
       <div v-else-if="selectedTab === 'Debraise'">
-        <DebraiseM>
-          <p>debraise</p>
-        </DebraiseM>
+        <Debraise/>
       </div>
       <div v-else-if="selectedTab === 'Amazigh'">
-        <AmazighM>
-          <p>amazon</p>
-        </AmazighM>
+        <Amazigh/>
       </div>
     </div>
 
@@ -46,18 +35,23 @@
 </template>
 
 <script scoped>
-  import AmazighM from "../components/Devs/Amazigh.vue";
-  import DebraiseM from "../components/Devs/Debraise.vue";
-  import RebeccaM from "../components/Devs/Rebecca.vue";
-  import ThomasP from '../components/Devs/Thomas.vue';
-  import ZiH from '../components/Devs/Zi.vue';
+  import Amazigh from "../components/Devs/Amazigh.vue";
+  import Debraise from "../components/Devs/Debraise.vue";
+  import Rebecca from "../components/Devs/Rebecca.vue";
+  import Thomas from '../components/Devs/Thomas.vue';
+  import Zi from '../components/Devs/Zi.vue';
   export default {
-
+    components:{
+      Zi,
+      Thomas, 
+      Amazigh, 
+      Debraise, 
+      Rebecca
+  },
     data() {
       return {
         selectedTab: '',
-        ZiH,
-        ThomasP, AmazighM, DebraiseM, RebeccaM
+       
       }
     }
   }
@@ -80,6 +74,7 @@
       width: fit-content; /* Adjust width to fit its content */
       
       li {
+        margin-top: 20px;
         padding: 10px 20px; /* Increase padding for a more button-like appearance */
         cursor: pointer;
         border: 2px solid #ccc; /* Solid border for a button-like look */
@@ -90,10 +85,6 @@
         &:hover {
           background-color: #ddd; /* Darker background on hover */
           border-color: #999; /* Darker border on hover */
-        }
-
-        &:last-child {
-          border-right: none;
         }
       }
     }
