@@ -15,7 +15,7 @@
     --footer-text-size: 1.05rem;
 }
 
-    * {
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -41,17 +41,42 @@ body {
     border-bottom-left-radius: 16px;
 }
 .app {
-    .contentPage {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-direction: column;
-    width: 100%;
-    min-height: 100svh;
-    margin-top: 2%;
-
-        .vue {
+    .all {
+        /*background-color: rgba(80, 177, 252, 0.493);*/
+        .contentPage {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-direction: column;
             width: 100%;
+            min-height: 100svh;
+            text-align: center;
+            margin: auto;
+    
+            .vue {
+                width: 100%;
+                text-align: center;
+                margin: auto;
+            }
+        }
+        .leNav {
+            z-index: 100;
+            display: flex; 
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0px auto 0.5% auto;
+            width: 100%;
+            background: rgb(255, 255, 255);
+            text-transform: uppercase;
+            
+            /* From https://css.glass */
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(7.6px);
+            -webkit-backdrop-filter: blur(7.6px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
     }
+
 }

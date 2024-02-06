@@ -12,9 +12,14 @@
 
 <style lang="scss" scoped>
 div {
-   border-radius: 16px;
+   width: 70%;
    margin: 1% 0% 2% 0%;
    padding: 1% 0% 3% 0%;
+   /* From https://css.glass */
+   background: rgba(255, 255, 255, 0.061);
+   border-radius: 16px;
+   backdrop-filter: blur(0.5px);
+   -webkit-backdrop-filter: blur(0.5px);
 
    .title{
       margin-bottom: 1%;

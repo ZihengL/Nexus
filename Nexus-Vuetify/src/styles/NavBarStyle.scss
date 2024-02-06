@@ -1,59 +1,70 @@
-.NavBar {
-  /* From https://css.glass */
-  background: rgba(255, 255, 255, 0.09);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-
-  .logo {
-    width: 10%;
-    text-align: center;
-    margin-left: 2%;
-
-    img {
-      width: 75%;
-    }
-  }
-
-  .link {
-    width: 100%;
-    height: 100%;
-    padding: 0%;
-    display: flex;
+.navBar {
+  .navContent {
+    width: 74%;
+    margin: auto;
+    display: flex; 
+    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
-    gap: 1%;
-    margin: 0%;
 
-    .router {
-      flex: 1;
-      margin: 0%;
-      text-align: center;
+    .logo {
+      width: 10%;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
-      flex-direction: column;
-      border-radius: 3px;
-      text-decoration: none;
-      color: black;
-      font-weight: bold;
-
-      .link-btn {
-        margin: auto;
+  
+      img {
+        width: 70%;
+      }
+    }
+    .logo:hover {
+      img{
+        cursor: pointer;
+      }
+    }
+  
+    .link {
+      width: 90%;
+      height: 60%;
+      display: flex;
+      align-items: center;
+      gap: 1%;
+      margin: 0%;
+  
+      .router {
+        flex: 1;
+        margin: 0%;
+        text-align: center;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: column;
+        border-radius: 3px;
+        text-decoration: none;
         color: black;
+        font-weight: bold;
+        font-size: 1rem;
+  
+        .link-btn {
+          margin: auto;
+          color: black;
+        }
+        /*Gere l'inconne du menu quand l'usager est connecter*/
+        .link .router .conectedIcon {
+          font-size: 3rem;
+        }
       }
-      /*Gere l'inconne du menu quand l'usager est connecter*/
-      .link .router .conectedIcon {
-        font-size: 3rem;
+      .router:hover, .router-link-exact-active {
+        font-weight: bolder;
+        font-size: 1.3rem;
       }
-    }
-    .router:hover {
-      background-color: var(--light-dark-gray-trans);
-      border-bottom: 4px solid var(--light-gray-trans);
-      font-weight: bolder;
-    }
-    .router-link-exact-active{
-      border-bottom: 4px solid var(--light-gray-trans);
-      font-weight: bolder;
+      .router-link-exact-active{
+        text-decoration: underline;
+        color: var(--purple);
+        .link-btn {
+          color: var(--purple);
+        }
+      }
     }
   }
 }
