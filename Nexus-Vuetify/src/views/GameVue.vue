@@ -13,17 +13,33 @@
                         quas expedita doloremque maiores enim minima, voluptas unde.</p>
                 </div>
                 <div class="ratings">
-                    ddd
+                    <v-rating
+                        hover
+                        :length="5"
+                        :size="32"
+                        :model-value="3"
+                        active-color="primary"
+                        class="rat"
+                    />
                 </div>
                 <div class="devs">
-                    dd
+                    <p><b>Developeur : </b> 2Braise</p>
                 </div>
                 <div class="tags">
-                    ddd
+                    <a href="#">Fps</a>
+                    <a href="#">Aventure</a>
+                    <a href="#">Drame</a>
+                    <a href="#">Algerient</a>
+                </div>
+                <div class="field btn">
+                    <div class="btn-layer"></div>
+                    <v-btn density="default" class="submit" @click="toggleProfile">
+                        Telecharger
+                    </v-btn>
                 </div>
             </div>
         </div>
-        <div class="btn"></div>
+
 
     </div>
 </template>
