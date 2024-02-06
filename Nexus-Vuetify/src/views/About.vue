@@ -61,36 +61,54 @@
       }
     }
   }
-</script>
-<style lang="scss">
-  .about {
-    /* Style pour la navigation */
-    .sidebar {
-      width: 200px;
-      height: 100%;
-      background-color: #f0f0f0;
-      float: left;
+</script><style lang="scss">
+.about {
+  display: flex; /* Use flex layout for the .about container */
+  flex-direction: column; /* Stack sidebar and content vertically */
+  align-items: center; /* Center align children (sidebar) */
+  
+  .sidebar {
+    width: 100%; 
 
-      ul {
-        list-style-type: none;
-        padding: 0;
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0 auto; /* Center the list in the sidebar */
+      display: flex; /* Use flexbox for horizontal layout */
+      justify-content: space-between; /* Distribute space evenly between items */
+      gap: 20px; /* Space between items */
+      width: fit-content; /* Adjust width to fit its content */
+      
+      li {
+        padding: 10px 20px; /* Increase padding for a more button-like appearance */
+        cursor: pointer;
+        border: 2px solid #ccc; /* Solid border for a button-like look */
+        border-radius: 5px; /* Rounded corners */
+        background-color: #eee; /* Light background color */
+        transition: background-color 0.3s, border-color 0.3s; /* Smooth transition for hover effect */
 
-        li {
-          padding: 10px;
-          cursor: pointer;
-          border-bottom: 1px solid #ccc;
+        &:hover {
+          background-color: #ddd; /* Darker background on hover */
+          border-color: #999; /* Darker border on hover */
         }
 
-        li:hover {
-          background-color: #ddd;
+        &:last-child {
+          border-right: none;
         }
       }
     }
-    .content1 {
-      margin-left: 220px;
-      padding: 20px;
-    }
   }
+
+  .content1 {
+    margin-top: 20px;
+    padding: 20px;
+    width: 100%; /* Ensure content width matches sidebar */
+  }
+}
 </style>
+
+
+
+
 
 
