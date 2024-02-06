@@ -5,7 +5,7 @@
     background: var(--light);
     border-radius: 5px;
     margin: auto;
-    
+    flex-basis: 100%;
   
     /* From https://css.glass */
     background: rgba(255, 255, 255, 0.09);
@@ -80,4 +80,20 @@
             left: 0;
         }
     }
+}
+.container{
+    display: flex;flex-direction: row;
+}
+.description{
+    display: flex;align-items: flex-start;
+}
+.imgProfil{
+    flex-basis: 50%;max-width: 50%;max-height: 50%;
+    height: 200px;
+}
+.champUtilisateur{
+    display: flex;text-align: left; flex-direction:  column; margin-left: 1%;flex-basis: 100%;
+}
+.button{
+    align-items: flex-end; flex-direction: row; flex-basis: 100%;margin-left: 60%;
 }

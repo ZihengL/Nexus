@@ -1,5 +1,5 @@
 <template>
-    <v-app-bar :elevation="21" class="NavBar roundBorderBottom">
+    <v-app-bar :elevation="21" class="NavBar">
       <div class="logo">
 				<img :src="logoURL" alt="Vue" />
 			</div>
