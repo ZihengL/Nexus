@@ -1,66 +1,112 @@
 #gameVue{
     width: 70%;
-    margin: auto;
+    margin: 3% auto 0% auto;
     display: flex; 
     flex-direction: column;
     justify-content: space-between;
-    align-items: center;
-    border: 2px solid red;
 
     .content{
         flex: 4;
-        border: 2px solid red;
+        width: 100%;
         display: flex; 
         flex-direction: row;
+        gap: 1%;
         justify-content: space-between;
         align-items: center;
 
         .gameCarrousel {
             flex: 4;
-            border: 2px solid red;
         }
         .gameInfo {
             flex: 2;
-            border: 2px solid red;
-            display: flex; 
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
+            min-height: 70vh;
 
             .gameImg {
-                flex: 2;
                 width: 100%;
-                border: 2px solid red;
 
                 img {
                     width: 100%;
                 }
             }
             .descript {
-                flex: 1;
                 width: 100%;
-                border: 2px solid red;
+                margin-top: 5%;
             }
             .ratings {
-                flex: 1;
+                display: inline-block;
                 width: 100%;
-                border: 2px solid red;
+                margin-top: 5%;
+                text-align: center;
+                .rat {
+                    display: inline-block;
+                    width: 100%;
+                }
             }
             .devs {
-                flex: 1;
                 width: 100%;
-                border: 2px solid red;
+                margin-top: 5%;
+
+                p{
+                    b{
+                        font-weight: bold;
+                        color: blue;
+                    }
+                }
             }
             .tags{
-                flex: 1;
-                width: 100%;
-                border: 2px solid red;
+                width: 90%;
+                margin: 5% auto 29% auto;
+                display: flex; 
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+
+                a {
+                    text-decoration: none;
+                    color: black;
+                    font-weight: bold;
+                }
             }
 
         }
-    }
-    .btn {
-        flex: 1;
-        border: 2px solid red;
+        .btn {
+    
+            width: 90%;
+            margin: auto;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            
+            .btn-layer{
+                height: 100%;
+                width: 300%;
+                position: absolute;
+                left: -100%;
+                background: -webkit-linear-gradient(right, var(--purple), var(--dark-blue), var(--purple), var(--dark-blue));
+                border-radius: 5px;
+                transition: all 0.4s ease;;
+                }
+            .submit{
+                height: 100%;
+                width: 100%;
+                z-index: 1;
+                position: relative;
+                background: none;
+                border: none;
+                color: var(--light);
+                padding: 4% 0%;
+                border-radius: 5px;
+                font-size: 1.5rem;
+                font-weight: 500;
+                cursor: pointer;
+            }
+    
+        }
+        .field:hover {
+          .btn-layer{
+            left: 0;
+          }
+        }
     }
 }
