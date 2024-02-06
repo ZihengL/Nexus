@@ -6,7 +6,7 @@ a{
 .carousel{
     height: 70svh;
     margin-top: -6%;
-    width: 70%;
+    width: 100%;
     margin: auto;
     overflow: hidden;
     position: relative;
@@ -71,7 +71,7 @@ a{
     .thumbnail{
         position: absolute;
         bottom: 5%;
-        left: 51%;
+        left: 55%;
         width: max-content;
         z-index: 100;
         gap: 20px;
@@ -110,7 +110,7 @@ a{
     .arrows{
         position: absolute;
         top: 87%;
-        right: 52%;
+        right: 63%;
         z-index: 100;
         width: 10%;
         max-width: 30%;

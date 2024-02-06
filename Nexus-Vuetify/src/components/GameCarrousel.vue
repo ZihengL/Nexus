@@ -1,82 +1,89 @@
 <template>
     <div class="slider">
-        <div class="list">
-            <div class="item">
-                <img src="../assets/image/img1.jpg" alt="">
-            </div>
-            <div class="item">
-                <img src="../assets/image/img1.jpg" alt="">
-            </div>
-            <div class="item">
-                <img src="../assets/image/img1.jpg" alt="">
-            </div>
-            <div class="item">
-                <img src="../assets/image/img1.jpg" alt="">
-            </div>
-            <div class="item">
-                <img src="../assets/image/img1.jpg" alt="">
-            </div>
+      <div class="list" ref="sliderList">
+        <div v-for="(imgGame, index) in tabImgGame" :key="index" class="item">
+            <img :src="imgGame" alt="#">
         </div>
-        <div class="buttons">
-            <button id="prev"><</button>
-            <button id="next">></button>
-        </div>
-        <ul class="dots">
-            <li class="active"></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-        </ul>
+      </div>
+      <div class="buttons">
+        <button id="prev" @click="prevFunc">&lt;</button>
+        <button id="next" @click="nextFunc">&gt;</button>
+      </div>
+      <ul class="dots">
+        <li :class="{ active: active === index }" v-for="(dot, index) in tabImgGame" :key="index" @click="goToSlide(index)"></li>
+      </ul>
     </div>
-</template>
-
-<script >
-  document.addEventListener("DOMContentLoaded", function() {
-      // Votre code JavaScript ici
-      let slider = document.querySelector('.slider .list');
-    let items = document.querySelectorAll('.slider .list .item');
-    let next = document.getElementById('next');
-    let prev = document.getElementById('prev');
-    let dots = document.querySelectorAll('.slider .dots li');
-
-    let lengthItems = items.length - 1;
-    let active = 0;
-    next.onclick = function(){
-        active = active + 1 <= lengthItems ? active + 1 : 0;
-        reloadSlider();
-    }
-    prev.onclick = function(){
-        active = active - 1 >= 0 ? active - 1 : lengthItems;
-        reloadSlider();
-    }
-    let refreshInterval = setInterval(()=> {next.click()}, 3000);
-    function reloadSlider(){
-        slider.style.left = -items[active].offsetLeft + 'px';
-        // 
-        let last_active_dot = document.querySelector('.slider .dots li.active');
-        last_active_dot.classList.remove('active');
-        dots[active].classList.add('active');
-
-        clearInterval(refreshInterval);
-        refreshInterval = setInterval(()=> {next.click()}, 3000);
-
-        
-    }
-
-    dots.forEach((li, key) => {
-        li.addEventListener('click', ()=>{
-            active = key;
-            reloadSlider();
-        })
-    })
-    window.onresize = function(event) {
-        reloadSlider();
-    };
+  </template>
+  
+  <script setup>
+  import { ref, onMounted, onBeforeUnmount } from 'vue';
+  const tabImgGame = [
+	"./src/assets/image/img1.jpg",
+	"./src/assets/image/img2.jpg",
+	"./src/assets/image/img3.jpg",
+	"./src/assets/image/img1.jpg",
+	"./src/assets/image/img4.jpg",
+  ];
+  const sliderList = ref(null);
+  const items = ref(null);
+  const next = ref(null);
+  const prev = ref(null);
+  const dots = ref(null);
+  
+  let lengthItems = 0;
+  let active = 0;
+  let refreshInterval;
+  
+  onMounted(() => {
+    items.value = sliderList.value.querySelectorAll('.item');
+    lengthItems = items.value.length - 1;
+    next.value = document.getElementById('next');
+    prev.value = document.getElementById('prev');
+    dots.value = sliderList.value.querySelectorAll('.dots li');
+  
+    refreshInterval = setInterval(() => {
+      next.value.click();
+    }, 3000);
   });
+  
+  onBeforeUnmount(() => {
+    clearInterval(refreshInterval);
+  });
+  
+  const nextFunc = () => {
+    active = active + 1 <= lengthItems ? active + 1 : 0;
+    reloadSlider();
+  };
+  
+  const prevFunc = () => {
+    active = active - 1 >= 0 ? active - 1 : lengthItems;
+    reloadSlider();
+  };
 
+const reloadSlider = () => {
+    sliderList.value.style.left = -items.value[active].offsetLeft + 'px';
 
-</script>
+    let lastActiveDot = sliderList.value.querySelector('.dots li.active');
+    if (lastActiveDot) {
+        lastActiveDot.classList.remove('active');
+    }
+    
+    dots.value[active].classList.add('active');
+
+    clearInterval(refreshInterval);
+    refreshInterval = setInterval(() => {
+        next.value.click();
+    }, 3000);
+};
+
+  
+  const goToSlide = (index) => {
+    active = index;
+    reloadSlider();
+  };
+  </script>
+
+  
 <style>
   .slider{
     width: 1300px;
@@ -96,8 +103,6 @@
       transition: 1s;
   }
   .slider .list img{
-      width: 1300px;
-      max-width: 100vw;
       height: 100%;
       object-fit: cover;
   }
@@ -119,11 +124,14 @@
       font-family: monospace;
       font-weight: bold;
   }
+  .slider .buttons button:hover {
+      background-color: rgba(255, 255, 255, 0.72);
+  }
   .slider .dots{
       position: absolute;
       bottom: 10px;
       left: 0;
-      color: #fff;
+      color: #000000;
       width: 100%;
       margin: 0;
       padding: 0;
@@ -134,10 +142,13 @@
       list-style: none;
       width: 10px;
       height: 10px;
-      background-color: #fff;
+      background-color: #ffffff;
       margin: 10px;
       border-radius: 20px;
       transition: 0.5s;
+  }
+  .slider .dots li:hover {
+    background-color: #ffffff8d;
   }
   .slider .dots li.active{
       width: 30px;

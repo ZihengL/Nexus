@@ -1,60 +1,69 @@
 .navBar {
-  .logo {
-    width: 10%;
-    display: flex;
-    justify-content: center;
+  .navContent {
+    width: 74%;
+    margin: auto;
+    display: flex; 
+    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
 
-    img {
-      width: 70%;
-    }
-  }
-  .logo:hover {
-    img{
-      cursor: pointer;
-    }
-  }
-
-  .link {
-    width: 90%;
-    height: 60%;
-    display: flex;
-    align-items: center;
-    gap: 1%;
-    margin: 0%;
-
-    .router {
-      flex: 1;
-      margin: 0%;
-      text-align: center;
+    .logo {
+      width: 10%;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
-      flex-direction: column;
-      border-radius: 3px;
-      text-decoration: none;
-      color: black;
-      font-weight: bold;
-      font-size: 1rem;
-
-      .link-btn {
-        margin: auto;
+  
+      img {
+        width: 70%;
+      }
+    }
+    .logo:hover {
+      img{
+        cursor: pointer;
+      }
+    }
+  
+    .link {
+      width: 90%;
+      height: 60%;
+      display: flex;
+      align-items: center;
+      gap: 1%;
+      margin: 0%;
+  
+      .router {
+        flex: 1;
+        margin: 0%;
+        text-align: center;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: column;
+        border-radius: 3px;
+        text-decoration: none;
         color: black;
+        font-weight: bold;
+        font-size: 1rem;
+  
+        .link-btn {
+          margin: auto;
+          color: black;
+        }
+        /*Gere l'inconne du menu quand l'usager est connecter*/
+        .link .router .conectedIcon {
+          font-size: 3rem;
+        }
       }
-      /*Gere l'inconne du menu quand l'usager est connecter*/
-      .link .router .conectedIcon {
-        font-size: 3rem;
+      .router:hover, .router-link-exact-active {
+        font-weight: bolder;
+        font-size: 1.3rem;
       }
-    }
-    .router:hover, .router-link-exact-active {
-      font-weight: bolder;
-      font-size: 1.3rem;
-    }
-    .router-link-exact-active{
-      text-decoration: underline;
-      color: var(--purple);
-      .link-btn {
+      .router-link-exact-active{
+        text-decoration: underline;
         color: var(--purple);
+        .link-btn {
+          color: var(--purple);
+        }
       }
     }
   }

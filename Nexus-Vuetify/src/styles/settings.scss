@@ -42,7 +42,7 @@ body {
 }
 .app {
     .all {
-        background-color: rgba(80, 177, 252, 0.493);
+        /*background-color: rgba(80, 177, 252, 0.493);*/
         .contentPage {
             display: flex;
             justify-content: space-between;
@@ -65,8 +65,8 @@ body {
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
-            margin: 0px auto 1% auto;
-            width: 70%;
+            margin: 0px auto 0.5% auto;
+            width: 100%;
             background: rgb(255, 255, 255);
             text-transform: uppercase;
             
