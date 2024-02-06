@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <Homecarrousel />
-    <Info />
+    <Info style="margin: auto; margin-top: 2%;"/>
   </div>
 </template>
 
@@ -19,6 +19,9 @@
 </script>
 
 <style lang="scss" scoped>
+  .home {
+    text-align: center;
+  }
 </style>
 
 
