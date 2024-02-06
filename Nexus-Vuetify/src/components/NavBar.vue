@@ -23,6 +23,7 @@
             <v-icon icon="mdi-account-circle" class="conectedIcon"/>
           </router-link>
         </div>
+
       </div>
     </nav>
 </template>
