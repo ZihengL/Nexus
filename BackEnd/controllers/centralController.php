@@ -1,9 +1,9 @@
 <?php
 
-require_once "$path/controllers/tokenmanager.php";
+require_once "$path/controllers/tokens.php";
 require_once "$path/controllers/database.php";
-require_once "$path/controllers/gamescontroller.php";
-require_once "$path/controllers/userscontroller.php";
+require_once "$path/controllers/games.php";
+require_once "$path/controllers/users.php";
 
 use Dotenv\Dotenv as Dotenv;
 

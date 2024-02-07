@@ -18,30 +18,9 @@ class TokenManager
     private $issuer;
     private $audience;
 
-
     // TODO: Create revocated tokens list. Tokens list stay in memory somewhere.
-    // TODO: Create encrypted key
-
 
     //-- CONSTRUCTOR
-
-    // private function __construct($access_key, $refresh_key, $algorithm, $issuer, $audience)
-    // {
-    //     $this->access_key = $access_key;
-    //     $this->refresh_key = $refresh_key;
-    //     $this->algorithm = $algorithm;
-    //     $this->issuer = $issuer;
-    //     $this->audience = $audience;
-    // }
-
-    // public static function getInstance($access_key, $refresh_key, $algorithm, $issuer, $audience)
-    // {
-    //     if (self::$instance == null) {
-    //         self::$instance = new TokenManager($access_key, $refresh_key, $algorithm, $issuer, $audience);
-    //     }
-
-    //     return self::$instance;
-    // }
 
     private function __construct($env)
     {
@@ -113,8 +92,7 @@ class TokenManager
         try {
             return JWT::decode($token, new Key($key, $this->algorithm));
         } catch (Exception $e) {
-            echo '<br><b>ERROR</b><br>' . $e->getMessage() . '<br>';
-
+            // TODO: IMPLEMENT ERROR HANDLING
             return null;
         }
     }
@@ -138,33 +116,3 @@ class TokenManager
             $this->validateRefreshToken($refresh_token);
     }
 }
-
-    //--- OLD EXAMPLES
-    // Access Token: Short-lived
-    // public static function generateAccessToken($user)
-    // {
-    //     $payload = [
-    //         'iss' => self::ISSUER,
-    //         'aud' => self::AUDIENCE,
-    //         'iat' => time(),
-    //         'exp' => time() + 3600,
-    //         'sub' => $user['id']
-    //     ];
-
-    //     $jwt = JWT::encode($payload, self::ACCESS_KEY, self::ALGORITHM);
-    //     return $jwt;
-    // }
-
-    // Refresh Token: Long-lived
-    // public static function generateRefreshToken($user)
-    // {
-    //     $payload = [
-    //         'iss' => self::ISSUER,
-    //         'aud' => self::AUDIENCE,
-    //         'iat' => time(),
-    //         'exp' => time() + 604800,
-    //         'sub' => $user['id']
-    //     ];
-
-    //     return JWT::encode($payload, self::REFRESH_KEY, self::ALGORITHM);
-    // }
