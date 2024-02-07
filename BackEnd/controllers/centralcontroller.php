@@ -1,41 +1,96 @@
 <?php
 
+require_once "$path/controllers/tokens.php";
 require_once "$path/controllers/database.php";
-// require_once "$path/controllers/reviews.php";
-// require_once "$path/controllers/notifications.php";
-require_once "$path/controllers/gamescontroller.php";
-require_once "$path/controllers/userscontroller.php";
 
-require_once "$path/remote/secrets.php";
+require_once "$path/controllers/games.php";
+require_once "$path/controllers/users.php";
 
-class CentralController {
+require_once "$path/remote/routines.php";
+
+
+use Dotenv\Dotenv as Dotenv;
+
+
+class CentralController
+{
     private static $instance = null;
-    private $databaseManager;
-    public $usersController;
-    public $gamesController;
 
-    private function __construct() {
-        $this->databaseManager = DatabaseManager::getInstance();
-        $pdo = $this->databaseManager->getPDO();
+    public $database_manager;
+    public $token_manager;
+    public $users_controller;
+    public $games_controller;
+    private $routines_controller;
 
-        $this->usersController = new UsersController($pdo);
-        $this->gamesController = new GamesController($pdo);
+    // CONSTRUCTOR
+
+    private function __construct()
+    {
+        global $path;
+        $dotenv = Dotenv::createImmutable($path);
+        $dotenv->load();
+
+        $this->database_manager = $this->instanciateDatabaseManager();
+        $pdo = $this->database_manager->getPDO();
+
+        $this->token_manager = $this->instanciateTokensController($pdo);
+        $this->users_controller = new UsersController($pdo, $this->token_manager);
+        $this->games_controller = new GamesController($pdo);
     }
 
-    public static function getInstance() {
+    public static function getInstance()
+    {
         if (self::$instance == null) {
-            self::$instance = new centralController();
+            self::$instance = new CentralController();
         }
 
         return self::$instance;
     }
 
-    public function getUsersController() {
-        return $this->usersController;
+    // CONTROLLERS & MANAGERS
+
+    private function instanciateTokensController($pdo)
+    {
+        $env = new stdClass();
+        $env->access_key = $_ENV['JWT_ACCESS_KEY'];
+        $env->refresh_key = $_ENV['JWT_REFRESH_KEY'];
+        $env->algorithm = $_ENV['JWT_ALGORITHM'];
+        $env->issuer = $_ENV['JWT_ISSUER'];
+        $env->audience = $_ENV['JWT_AUDIENCE'];
+
+        return TokensController::getInstance($pdo, $env);
     }
 
-    public function getGamesController() {
-        return $this->gamesController;
+    private function instanciateDatabaseManager()
+    {
+        $env = new stdClass();
+        $env->host = $_ENV['DB_HOST'];
+        $env->database = $_ENV['DB_NAME'];
+        $env->username = $_ENV['DB_USER'];
+        $env->password = $_ENV['DB_PASS'];
+
+        return DatabaseManager::getInstance($env);
+    }
+
+    private function instanciateRoutines()
+    {
+        $env = new stdClass();
+        $env->run = true;
+        $env->database_manager = $this->database_manager;
+
+        $this->routines_controller = Routines::getInstance($env);
+    }
+
+    // GETTERS
+
+    public function getUsersController()
+    {
+        return $this->users_controller;
+    }
+
+    public function getGamesController()
+    {
+        return $this->games_controller;
     }
 
     // // USER
@@ -94,7 +149,7 @@ class CentralController {
     //     if (!isset($_SESSION['cart'])) {
     //         $_SESSION['cart'] = [];
     //     } 
-        
+
     //     if (!isset($_SESSION['cart'][$stripeID])) {
     //         $_SESSION['cart'][$stripeID] = $quantity;
     //     } else {

@@ -3,35 +3,57 @@
 class DatabaseManager
 {
     private static $instance = null;
-    private static $host = 'localhost';
-    private static $database = 'nexus';
-    private static $username = 'pma';
-    private static $password = '';
 
+    private const BACKUPS = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd/remote/backups/';
+
+    private $host;
+    private $database;
+    private $username;
+    private $password;
     private $pdo;
 
-    // CONSTRUCTORS
+    // CONSTRUCTOR
 
-    private function __construct()
+    private function __construct($env)
     {
-        $connectionString = 'mysql:host=' . self::$host . ';dbname=' . self::$database;
+        $this->host = $env->host;
+        $this->database = $env->database;
+        $this->username = $env->username;
+        $this->password = $env->password;
 
-        $this->pdo = new PDO($connectionString, self::$username, self::$password);
+        $connection_string = 'mysql:host=' . $this->host . ';dbname=' . $this->database;
+        $this->pdo = new PDO($connection_string, $this->username, $this->password);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
-    // STATIC
-
-    public static function getInstance()
+    public static function getInstance($env)
     {
         if (self::$instance == null) {
-            self::$instance = new DatabaseManager();
+            self::$instance = new DatabaseManager($env);
         }
 
         return self::$instance;
     }
 
-    // PRIVATE
+    // BACKUP
+
+    public function backup($filename = null, $max = 5)
+    {
+        $filename = $filename ?? time();
+
+        $backup_files = array_map('realpath', glob(self::BACKUPS . '*'));
+        usort($backup_files, function ($a, $b) {
+            return filemtime($a) <=> filemtime($b);
+        });
+
+        $backups_count = count($backup_files);
+        if ($backups_count > $max) {
+            array_map('unlink', array_slice($backup_files, 0, $backups_count - $max));
+        }
+    }
+
+
+    // QUERIES
 
     public function query($sql)
     {
@@ -61,7 +83,7 @@ class DatabaseManager
         }
     }
 
-    // PUBLIC
+    // GETTERS
 
     public function getPDO()
     {

@@ -1,15 +1,15 @@
 <?php
-
-// require_once "$path/controllers/base_controller.php";
-require_once "$path/models/usermodel.php";
+require_once $path . '/models/user.php';
 
 class UsersController
 {
     private $model;
+    private $token_manager;
 
-    public function __construct($pdo)
+    public function __construct($pdo, $token_manager)
     {
         $this->model = new UserModel($pdo);
+        $this->token_manager = $token_manager;
     }
 
     public function getUserById($id, $columns = [])
@@ -96,31 +96,22 @@ class UsersController
     }
 
 
-    public function logout()
+    public function logout($refreshToken)
     {
-        if ($this->isAuthenticated()) {
-            // session_destroy();
-            // session_unset();
-            // session_write_close();
+        if ($this->isAuthenticated($refreshToken)) {
+            // TODO: Revoke token
         }
     }
 
     private function verifyUser($user, $email, $password)
     {
-        return  $user &&
+        return $user &&
             $user['email'] === $email &&
             password_verify($password, $user['password']);
     }
 
-    public function isAuthenticated()
+    public function isAuthenticated($refresh_token)
     {
-        // TODO: REPLACE SESSIONS WITH WEB TOKENS(JWT).
-        // if (session_status() !== PHP_SESSION_ACTIVE) {
-        //     session_start();
-        // }
-
-        // return  isset($_SESSION['user']) &&
-        //         isset($_SESSION['authentified']) && 
-        //         $_SESSION['authentified'];
+        return $this->token_manager->validateRefreshToken($refresh_token);
     }
 }
