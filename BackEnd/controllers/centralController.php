@@ -41,23 +41,25 @@ class CentralController
 
     private function instanciateTokenManager()
     {
-        $access_key = $_ENV['JWT_ACCESS_KEY'];
-        $refresh_key = $_ENV['JWT_REFRESH_KEY'];
-        $algorithm = $_ENV['JWT_ALGORITHM'];
-        $issuer = $_ENV['JWT_ISSUER'];
-        $audience = $_ENV['JWT_AUDIENCE'];
+        $env = new stdClass();
+        $env->access_key = $_ENV['JWT_ACCESS_KEY'];
+        $env->refresh_key = $_ENV['JWT_REFRESH_KEY'];
+        $env->algorithm = $_ENV['JWT_ALGORITHM'];
+        $env->issuer = $_ENV['JWT_ISSUER'];
+        $env->audience = $_ENV['JWT_AUDIENCE'];
 
-        return TokenManager::getInstance($access_key, $refresh_key, $algorithm, $issuer, $audience);
+        return TokenManager::getInstance($env);
     }
 
     private function instanciateDatabaseManager()
     {
-        $host = $_ENV['DB_HOST'];
-        $database = $_ENV['DB_NAME'];
-        $username = $_ENV['DB_USER'];
-        $password = $_ENV['DB_PASS'];
+        $env = new stdClass();
+        $env->host = $_ENV['DB_HOST'];
+        $env->database = $_ENV['DB_NAME'];
+        $env->username = $_ENV['DB_USER'];
+        $env->password = $_ENV['DB_PASS'];
 
-        return DatabaseManager::getInstance($host, $database, $username, $password);
+        return DatabaseManager::getInstance($env);
     }
 
     public function getUsersController()

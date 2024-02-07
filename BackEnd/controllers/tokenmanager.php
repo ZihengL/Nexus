@@ -25,19 +25,37 @@ class TokenManager
 
     //-- CONSTRUCTOR
 
-    private function __construct($access_key, $refresh_key, $algorithm, $issuer, $audience)
+    // private function __construct($access_key, $refresh_key, $algorithm, $issuer, $audience)
+    // {
+    //     $this->access_key = $access_key;
+    //     $this->refresh_key = $refresh_key;
+    //     $this->algorithm = $algorithm;
+    //     $this->issuer = $issuer;
+    //     $this->audience = $audience;
+    // }
+
+    // public static function getInstance($access_key, $refresh_key, $algorithm, $issuer, $audience)
+    // {
+    //     if (self::$instance == null) {
+    //         self::$instance = new TokenManager($access_key, $refresh_key, $algorithm, $issuer, $audience);
+    //     }
+
+    //     return self::$instance;
+    // }
+
+    private function __construct($env)
     {
-        $this->access_key = $access_key;
-        $this->refresh_key = $refresh_key;
-        $this->algorithm = $algorithm;
-        $this->issuer = $issuer;
-        $this->audience = $audience;
+        $this->access_key = $env->access_key;
+        $this->refresh_key = $env->refresh_key;
+        $this->algorithm = $env->algorithm;
+        $this->issuer = $env->issuer;
+        $this->audience = $env->audience;
     }
 
-    public static function getInstance($access_key, $refresh_key, $algorithm, $issuer, $audience)
+    public static function getInstance($env)
     {
         if (self::$instance == null) {
-            self::$instance = new TokenManager($access_key, $refresh_key, $algorithm, $issuer, $audience);
+            self::$instance = new TokenManager($env);
         }
 
         return self::$instance;

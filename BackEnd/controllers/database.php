@@ -12,12 +12,12 @@ class DatabaseManager
 
     // CONSTRUCTORS
 
-    private function __construct($host, $database, $username, $password)
+    private function __construct($env)
     {
-        $this->host = $host;
-        $this->database = $database;
-        $this->username = $username;
-        $this->password = $password;
+        $this->host = $env->host;
+        $this->database = $env->database;
+        $this->username = $env->username;
+        $this->password = $env->password;
 
         $connection_string = 'mysql:host=' . $this->host . ';dbname=' . $this->database;
         $this->pdo = new PDO($connection_string, $this->username, $this->password);
@@ -26,10 +26,10 @@ class DatabaseManager
 
     // STATIC
 
-    public static function getInstance($host, $database, $username, $password)
+    public static function getInstance($env)
     {
         if (self::$instance == null) {
-            self::$instance = new DatabaseManager($host, $database, $username, $password);
+            self::$instance = new DatabaseManager($env);
         }
 
         return self::$instance;
