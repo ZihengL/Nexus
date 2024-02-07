@@ -2,15 +2,16 @@
 
 // require_once "$path/controllers/base_controller.php";
 require_once $path . '/models/usermodel.php';
-require_once $path . '/controllers/webtokens.php';
 
 class UsersController
 {
     private $model;
+    private $token_manager;
 
-    public function __construct($pdo)
+    public function __construct($pdo, $token_manager)
     {
         $this->model = new UserModel($pdo);
+        $this->token_manager = $token_manager;
     }
 
     public function getUserById($id, $columns = [])
@@ -106,9 +107,9 @@ class UsersController
             password_verify($password, $user['password']);
     }
 
-    public function isAuthenticated($refreshToken)
+    public function isAuthenticated($refresh_token)
     {
-        return WebTokens::validateRefreshToken($refreshToken);
+        return $this->token_manager->validateRefreshToken($refresh_token);
     }
 
     // public function isAuthenticated($token)

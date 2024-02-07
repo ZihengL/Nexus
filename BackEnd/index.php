@@ -32,7 +32,7 @@ global $centralController;
 $dbUsername = "nexus";
 $dbPassword = "123";
 
-$path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus';
+$path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd';
 $baseURL = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]/Nexus";
 
 // $path = "$_SERVER[DOCUMENT_ROOT]/zi_htdocs/RichRicasso";
@@ -40,7 +40,7 @@ $baseURL = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOS
 
 // Pathing and URL
 // require_once "$path/transactions/routines.php";
-require_once "$path/models/db_manager.php";
+require_once "$path/controllers/database.php";
 require_once "$path/controllers/centralController.php";
 
 
@@ -106,70 +106,69 @@ if ($method === 'GET') {
         case 'deleteGame':
             $result = $centralController->gamesController->deleteProduct($decodedData);
             break;
-        // case 'check':
-        //     require_once "$path/transactions/checkout.php";
-        //     $centralController->addToCart('prod_PBRpRO0LQiFGuL', 2);
+            // case 'check':
+            //     require_once "$path/transactions/checkout.php";
+            //     $centralController->addToCart('prod_PBRpRO0LQiFGuL', 2);
 
-        //     $result = require_once "$path/transactions/checkout.php";
-        //     break;
-        // case 'create_payment_intent':
-        //     $decodedData = json_decode(file_get_contents('php://input'), true);
-        //     $amount = $decodedData['amount']; // amount should be sent from the client
+            //     $result = require_once "$path/transactions/checkout.php";
+            //     break;
+            // case 'create_payment_intent':
+            //     $decodedData = json_decode(file_get_contents('php://input'), true);
+            //     $amount = $decodedData['amount']; // amount should be sent from the client
 
-        //     try {
-        //         $paymentIntent = \Stripe\PaymentIntent::create([
-        //             'amount' => $amount,
-        //             'currency' => 'usd',
-        //             // Add other payment intent configurations if needed
-        //         ]);
-        //         $result = ['clientSecret' => $paymentIntent->client_secret];
-        //     } catch (\Stripe\Exception\ApiErrorException $e) {
-        //         // Handle the exception
-        //         $result = ['error' => $e->getMessage()];
-        //     }
-        //     break;
-        // case 'checkout2':
-        //     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            //     try {
+            //         $paymentIntent = \Stripe\PaymentIntent::create([
+            //             'amount' => $amount,
+            //             'currency' => 'usd',
+            //             // Add other payment intent configurations if needed
+            //         ]);
+            //         $result = ['clientSecret' => $paymentIntent->client_secret];
+            //     } catch (\Stripe\Exception\ApiErrorException $e) {
+            //         // Handle the exception
+            //         $result = ['error' => $e->getMessage()];
+            //     }
+            //     break;
+            // case 'checkout2':
+            //     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-        //         require __DIR__ . '/vendor/autoload.php';
-        //         // require_once 'vendor/autoload.php';
-        //         \Stripe\Stripe::setApiKey('sk_test_51ONc07CVit0Y8pd9Dk5GcWhGU972X4gpcKHnrzFNzWsPRiKV1nkCWSgqgY2vzgSmOoKxMpyIvkWDAJa00FXkqTC000lqaHBgF6');
+            //         require __DIR__ . '/vendor/autoload.php';
+            //         // require_once 'vendor/autoload.php';
+            //         \Stripe\Stripe::setApiKey('sk_test_51ONc07CVit0Y8pd9Dk5GcWhGU972X4gpcKHnrzFNzWsPRiKV1nkCWSgqgY2vzgSmOoKxMpyIvkWDAJa00FXkqTC000lqaHBgF6');
 
-        //         $stripe_secret_key = "sk_test_51ONc07CVit0Y8pd9Dk5GcWhGU972X4gpcKHnrzFNzWsPRiKV1nkCWSgqgY2vzgSmOoKxMpyIvkWDAJa00FXkqTC000lqaHBgF6";
+            //         $stripe_secret_key = "sk_test_51ONc07CVit0Y8pd9Dk5GcWhGU972X4gpcKHnrzFNzWsPRiKV1nkCWSgqgY2vzgSmOoKxMpyIvkWDAJa00FXkqTC000lqaHBgF6";
 
-        //         // print("hello")
-        //         \Stripe\Stripe::setApiKey($stripe_secret_key);
+            //         // print("hello")
+            //         \Stripe\Stripe::setApiKey($stripe_secret_key);
 
-        //         $checkout_session = \Stripe\Checkout\Session::create([
-        //             "mode" => "payment",
-        //             "success_url" => "http://localhost/success.php",
-        //             "cancel_url" => "http://localhost/index.php",
-        //             "locale" => "auto",
-        //             "line_items" => [
-        //                 [
-        //                     "quantity" => 1,
-        //                     "price_data" => [
-        //                         "currency" => "usd",
-        //                         "unit_amount" => $decodedData['amount'],
-        //                         "product_data" => [
-        //                             "name" => "Rich Ricasso Clothes"
-        //                         ]
-        //                     ]
-        //                 ]
-        //             ]
-        //         ]);
+            //         $checkout_session = \Stripe\Checkout\Session::create([
+            //             "mode" => "payment",
+            //             "success_url" => "http://localhost/success.php",
+            //             "cancel_url" => "http://localhost/index.php",
+            //             "locale" => "auto",
+            //             "line_items" => [
+            //                 [
+            //                     "quantity" => 1,
+            //                     "price_data" => [
+            //                         "currency" => "usd",
+            //                         "unit_amount" => $decodedData['amount'],
+            //                         "product_data" => [
+            //                             "name" => "Rich Ricasso Clothes"
+            //                         ]
+            //                     ]
+            //                 ]
+            //             ]
+            //         ]);
 
-        //         http_response_code(303);
-        //         // print("Location: " . $checkout_session->url);
-        //         // echo header("Location: " . $checkout_session->url);
-        //         echo json_encode(['checkoutUrl' => $checkout_session->url]);
-        //         exit;
-        //     }
-        //     break;
+            //         http_response_code(303);
+            //         // print("Location: " . $checkout_session->url);
+            //         // echo header("Location: " . $checkout_session->url);
+            //         echo json_encode(['checkoutUrl' => $checkout_session->url]);
+            //         exit;
+            //     }
+            //     break;
         default:
             $result = [];
     }
-
 }
 
 if ($result) {

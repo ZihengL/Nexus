@@ -28,11 +28,10 @@ global $path;
 $path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd';
 
 // ----- DatabaseManager, PDO & CentralController init
-require_once $path . '/controllers/database.php';
-require_once $path . '/controllers/centralController.php';
-
-$databaseManager = DatabaseManager::getInstance();
+require_once $path . '/controllers/centralcontroller.php';
 $centralController = CentralController::getInstance();
+
+$database_manager = $centralController->database_manager;
 
 
 // ----- Request URL & Routing
@@ -50,20 +49,18 @@ $requestUrl = $_GET['url'] ?? '';
 
 
 // ----- Test zone; delete later.
-$usersCtrl = $centralController->usersController;
+$usersCtrl = $centralController->users_controller;
 $user = $usersCtrl->getUserById(1);
 printer($user, 'User fetch test');
 
-// Importing webtokens
-require_once $path . '/controllers/webtokens.php';
+// Token manager
+$token_manager = $centralController->token_manager;
+
 
 // Token is stored client-side with local storage, session storage, or cookies.
 // TODO: Store token locally, and send token in the url header.
-$token = WebTokens::generateAccessToken($user);
-printer($token, 'Token generation test');
+$tokens = $token_manager->generateTokens($user);
+printer($tokens, 'Token generation test');
 
-// Token validation test
-$tokenValidation = WebTokens::validateRefreshToken($token);
-printer($tokenValidation, 'Token validation test');
 
 // TODO: Creating and reading backup of database as part of api launch routine.

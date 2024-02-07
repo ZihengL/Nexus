@@ -1,41 +1,73 @@
 <?php
 
+require_once "$path/controllers/tokenmanager.php";
 require_once "$path/controllers/database.php";
-// require_once "$path/controllers/reviews.php";
-// require_once "$path/controllers/notifications.php";
 require_once "$path/controllers/gamescontroller.php";
 require_once "$path/controllers/userscontroller.php";
 
-require_once "$path/remote/secrets.php";
+use Dotenv\Dotenv as Dotenv;
 
-class CentralController {
+class CentralController
+{
     private static $instance = null;
-    private $databaseManager;
-    public $usersController;
-    public $gamesController;
 
-    private function __construct() {
-        $this->databaseManager = DatabaseManager::getInstance();
-        $pdo = $this->databaseManager->getPDO();
+    public $database_manager;
+    public $token_manager;
+    public $users_controller;
+    public $games_controller;
 
-        $this->usersController = new UsersController($pdo);
-        $this->gamesController = new GamesController($pdo);
+    private function __construct()
+    {
+        global $path;
+        $dotenv = Dotenv::createImmutable($path);
+        $dotenv->load();
+
+        $this->token_manager = $this->instanciateTokenManager();
+        $this->database_manager = $this->instanciateDatabaseManager();
+
+        $pdo = $this->database_manager->getPDO();
+        $this->users_controller = new UsersController($pdo, $this->token_manager);
+        $this->games_controller = new GamesController($pdo);
     }
 
-    public static function getInstance() {
+    public static function getInstance()
+    {
         if (self::$instance == null) {
-            self::$instance = new centralController();
+            self::$instance = new CentralController();
         }
 
         return self::$instance;
     }
 
-    public function getUsersController() {
-        return $this->usersController;
+    private function instanciateTokenManager()
+    {
+        $access_key = $_ENV['JWT_ACCESS_KEY'];
+        $refresh_key = $_ENV['JWT_REFRESH_KEY'];
+        $algorithm = $_ENV['JWT_ALGORITHM'];
+        $issuer = $_ENV['JWT_ISSUER'];
+        $audience = $_ENV['JWT_AUDIENCE'];
+
+        return TokenManager::getInstance($access_key, $refresh_key, $algorithm, $issuer, $audience);
     }
 
-    public function getGamesController() {
-        return $this->gamesController;
+    private function instanciateDatabaseManager()
+    {
+        $host = $_ENV['DB_HOST'];
+        $database = $_ENV['DB_NAME'];
+        $username = $_ENV['DB_USER'];
+        $password = $_ENV['DB_PASS'];
+
+        return DatabaseManager::getInstance($host, $database, $username, $password);
+    }
+
+    public function getUsersController()
+    {
+        return $this->users_controller;
+    }
+
+    public function getGamesController()
+    {
+        return $this->games_controller;
     }
 
     // // USER
@@ -94,7 +126,7 @@ class CentralController {
     //     if (!isset($_SESSION['cart'])) {
     //         $_SESSION['cart'] = [];
     //     } 
-        
+
     //     if (!isset($_SESSION['cart'][$stripeID])) {
     //         $_SESSION['cart'][$stripeID] = $quantity;
     //     } else {
