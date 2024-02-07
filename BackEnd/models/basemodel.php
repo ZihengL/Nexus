@@ -260,27 +260,54 @@ class BaseModel
 
     // sql = 'SELECT * FROM users WHERE username = :username AND password = :password';
 
-    public function applyFilters($filters)
-    {
-        $params = [];
-        $validEntries = array_intersect(array_keys($filters), $this->columns);
-        // print_r($validEntries);
-        // echo "<br>";
-        // print_r($this->columns);
-        // echo "<br>";
-        // print_r($filters);
-        // echo "<br> validEntries " . $validEntries . "<br>\n";
-        // $sql .= !empty($validEntries) ? ' WHERE 1 = 1' : '';
-        $sql = 'SELECT * FROM ' . $this->table . ' WHERE 1 = 1';
+    // public function applyFilters($filters)
+    // {
+    //     $params = [];
+    //     $validEntries = array_intersect(array_keys($filters), $this->columns);
+    //     // print_r($validEntries);
+    //     // echo "<br>";
+    //     // print_r($this->columns);
+    //     // echo "<br>";
+    //     // print_r($filters);
+    //     // echo "<br> validEntries " . $validEntries . "<br>\n";
+    //     // $sql .= !empty($validEntries) ? ' WHERE 1 = 1' : '';
+    //     $sql = 'SELECT * FROM ' . $this->table . ' WHERE 1 = 1';
 
-        foreach ($validEntries as $column) {
-            $sql .= " AND $column = :$column";
-            // echo "<br> SQL with columns: " . $sql . "<br>\n";
-            $params[":$column"] = $filters[$column];
+    //     foreach ($validEntries as $column) {
+    //         $sql .= " AND $column = :$column";
+    //         // echo "<br> SQL with columns: " . $sql . "<br>\n";
+    //         $params[":$column"] = $filters[$column];
+    //     }
+
+    //     return ['sql' => $sql, 'params' => $params];
+    // }
+
+    function applyFilters($filters)
+    {
+        $sql = 'SELECT * FROM ' . $this->table . ' WHERE 1 = 1';
+        $params = [];
+
+        foreach ($filters as $column => $value) {
+            // Check if column is of SET type
+            $isSetType = $this->isColumnSetType($this->pdo, $this->table, $column);
+
+            if ($isSetType) {
+                $result = $this->handleSetCondition($column, $value);
+                $sql .= ' AND ' . $result['sql'];
+                $params = array_merge($params, $result['params']);
+            } elseif (is_array($value) && !$isSetType) {
+                $result = $this->handleRangeCondition($column, $value);
+                $sql .= ' AND ' . $result['sql'];
+                $params = array_merge($params, $result['params']);
+            } else {
+                $sql .= " AND $column = :$column";
+                $params[":$column"] = $value;
+            }
         }
 
         return ['sql' => $sql, 'params' => $params];
     }
+
 
     public function applySorting($sorting)
     {
@@ -328,7 +355,8 @@ class BaseModel
     // }
 
 
-    function isColumnSetType($pdo, $tableName, $columnName) {
+    function isColumnSetType($pdo, $tableName, $columnName)
+    {
         try {
             // Prepare the SQL query to get the column type from INFORMATION_SCHEMA.COLUMNS
             $sql = "SELECT COLUMN_TYPE 
@@ -336,21 +364,21 @@ class BaseModel
                     WHERE TABLE_SCHEMA = :databaseName 
                     AND TABLE_NAME = :tableName 
                     AND COLUMN_NAME = :columnName";
-            
+
             // Assuming $pdo is your PDO database connection
             $stmt = $pdo->prepare($sql);
-            
+
             // Bind the parameters
             $stmt->bindValue(':databaseName', $this->pdo->query('select database()')->fetchColumn());
             $stmt->bindValue(':tableName', $this->table);
             $stmt->bindValue(':columnName', $columnName);
-            
+
             // Execute the query
             $stmt->execute();
-            
+
             // Fetch the column type
             $columnType = $stmt->fetchColumn();
-            
+
             // Check if the column type starts with 'set(' indicating it's a SET type
             if (strpos($columnType, 'set(') === 0) {
                 return true;
@@ -359,7 +387,7 @@ class BaseModel
             // Handle potential errors here
             echo "Error: " . $e->getMessage();
         }
-        
+
         return false;
     }
 
