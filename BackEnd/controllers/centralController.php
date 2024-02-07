@@ -2,10 +2,15 @@
 
 require_once "$path/controllers/tokens.php";
 require_once "$path/controllers/database.php";
+
 require_once "$path/controllers/games.php";
 require_once "$path/controllers/users.php";
 
+require_once "$path/remote/routines.php";
+
+
 use Dotenv\Dotenv as Dotenv;
+
 
 class CentralController
 {
@@ -15,6 +20,9 @@ class CentralController
     public $token_manager;
     public $users_controller;
     public $games_controller;
+    private $routines_controller;
+
+    // CONSTRUCTOR
 
     private function __construct()
     {
@@ -22,10 +30,10 @@ class CentralController
         $dotenv = Dotenv::createImmutable($path);
         $dotenv->load();
 
-        $this->token_manager = $this->instanciateTokenManager();
         $this->database_manager = $this->instanciateDatabaseManager();
-
         $pdo = $this->database_manager->getPDO();
+
+        $this->token_manager = $this->instanciateTokensController($pdo);
         $this->users_controller = new UsersController($pdo, $this->token_manager);
         $this->games_controller = new GamesController($pdo);
     }
@@ -39,7 +47,9 @@ class CentralController
         return self::$instance;
     }
 
-    private function instanciateTokenManager()
+    // CONTROLLERS & MANAGERS
+
+    private function instanciateTokensController($pdo)
     {
         $env = new stdClass();
         $env->access_key = $_ENV['JWT_ACCESS_KEY'];
@@ -48,7 +58,7 @@ class CentralController
         $env->issuer = $_ENV['JWT_ISSUER'];
         $env->audience = $_ENV['JWT_AUDIENCE'];
 
-        return TokenManager::getInstance($env);
+        return TokensController::getInstance($pdo, $env);
     }
 
     private function instanciateDatabaseManager()
@@ -61,6 +71,17 @@ class CentralController
 
         return DatabaseManager::getInstance($env);
     }
+
+    private function instanciateRoutines()
+    {
+        $env = new stdClass();
+        $env->run = true;
+        $env->database_manager = $this->database_manager;
+
+        $this->routines_controller = Routines::getInstance($env);
+    }
+
+    // GETTERS
 
     public function getUsersController()
     {

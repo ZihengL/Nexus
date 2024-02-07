@@ -1,35 +1,61 @@
 <?php
 
+const BACKUPS = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd/remote/backups/';
+
 class Routines
 {
     private static $instance = null;
 
-    private const REFRESH_RATE = 3600;
+    private const DAILY = 86400;
+    private const HOURLY = 3600;
 
-    private $run = true;
+    private $run;
+    private $database_manager;
+    private $tokens_manager;
 
-    private function __construct()
+    // CONSTRUCTOR
+
+    private function __construct($env)
     {
+        $this->run = $env->run;
+        $this->database_manager = $env->database_manager;
+
+        if (self::$instance->run) $this->runRoutines();
     }
 
-    public static function instanciateRoutines($state)
+    public static function getInstance($env)
     {
         if (self::$instance === null) {
-            self::$instance = new Routines();
+            self::$instance = new Routines($env);
         }
 
-        self::$instance->run = $state;
-        if (self::$instance->run) {
-        }
+        return self::$instance;
     }
+
+    public static function setRunningState($running)
+    {
+        self::$instance->run = $running;
+    }
+
+    // METHODS
 
     private function runRoutines()
     {
-        if ($this->run) {
-            // TODO: cleanup script
-        }
+        if (!$this->run) return;
 
-        sleep(self::REFRESH_RATE);
         $this->runRoutines();
+    }
+
+    private function execDailyRoutine()
+    {
+        if (!$this->run) return;
+
+        // Database backup
+        $this->database_manager->backup(time());
+    }
+
+    private function execHourlyRoutine()
+    {
+        if (!$this->run) return;
     }
 }

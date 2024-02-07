@@ -1,64 +1,71 @@
 <?php
 
 require_once "$path/models/basemodel.php";
-// require_once "$path/controllers/gamesco.php";
 
-class GameModel extends BaseModel {
-    public function __construct($pdo) {
+class GameModel extends BaseModel
+{
+    public function __construct($pdo)
+    {
         $table = "games";
-        // $fields = ["name", "type", "color", "size", "price", "images", "description"];
 
         parent::__construct($pdo, $table);
     }
 
-    public function getById($id, $columns = []) {
+    public function getById($id, $columns = [])
+    {
         $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE id = ?");
         $stmt->execute([$id]);
 
         return $stmt->fetch();
     }
-    
-    public function getByReleaseDate($date){
+
+    public function getByReleaseDate($date)
+    {
         $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE date = ?");
         $stmt->execute([$date]);
 
         return $stmt->fetch();
     }
 
-    public function getByTags($tags) {
+    public function getByTags($tags)
+    {
         $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE tags = ?");
         $stmt->execute([$tags]);
 
         return $stmt->fetch();
     }
-    
-    public function getByDescription($description){
+
+    public function getByDescription($description)
+    {
         $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE description = ?");
         $stmt->execute([$description]);
 
         return $stmt->fetch();
     }
 
-    
-    public function getByImages($img) {
+
+    public function getByImages($img)
+    {
         $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE imgs = ?");
         $stmt->execute([$img]);
 
         return $stmt->fetch();
     }
-    
-    public function getByDevs($devName){
+
+    public function getByDevs($devName)
+    {
         $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE devName = ?");
         $stmt->execute([$devName]);
 
         return $stmt->fetch();
     }
 
-    
-    public function getPriceRange($filters) {
+
+    public function getPriceRange($filters)
+    {
         $minPrice = intval($filters['minprice']);
         $maxPrice = intval($filters['maxprice']) === 0 ? 999999 : $filters['maxprice'];
-    
+
         return "$minPrice, $maxPrice";
     }
 
@@ -72,14 +79,16 @@ class GameModel extends BaseModel {
 
     //Other Cruds
 
-    public function addGame($game) {
+    public function addGame($game)
+    {
         $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE game = ?");
         $stmt->execute([$game]);
 
         return $stmt->fetch();
     }
-    
-    public function updateGame($id,$Game){
+
+    public function updateGame($id, $Game)
+    {
         $formattedData = $this->formatData($Game);
         $pairs = implode(' = ?, ', array_keys($formattedData)) . ' = ?';
         $formattedData['id'] = $id;
@@ -93,7 +102,8 @@ class GameModel extends BaseModel {
         }
     }
 
-    public function deleteGame($id){
+    public function deleteGame($id)
+    {
         $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE id = ?");
         $stmt->execute([$id]);
 
@@ -128,5 +138,5 @@ class GameModel extends BaseModel {
     // }
 
 
-    
+
 }

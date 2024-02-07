@@ -1,29 +1,38 @@
 <?php
-
+require_once $path . '/models/token.php';
 require_once 'vendor/autoload.php';
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
-class TokenManager
+class TokensController
 {
     private static $instance = null;
 
-    private const ACCESS_TIME = 3600;
-    private const REFRESH_TIME = 604800;
+    // COLUMNS
+    public const USER_ID = 'user_id';
+    public const EXPIRY_DATE = 'expiry_date';
+    public const REVOCATION_DATE = 'revocation_date';
 
-    private $access_key;        // Access: Permission for secure API calls
-    private $refresh_key;      // Refresh: Authentified
+    // TIMEOUT
+    private const ACCESS_TIMEOUT = 3600;
+    private const REFRESH_TIMEOUT = 604800;
+
+    private $model;
+    private $access_key;        // Permission for secure API calls
+    private $refresh_key;      // Authentified for access keys issuing
     private $algorithm;
     private $issuer;
     private $audience;
 
     // TODO: Create revocated tokens list. Tokens list stay in memory somewhere.
 
-    //-- CONSTRUCTOR
+    // CONSTRUCTOR
 
-    private function __construct($env)
+    private function __construct($pdo, $env)
     {
+        $this->model = new RevokedTokenModel($pdo);
+
         $this->access_key = $env->access_key;
         $this->refresh_key = $env->refresh_key;
         $this->algorithm = $env->algorithm;
@@ -31,16 +40,16 @@ class TokenManager
         $this->audience = $env->audience;
     }
 
-    public static function getInstance($env)
+    public static function getInstance($pdo, $env)
     {
         if (self::$instance == null) {
-            self::$instance = new TokenManager($env);
+            self::$instance = new TokensController($pdo, $env);
         }
 
         return self::$instance;
     }
 
-    //-- TOKEN GENERATION
+    // GENERATION
 
     private function generateToken($user_id, $key, $expiration_time, $other_content = [])
     {
@@ -59,12 +68,12 @@ class TokenManager
 
     public function generateAccessToken($user)
     {
-        return $this->generateToken($user['id'], $this->access_key, self::ACCESS_TIME);
+        return $this->generateToken($user['id'], $this->access_key, self::ACCESS_TIMEOUT);
     }
 
     public function generateRefreshToken($user)
     {
-        return $this->generateToken($user['id'], $this->refresh_key, self::REFRESH_TIME);
+        return $this->generateToken($user['id'], $this->refresh_key, self::REFRESH_TIMEOUT);
     }
 
     public function generateTokens($user)
@@ -85,7 +94,7 @@ class TokenManager
         return false;
     }
 
-    //- TOKEN VALIDATION
+    // VALIDATION
 
     private function validateToken($token, $key)
     {
@@ -114,5 +123,12 @@ class TokenManager
 
         return $this->validateAccessToken($access_token) &&
             $this->validateRefreshToken($refresh_token);
+    }
+
+    // REVOCATION MANAGEMENT
+
+    public function deleteExpiredTokens()
+    {
+        return $this->model->deleteExpiredTokens();
     }
 }

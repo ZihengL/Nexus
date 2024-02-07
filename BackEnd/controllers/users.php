@@ -109,15 +109,4 @@ class UsersController
     {
         return $this->token_manager->validateRefreshToken($refresh_token);
     }
-
-    // public function isAuthenticated($token)
-    // {
-    //     if (session_status() !== PHP_SESSION_ACTIVE) {
-    //         session_start();
-    //     }
-
-    //     return  isset($_SESSION['user']) &&
-    //             isset($_SESSION['authentified']) && 
-    //             $_SESSION['authentified'];
-    // }
 }
