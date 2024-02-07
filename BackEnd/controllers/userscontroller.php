@@ -39,9 +39,9 @@ class UsersController
         return $this->model->get($this->lastName, $lastname);
     }
 
-    public function applyFiltersAndSorting($sql, $filters, $sorting)
+    public function applyFiltersAndSorting( $filters, $sorting){
+        return $this->model->applyFiltersAndSorting($filters , $sorting );
     }
-
     
 
     // ONLY FOR TESTING, DELETE IN FUTURE

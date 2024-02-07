@@ -67,15 +67,22 @@ printer(implode(' // ', $user), "implode test");
 // Base SQL before applying filters and sorting
 $sql = "SELECT * FROM user";
 
-// Define filters and sorting criteria
+// Define filters and sorting criteria for test
 $filters = [
-    'name' => "john_doe"
+    'user' => "john_doe"
 ];
 $sorting = [
-    'phoneNumber' => 'ASC'
+    'phoneNumber' => 'ASC',
+    'picture' => 'ASC'
 ];
 
 // Apply filters and sorting to the base SQL
-$result = $centralController->usersController->applyFiltersAndSorting($sql, $filters, $sorting);
-
+$result = $centralController->usersController->applyFiltersAndSorting( $filters, $sorting);
+echo "<br>Final SQL <br>\n";
+// print_r($result);
+foreach ($result as $item) {
+    // echo "<br>". $item. " <br>\n";
+    print_r($item);
+    echo "<br><br>";
+}
 // TODO: Creating and reading backup of database as part of api launch routine.

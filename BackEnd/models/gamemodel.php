@@ -5,7 +5,7 @@ require_once "$path/models/basemodel.php";
 
 class GameModel extends BaseModel {
 
-  
+    protected $tableName = "games";
 
 
     public function __construct($pdo) {

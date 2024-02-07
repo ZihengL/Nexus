@@ -14,7 +14,7 @@ class GamesController {
     protected $releaseDate = "releaseDate"; 
     protected $description = "description";
     protected $stripeID = "stripeID";
-    protected $tableName = "games";
+  
 
 
     public function __construct($pdo) {

@@ -4,7 +4,6 @@ require_once "$path/models/basemodel.php";
 
 class UserModel extends BaseModel
 {
-
     // + Construct()
     // + getByEmail(String): User
     // + getByName(String): [User]
@@ -57,6 +56,10 @@ class UserModel extends BaseModel
     }
 
     //other cruds
+
+    public function applyFiltersAndSorting( $filters , $sorting){
+        return parent::applyFiltersAndSorting($filters , $sorting );
+    }
 
     public function updateUser($id, $data)
     {
