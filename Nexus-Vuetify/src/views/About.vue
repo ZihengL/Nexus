@@ -15,30 +15,19 @@
     <!-- Contenu changeant en fonction de la navigation -->
     <div class="content1">
       <div v-if="selectedTab === 'Zi'">
-        <ZiH>
-          <p>Je suis Zi Heng Liu, ingénieur en informatique et je suis chargé du développement frontend de l'application.
-            Pour plus d'informations </p>
-        </ZiH>
+        <Zi/>
       </div>
       <div v-else-if="selectedTab === 'Rebecca'">
-        <RebeccaM>
-          <p>Reb</p>
-        </RebeccaM>
+        <Rebecca/>
       </div>
       <div v-else-if="selectedTab === 'Thomas'">
-        <ThomasP>
-          <p>thom</p>
-        </ThomasP>
+        <Thomas/>
       </div>
       <div v-else-if="selectedTab === 'Debraise'">
-        <DebraiseM>
-          <p>debraise</p>
-        </DebraiseM>
+        <Debraise/>
       </div>
       <div v-else-if="selectedTab === 'Amazigh'">
-        <AmazighM>
-          <p>amazon</p>
-        </AmazighM>
+        <Amazigh/>
       </div>
     </div>
 
@@ -46,51 +35,71 @@
 </template>
 
 <script scoped>
-  import AmazighM from "../components/Devs/Amazigh.vue";
-  import DebraiseM from "../components/Devs/Debraise.vue";
-  import RebeccaM from "../components/Devs/Rebecca.vue";
-  import ThomasP from '../components/Devs/Thomas.vue';
-  import ZiH from '../components/Devs/Zi.vue';
+  import Amazigh from "../components/Devs/Amazigh.vue";
+  import Debraise from "../components/Devs/Debraise.vue";
+  import Rebecca from "../components/Devs/Rebecca.vue";
+  import Thomas from '../components/Devs/Thomas.vue';
+  import Zi from '../components/Devs/Zi.vue';
   export default {
-
+    components:{
+      Zi,
+      Thomas, 
+      Amazigh, 
+      Debraise, 
+      Rebecca
+  },
     data() {
       return {
         selectedTab: '',
-        ZiH,
-        ThomasP, AmazighM, DebraiseM, RebeccaM
+       
       }
     }
   }
-</script>
-<style lang="scss">
-  .about {
-    /* Style pour la navigation */
-    .sidebar {
-      width: 200px;
-      height: 100%;
-      background-color: #f0f0f0;
-      float: left;
+</script><style lang="scss">
+.about {
+  display: flex; /* Use flex layout for the .about container */
+  flex-direction: column; /* Stack sidebar and content vertically */
+  align-items: center; /* Center align children (sidebar) */
+  
+  .sidebar {
+    width: 100%; 
 
-      ul {
-        list-style-type: none;
-        padding: 0;
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0 auto; /* Center the list in the sidebar */
+      display: flex; /* Use flexbox for horizontal layout */
+      justify-content: space-between; /* Distribute space evenly between items */
+      gap: 20px; /* Space between items */
+      width: fit-content; /* Adjust width to fit its content */
+      
+      li {
+        margin-top: 20px;
+        padding: 10px 20px; /* Increase padding for a more button-like appearance */
+        cursor: pointer;
+        border: 2px solid #ccc; /* Solid border for a button-like look */
+        border-radius: 5px; /* Rounded corners */
+        background-color: #eee; /* Light background color */
+        transition: background-color 0.3s, border-color 0.3s; /* Smooth transition for hover effect */
 
-        li {
-          padding: 10px;
-          cursor: pointer;
-          border-bottom: 1px solid #ccc;
-        }
-
-        li:hover {
-          background-color: #ddd;
+        &:hover {
+          background-color: #ddd; /* Darker background on hover */
+          border-color: #999; /* Darker border on hover */
         }
       }
     }
-    .content1 {
-      margin-left: 220px;
-      padding: 20px;
-    }
   }
+
+  .content1 {
+    margin-top: 20px;
+    padding: 20px;
+    width: 100%; /* Ensure content width matches sidebar */
+  }
+}
 </style>
+
+
+
+
 
 

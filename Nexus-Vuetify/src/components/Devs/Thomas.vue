@@ -1,6 +1,6 @@
 <template>
-  <slot>
-
+<slot>
+  <h1>bla</h1>
   </slot>
   </template>
 <style>
