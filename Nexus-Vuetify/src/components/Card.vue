@@ -1,76 +1,77 @@
 <template>
-  <v-card class="transparent-background pa-4">
-    <v-text-field
-      v-model="searchQuery"
-      append-icon="mdi-magnify"
-      label="Search Games"
-      single-line
-      hide-details
-      @click:append="onSearchClick"
-    ></v-text-field>
-  </v-card>
+  <div id="Card">
+    <v-card class="transparent-background pa-4">
+      <v-text-field
+        v-model="searchQuery"
+        append-icon="mdi-magnify"
+        label="Search Games"
+        single-line
+        hide-details
+        @click:append="onSearchClick"
+      ></v-text-field>
+    </v-card>
+    <!-- Filter Section -->
+    <v-card class="pa-3">
+      <v-container>
+        <v-row>
+          <!-- Genres -->
+          <v-col cols="12" md="3" class="pa-2">
+            <v-select
+              v-model="filters.genre"
+              :items="genres"
+              label="Genre"
+              multiple
+              outlined
+              dense
+              class="no-border-bottom"
+            ></v-select>
+          </v-col>
+          <!-- Publishers/Developers -->
+          <v-col cols="12" md="3" class="pa-2">
+            <v-select
+              v-model="filters.publisher"
+              :items="publishers"
+              label="studio de developpement"
+              multiple
+              outlined
+              dense
+              class="no-border-bottom"
+            ></v-select>
+          </v-col>
+          <!-- Apply Filter Button -->
+          <v-col cols="12" md="3" class="d-flex align-center pa-2">
+            <v-btn color="primary" @click="applyFilters" class="ma-auto violet">Apply Filters</v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-card>
 
-  <!-- Filter Section -->
-  <v-card class="pa-3">
-    <v-container>
+    <v-container fluid class="card">
       <v-row>
-        <!-- Genres -->
-        <v-col cols="12" md="3" class="pa-2">
-          <v-select
-            v-model="filters.genre"
-            :items="genres"
-            label="Genre"
-            multiple
-            outlined
-            dense
-            class="no-border-bottom"
-          ></v-select>
-        </v-col>
-        <!-- Publishers/Developers -->
-        <v-col cols="12" md="3" class="pa-2">
-          <v-select
-            v-model="filters.publisher"
-            :items="publishers"
-            label="studio de developpement"
-            multiple
-            outlined
-            dense
-            class="no-border-bottom"
-          ></v-select>
-        </v-col>
-        <!-- Apply Filter Button -->
-        <v-col cols="12" md="3" class="d-flex align-center pa-2">
-          <v-btn color="primary" @click="applyFilters" class="ma-auto violet">Apply Filters</v-btn>
+        <v-col
+          v-for="(game, index) in filteredGames"
+          :key="index"
+          cols="3"
+          sm="6"
+          md="4"
+          lg="3"
+        >
+          <router-link to="/Game" class="unJeu">
+            <v-img :src="game.image" aspect-ratio="1.7">
+              <v-row class="fill-height ma-0" align="end" justify="start">
+                <span class="discount" v-if="game.discount">{{ game.discount }}</span>
+              </v-row>
+            </v-img>
+            <v-card-title>{{ game.title }}</v-card-title>
+            <v-card-subtitle v-if="game.subtitle">{{ game.subtitle }}</v-card-subtitle>
+            <v-card-text>
+              <div class="price">{{ game.price }}</div>
+            </v-card-text>
+          </router-link>
         </v-col>
       </v-row>
     </v-container>
-  </v-card>
-
-  <v-container fluid class="card">
-    <v-row>
-      <v-col
-        v-for="(game, index) in filteredGames"
-        :key="index"
-        cols="3"
-        sm="6"
-        md="4"
-        lg="3"
-      >
-        <v-card class="unJeu">
-          <v-img :src="game.image" aspect-ratio="1.7">
-            <v-row class="fill-height ma-0" align="end" justify="start">
-              <span class="discount" v-if="game.discount">{{ game.discount }}</span>
-            </v-row>
-          </v-img>
-          <v-card-title>{{ game.title }}</v-card-title>
-          <v-card-subtitle v-if="game.subtitle">{{ game.subtitle }}</v-card-subtitle>
-          <v-card-text>
-            <div class="price">{{ game.price }}</div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+  </div>
 </template>
 
 
@@ -193,5 +194,14 @@
 .v-select.no-border-bottom .v-input__slot:before {
   background-color: transparent !important;
   border-bottom: none !important;
+}
+.unJeu {
+  text-decoration: none;
+  color: black;
+  display: block;
+  background-color: var(--light-gray-trans);
+}
+.unJeu:hover {
+  background-color: rgba(128, 128, 128, 0.083);
 }
 </style>

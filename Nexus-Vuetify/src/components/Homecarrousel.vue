@@ -37,4 +37,4 @@
 </template>
 <script src="../JS/carrouselScript.js">
 </script>
-<style src="../styles/CarousselStyle.scss" scoped></style>
+<style src="../styles/HomeCarousselStyle.scss" scoped></style>
