@@ -7,10 +7,9 @@
       <h1>Amazigh</h1>
       <h2>Développeur Front-End</h2>
       <p>Développeur web junior, qui s'intéresse beaucoup à la creation de site innovant.
-        <br>
         s'intéresse beaucoup à l'intéraction client.
       </p>
-      <a href="https://github.com/T3NS31" target="_blank" class="info-link">Visitez mon portfolio</a>
+      <a href="https://github.com/AmazighMaloum" target="_blank" class="info-link">Visitez mon portfolio</a>
     </div>
   </div>
 </template>
@@ -47,7 +46,7 @@
 
 .profile {
   flex-shrink: 0;
-  animation: slideInLeft 2s ease-out;
+  animation: slideInLeft 1.5s ease-out;
 }
 
 .profile img {
@@ -62,22 +61,24 @@
 }
 
 .info h1, .info h2, .info p {
-  animation: fadeIn 1s ease-out;
-  animation: slideInLeft 2s ease-out;
+  animation: fadeIn 1.5s ease-out;
+  animation: slideInLeft 1.5s ease-out;
 }
 
 .info h1 {
   color: #333; 
-  font-size: 2em; 
+  font-size: 2.5em; 
+  margin-bottom: 2%;
 }
 
 .info h2 {
   color: #666; 
   font-size: 1.5em; 
+  margin-bottom: 2%;
 }
 
 .info p {
-  font-size: 40px;
+  font-size: 30px;
   color: #999; 
 }
 
