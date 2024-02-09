@@ -26,6 +26,7 @@
 
         </div>
       </div>
+      <div style="display: flex; margin-top: 40px;">
       <div class="laListeJeu">
         <h2>Liste de jeu</h2>
         <liste-de-jeu />
@@ -34,6 +35,19 @@
         <liste-de-jeu />
         <liste-de-jeu />
         <liste-de-jeu />
+
+        <div
+          style="flex-basis: 25%;padding: 20px;border-radius: 30px;box-shadow: 10px 10px 20px black;margin-left: 30px;">
+          <h2> liste amis</h2>
+          <amis />
+          <amis />
+          <amis />
+          <amis />
+          <amis />
+          <amis />
+          <amis />
+          <amis />
+        </div>
       </div>
     </div>
 
@@ -45,6 +59,9 @@
 import ListeDeJeu from './ListeDeJeu.vue';
   const props = defineProps(['isHimself']);
   console.log(props.isHimself);
+
+import Amis from './amis.vue';
+
 </script>
 
 <style src="../styles/ProfileStyle.scss"></style>
