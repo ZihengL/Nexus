@@ -119,7 +119,7 @@ $filters = [
     'developperID' => '4',
     ];
 $sorting = [
-    'releaseDate' => false
+    'releaseDate' => false  //most recent to oldes date
 ];
 
 $results_2 = $centralController->gamesController->applyFiltersAndSorting($filters, $sorting);
