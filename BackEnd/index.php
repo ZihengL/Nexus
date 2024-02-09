@@ -1,176 +1,121 @@
 <?php
+function printer($content, $title = null)
+{
+    $result = $title ?? "<hr><h5> $title </h5><br>";
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    // Return only the headers and not the content
-    // Only allow CORS if we're doing a GET - this is a preflight request
-    header('Access-Control-Allow-Origin: *');
-    header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
-    header('Access-Control-Allow-Headers: Content-Type, Authorization');
-    header('Access-Control-Allow-Credentials: true');
-    exit;
+    if (is_array($content)) {
+        $is_dict = array_keys($content) !== range(0, count($content) - 1);
+
+        foreach ($content as $element => $value) {
+            if ($is_dict) {
+                $result .= "$element: <b>$value</b>";
+            } else {
+                $result .= "$element <br>";
+            }
+        }
+    } else {
+        $result .= $content;
+    }
+
+    return $result . '<br>';
 }
 
-
-header('Access-Control-Allow-Origin: *');
-// header('Access-Control-Allow-Origin: http://localhost:3001');
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
-header('Access-Control-Allow-Credentials: true');
-header('Content-Type: application/json');
-header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
-header('Pragma: no-cache');
-
-
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Global vars
+// PATHS
 global $path;
-global $baseURL;
-global $centralController;
-$dbUsername = "nexus";
-$dbPassword = "123";
+global $webpath;
+$path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd/';
+$webpath = '/Nexus/BackEnd/tests/';
 
-$path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd';
-$baseURL = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]/Nexus";
+// CONTROLLERS
+require_once $path . 'controllers/centralcontroller.php';
 
-// $path = "$_SERVER[DOCUMENT_ROOT]/zi_htdocs/RichRicasso";
-// $baseURL = $baseURL = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]/zi_htdocs/RichRicasso";
+global $central_controller;
+$central_controller = CentralController::getInstance();
 
-// Pathing and URL
-// require_once "$path/transactions/routines.php";
-require_once "$path/controllers/database.php";
-require_once "$path/controllers/centralcontroller.php";
+$users_controller = $central_controller->users_controller;
+$games_controller = $central_controller->games_controller;
 
+// MANAGERS
+$token_manager = $central_controller->token_manager;
+$database_manager = $central_controller->database_manager;
+?>
 
-// centralController
-$centralController = CentralController::getInstance($dbUsername, $dbPassword);
+<!DOCTYPE html>
+<html lang="fr">
 
-// METHOD & URI
-$method = $_SERVER["REQUEST_METHOD"];
-$uri = $_SERVER["REQUEST_URI"];
-$explodedURI = explode('/', $uri);
-$endURI = end($explodedURI);
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS - Tests</title>
+    <style>
+        body {
+            margin: auto;
+            vertical-align: center;
+            text-align: center;
+            width: 50%;
+            padding: 10%;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
 
-$result = null;
+        ul {
+            margin: auto 200px;
+            list-style-type: none;
+            background-color: #C6CF9B;
+            border-radius: 5px;
+            padding: 0;
+            padding-top: 10px;
+        }
 
-if ($method === 'GET') {
-    switch ($endURI) {
-        case 'getAllProducts':
-            $result = $centralController->gamesController->getAllProducts();
-            break;
-        default:
-            $result = [];
-    }
-} else {
+        li {
+            display: inline-block;
+            width: 200px;
+            height: 50px;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
 
-    $rawData = file_get_contents('php://input');
-    $decodedData = json_decode($rawData, true);
+        li a {
+            text-decoration: none;
+            color: #333;
+        }
 
-    switch ($endURI) {
-        case 'filterGames':
-            $result = $centralController->gamesController->filter($decodedData, []);
-            break;
-        case 'getGame':
-            $result = $centralController->gamesController->getProductById($decodedData);
-            break;
-        case 'getUser':
-            $result = $centralController->usersController->getUserById($decodedData);
-            break;
-        case 'updateUser':
-            if (json_last_error() === JSON_ERROR_NONE) {
-                $userId = $decodedData['id'];
-                $password = $decodedData['password'];
+        button {
+            background-color: #11235A;
+            width: 200px;
+            height: 50px;
+            color: #F6ECA9;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-                $result = $centralController->usersController->updateUser($userId, ['password' => $password]);
+        button:hover {
+            background-color: #596FB7;
+            color: #C6CF9B;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Démos Back-End</h2>
+    <ul>
+        <?php
+        $files = new DirectoryIterator($path . '/tests/');
+
+        foreach ($files as $file) {
+            if ($file->isDot()) {
+                continue;
             }
-            break;
-        case 'login':
-            if (json_last_error() === JSON_ERROR_NONE) {
-                $email = $decodedData['email'];
-                $password = $decodedData['password'];
 
-                $result = $centralController->usersController->login($email, $password);
-            }
-            break;
-        case 'logout':
-            $centralController->usersController->logout();
-            break;
-        case 'register':
-            $result = $centralController->usersController->createUser($decodedData);
-            break;
-        case 'deleteUser':
-            $result = $centralController->usersController->deleteUsers($decodedData);
-            break;
-        case 'deleteGame':
-            $result = $centralController->gamesController->deleteProduct($decodedData);
-            break;
-            // case 'check':
-            //     require_once "$path/transactions/checkout.php";
-            //     $centralController->addToCart('prod_PBRpRO0LQiFGuL', 2);
+            $name = $file->getFilename();
+            $name = substr($file, 0, strpos($name, '.'));
+            $file_path = $webpath . $file->getFilename();
 
-            //     $result = require_once "$path/transactions/checkout.php";
-            //     break;
-            // case 'create_payment_intent':
-            //     $decodedData = json_decode(file_get_contents('php://input'), true);
-            //     $amount = $decodedData['amount']; // amount should be sent from the client
+            echo "<li><a href='$file_path'><button>$name</button></a></li><br>";
+        }
+        ?>
+    </ul>
+</body>
 
-            //     try {
-            //         $paymentIntent = \Stripe\PaymentIntent::create([
-            //             'amount' => $amount,
-            //             'currency' => 'usd',
-            //             // Add other payment intent configurations if needed
-            //         ]);
-            //         $result = ['clientSecret' => $paymentIntent->client_secret];
-            //     } catch (\Stripe\Exception\ApiErrorException $e) {
-            //         // Handle the exception
-            //         $result = ['error' => $e->getMessage()];
-            //     }
-            //     break;
-            // case 'checkout2':
-            //     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-            //         require __DIR__ . '/vendor/autoload.php';
-            //         // require_once 'vendor/autoload.php';
-            //         \Stripe\Stripe::setApiKey('sk_test_51ONc07CVit0Y8pd9Dk5GcWhGU972X4gpcKHnrzFNzWsPRiKV1nkCWSgqgY2vzgSmOoKxMpyIvkWDAJa00FXkqTC000lqaHBgF6');
-
-            //         $stripe_secret_key = "sk_test_51ONc07CVit0Y8pd9Dk5GcWhGU972X4gpcKHnrzFNzWsPRiKV1nkCWSgqgY2vzgSmOoKxMpyIvkWDAJa00FXkqTC000lqaHBgF6";
-
-            //         // print("hello")
-            //         \Stripe\Stripe::setApiKey($stripe_secret_key);
-
-            //         $checkout_session = \Stripe\Checkout\Session::create([
-            //             "mode" => "payment",
-            //             "success_url" => "http://localhost/success.php",
-            //             "cancel_url" => "http://localhost/index.php",
-            //             "locale" => "auto",
-            //             "line_items" => [
-            //                 [
-            //                     "quantity" => 1,
-            //                     "price_data" => [
-            //                         "currency" => "usd",
-            //                         "unit_amount" => $decodedData['amount'],
-            //                         "product_data" => [
-            //                             "name" => "Rich Ricasso Clothes"
-            //                         ]
-            //                     ]
-            //                 ]
-            //             ]
-            //         ]);
-
-            //         http_response_code(303);
-            //         // print("Location: " . $checkout_session->url);
-            //         // echo header("Location: " . $checkout_session->url);
-            //         echo json_encode(['checkoutUrl' => $checkout_session->url]);
-            //         exit;
-            //     }
-            //     break;
-        default:
-            $result = [];
-    }
-}
-
-if ($result) {
-    echo json_encode($result);
-}
+</html>

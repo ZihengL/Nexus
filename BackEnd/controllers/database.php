@@ -4,7 +4,7 @@ class DatabaseManager
 {
     private static $instance = null;
 
-    private const BACKUPS = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd/remote/backups/';
+    private const BACKUPS = '/Nexus/BackEnd/remote/backups/';
 
     private $host;
     private $database;
@@ -14,22 +14,27 @@ class DatabaseManager
 
     // CONSTRUCTOR
 
-    private function __construct($env)
+    private function __construct()
     {
-        $this->host = $env->host;
-        $this->database = $env->database;
-        $this->username = $env->username;
-        $this->password = $env->password;
+        // $this->host = $env->host;
+        // $this->database = $env->database;
+        // $this->username = $env->username;
+        // $this->password = $env->password;
+
+        $this->host = $_ENV['DB_HOST'];
+        $this->database = $_ENV['DB_NAME'];
+        $this->username = $_ENV['DB_USER'];
+        $this->password = $_ENV['DB_PASS'];
 
         $connection_string = 'mysql:host=' . $this->host . ';dbname=' . $this->database;
         $this->pdo = new PDO($connection_string, $this->username, $this->password);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
-    public static function getInstance($env)
+    public static function getInstance()
     {
         if (self::$instance == null) {
-            self::$instance = new DatabaseManager($env);
+            self::$instance = new DatabaseManager();
         }
 
         return self::$instance;
@@ -37,11 +42,16 @@ class DatabaseManager
 
     // BACKUP
 
+    public static function getBackupPath()
+    {
+        return $_SERVER['DOCUMENT_ROOT'] . self::BACKUPS;
+    }
+
     public function backup($filename = null, $max = 5)
     {
         $filename = $filename ?? time();
 
-        $backup_files = array_map('realpath', glob(self::BACKUPS . '*'));
+        $backup_files = array_map('realpath', glob(self::getBackupPath() . '*'));
         usort($backup_files, function ($a, $b) {
             return filemtime($a) <=> filemtime($b);
         });

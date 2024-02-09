@@ -1,6 +1,6 @@
 <?php
 require_once $path . '/models/token.php';
-require_once 'vendor/autoload.php';
+require_once $path . '/vendor/autoload.php';
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -16,7 +16,7 @@ class TokensController
 
     // TIMEOUT
     private const ACCESS_TIMEOUT = 3600;
-    private const REFRESH_TIMEOUT = 604800;
+    private const REFRESH_TIMEOUT = 86400;
 
     private $model;
     private $access_key;        // Permission for secure API calls
@@ -29,21 +29,21 @@ class TokensController
 
     // CONSTRUCTOR
 
-    private function __construct($pdo, $env)
+    private function __construct($pdo)
     {
         $this->model = new RevokedTokenModel($pdo);
 
-        $this->access_key = $env->access_key;
-        $this->refresh_key = $env->refresh_key;
-        $this->algorithm = $env->algorithm;
-        $this->issuer = $env->issuer;
-        $this->audience = $env->audience;
+        $this->access_key = $_ENV['JWT_ACCESS_KEY'];
+        $this->refresh_key = $_ENV['JWT_REFRESH_KEY'];
+        $this->algorithm = $_ENV['JWT_ALGORITHM'];
+        $this->issuer = $_ENV['JWT_ISSUER'];
+        $this->audience = $_ENV['JWT_AUDIENCE'];
     }
 
-    public static function getInstance($pdo, $env)
+    public static function getInstance($pdo)
     {
         if (self::$instance == null) {
-            self::$instance = new TokensController($pdo, $env);
+            self::$instance = new TokensController($pdo);
         }
 
         return self::$instance;
@@ -60,50 +60,63 @@ class TokensController
             'aud' => $this->audience,
             'iat' => $current_time, // Issued at
             'exp' => $current_time + $expiration_time, // Expiration time
+            // 'exp' => $current_time + 5,
             'sub' => $user_id
         ];
 
         return JWT::encode($payload, $key, $this->algorithm);
     }
 
-    public function generateAccessToken($user)
+    public function generateAccessToken($refresh_token)
     {
-        return $this->generateToken($user['id'], $this->access_key, self::ACCESS_TIMEOUT);
+        if ($this->validateRefreshToken($refresh_token)) {
+            return $this->generateToken($refresh_token->sub, $this->access_key, self::ACCESS_TIMEOUT);
+        }
     }
 
-    public function generateRefreshToken($user)
+    public function generateRefreshToken($user_id)
     {
-        return $this->generateToken($user['id'], $this->refresh_key, self::REFRESH_TIMEOUT);
+        return $this->generateToken($user_id, $this->refresh_key, self::REFRESH_TIMEOUT);
     }
 
-    public function generateTokens($user)
+    public function generateTokenPair($user_id)
     {
-        $access_token = $this->generateAccessToken($user);
-        $refresh_token = $this->generateRefreshToken($user);
+        $refresh_token = $this->generateRefreshToken($user_id);
+        $access_token = $this->generateAccessToken($refresh_token);
 
         return ['access_token' => $access_token, 'refresh_token' => $refresh_token];
     }
 
     // Valid Refresh token ? new Access token : error
-    public function refreshAccessToken($refresh_token)
-    {
-        if ($this->validateRefreshToken($refresh_token)) {
-            return $this->generateAccessToken($refresh_token->sub);
-        }
+    // public function refreshAccessToken($refresh_token)
+    // {
+    //     if ($this->validateRefreshToken($refresh_token)) {
+    //         return $this->generateAccessToken($refresh_token);
+    //     }
 
-        return false;
-    }
+    //     return false;
+    // }
 
     // VALIDATION
 
     private function validateToken($token, $key)
     {
+        if ($this->isRevoked($token)) return false;
+
         try {
-            return JWT::decode($token, new Key($key, $this->algorithm));
+            return (array) JWT::decode($token, new Key($key, $this->algorithm));
         } catch (Exception $e) {
             // TODO: IMPLEMENT ERROR HANDLING
-            return null;
+            return false;
         }
+    }
+
+    public function isExpired($token, $isRefresh = false)
+    {
+        $decoded = $this->validateToken($token, $isRefresh ? $this->refresh_key : $this->access_key);
+
+
+        return !$decoded || $decoded['exp'] < time();
     }
 
     public function validateAccessToken($access_token)
@@ -125,10 +138,36 @@ class TokensController
             $this->validateRefreshToken($refresh_token);
     }
 
-    // REVOCATION MANAGEMENT
+    // DATABASE
+
+    public function getAll()
+    {
+        return $this->model->getAll();
+    }
+
+    public function isRevoked($refresh_token)
+    {
+        return $this->model->getById($refresh_token);
+    }
+
+    public function revokeToken($refresh_token)
+    {
+        $decoded = $this->validateRefreshToken($refresh_token);
+
+        if ($decoded) {
+            $decoded['id'] = $refresh_token;
+            $decoded['rev'] = time();
+
+            return $this->model->create($decoded);
+        }
+
+        return false;
+    }
 
     public function deleteExpiredTokens()
     {
         return $this->model->deleteExpiredTokens();
     }
+
+    // GETTERS
 }
