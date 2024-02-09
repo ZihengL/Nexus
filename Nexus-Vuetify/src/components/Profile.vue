@@ -1,57 +1,49 @@
 <template>
   <!-- Created By CodingNepal -->
-  <div class="containerProfile  glass">
-    <div class="wrapper">
-      <div class="description">
-        <div :class="isHimself ? 'imgContainerFull' : 'imgContainer'">
-          <img src="../assets/Rich_Ricasso.png" alt="John" class="imgProfil" />
-        </div>
-
-        <div class="champUtilisateur">
-          <h3>Nom Prenom</h3>
-          <br>
-          <p>description</p>
-        </div>
-        <div class="button"  v-show="isHimself">
-          <router-link to="/Profile" class="router glow">
-            <v-icon icon="mdi-account-circle" />
-            <span class="link-btn">Gerer son profil</span>
-          </router-link>
-          <div class="fieldBtn">
-            <div class="btn-layer"></div>
-            <v-btn density="default" class="submit glow" @click="$emit('showLogin')">
-              Se deconnecter
-            </v-btn>
+  <div class="allP">
+    <div class="containerProfile  glass">
+      <div class="wrapper">
+        <div class="description">
+          <div :class="isHimself ? 'imgContainerFull' : 'imgContainer'">
+            <img src="../assets/Rich_Ricasso.png" alt="John" class="imgProfil" />
           </div>
-
+          <div class="champUtilisateur">
+            <h3>Nom Prenom</h3>
+            <br>
+            <p>description</p>
+          </div>
+          <div class="button"  v-show="isHimself">
+            <router-link to="/Profile" class="router glow">
+              <v-icon icon="mdi-account-circle" />
+              <span class="link-btn">Gerer son profil</span>
+            </router-link>
+            <div class="fieldBtn">
+              <div class="btn-layer"></div>
+              <v-btn density="default" class="submit glow" @click="$emit('showLogin')">
+                Se deconnecter
+              </v-btn>
+            </div>
+          </div>
         </div>
-      </div>
-      <div style="display: flex; margin-top: 40px;">
-        <div class="laListeJeu">
-          <h2>Liste de jeu</h2>
-          <liste-de-jeu />
-          <liste-de-jeu />
-          <liste-de-jeu />
-          <liste-de-jeu />
-          <liste-de-jeu />
-          <liste-de-jeu />
-        </div>
-
-        <div
-          style="flex-basis: 25%;padding: 20px;border-radius: 30px;box-shadow: 10px 10px 20px black;margin-left: 30px;">
-          <h2> liste amis</h2>
-          <amis />
-          <amis />
-          <amis />
-          <amis />
-          <amis />
-          <amis />
-          <amis />
-          <amis />
+        <div style="display: flex; margin-top: 40px;">
+          <div class="laListeJeu">
+            <h2>Liste de jeu</h2>
+            <liste-de-jeu />
+            <liste-de-jeu />
+            <liste-de-jeu />
+            <liste-de-jeu />
+            <liste-de-jeu />
+            <liste-de-jeu />
+          </div>
         </div>
       </div>
     </div>
-
+    <div style="flex-basis: 25%;padding: 20px;box-shadow: 10px 10px 20px black;margin-left: 30px;" class="listeF glass">
+        <h2> liste amis</h2>
+        <amis />
+        <amis />
+        <amis />
+      </div>
   </div>
 </template>
 

@@ -34,7 +34,7 @@
           <div class="fieldBtn">
             <div class="btn-layer"></div>
             <v-btn density="default" class="submit glow" @click="toggleProfile">
-              S'inscrire
+              Modifier
             </v-btn>
           </div>
         </form>
