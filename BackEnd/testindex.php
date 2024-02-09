@@ -1,28 +1,28 @@
 <?php
 
-function printer($content, $index = 0, $title = 'ARRAY START')
-{
-    if (is_array($content)) {
-        echo '<hr><h5>' . $title . '</h5><br>';
+// function printer($content, $index = 0, $title = 'ARRAY START')
+// {
+//     if (is_array($content)) {
+//         echo '<hr><h5>' . $title . '</h5><br>';
 
-        $index = 0;
-        if (array_keys($content) !== range(0, count($content) - 1)) {
-            foreach ($content as $element => $value) {
-                printer("$element: $value", $index);
-                $index++;
-            }
-        } else {
-            foreach ($content as $element) {
-                printer($element, $index);
-                $index++;
-            }
-        }
+//         $index = 0;
+//         if (array_keys($content) !== range(0, count($content) - 1)) {
+//             foreach ($content as $element => $value) {
+//                 printer("$element: $value", $index);
+//                 $index++;
+//             }
+//         } else {
+//             foreach ($content as $element) {
+//                 printer($element, $index);
+//                 $index++;
+//             }
+//         }
 
-        echo '<br>';
-    } else {
-        echo "$index - $content<br>";
-    }
-}
+//         echo '<br>';
+//     } else {
+//         echo "$index - $content<br>";
+//     }
+// }
 
 global $path;
 $path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd';
@@ -35,26 +35,26 @@ $databaseManager = DatabaseManager::getInstance();
 $centralController = CentralController::getInstance();
 
 
-// ----- Request URL & Routing
-$requestUrl = $_GET['url'] ?? '';
+// // ----- Request URL & Routing
+// $requestUrl = $_GET['url'] ?? '';
 
-switch ($requestUrl) {
-    case 'users':
-        break;
-    case 'games':
-        break;
-    default:
-        printer("API endpoint not found");
-        break;
-}
+// switch ($requestUrl) {
+//     case 'users':
+//         break;
+//     case 'games':
+//         break;
+//     default:
+//         printer("API endpoint not found");
+//         break;
+// }
 
 
-// ----- Test zone; delete later.
-$usersCtrl = $centralController->usersController;
-$user = $usersCtrl->getUserById(1);
-printer($user, 0, 'USER FETCH TEST');
+// // ----- Test zone; delete later.
+// $usersCtrl = $centralController->usersController;
+// $user = $usersCtrl->getUserById(1);
+// printer($user, 0, 'USER FETCH TEST');
 
-printer(implode(' // ', $user), "implode test");
+// printer(implode(' // ', $user), "implode test");
 
 // $updated_user = $user;
 // $updated_user['user'] = 'updated username';
@@ -64,25 +64,68 @@ printer(implode(' // ', $user), "implode test");
 // $result = $usersCtrl->getById($user['id']);
 // printer($result, 'UPDATED USER RESULT');
 
-// Base SQL before applying filters and sorting
-$sql = "SELECT * FROM user";
+                    //FILTER BY NON EXACT VALUES
 
-// Define filters and sorting criteria for test
-$filters = [
-    'user' => "john_doe"
-];
+//FILTER ON TAGS
+$filters = [ 'tagId' => ['relatedTable' => 'gamesTags', 'values' => ['1', '3'], 'wantedColumn' => 'gameId']];
+$results_1 = $centralController->gamesController->applyFiltersAndSorting($filters, null);
+
+echo "<br> testindex - tag results :  <br>\n";
+        print_r($results_1);
+        echo "<br>";
+
+//FILTER ON RATINGS AND SORT ON RATINGS
+$filters = ['ratingAverage' => ['gt' => 1, 'lte' => 5]];
 $sorting = [
-    'phoneNumber' => 'ASC',
-    'picture' => 'ASC'
+    'ratingAverage' => true
 ];
 
-// Apply filters and sorting to the base SQL
-$result = $centralController->usersController->applyFiltersAndSorting( $filters, $sorting);
-echo "<br>Final SQL <br>\n";
-// print_r($result);
-foreach ($result as $item) {
-    // echo "<br>". $item. " <br>\n";
-    print_r($item);
-    echo "<br><br>";
-}
-// TODO: Creating and reading backup of database as part of api launch routine.
+$results_2 = $centralController->gamesController->applyFiltersAndSorting($filters, $sorting);
+
+echo "<br> testindex - filter on ratings and sort on ratings results :  <br>\n";
+        print_r($results_2);
+        echo "<br>";
+
+//FILTER ON NAMES
+$filters = ['name' => 'Super Game'];
+$results_2 = $centralController->gamesController->applyFiltersAndSorting($filters, null);
+
+echo "<br> testindex - exact name results :  <br>\n";
+        print_r($results_2);
+        echo "<br>";
+
+
+//FILTER ON RATINGS, NAMES, AND SORT ON DATE
+$filters = [
+    'ratingAverage' => ['gt' => 1, 'lte' => 7],
+    'name' => ['contain' => 'super'],
+    // 'developperID' => '4',
+    ];
+$sorting = [
+    'releaseDate' => false
+];
+
+$results_2 = $centralController->gamesController->applyFiltersAndSorting($filters, $sorting);
+
+echo "<br> testindex - filter ON RATINGS, NAMES(contain), AND SORT ON DATE results :  <br>\n";
+        print_r($results_2);
+        echo "<br>";
+
+                    
+//FILTER ON RATINGS, NAMES, AND SORT ON DATE
+$filters = [
+    'ratingAverage' => ['gt' => 1, 'lte' => 7],
+    'name' => ['contain' => 'super'],
+    'developperID' => '4',
+    ];
+$sorting = [
+    'releaseDate' => false
+];
+
+$results_2 = $centralController->gamesController->applyFiltersAndSorting($filters, $sorting);
+
+echo "<br> testindex - filter ON RATINGS, NAMES(contain), developperID AND SORT ON DATE results :  <br>\n";
+        print_r($results_2);
+        echo "<br>";
+
+              

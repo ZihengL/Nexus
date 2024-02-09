@@ -73,6 +73,10 @@ class GameModel extends BaseModel {
 
     //Other Cruds
 
+    public function applyFiltersAndSorting( $filters , $sorting){
+        return parent::applyFiltersAndSorting($filters , $sorting);
+    }
+
     public function addGame($game) {
         $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE game = ?");
         $stmt->execute([$game]);

@@ -65,6 +65,10 @@ class GamesController {
         return $this->model->deleteGame($id);
     }
 
+    public function applyFiltersAndSorting($filters, $sorting){
+        return $this->model->applyFiltersAndSorting($filters , $sorting );
+    }
+
 }
 
  // public function filterGames($filters, $columns = []) {
