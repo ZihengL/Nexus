@@ -59,7 +59,7 @@ class TokensController
             'iss' => $this->issuer,
             'aud' => $this->audience,
             'iat' => $current_time, // Issued at
-            'exp' => $current_time + $expiration_time, // Expiration time
+            'exp' => $current_time + $expiration_time, // Expiration
             // 'exp' => $current_time + 5,
             'sub' => $user_id
         ];
@@ -86,16 +86,6 @@ class TokensController
 
         return ['access_token' => $access_token, 'refresh_token' => $refresh_token];
     }
-
-    // Valid Refresh token ? new Access token : error
-    // public function refreshAccessToken($refresh_token)
-    // {
-    //     if ($this->validateRefreshToken($refresh_token)) {
-    //         return $this->generateAccessToken($refresh_token);
-    //     }
-
-    //     return false;
-    // }
 
     // VALIDATION
 
@@ -168,6 +158,4 @@ class TokensController
     {
         return $this->model->deleteExpiredTokens();
     }
-
-    // GETTERS
 }
