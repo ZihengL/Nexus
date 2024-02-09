@@ -1,105 +1,89 @@
 <template>
   <div class="about">
 
-    <!-- Barre de navigation latérale -->
-    <div class="sidebar">
+    <!-- Navbar -->
+    <div class="navbar">
       <ul>
-        <li @click="selectedTab = 'Zi'">Zi Heng Liu</li>
-        <li @click="selectedTab = 'Rebecca'">Rebecca </li>
-        <li @click="selectedTab = 'Thomas'">Thomas</li>
-        <li @click="selectedTab = 'Debraise'">Debraise</li>
-        <li @click="selectedTab = 'Amazigh'">Amazigh</li>
+        <li :class="{ active: selectedTab === 'Zi' }" @click="selectedTab = 'Zi'">Zi Heng Liu</li>
+        <li :class="{ active: selectedTab === 'Rebecca' }" @click="selectedTab = 'Rebecca'">Rebecca</li>
+        <li :class="{ active: selectedTab === 'Thomas' }" @click="selectedTab = 'Thomas'">Thomas</li>
+        <li :class="{ active: selectedTab === 'Debraise' }" @click="selectedTab = 'Debraise'">Debraise</li>
+        <li :class="{ active: selectedTab === 'Amazigh' }" @click="selectedTab = 'Amazigh'">Amazigh</li>
       </ul>
     </div>
 
-    <!-- Contenu changeant en fonction de la navigation -->
-    <div class="content1">
-      <div v-if="selectedTab === 'Zi'">
-        <Zi/>
-      </div>
-      <div v-else-if="selectedTab === 'Rebecca'">
-        <Rebecca/>
-      </div>
-      <div v-else-if="selectedTab === 'Thomas'">
-        <Thomas/>
-      </div>
-      <div v-else-if="selectedTab === 'Debraise'">
-        <Debraise/>
-      </div>
-      <div v-else-if="selectedTab === 'Amazigh'">
-        <Amazigh/>
-      </div>
+    <!-- Dynamic content based on navigation -->
+    <div class="content">
+      <div v-if="selectedTab === 'Zi'"><Zi/></div>
+      <div v-else-if="selectedTab === 'Rebecca'"><Rebecca/></div>
+      <div v-else-if="selectedTab === 'Thomas'"><Thomas/></div>
+      <div v-else-if="selectedTab === 'Debraise'"><Debraise/></div>
+      <div v-else-if="selectedTab === 'Amazigh'"><Amazigh/></div>
     </div>
 
   </div>
 </template>
 
-<script scoped>
-  import Amazigh from "../components/Devs/Amazigh.vue";
-  import Debraise from "../components/Devs/Debraise.vue";
-  import Rebecca from "../components/Devs/Rebecca.vue";
-  import Thomas from '../components/Devs/Thomas.vue';
-  import Zi from '../components/Devs/Zi.vue';
-  export default {
-    components:{
-      Zi,
-      Thomas, 
-      Amazigh, 
-      Debraise, 
-      Rebecca
+<script>
+import Amazigh from "../components/Devs/Amazigh.vue";
+import Debraise from "../components/Devs/Debraise.vue";
+import Rebecca from "../components/Devs/Rebecca.vue";
+import Thomas from '../components/Devs/Thomas.vue';
+import Zi from '../components/Devs/Zi.vue';
+
+export default {
+  components: {
+    Zi,
+    Thomas, 
+    Amazigh, 
+    Debraise, 
+    Rebecca
   },
-    data() {
-      return {
-        selectedTab: '',
-       
-      }
+  data() {
+    return {
+      selectedTab: '',
     }
   }
-</script><style lang="scss">
-.about {
-  display: flex; /* Use flex layout for the .about container */
-  flex-direction: column; /* Stack sidebar and content vertically */
-  align-items: center; /* Center align children (sidebar) */
-  
-  .sidebar {
-    width: 100%; 
+}
+</script>
 
+<style scoped lang="scss">
+.about {
+  display: flex;
+  flex-direction: column; /* Keep the main direction as column */
+  align-items: center; /* Center align the children */
+
+  .navbar {
+    width: 100%;
     ul {
       list-style-type: none;
-      padding: 0;
-      margin: 0 auto; /* Center the list in the sidebar */
-      display: flex; /* Use flexbox for horizontal layout */
-      justify-content: space-between; /* Distribute space evenly between items */
+      padding: 1%;
+      margin: 0 auto; /* Center the list */
+      display: flex; /* Use flexbox for a horizontal layout */
+      justify-content: center; /* Center items horizontally */
       gap: 20px; /* Space between items */
-      width: fit-content; /* Adjust width to fit its content */
       
       li {
-        margin-top: 20px;
-        padding: 10px 20px; /* Increase padding for a more button-like appearance */
+        padding: 10px 0px;
         cursor: pointer;
-        border: 2px solid #ccc; /* Solid border for a button-like look */
-        border-radius: 5px; /* Rounded corners */
-        background-color: #eee; /* Light background color */
-        transition: background-color 0.3s, border-color 0.3s; /* Smooth transition for hover effect */
+        margin-left: 10% ;
+        transition: background-color 0.3s, border-color 0.3s;
 
         &:hover {
-          background-color: #ddd; /* Darker background on hover */
-          border-color: #999; /* Darker border on hover */
+          border-bottom: 2px solid black;
+        }
+
+        &.active {
+          border-bottom: 2px solid black;
         }
       }
     }
   }
 
-  .content1 {
+  .content {
     margin-top: 20px;
     padding: 20px;
-    width: 100%; /* Ensure content width matches sidebar */
+    width: 100%; /* Ensure content width matches navbar */
   }
 }
 </style>
-
-
-
-
-
-
