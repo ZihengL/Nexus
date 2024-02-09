@@ -1,7 +1,7 @@
 <template>
   <div class="loginProfile">
     <LoginRegister v-if="isProfileVisible" @showProfile="toggleProfileForm "/>
-    <Profile  v-else @showLogin="toggleLoginForm"/>
+    <Profile  v-else @showLogin="toggleLoginForm" :isHimself="true"/>
   </div>
 </template>
 <script setup>

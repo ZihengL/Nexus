@@ -11,7 +11,7 @@
       ></v-text-field>
     </v-card>
     <!-- Filter Section -->
-    <v-card class="pa-3">
+    <v-card class="pa-3 glass" style="border-radius: 0px;">
       <v-container>
         <v-row>
           <!-- Genres -->
@@ -40,7 +40,15 @@
           </v-col>
           <!-- Apply Filter Button -->
           <v-col cols="12" md="3" class="d-flex align-center pa-2">
-            <v-btn color="primary" @click="applyFilters" class="ma-auto violet">Apply Filters</v-btn>
+            <!--<v-btn color="primary" @click="applyFilters" class="ma-auto violet">Apply Filters</v-btn>-->
+
+          <div class="fieldBtn">
+            <div class="btn-layer"></div>
+            <v-btn density="default" class="submit glow" @click="toggleProfile">
+              Filtrer
+            </v-btn>
+          </div>
+            
           </v-col>
         </v-row>
       </v-container>
@@ -194,6 +202,17 @@
 .v-select.no-border-bottom .v-input__slot:before {
   background-color: transparent !important;
   border-bottom: none !important;
+}
+.pa-3 {
+  width: 70%;
+  margin: auto;
+}
+.pa-4 {
+  width: 71.8%;
+  margin: auto;
+}
+.card {
+  width: 72%;
 }
 .unJeu {
   text-decoration: none;

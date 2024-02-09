@@ -2,7 +2,7 @@
     <div id="gameVue">
         <div class="content">
             <game class="gameCarrousel"/>
-            <div class="gameInfo">
+            <div class="gameInfo glass">
                 <div class="gameImg">
                     <img src="../assets/image/img1.png" alt="#">
                 </div>
@@ -26,14 +26,14 @@
                     <p><b>Developeur : </b> 2Braise</p>
                 </div>
                 <div class="tags">
-                    <a href="#">Fps</a>
-                    <a href="#">Aventure</a>
-                    <a href="#">Drame</a>
-                    <a href="#">Algerient</a>
+                    <a href="#" class="glow">Fps</a>
+                    <a href="#" class="glow">Aventure</a>
+                    <a href="#" class="glow">Drame</a>
+                    <a href="#" class="glow">Algerient</a>
                 </div>
-                <div class="field btn">
+                <div class="fieldBtn">
                     <div class="btn-layer"></div>
-                    <v-btn density="default" class="submit" @click="toggleProfile">
+                    <v-btn density="default" class="submit glow" @click="toggleProfile">
                         Telecharger
                     </v-btn>
                 </div>

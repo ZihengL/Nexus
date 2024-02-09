@@ -1,22 +1,25 @@
 <template>
   <!-- Created By CodingNepal -->
-  <div class="container">
+  <div class="containerProfile  glass">
     <div class="wrapper">
       <div class="description">
-        <img src="../assets/Rich_Ricasso.png" alt="John" class="imgProfil" />
+        <div :class="isHimself ? 'imgContainerFull' : 'imgContainer'">
+          <img src="../assets/Rich_Ricasso.png" alt="John" class="imgProfil" />
+        </div>
+
         <div class="champUtilisateur">
           <h3>Nom Prenom</h3>
           <br>
           <p>description</p>
         </div>
-        <div class="button">
-          <router-link to="/Profile" class="router">
+        <div class="button"  v-show="isHimself">
+          <router-link to="/Profile" class="router glow">
             <v-icon icon="mdi-account-circle" />
             <span class="link-btn">Gerer son profil</span>
           </router-link>
-          <div class="field">
+          <div class="fieldBtn">
             <div class="btn-layer"></div>
-            <v-btn density="default" class="submit" @click="$emit('showLogin')">
+            <v-btn density="default" class="submit glow" @click="$emit('showLogin')">
               Se deconnecter
             </v-btn>
           </div>
@@ -24,9 +27,7 @@
         </div>
       </div>
       <div style="display: flex; margin-top: 40px;">
-
-
-        <div style="flex-basis: 100%;padding: 20px;border-radius: 30px;box-shadow: 10px 10px 20px black;">
+        <div class="laListeJeu">
           <h2>Liste de jeu</h2>
           <liste-de-jeu />
           <liste-de-jeu />
@@ -34,8 +35,8 @@
           <liste-de-jeu />
           <liste-de-jeu />
           <liste-de-jeu />
-
         </div>
+
         <div
           style="flex-basis: 25%;padding: 20px;border-radius: 30px;box-shadow: 10px 10px 20px black;margin-left: 30px;">
           <h2> liste amis</h2>
@@ -57,6 +58,9 @@
 
 <script setup>
 import ListeDeJeu from './ListeDeJeu.vue';
+  const props = defineProps(['isHimself']);
+  console.log(props.isHimself);
+
 import Amis from './amis.vue';
 
 </script>

@@ -14,18 +14,18 @@
 
 <script>
 export default {
-props: {
-    // Définition des props
-    image: String,
-    name: String,
-    price: String,
-},
-methods: {
-    // Ajoutez la logique pour supprimer le jeu ici
-    removeGame() {
-    this.$emit('remove-game');
+    props: {
+        // Définition des props
+        image: String,
+        name: String,
+        price: String,
     },
-},
+    methods: {
+        // Ajoutez la logique pour supprimer le jeu ici
+        removeGame() {
+        this.$emit('remove-game');
+        },
+    },
 };
 </script>
   

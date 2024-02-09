@@ -1,4 +1,5 @@
 <template>
+
   <!-- <div v-for="activity in activities" :key="activity.id" class="activities">-->
   <div class="container">
     <img alt="image jeu" class="img">
@@ -7,8 +8,8 @@
       <button class="btn">Voir Plus</button>
     </div>
   </div>
-  <!--</div>-->
 </template>
+
 <style lang="scss">
 .container {
   display: flex;

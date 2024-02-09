@@ -1,7 +1,7 @@
 <template>
   <v-app class="app">
     <div class="all">
-      <NavBar class="leNav"/>
+      <NavBar class="leNav glass"/>
       <div class="contentPage">
         <default-view  class="vue"/>
         <Footer/>

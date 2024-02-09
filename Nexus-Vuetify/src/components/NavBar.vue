@@ -1,18 +1,18 @@
 <template>
-    <nav class="navBar">
+    <nav class="navBar ">
       <div class="navContent">
         <router-link to="/"  class="logo">
                 <img :src="logoURL" alt="Vue" />
               </router-link>
         <div class="link">
           <v-spacer></v-spacer>
-          <router-link to="/"  class="router">
+          <router-link to="/"  class="router glow">
             <span class="link-btn" text>Accueil</span>
           </router-link>
-          <router-link to="/Store"  class="router">
+          <router-link to="/Store"  class="router glow">
             <span class="link-btn" text>Boutique</span>
           </router-link>
-          <router-link to="/About"  class="router">
+          <router-link to="/About"  class="router glow">
             <span class="link-btn" >A propos</span>
           </router-link>
           <v-spacer></v-spacer>

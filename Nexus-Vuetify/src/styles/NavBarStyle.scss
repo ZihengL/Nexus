@@ -47,24 +47,40 @@
   
         .link-btn {
           margin: auto;
-          color: black;
+          color: var(--light-trans);
         }
         /*Gere l'inconne du menu quand l'usager est connecter*/
         .link .router .conectedIcon {
           font-size: 3rem;
         }
       }
-      .router:hover, .router-link-exact-active {
+      .router:hover {
         font-weight: bolder;
-        font-size: 1.3rem;
-      }
-      .router-link-exact-active{
-        text-decoration: underline;
-        color: var(--purple);
         .link-btn {
-          color: var(--purple);
+          color: var(--light);
         }
       }
+      
+      .router-link-exact-active{
+        font-weight: bolder;
+        font-size: 1.3rem;
+        border-bottom: 3px solid var(--light);
+        padding-bottom: 0.4%;
+        .link-btn {
+          color: var(--light);       
+          text-shadow:
+              0 0 1.5px #ffffff3d,
+              0 0 2.5px #ffffff3d,
+              0 0 5px #ffffff3d,
+              0 0 10px rgba(0, 255, 170, 0.100),
+              0 0 20px rgba(0, 255, 170, 0.100),
+              0 0 25px rgba(0, 255, 170, 0.100),
+              0 0 30px rgba(0, 255, 170, 0.100),
+              0 0 33px rgba(0, 255, 170, 0.100);
+          animation: neonGlow 0.5s ease-in-out infinite alternate;
+        }
+      }
+      
     }
   }
 }
