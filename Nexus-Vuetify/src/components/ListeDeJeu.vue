@@ -16,7 +16,6 @@
   justify-content: space-between;
   border: 1px solid black;
   padding: 20px;
-  border-radius: 30px;
   box-shadow: 10px 10px 10px black;
   margin-top: 30px;
 }

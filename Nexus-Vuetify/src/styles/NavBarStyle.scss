@@ -64,9 +64,10 @@
       .router-link-exact-active{
         font-weight: bolder;
         font-size: 1.3rem;
-        border-bottom: 3px solid var(--light);
         padding-bottom: 0.4%;
         .link-btn {
+          //border-bottom: 3px solid var(--marin);
+          //border-bottom: 3px solid var(--light);
           color: var(--light);       
           text-shadow:
               0 0 1.5px #ffffff3d,
