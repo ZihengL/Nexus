@@ -36,7 +36,7 @@
         display: none;
       }
       label.signup{
-        color: var(--dark);
+        color: var(--light-trans);
       }
       .slider-tab{
         position: absolute;
@@ -69,10 +69,10 @@
         animation: neonGlow 0.5s ease-in-out infinite alternate;
       }
       #signup:checked ~ label.login{
-        color: var(--dark);
+        color: var(--light-trans);
       }
       #login:checked ~ label.signup{
-        color: var(--dark);
+        color: var(--light-trans);
       }
       #login:checked ~ label.login{
         cursor: default;

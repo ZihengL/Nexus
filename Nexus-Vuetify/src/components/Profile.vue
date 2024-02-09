@@ -27,14 +27,15 @@
         </div>
       </div>
       <div style="display: flex; margin-top: 40px;">
-      <div class="laListeJeu">
-        <h2>Liste de jeu</h2>
-        <liste-de-jeu />
-        <liste-de-jeu />
-        <liste-de-jeu />
-        <liste-de-jeu />
-        <liste-de-jeu />
-        <liste-de-jeu />
+        <div class="laListeJeu">
+          <h2>Liste de jeu</h2>
+          <liste-de-jeu />
+          <liste-de-jeu />
+          <liste-de-jeu />
+          <liste-de-jeu />
+          <liste-de-jeu />
+          <liste-de-jeu />
+        </div>
 
         <div
           style="flex-basis: 25%;padding: 20px;border-radius: 30px;box-shadow: 10px 10px 20px black;margin-left: 30px;">

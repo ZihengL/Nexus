@@ -16,8 +16,8 @@ div {
    margin: 1% 0% 2% 0%;
    padding: 1% 0% 3% 0%;
    /* From https://css.glass */
-   background: rgba(255, 255, 255, 0.061);
-   border-radius: 16px;
+   background: rgba(255, 255, 255, 0.005);
+   border-radius: 0px;
    backdrop-filter: blur(0.5px);
    -webkit-backdrop-filter: blur(0.5px);
 
@@ -31,7 +31,7 @@ div {
       margin-left: 3%;
       margin-right: 3%;
       text-align: center;
-      color: var(--dark);
+      color: var(--light-trans-2);
    }
 }
 
