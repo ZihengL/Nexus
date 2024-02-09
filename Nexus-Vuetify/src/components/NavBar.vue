@@ -16,10 +16,10 @@
             <span class="link-btn" >A propos</span>
           </router-link>
           <v-spacer></v-spacer>
-          <router-link to="/Login" class="router glow" v-if="!isConnected.value">
+          <router-link to="/Login" class="router" v-if="!isConnected.value">
                   <span class="link-btn" text>Connexion</span>
           </router-link>
-          <router-link to="/Login" class="router glow" v-else>
+          <router-link to="/Login" class="router" v-else>
             <v-icon icon="mdi-account-circle" class="conectedIcon"/>
           </router-link>
         </div>

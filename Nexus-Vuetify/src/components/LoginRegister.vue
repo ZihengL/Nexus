@@ -91,15 +91,15 @@ export default {
       this.isLogin = true;
       console.log("c est true");
       var formInner =  document.querySelector(".form-inner");
-      formInner.style.display = 'block';
-      formInner.style.height = '35svh';
+      //formInner.style.display = 'block';
+      formInner.style.height = '40svh';
     },
     toggleSignup() {
       this.isLogin = false;
       console.log("c est false");
       var formInner =  document.querySelector(".form-inner");
-      formInner.style.display = 'flex';
-      formInner.style.flexDirection = 'row';
+      //formInner.style.display = 'flex';
+      //formInner.style.flexDirection = 'row';
       formInner.style.height = '75svh';
     },
     toggleProfile() {

@@ -1,102 +1,67 @@
 <template>
   <div id="fullProfile">
-    <div class="profil">
-      <img src="../assets/img/profile.png" alt="bugmanguy logo" style="width: 100px; display: block; margin: 0 auto; background-color: blue;"/>
-    </div>
-    <section class="form-section">
-      <div>
-        <input type="text" id="username" placeholder="Username" required>
-      </div>
-      <div>
-        <input type="password" id="mdp" placeholder="Mot de passe" required>
-      </div>
-      <div>
-        <input type="password" id="mdp" placeholder="Confirmer" required>
-      </div>
-      <div class="bio">
-        <textarea id="bio" placeholder="Bio"></textarea>
-      </div>
-      <div class="fieldBtn btn">
-        <div class="btn-layer"></div>
-        <v-btn density="default" class="submit" @click="toggleProfile">
-          Sauvegarder
-        </v-btn>
-      </div>
-    </section>
+
+    <form action="#" class=" glass">
+          
+          <v-avatar size="10rem">
+            <v-img
+              src="../assets/Rich_Ricasso.png"
+              alt="John"
+            ></v-img>
+          </v-avatar>
+          <!-- ... Signup form content ... -->
+          <div class="field">
+            <input type="text" placeholder="Nom">
+          </div>
+          <div class="field">
+            <input type="text" placeholder="Prenom">
+          </div>
+          <div class="field">
+            <input type="text" placeholder="Téléphone" required>
+          </div>
+          <div class="field">
+            <input type="text" placeholder="Username" required>
+          </div>
+          <div class="field">
+            <input type="text" placeholder="Email" required>
+          </div>
+          <div class="field">
+            <input type="password" placeholder="Mot de passe" required>
+          </div>
+          <div class="field">
+            <input type="password" placeholder="Confirmer le mot de passe" required>
+          </div>
+          <div class="fieldBtn">
+            <div class="btn-layer"></div>
+            <v-btn density="default" class="submit glow" @click="toggleProfile">
+              S'inscrire
+            </v-btn>
+          </div>
+        </form>
   </div>
 </template>
 
-<style scoped>
-.info{
-  margin-top: 10px;
-}
-
-button {
-  padding: 20px 40px; /* Increase padding to make the button taller and wider */
-  background-color: #ffffff;
-  color: #fff;
-  border: none;
-  border-radius: 40px;
-  cursor: pointer;
-  font-size: 18px; /* Increase font size for better visibility */
-  display: inline-block; /* Ensure the button respects padding and sizing */
-  margin: 0 auto; /* Center the button if it's not already */
-  transition: background-color 0.3s; /* Smooth transition for hover effect */
-}
-
+<style lang="scss" scoped>
 #fullProfile {
-  width: 80%;
-  max-height: 90%;
+  width: 100%;
+  margin: 0% auto 3% auto;
+  /*max-height: 90%;
   margin: 20px auto;
   background-color: #ffffff;
   padding: 40px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  height: 95svh;
+  height: 95svh;*/
+
+  form{
+    width: 50%;
+    padding: 2% 2%;
+    margin: auto;
+
+  }
 }
 
-.bio{
-  margin-top: 50px;
-}
 
-input,
-textarea {
-  display: block;
-  width: calc(100% - 20px);
-  height: 50px; 
-  padding: 5px;
-  background-color: #ffffff;
-  border: 1px solid #4a6f7c;
-  border-radius: 4px;
-  color: #c7d5e0;
-  margin-top: 40px;
-}
-
-#bio{ 
-   display: block;
-  width: calc(100% - 20px); 
-  height: 200px; 
-  padding: 10px; 
-  background-color: #ffffff;
-  border: 1px solid #4a6f7c;
-  border-radius: 4px;
-  color: #c7d5e0;
-  margin-top: 5px; 
-  font-size: 16px; 
-
-}
-
-.profil > img {
-  width: 500px;
-  display: block;
-  margin: 0 auto;
-  background-color: blue;
-  border-radius: 50%;
-}
-
-button:hover {
-  background-color: #0039a6;
-}
 </style>
 <script>
 export default {

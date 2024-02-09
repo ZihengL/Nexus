@@ -56,16 +56,17 @@
         color: var(--light);
         cursor: default;
         user-select: none;
+        color: var(--light);       
         text-shadow:
-            0 0 7px #fff,
-            0 0 10px #fff,
-            0 0 21px #fff,
-            0 0 42px #0fa,
-            0 0 82px #0fa,
-            0 0 92px #0fa,
-            0 0 102px #0fa,
-            0 0 151px #0fa;
-        animation: neonGlow 1.5s ease-in-out infinite alternate;
+            0 0 3px #ffffffa1,
+            0 0 5px #ffffffa1,
+            0 0 10px #ffffffa1,
+            0 0 20px rgba(0, 255, 170, 0.600),
+            0 0 40px rgba(0, 255, 170, 0.600),
+            0 0 50px rgba(0, 255, 170, 0.600),
+            0 0 60px rgba(0, 255, 170, 0.600),
+            0 0 75px rgba(0, 255, 170, 0.600);
+        animation: neonGlow 0.5s ease-in-out infinite alternate;
       }
       #signup:checked ~ label.login{
         color: var(--dark);
@@ -76,55 +77,30 @@
       #login:checked ~ label.login{
         cursor: default;
         user-select: none;
+        color: var(--light);       
         text-shadow:
-            0 0 7px #fff,
-            0 0 10px #fff,
-            0 0 21px #fff,
-            0 0 42px #0fa,
-            0 0 82px #0fa,
-            0 0 92px #0fa,
-            0 0 102px #0fa,
-            0 0 151px #0fa;
-        animation: neonGlow 1.5s ease-in-out infinite alternate;
+            0 0 3px #ffffffa1,
+            0 0 5px #ffffffa1,
+            0 0 10px #ffffffa1,
+            0 0 20px rgba(0, 255, 170, 0.600),
+            0 0 40px rgba(0, 255, 170, 0.600),
+            0 0 50px rgba(0, 255, 170, 0.600),
+            0 0 60px rgba(0, 255, 170, 0.600),
+            0 0 75px rgba(0, 255, 170, 0.600);
+        animation: neonGlow 0.5s ease-in-out infinite alternate;
       }
     }
     
     .form-inner{
-      display: block;
-      height: 35svh;
+      display: flex;
+      flex-direction: row;
+      height: 40svh;
       width: 200%;
 
       form{
         width: 50%;
         transition: all 0.6s cubic-bezier(0.68,-0.55,0.265,1.55);
 
-        .field{
-          height: 50px;
-          width: 100%;
-          margin: 5% auto;
-
-          input{
-            height: 100%;
-            width: 100%;
-            outline: none;
-            padding-left: 15px;
-            border-radius: 5px;
-            border: 1px solid var(--light-gray-trans);
-            border-bottom-width: 2px;
-            font-size: 17px;
-            transition: all 0.3s ease;
-          }
-          input:focus{
-            border-color: var(--dark-blue);
-          }
-          input::placeholder{
-            color: var(--dark-gray-trans);
-            transition: all 0.3s ease;
-          }
-          input:focus::placeholder{
-            color: var(--light-gray-trans);
-          }
-        }
         .btn {
           width: 100%;
         }
