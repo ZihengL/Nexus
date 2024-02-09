@@ -69,10 +69,11 @@ $centralController = CentralController::getInstance();
 //FILTER ON TAGS
 $filters = [ 'tagId' => ['relatedTable' => 'gamesTags', 'values' => ['1', '3'], 'wantedColumn' => 'gameId']];
 $results_1 = $centralController->gamesController->applyFiltersAndSorting($filters, null);
+echo "<pre>";
 
-echo "<br> testindex - tag results :  <br>\n";
+echo "<br> <strong>testindex - tag results : </strong> <br>\n";
         print_r($results_1);
-        echo "<br>";
+        echo "<pre><br>";
 
 //FILTER ON RATINGS AND SORT ON RATINGS
 $filters = ['ratingAverage' => ['gt' => 1, 'lte' => 5]];
@@ -81,18 +82,19 @@ $sorting = [
 ];
 
 $results_2 = $centralController->gamesController->applyFiltersAndSorting($filters, $sorting);
-
-echo "<br> testindex - filter on ratings and sort on ratings results :  <br>\n";
+echo "<pre>";
+echo "<br> <strong>testindex - filter on ratings and sort on ratings results : </strong>  <br>\n";
         print_r($results_2);
-        echo "<br>";
+        echo " <pre> <br>";
+
 
 //FILTER ON NAMES
 $filters = ['name' => 'Super Game'];
 $results_2 = $centralController->gamesController->applyFiltersAndSorting($filters, null);
-
-echo "<br> testindex - exact name results :  <br>\n";
+echo "<pre>";
+echo "<br> <strong>testindex - exact name results :</strong>  <br>\n";
         print_r($results_2);
-        echo "<br>";
+        echo "<pre><br>";
 
 
 //FILTER ON RATINGS, NAMES, AND SORT ON DATE
@@ -107,9 +109,11 @@ $sorting = [
 
 $results_2 = $centralController->gamesController->applyFiltersAndSorting($filters, $sorting);
 
-echo "<br> testindex - filter ON RATINGS, NAMES(contain), AND SORT ON DATE results :  <br>\n";
+
+echo "<br> <strong>testindex - filter ON RATINGS, NAMES(contain), AND SORT ON DATE results : </strong> <br>\n";
+        echo "<pre>";   
         print_r($results_2);
-        echo "<br>";
+        echo "<pre><br>";
 
                     
 //FILTER ON RATINGS, NAMES, AND SORT ON DATE
@@ -123,9 +127,8 @@ $sorting = [
 ];
 
 $results_2 = $centralController->gamesController->applyFiltersAndSorting($filters, $sorting);
-
-echo "<br> testindex - filter ON RATINGS, NAMES(contain), developperID AND SORT ON DATE results :  <br>\n";
+echo "<pre>";
+echo "<br> <strong>testindex - filter ON RATINGS, NAMES(contain), developperID AND SORT ON DATE results : </strong> <br>\n";
         print_r($results_2);
-        echo "<br>";
-
+        echo "<pre><br>";
               
