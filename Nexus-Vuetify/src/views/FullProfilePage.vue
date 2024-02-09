@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="fullProfile">
     <div class="profil">
       <img src="../assets/img/profile.png" alt="bugmanguy logo" style="width: 100px; display: block; margin: 0 auto; background-color: blue;"/>
     </div>
@@ -16,35 +16,24 @@
       <div class="bio">
         <textarea id="bio" placeholder="Bio"></textarea>
       </div>
-      <div class="btn">
-        <button>Sauvegarder</button>
+      <div class="fieldBtn btn">
+        <div class="btn-layer"></div>
+        <v-btn density="default" class="submit" @click="toggleProfile">
+          Sauvegarder
+        </v-btn>
       </div>
     </section>
   </div>
 </template>
 
 <style scoped>
-body {
-  font-family: 'Arial', sans-serif;
-  background-color: #1b2838;
-  color: #c7d5e0;
-  margin: 0;
-  padding: 20px;
-}
-
-.btn {
-  display: flex; 
-  justify-content: center; 
-  margin: 40px auto; 
-  width: fit-content; 
-}
 .info{
   margin-top: 10px;
 }
 
 button {
   padding: 20px 40px; /* Increase padding to make the button taller and wider */
-  background-color: #002D62;
+  background-color: #ffffff;
   color: #fff;
   border: none;
   border-radius: 40px;
@@ -55,11 +44,11 @@ button {
   transition: background-color 0.3s; /* Smooth transition for hover effect */
 }
 
-#app {
-  max-width: 80%;
+#fullProfile {
+  width: 80%;
   max-height: 90%;
   margin: 20px auto;
-  background-color: #13274F;
+  background-color: #ffffff;
   padding: 40px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
@@ -76,7 +65,7 @@ textarea {
   width: calc(100% - 20px);
   height: 50px; 
   padding: 5px;
-  background-color: #002244;
+  background-color: #ffffff;
   border: 1px solid #4a6f7c;
   border-radius: 4px;
   color: #c7d5e0;
@@ -88,7 +77,7 @@ textarea {
   width: calc(100% - 20px); 
   height: 200px; 
   padding: 10px; 
-  background-color: #002244;
+  background-color: #ffffff;
   border: 1px solid #4a6f7c;
   border-radius: 4px;
   color: #c7d5e0;

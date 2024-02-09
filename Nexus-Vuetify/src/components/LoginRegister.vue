@@ -1,14 +1,6 @@
 <template>
   <!-- Created By CodingNepal -->
-  <div class="wrapper">
-    <div class="title-text">
-      <div class="title login">
-        Se connecter
-      </div>
-      <div class="title signup">
-        S'inscrire
-      </div>
-    </div>
+  <div class="wrapper glass">
 
     <div class="form-container">
 
@@ -30,17 +22,17 @@
           <div class="field">
             <input type="password" placeholder="Mot de passe" required>
           </div>
-          <div class="pass-link">
+          <div class="pass-link glow">
             <a href="#">Mot de passe oublier ?</a>
           </div>
-          <div class="field btn">
+          <div class="fieldBtn">
             <div class="btn-layer"></div>
-            <v-btn density="default" class="submit" @click="toggleProfile">
+            <v-btn density="default" class="submit glow" @click="toggleProfile">
               Se connecter
             </v-btn>
           </div>
           <div class="signup-link">
-            Pas encore inscris ? <a style=" cursor: pointer;">S'inscrire</a>
+            Pas encore inscris ? <a style=" cursor: pointer;" class=" glow">S'inscrire</a>
           </div>
         </form>
 
@@ -67,9 +59,9 @@
           <div class="field">
             <input type="password" placeholder="Confirmer le mot de passe" required>
           </div>
-          <div class="field btn">
+          <div class="fieldBtn">
             <div class="btn-layer"></div>
-            <v-btn density="default" class="submit" @click="toggleProfile">
+            <v-btn density="default" class="submit glow" @click="toggleProfile">
               S'inscrire
             </v-btn>
           </div>
@@ -97,12 +89,21 @@ export default {
   methods: {
     toggleLogin() {
       this.isLogin = true;
+      console.log("c est true");
+      var formInner =  document.querySelector(".form-inner");
+      formInner.style.display = 'block';
+      formInner.style.height = '35svh';
     },
     toggleSignup() {
       this.isLogin = false;
+      console.log("c est false");
+      var formInner =  document.querySelector(".form-inner");
+      formInner.style.display = 'flex';
+      formInner.style.flexDirection = 'row';
+      formInner.style.height = '75svh';
     },
     toggleProfile() {
-      this.$emit('showProfile')
+      this.$emit('showProfile');
     },
   },
 };

@@ -49,6 +49,14 @@ const routes = [
         component: () => import('@/views/GameVue.vue'),
       },
       {
+        path: '/Dev',
+        name: 'Dev',
+        // route level code-splitting
+        // this generates a separate chunk (Home-[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () => import('@/views/profileDev.vue'),
+      },
+      {
         path: '/Login',
         name: 'Login',
         // route level code-splitting

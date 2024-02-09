@@ -3,29 +3,7 @@
   overflow: hidden;
   width: 45%;
   padding: 30px;
-  border-radius: 16px;
   margin: auto;
-
-  /* From https://css.glass */
-  background: rgba(255, 255, 255, 0.09);
-  border-radius: 16px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-
-  .title-text{
-    display: flex;
-    width: 200%;
-
-    .title{
-      width: 50%;
-      font-size: 35px;
-      font-weight: 600;
-      text-align: center;
-      transition: all 0.6s cubic-bezier(0.68,-0.55,0.265,1.55);
-    }
-  }
 
   .form-container {
     width: 100%;
@@ -78,6 +56,16 @@
         color: var(--light);
         cursor: default;
         user-select: none;
+        text-shadow:
+            0 0 7px #fff,
+            0 0 10px #fff,
+            0 0 21px #fff,
+            0 0 42px #0fa,
+            0 0 82px #0fa,
+            0 0 92px #0fa,
+            0 0 102px #0fa,
+            0 0 151px #0fa;
+        animation: neonGlow 1.5s ease-in-out infinite alternate;
       }
       #signup:checked ~ label.login{
         color: var(--dark);
@@ -88,10 +76,22 @@
       #login:checked ~ label.login{
         cursor: default;
         user-select: none;
+        text-shadow:
+            0 0 7px #fff,
+            0 0 10px #fff,
+            0 0 21px #fff,
+            0 0 42px #0fa,
+            0 0 82px #0fa,
+            0 0 92px #0fa,
+            0 0 102px #0fa,
+            0 0 151px #0fa;
+        animation: neonGlow 1.5s ease-in-out infinite alternate;
       }
     }
+    
     .form-inner{
-      display: flex;
+      display: block;
+      height: 35svh;
       width: 200%;
 
       form{
@@ -125,41 +125,8 @@
             color: var(--light-gray-trans);
           }
         }
-        .btn{
-          height: 50px;
+        .btn {
           width: 100%;
-          border-radius: 5px;
-          position: relative;
-          overflow: hidden;
-
-          .btn-layer{
-            height: 100%;
-            width: 300%;
-            position: absolute;
-            left: -100%;
-            background: -webkit-linear-gradient(right, var(--purple), var(--dark-blue), var(--purple), var(--dark-blue));
-            border-radius: 5px;
-            transition: all 0.4s ease;;
-          }
-          .submit{
-            height: 100%;
-            width: 100%;
-            z-index: 1;
-            position: relative;
-            background: none;
-            border: none;
-            color: var(--light);
-            padding-left: 0;
-            border-radius: 5px;
-            font-size: 1.5rem;
-            font-weight: 500;
-            cursor: pointer;
-          }
-        }
-        .btn:hover {
-          .btn-layer{
-            left: 0;
-          }
         }
         .pass-link{
           margin-top: 5px;
@@ -175,7 +142,8 @@
         }
         .pass-link a:hover,
         .signup-link a:hover{
-          color: var(--dark-blue-light);
+          color: var(--light);
+          //color: var(--dark-blue-light);
           text-decoration: underline;
         }
       }

@@ -42,7 +42,57 @@ body {
 }
 .app {
     .all {
-        /*background-color: rgba(80, 177, 252, 0.493);*/
+        //background: rgb(0,0,0);
+        background: rgb(153,54,175);
+        background: linear-gradient(153deg, rgba(153,54,175,0.900) 0%, rgba(0, 0, 86, 0.900) 96%);
+        
+        .glass {
+            /* From https://css.glass */
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(7.1px);
+            -webkit-backdrop-filter: blur(7.1px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .glow:hover {
+            color: var(--light);       
+            text-shadow:
+                0 0 7px #fff,
+                0 0 10px #fff,
+                0 0 21px #fff,
+                0 0 42px #0fa,
+                0 0 82px #0fa,
+                0 0 92px #0fa,
+                0 0 102px #0fa,
+                0 0 151px #0fa;
+            animation: neonGlow 0.1s ease-in-out infinite alternate;
+        }
+        @keyframes neonGlow {
+            from {
+            text-shadow:
+                0 0 7px #fff,
+                0 0 10px #fff,
+                0 0 21px #fff,
+                0 0 42px #0fa,
+                0 0 82px #0fa,
+                0 0 92px #0fa,
+                0 0 102px #0fa,
+                0 0 151px #0fa;
+            }
+        
+            to {
+            text-shadow:
+                0 0 10px #fff,
+                0 0 15px #fff,
+                0 0 30px #fff,
+                0 0 60px #0fa,
+                0 0 120px #0fa,
+                0 0 150px #0fa,
+                0 0 180px #0fa,
+                0 0 240px #0fa;
+            }
+        }
         .contentPage {
             display: flex;
             justify-content: space-between;
@@ -57,6 +107,43 @@ body {
                 width: 100%;
                 text-align: center;
                 margin: auto;
+
+                .fieldBtn{
+                    height: 50px;
+                    width: 100%;
+                    border-radius: 5px;
+                    position: relative;
+                    overflow: hidden;
+                
+                    .btn-layer{
+                        height: 100%;
+                        width: 300%;
+                        position: absolute;
+                        left: -100%;
+                        background: -webkit-linear-gradient(right, var(--purple), var(--dark-blue), var(--purple), var(--dark-blue));
+                        border-radius: 5px;
+                        transition: all 0.4s ease;;
+                    }
+                    .submit{
+                        height: 100%;
+                        width: 100%;
+                        z-index: 1;
+                        position: relative;
+                        background: none;
+                        border: none;
+                        color: var(--light);
+                        padding-left: 0;
+                        border-radius: 5px;
+                        font-size: 20px;
+                        font-weight: 500;
+                        cursor: pointer;
+                    }
+                }
+                .fieldBtn:hover {
+                    .btn-layer{
+                        left: 0;
+                    }
+                }
             }
         }
         .leNav {
@@ -67,15 +154,8 @@ body {
             align-items: center;
             margin: 0px auto 0.5% auto;
             width: 100%;
-            background: rgb(255, 255, 255);
             text-transform: uppercase;
-            
-            /* From https://css.glass */
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(7.6px);
-            -webkit-backdrop-filter: blur(7.6px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 0px;
         }
     }
 
