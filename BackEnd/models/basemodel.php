@@ -127,15 +127,15 @@ class BaseModel
 
     // FILTERS
 
-    public function filterByExactValues($data)
-    {
-        $validatedData = $this->formatData($data);
-        $pairs = implode(' = ?, ', array_keys($validatedData)) . ' = ?';
+    // public function filterByExactValues($data)
+    // {
+    //     $validatedData = $this->formatData($data);
+    //     $pairs = implode(' = ?, ', array_keys($validatedData)) . ' = ?';
 
-        $sql = "SELECT * FROM $this->table WHERE $pairs";
+    //     $sql = "SELECT * FROM $this->table WHERE $pairs";
 
-        return $this->query($sql, $validatedData)->fetchAll();
-    }
+    //     return $this->query($sql, $validatedData)->fetchAll();
+    // }
 
     // TOOLS
 
@@ -260,53 +260,63 @@ class BaseModel
 
     // sql = 'SELECT * FROM users WHERE username = :username AND password = :password';
 
-    // public function applyFilters($filters)
-    // {
-    //     $params = [];
-    //     $validEntries = array_intersect(array_keys($filters), $this->columns);
-    //     // print_r($validEntries);
-    //     // echo "<br>";
-    //     // print_r($this->columns);
-    //     // echo "<br>";
-    //     // print_r($filters);
-    //     // echo "<br> validEntries " . $validEntries . "<br>\n";
-    //     // $sql .= !empty($validEntries) ? ' WHERE 1 = 1' : '';
-    //     $sql = 'SELECT * FROM ' . $this->table . ' WHERE 1 = 1';
-
-    //     foreach ($validEntries as $column) {
-    //         $sql .= " AND $column = :$column";
-    //         // echo "<br> SQL with columns: " . $sql . "<br>\n";
-    //         $params[":$column"] = $filters[$column];
-    //     }
-
-    //     return ['sql' => $sql, 'params' => $params];
-    // }
-
-    function applyFilters($filters)
+    public function applyFilters($filters)
     {
-        $sql = 'SELECT * FROM ' . $this->table . ' WHERE 1 = 1';
         $params = [];
+        $validEntries = array_intersect(array_keys($filters), $this->columns);
+        // print_r($validEntries);
+        // echo "<br>";
+        // print_r($this->columns);
+        // echo "<br>";
+        // print_r($filters);
+        // echo "<br> validEntries " . $validEntries . "<br>\n";
+        // $sql .= !empty($validEntries) ? ' WHERE 1 = 1' : '';
+        $sql = 'SELECT * FROM ' . $this->table . ' WHERE 1 = 1';
 
-        foreach ($filters as $column => $value) {
-            // Check if column is of SET type
-            $isSetType = $this->isColumnSetType($this->pdo, $this->table, $column);
-
-            if ($isSetType) {
-                $result = $this->handleSetCondition($column, $value);
-                $sql .= ' AND ' . $result['sql'];
-                $params = array_merge($params, $result['params']);
-            } elseif (is_array($value) && !$isSetType) {
-                $result = $this->handleRangeCondition($column, $value);
-                $sql .= ' AND ' . $result['sql'];
-                $params = array_merge($params, $result['params']);
-            } else {
-                $sql .= " AND $column = :$column";
-                $params[":$column"] = $value;
-            }
+        foreach ($validEntries as $column) {
+            $sql .= " AND $column = :$column";
+            // echo "<br> SQL with columns: " . $sql . "<br>\n";
+            $params[":$column"] = $filters[$column];
         }
 
         return ['sql' => $sql, 'params' => $params];
     }
+
+
+
+    // status IN (:status_in_0, :status_in_1)
+    // And the parameters array would map :status_in_0 to 'active' and :status_in_1 to 'inactive'.
+
+    /* Here's how the output would look based on your example:
+
+        SQL: status IN (:status_in_0, :status_in_1)
+        Parameters:
+            :status_in_0 => active
+            :status_in_1 => inactive
+    */
+    function handleSetCondition($column, $value)
+    {
+        $params = [];
+        // Check if the value is an array for multiple values in an IN condition
+        if (is_array($value)) {
+            $inParams = [];
+            foreach ($value as $idx => $val) {
+                $paramKey = ":{$column}_in_$idx";
+                $inParams[] = $paramKey;
+                $params[$paramKey] = $val;
+            }
+            $inClause = implode(', ', $inParams);
+            $sql = "$column IN ($inClause)";
+        } else {
+            // Treat as a single value for direct comparison
+            $paramKey = ":{$column}";
+            $params[$paramKey] = $value;
+            $sql = "$column = $paramKey";
+        }
+        return ['sql' => $sql, 'params' => $params];
+    }
+
+
 
 
     public function applySorting($sorting)
