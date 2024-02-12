@@ -1,5 +1,9 @@
 <?php
 
+<<<<<<< Updated upstream
+=======
+// require_once "$path/controllers/base_controller.php";
+>>>>>>> Stashed changes
 require_once "$path/models/user_model.php";
 
 class UsersController
