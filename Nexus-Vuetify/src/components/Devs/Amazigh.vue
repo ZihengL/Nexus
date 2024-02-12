@@ -9,7 +9,7 @@
       <p>Développeur web junior, qui s'intéresse beaucoup à la creation de site innovant.
         s'intéresse beaucoup à l'intéraction client.
       </p>
-      <a href="https://github.com/FrontEndJuniorDev" target="_blank" class="info-link">Visitez mon portfolio</a>
+      <a href="https://github.com/FrontEndJuniorDev" target="_blank" class="info-link">Visitez mon Github</a>
     </div>
   </div>
 </template>
