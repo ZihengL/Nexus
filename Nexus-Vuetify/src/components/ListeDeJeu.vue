@@ -1,7 +1,7 @@
 <template>
 
   <!-- <div v-for="activity in activities" :key="activity.id" class="activities">-->
-  <div class="container">
+  <div class="container glow">
     <div class="img">
       <img src="../assets//img/apex.png" alt="image jeu">
     </div>

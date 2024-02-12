@@ -35,12 +35,12 @@
         </div>
       </div>
     </div>
-    <div class="listeF glass">
-        <h2> liste amis</h2>
-        <amis />
-        <amis />
-        <amis />
-      </div>
+    <div class="listeFriends glass">
+      <h2> liste amis</h2>
+      <amis />
+      <amis />
+      <amis />
+    </div>
   </div>
 </template>
 

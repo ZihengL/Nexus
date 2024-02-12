@@ -49,6 +49,7 @@
                      flex-direction:  column; 
                      margin-left: 1%;
                      flex-basis: 100%;
+                     color: var(--light-trans-2);
     
                      h3, .router, .field {
                         display: block;
@@ -88,6 +89,7 @@
                     }
                     .router:hover {
                         font-weight: bold;
+                        color: var(--light);
                         background: rgb(196,196,196);
                         background: linear-gradient(90deg, rgba(196, 196, 196, 0.072) 0%, rgba(196, 196, 196, 0.775) 50%, rgba(196,196,196,0.072) 100%);
                     }
@@ -96,16 +98,17 @@
             .laListeJeu {
                 padding-right: 0%;
                 width: 100%;
+                color: var(--light-trans-2);
             }
             
         }
     }
-    .listeF {
+    .listeFriends {
         flex: 1;
-        //display: inline;
         flex-basis: 25%;
         padding: 20px;
         box-shadow: 10px 10px 20px black;
         margin-left: 30px;
+        color: var(--light-trans-2);
     }
 }

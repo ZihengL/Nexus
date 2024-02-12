@@ -1,6 +1,8 @@
 <template>
-  <div class="amis">
-    <img src="" alt="amis">
+  <div class="amis  glow">
+    <div class="img">
+      <img src="../assets//img/apex.png" alt="image jeu">
+    </div>
     <p>alloooomvjofvbihwabaocvnboj</p>
   </div>
 </template>
@@ -13,8 +15,19 @@
     border: 1px solid black;
     margin-top: 30px;
 
-    img {
-      margin: 10px;
+    .img {
+      flex: 3;
+      align-self: flex-start;
+      width: 10%;
+      margin-right: 5%;
+      img {
+        width: 100%;
+        //display: none;
+        //width: 1rem;
+      }
+    }
+    p {
+      align-items: center;
     }
   }
 </style>
