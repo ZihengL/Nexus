@@ -58,7 +58,7 @@ $result = null;
 if ($method === 'GET') {
     switch ($endURI) {
         case 'getAllProducts':
-            $result = $centralController->gamesController->getAllProducts();
+            $result = $centralController->games_controller->getAllProducts();
             break;
         default:
             $result = [];
@@ -70,10 +70,10 @@ if ($method === 'GET') {
 
     switch ($endURI) {
         case 'filterGames':
-            $result = $centralController->gamesController->filter($decodedData, []);
+            $result = $centralController->games_controller->filter($decodedData, []);
             break;
         case 'getGame':
-            $result = $centralController->gamesController->getProductById($decodedData);
+            $result = $centralController->games_controller->getProductById($decodedData);
             break;
         case 'getUser':
             $result = $centralController->usersController->getUserById($decodedData);
@@ -104,7 +104,7 @@ if ($method === 'GET') {
             $result = $centralController->usersController->deleteUsers($decodedData);
             break;
         case 'deleteGame':
-            $result = $centralController->gamesController->deleteProduct($decodedData);
+            $result = $centralController->games_controller->deleteProduct($decodedData);
             break;
             // case 'check':
             //     require_once "$path/transactions/checkout.php";
