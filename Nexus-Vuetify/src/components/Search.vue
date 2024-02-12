@@ -1,9 +1,8 @@
 <template>
-    <head>
-        <!-- ... other links and scripts ... -->
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    </head>
     <div class="search-container">
+        <head>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        </head>
         <input type="text" class="search-input" placeholder="Search games...">
         <button class="search-button">
             <i class="fa fa-search"></i> <!-- FontAwesome icon for search -->
