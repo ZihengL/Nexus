@@ -27,7 +27,7 @@ $path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd/';
 $webpath = '/Nexus/BackEnd/tests/';
 
 // CONTROLLERS
-require_once $path . 'controllers/centralcontroller.php';
+require_once $path . 'controllers/central_controller.php';
 
 global $central_controller;
 $central_controller = CentralController::getInstance();
