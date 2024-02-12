@@ -1,0 +1,87 @@
+.navBar {
+  .navContent {
+    width: 74%;
+    margin: auto;
+    display: flex; 
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    .logo {
+      width: 10%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  
+      img {
+        width: 70%;
+      }
+    }
+    .logo:hover {
+      img{
+        cursor: pointer;
+      }
+    }
+  
+    .link {
+      width: 90%;
+      height: 60%;
+      display: flex;
+      align-items: center;
+      gap: 1%;
+      margin: 0%;
+  
+      .router {
+        flex: 1;
+        margin: 0%;
+        text-align: center;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: column;
+        border-radius: 3px;
+        text-decoration: none;
+        color: black;
+        font-weight: bold;
+        font-size: 1rem;
+  
+        .link-btn {
+          margin: auto;
+          color: var(--light-trans);
+        }
+        /*Gere l'inconne du menu quand l'usager est connecter*/
+        .link .router .conectedIcon {
+          font-size: 3rem;
+        }
+      }
+      .router:hover {
+        font-weight: bolder;
+        .link-btn {
+          color: var(--light);
+        }
+      }
+      
+      .router-link-exact-active{
+        font-weight: bolder;
+        font-size: 1.3rem;
+        padding-bottom: 0.4%;
+        .link-btn {
+          //border-bottom: 3px solid var(--marin);
+          //border-bottom: 3px solid var(--light);
+          color: var(--light);       
+          text-shadow:
+              0 0 1.5px #ffffff3d,
+              0 0 2.5px #ffffff3d,
+              0 0 5px #ffffff3d,
+              0 0 10px rgba(0, 255, 170, 0.100),
+              0 0 20px rgba(0, 255, 170, 0.100),
+              0 0 25px rgba(0, 255, 170, 0.100),
+              0 0 30px rgba(0, 255, 170, 0.100),
+              0 0 33px rgba(0, 255, 170, 0.100);
+          animation: neonGlow 0.5s ease-in-out infinite alternate;
+        }
+      }
+      
+    }
+  }
+}
