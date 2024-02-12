@@ -1,9 +1,9 @@
 <?php
 
-require_once "$path/controllers/database.php";
-require_once "$path/controllers/games.php";
-require_once "$path/controllers/users.php";
-require_once "$path/controllers/tokens.php";
+require_once "$path/controllers/database_manager.php";
+require_once "$path/controllers/games_controller.php";
+require_once "$path/controllers/users_controller.php";
+require_once "$path/controllers/tokens_controller.php";
 
 require_once "$path/remote/routines.php";
 

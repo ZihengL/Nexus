@@ -1,7 +1,5 @@
 <?php
 
-// require_once "$path/models/dbmanager.php";
-
 function parseColumns($columns = [])
 {
     return empty($columns) ? "*" : implode(', ', $columns);
@@ -129,7 +127,7 @@ class BaseModel
 
         $sql = "UPDATE $this->table SET $pairs WHERE id = ?";
         echo "<br>UPDATE SQL<br>$sql<br>";
-        
+
         if ($this->query($sql, $formattedData)) {
             return true;
         } else {
