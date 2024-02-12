@@ -51,16 +51,22 @@ class TokensController
 
     // GENERATION
 
-    private function generateToken($user_id, $key, $expiration_time, $other_content = [])
+    private function generateToken($user_id, $isRefresh = false)
     {
         $current_time = time();
+        if ($isRefresh) {
+            $key = $this->refresh_key;
+            $expiration_time = self::REFRESH_TIMEOUT;
+        } else {
+            $key = $this->access_key;
+            $expiration_time = self::ACCESS_TIMEOUT;
+        }
 
         $payload = [
             'iss' => $this->issuer,
             'aud' => $this->audience,
             'iat' => $current_time, // Issued at
             'exp' => $current_time + $expiration_time, // Expiration
-            // 'exp' => $current_time + 5,
             'sub' => $user_id
         ];
 
@@ -70,13 +76,13 @@ class TokensController
     public function generateAccessToken($refresh_token)
     {
         if ($this->validateRefreshToken($refresh_token)) {
-            return $this->generateToken($refresh_token->sub, $this->access_key, self::ACCESS_TIMEOUT);
+            return $this->generateToken($refresh_token->sub, false);
         }
     }
 
     public function generateRefreshToken($user_id)
     {
-        return $this->generateToken($user_id, $this->refresh_key, self::REFRESH_TIMEOUT);
+        return $this->generateToken($user_id, true);
     }
 
     public function generateTokenPair($user_id)
@@ -104,7 +110,6 @@ class TokensController
     public function isExpired($token, $isRefresh = false)
     {
         $decoded = $this->validateToken($token, $isRefresh ? $this->refresh_key : $this->access_key);
-
 
         return !$decoded || $decoded['exp'] < time();
     }
