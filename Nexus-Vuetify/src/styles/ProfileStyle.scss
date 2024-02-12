@@ -102,5 +102,10 @@
     }
     .listeF {
         flex: 1;
+        //display: inline;
+        flex-basis: 25%;
+        padding: 20px;
+        box-shadow: 10px 10px 20px black;
+        margin-left: 30px;
     }
 }

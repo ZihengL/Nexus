@@ -31,14 +31,11 @@
             <liste-de-jeu />
             <liste-de-jeu />
             <liste-de-jeu />
-            <liste-de-jeu />
-            <liste-de-jeu />
-            <liste-de-jeu />
           </div>
         </div>
       </div>
     </div>
-    <div style="flex-basis: 25%;padding: 20px;box-shadow: 10px 10px 20px black;margin-left: 30px;" class="listeF glass">
+    <div class="listeF glass">
         <h2> liste amis</h2>
         <amis />
         <amis />
