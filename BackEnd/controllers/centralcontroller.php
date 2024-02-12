@@ -1,13 +1,11 @@
 <?php
 
-require_once "$path/controllers/tokens.php";
 require_once "$path/controllers/database.php";
-
 require_once "$path/controllers/games.php";
 require_once "$path/controllers/users.php";
+require_once "$path/controllers/tokens.php";
 
 require_once "$path/remote/routines.php";
-
 
 use Dotenv\Dotenv as Dotenv;
 
@@ -18,9 +16,10 @@ class CentralController
 
     public $database_manager;
     public $token_manager;
+    public $routines_controller;
+
     public $users_controller;
     public $games_controller;
-    private $routines_controller;
 
     // CONSTRUCTOR
 
@@ -30,12 +29,14 @@ class CentralController
         $dotenv = Dotenv::createImmutable($path);
         $dotenv->load();
 
-        $this->database_manager = $this->instanciateDatabaseManager();
-        $pdo = $this->database_manager->getPDO();
+        // $this->database_manager = $this->instanciateDatabaseManager();
+        $this->database_manager = DatabaseManager::getInstance();
 
-        $this->token_manager = $this->instanciateTokensController($pdo);
+        $pdo = $this->database_manager->getPDO();
+        $this->token_manager = TokensController::getInstance($pdo);
         $this->users_controller = new UsersController($pdo, $this->token_manager);
         $this->games_controller = new GamesController($pdo);
+        // $this->routines_controller = $this->instanciateRoutines();
     }
 
     public static function getInstance()
@@ -49,37 +50,37 @@ class CentralController
 
     // CONTROLLERS & MANAGERS
 
-    private function instanciateTokensController($pdo)
-    {
-        $env = new stdClass();
-        $env->access_key = $_ENV['JWT_ACCESS_KEY'];
-        $env->refresh_key = $_ENV['JWT_REFRESH_KEY'];
-        $env->algorithm = $_ENV['JWT_ALGORITHM'];
-        $env->issuer = $_ENV['JWT_ISSUER'];
-        $env->audience = $_ENV['JWT_AUDIENCE'];
+    // private function instanciateTokensController($pdo)
+    // {
+    //     $env = new stdClass();
+    //     $env->access_key = $_ENV['JWT_ACCESS_KEY'];
+    //     $env->refresh_key = $_ENV['JWT_REFRESH_KEY'];
+    //     $env->algorithm = $_ENV['JWT_ALGORITHM'];
+    //     $env->issuer = $_ENV['JWT_ISSUER'];
+    //     $env->audience = $_ENV['JWT_AUDIENCE'];
 
-        return TokensController::getInstance($pdo, $env);
-    }
+    //     return TokensController::getInstance($pdo, $env);
+    // }
 
-    private function instanciateDatabaseManager()
-    {
-        $env = new stdClass();
-        $env->host = $_ENV['DB_HOST'];
-        $env->database = $_ENV['DB_NAME'];
-        $env->username = $_ENV['DB_USER'];
-        $env->password = $_ENV['DB_PASS'];
+    // private function instanciateDatabaseManager()
+    // {
+    //     $env = new stdClass();
+    //     $env->host = $_ENV['DB_HOST'];
+    //     $env->database = $_ENV['DB_NAME'];
+    //     $env->username = $_ENV['DB_USER'];
+    //     $env->password = $_ENV['DB_PASS'];
 
-        return DatabaseManager::getInstance($env);
-    }
+    //     return DatabaseManager::getInstance($env);
+    // }
 
-    private function instanciateRoutines()
-    {
-        $env = new stdClass();
-        $env->run = true;
-        $env->database_manager = $this->database_manager;
+    // private function instanciateRoutines()
+    // {
+    //     $config = new stdClass();
+    //     $config->run = true;
+    //     $config->central_controller = $this;
 
-        $this->routines_controller = Routines::getInstance($env);
-    }
+    //     return Routines::getInstance($config);
+    // }
 
     // GETTERS
 
@@ -91,6 +92,13 @@ class CentralController
     public function getGamesController()
     {
         return $this->games_controller;
+    }
+
+    // COMMANDS
+
+    public function setRoutines($toRunning)
+    {
+        $this->routines_controller->setRunningState($toRunning);
     }
 
     // // USER

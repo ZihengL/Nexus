@@ -136,7 +136,4 @@ class GameModel extends BaseModel
 
     //     return implode(' AND ', $mappedKeys);
     // }
-
-
-
 }

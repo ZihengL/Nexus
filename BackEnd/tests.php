@@ -28,6 +28,8 @@ $webpath = '/Nexus/BackEnd/tests/';
 
 // CONTROLLERS
 require_once $path . 'controllers/centralcontroller.php';
+
+global $central_controller;
 $central_controller = CentralController::getInstance();
 
 $users_controller = $central_controller->users_controller;
@@ -36,7 +38,6 @@ $games_controller = $central_controller->games_controller;
 // MANAGERS
 $token_manager = $central_controller->token_manager;
 $database_manager = $central_controller->database_manager;
-
 ?>
 
 <!DOCTYPE html>

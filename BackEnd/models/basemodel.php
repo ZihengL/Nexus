@@ -27,11 +27,11 @@ class BaseModel
     public $table;
     public $columns = [];
 
-    protected function __construct($pdo, $table)
+    protected function __construct($pdo, $table, $require_id = false)
     {
         $this->pdo = $pdo;
         $this->table = $table;
-        $this->columns = $this->getColumns();
+        $this->columns = $this->getColumns($require_id);
     }
 
     protected function query($sql, $params = [])
