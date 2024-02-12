@@ -1,6 +1,5 @@
 <template>
   <div class="about">
-<div class="container">Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati labore tempore, velit cum iusto quisquam consectetur! Accusamus esse molestiae est architecto? Temporibus sapiente accusantium ullam at pariatur sequi in earum.Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati labore tempore, velit cum iusto quisquam consectetur! Accusamus esse molestiae est architecto? Temporibus sapiente accusantium ullam at pariatur sequi in earum.Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati labore tempore, velit cum iusto quisquam consectetur! Accusamus esse molestiae est architecto? Temporibus sapiente accusantium ullam at pariatur sequi in earum.Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati labore tempore, velit cum iusto quisquam consectetur! Accusamus esse molestiae est architecto? Temporibus sapiente accusantium ullam at pariatur sequi in earum.Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati labore tempore, velit cum iusto quisquam consectetur! Accusamus esse molestiae est architecto? Temporibus sapiente accusantium ullam at pariatur sequi in earum.</div>
     <!-- Navbar -->
     <div class="navbar">
       <ul>
@@ -19,7 +18,19 @@
       <div v-else-if="selectedTab === 'Thomas'" class="devs"><Thomas/></div>
       <div v-else-if="selectedTab === 'Debraise'" class="devs"><Debraise/></div>
       <div v-else-if="selectedTab === 'Amazigh'" class="devs"><Amazigh/></div>
+      <div v-else  class="devs teamDes glass">Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati labore tempore, velit cum iusto 
+        quisquam consectetur! Accusamus esse molestiae est architecto? Temporibus sapiente accusantium ullam at pariatur sequi 
+        in earum.Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati labore tempore, velit cum iusto quisquam
+        consectetur! Accusamus esse molestiae est architecto? Temporibus sapiente accusantium ullam at pariatur sequi in earum.
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati labore tempore, velit cum iusto quisquam consectetur! 
+        Accusamus esse molestiae est architecto? Temporibus sapiente accusantium ullam at pariatur sequi in earum.Lorem ipsum dolor
+        sit amet consectetur adipisicing elit. Obcaecati labore tempore, velit cum iusto quisquam consectetur! Accusamus esse 
+        molestiae est architecto? Temporibus sapiente accusantium ullam at pariatur sequi in earum.Lorem ipsum dolor sit amet 
+        consectetur adipisicing elit. Obcaecati labore tempore, velit cum iusto quisquam consectetur! Accusamus esse molestiae est 
+        architecto? Temporibus sapiente accusantium ullam at pariatur sequi in earum.</div>
     </div>
+
+
 
   </div>
 </template>
@@ -47,7 +58,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .about {
   display: flex;
   flex-direction: column; /* Keep the main direction as column */
@@ -55,21 +66,23 @@ export default {
 
   .navbar {
     width: 100%;
+    text-align: center;
     .glow {
-      color: var(--light-trans);
+      color: var(--light-trans-2);
     }
     ul {
       list-style-type: none;
+      display: inline-block;
       padding: 1%;
       margin: 0 auto; /* Center the list */
       display: flex; /* Use flexbox for a horizontal layout */
       justify-content: center; /* Center items horizontally */
       gap: 20px; /* Space between items */
+      text-align: center;
       
       li {
-        padding: 10px 0px;
         cursor: pointer;
-        margin-left: 10% ;
+        margin: 0% 6% ;
         transition: background-color 0.3s, border-color 0.3s;
 
         &.active {
@@ -99,6 +112,11 @@ export default {
     .devs {
       width: 70%;
       margin: auto;
+    }
+    .teamDes {
+      margin-top: 7%;
+      padding: 3% 2%;
+      color: var(--light-trans);
     }
   }
 }
