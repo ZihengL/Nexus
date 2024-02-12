@@ -1,6 +1,6 @@
 <?php
 
-require_once "$path/models/basemodel.php";
+require_once "$path/models/base_model.php";
 // require_once "$path/controllers/tagscontroller.php";
 
 class TagsModel extends BaseModel {
