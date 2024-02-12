@@ -24,7 +24,7 @@ class GamesController {
     // GETTERS
 
     public function getById($id) {
-        return $this->model->getById($this->id, $id);
+        return $this->model->getById($this->id);
     }
 
     public function getByReleaseDate($releaseDate) {

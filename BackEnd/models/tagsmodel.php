@@ -3,7 +3,7 @@
 require_once "$path/models/basemodel.php";
 // require_once "$path/controllers/tagscontroller.php";
 
-class tagsmodel extends BaseModel {
+class TagsModel extends BaseModel {
 
     protected $tableName = "tags";
 
@@ -16,13 +16,11 @@ class tagsmodel extends BaseModel {
         return parent::getAll($columnName, $name);
     }
 
-    public function getAllGames() {
+    public function getAll() {
         return parent::getAll();
     }
 
-
     //Other Cruds
-
     public function applyFiltersAndSorting( $filters , $sorting){
         return parent::applyFiltersAndSorting($filters , $sorting);
     }
@@ -43,10 +41,6 @@ class tagsmodel extends BaseModel {
 
     public function deleteGame($id){
         return parent::delete($id);
-        // $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE id = ?");
-        // $stmt->execute([$id]);
-
-        // return $stmt->fetch();
     }
     
 }

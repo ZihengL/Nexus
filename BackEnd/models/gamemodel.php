@@ -15,10 +15,6 @@ class GameModel extends BaseModel {
         parent::__construct($pdo, $this->tableName);
     }
 
-    // public function getById($id) {
-    //     return parent::getOne($this->id, $id);
-    // }
-    
     public function getByReleaseDate($columnName, $date){
         return parent::getAll($columnName, $date);
     }

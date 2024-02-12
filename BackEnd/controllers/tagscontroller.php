@@ -1,7 +1,7 @@
 <?php
 require_once "$path/models/gamemodel.php";
 
-class GamesController {
+class TagsController {
 
     protected $model;
     protected $id = "id";
@@ -9,33 +9,24 @@ class GamesController {
     
 
     public function __construct($pdo) {
-        $this->model = new GameModel($pdo);
+        $this->model = new TagsModel($pdo);
     }
 
     // GETTERS
 
     public function getById($id) {
-        return $this->model->getById($this->id, $id);
+        return $this->model->getById($this->id);
     }
 
-    public function getByName($releaseDate) {
-        return $this->model->getByReleaseDate($this->releaseDate, $releaseDate);
+    public function getByName($name) {
+        return $this->model->getByName($this->name, $name);
     }
 
-
+    public function getAll() {
+        return $this->model->getAll();
+    }
 
     // Other CRUDs 
-    public function addGame($data) {
-        return $this->model->addGame($data);
-    }
-
-    public function updateGame($id, $data) {
-        return $this->model->updateGame($id, $data);
-    }
-
-    public function deleteGame($id) {
-        return $this->model->deleteGame($id);
-    }
 
     public function applyFiltersAndSorting($filters, $sorting){
         return $this->model->applyFiltersAndSorting($filters , $sorting );
