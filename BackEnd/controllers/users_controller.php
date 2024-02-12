@@ -1,7 +1,6 @@
 <?php
 
-// require_once "$path/controllers/base_controller.php";
-require_once "$path/models/usermodel.php";
+require_once "$path/models/user_model.php";
 
 class UsersController
 {
@@ -41,10 +40,11 @@ class UsersController
         return $this->model->get($this->lastName, $lastname);
     }
 
-    public function applyFiltersAndSorting( $filters, $sorting){
-        return $this->model->applyFiltersAndSorting($filters , $sorting );
+    public function applyFiltersAndSorting($filters, $sorting)
+    {
+        return $this->model->applyFiltersAndSorting($filters, $sorting);
     }
-    
+
 
     // ONLY FOR TESTING, DELETE IN FUTURE
     public function getAllUsers($columns = [])
