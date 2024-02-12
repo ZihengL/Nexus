@@ -3,48 +3,54 @@
 require_once "$path/models/base_model.php";
 // require_once "$path/controllers/games.php";
 
-class GameModel extends BaseModel {
+class GameModel extends BaseModel
+{
 
     protected $tableName = "games";
 
 
-    public function __construct($pdo) {
-      
-        // $fields = ["name", "type", "color", "size", "price", "images", "description"];
-
+    public function __construct($pdo)
+    {
         parent::__construct($pdo, $this->tableName);
     }
 
-    public function getByReleaseDate($columnName, $date){
+    public function getByReleaseDate($columnName, $date)
+    {
         return parent::getAll($columnName, $date);
     }
 
-    public function getByTags($columnName, $tags) {
+    public function getByTags($columnName, $tags)
+    {
         return parent::getAll($columnName, $tags);
     }
-    
-    public function getByDescription($columnName, $description){
+
+    public function getByDescription($columnName, $description)
+    {
         return parent::getAll($columnName, $description);
     }
 
-    public function getByImages($columnName, $img) {
+    public function getByImages($columnName, $img)
+    {
         return parent::getAll($columnName, $img);
     }
-    
-    public function getByDevs($columnName, $devName){
+
+    public function getByDevs($columnName, $devName)
+    {
         return parent::getAll($columnName, $devName);
     }
 
-    public function getAllGames() {
+    public function getAllGames()
+    {
         return parent::getAll();
     }
 
-    public function getMinMaxPrice() {
+    public function getMinMaxPrice()
+    {
         $sql = "SELECT MIN(price) AS minPrice, MAX(price) AS maxPrice FROM $this->tableName";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+
         if ($result) {
             return [
                 'minPrice' => $result['minPrice'],
@@ -57,30 +63,33 @@ class GameModel extends BaseModel {
             ];
         }
     }
-    
-    
+
+
     // public function getPriceRange($filters) {
     //     $minPrice = intval($filters['minprice']);
     //     $maxPrice = intval($filters['maxprice']) === 0 ? 999999 : $filters['maxprice'];
-    
+
     //     return "$minPrice, $maxPrice";
     // }
 
 
     //Other Cruds
 
-    public function applyFiltersAndSorting( $filters , $sorting){
-        return parent::applyFiltersAndSorting($filters , $sorting);
+    public function applyFiltersAndSorting($filters, $sorting)
+    {
+        return parent::applyFiltersAndSorting($filters, $sorting);
     }
 
-    public function addGame($game) {
+    public function addGame($game)
+    {
         $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE game = ?");
         $stmt->execute([$game]);
 
         return $stmt->fetch();
     }
-    
-    public function updateGame($id,$Game){
+
+    public function updateGame($id, $Game)
+    {
         $formattedData = $this->formatData($Game);
         $pairs = implode(' = ?, ', array_keys($formattedData)) . ' = ?';
         $formattedData['id'] = $id;
@@ -94,7 +103,8 @@ class GameModel extends BaseModel {
         }
     }
 
-    public function deleteGame($id){
+    public function deleteGame($id)
+    {
         return parent::delete($id);
         // $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE id = ?");
         // $stmt->execute([$id]);
@@ -130,5 +140,5 @@ class GameModel extends BaseModel {
     // }
 
 
-    
+
 }
