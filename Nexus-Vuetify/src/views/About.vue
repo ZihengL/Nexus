@@ -4,21 +4,21 @@
     <!-- Navbar -->
     <div class="navbar">
       <ul>
-        <li :class="{ active: selectedTab === 'Zi' }" @click="selectedTab = 'Zi'">Zi Heng Liu</li>
-        <li :class="{ active: selectedTab === 'Rebecca' }" @click="selectedTab = 'Rebecca'">Rebecca</li>
-        <li :class="{ active: selectedTab === 'Thomas' }" @click="selectedTab = 'Thomas'">Thomas</li>
-        <li :class="{ active: selectedTab === 'Debraise' }" @click="selectedTab = 'Debraise'">Debraise</li>
-        <li :class="{ active: selectedTab === 'Amazigh' }" @click="selectedTab = 'Amazigh'">Amazigh</li>
+        <li :class="{ active: selectedTab === 'Zi' }" @click="selectedTab = 'Zi'" class="glow">Zi Heng Liu</li>
+        <li :class="{ active: selectedTab === 'Rebecca' }" @click="selectedTab = 'Rebecca'" class="glow">Rebecca</li>
+        <li :class="{ active: selectedTab === 'Thomas' }" @click="selectedTab = 'Thomas'" class="glow">Thomas</li>
+        <li :class="{ active: selectedTab === 'Debraise' }" @click="selectedTab = 'Debraise'" class="glow">Debraise</li>
+        <li :class="{ active: selectedTab === 'Amazigh' }" @click="selectedTab = 'Amazigh'" class="glow">Amazigh</li>
       </ul>
     </div>
 
     <!-- Dynamic content based on navigation -->
     <div class="content">
-      <div v-if="selectedTab === 'Zi'"><Zi/></div>
-      <div v-else-if="selectedTab === 'Rebecca'"><Rebecca/></div>
-      <div v-else-if="selectedTab === 'Thomas'"><Thomas/></div>
-      <div v-else-if="selectedTab === 'Debraise'"><Debraise/></div>
-      <div v-else-if="selectedTab === 'Amazigh'"><Amazigh/></div>
+      <div v-if="selectedTab === 'Zi'" class="devs"><Zi/></div>
+      <div v-else-if="selectedTab === 'Rebecca'" class="devs"><Rebecca/></div>
+      <div v-else-if="selectedTab === 'Thomas'" class="devs"><Thomas/></div>
+      <div v-else-if="selectedTab === 'Debraise'" class="devs"><Debraise/></div>
+      <div v-else-if="selectedTab === 'Amazigh'" class="devs"><Amazigh/></div>
     </div>
 
   </div>
@@ -55,6 +55,9 @@ export default {
 
   .navbar {
     width: 100%;
+    .glow {
+      color: var(--light-trans);
+    }
     ul {
       list-style-type: none;
       padding: 1%;
@@ -69,12 +72,20 @@ export default {
         margin-left: 10% ;
         transition: background-color 0.3s, border-color 0.3s;
 
-        &:hover {
-          border-bottom: 2px solid black;
-        }
-
         &.active {
-          border-bottom: 2px solid black;
+          border-bottom: 2px solid var(--light);
+          
+          color: var(--light);       
+            text-shadow:
+                0 0 1.5px #ffffffa1,
+                0 0 2.5px #ffffffa1,
+                0 0 5px #ffffffa1,
+                0 0 10px var(--marin-b),
+                0 0 20px var(--marin-b),
+                0 0 25px var(--marin-b),
+                0 0 30px var(--marin-b),
+                0 0 33px var(--marin-b);
+            animation: neonGlow 0.5s ease-in-out infinite alternate;
         }
       }
     }
@@ -84,6 +95,11 @@ export default {
     margin-top: 20px;
     padding: 20px;
     width: 100%; /* Ensure content width matches navbar */
+
+    .devs {
+      width: 70%;
+      margin: auto;
+    }
   }
 }
 </style>

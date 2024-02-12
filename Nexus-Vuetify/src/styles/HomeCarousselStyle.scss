@@ -51,6 +51,7 @@ a{
                         font-family: Poppins;
                         font-weight: 500;
                         color: black;
+                        border-radius: 0px;
                     }
                     .btn:nth-child(1):hover{
                         background-color: rgba(114, 114, 114, 0.2);
@@ -88,7 +89,7 @@ a{
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
-                border-radius: 20px;
+                border-radius: 0px;
             }
             .content{
                 color: var(--light);
@@ -109,8 +110,8 @@ a{
     /* arrows */
     .arrows{
         position: absolute;
-        top: 87%;
-        right: 63%;
+        top: 60%;
+        right: 17%;
         z-index: 100;
         width: 10%;
         max-width: 30%;
@@ -122,17 +123,43 @@ a{
         button{
             width: 40px;
             height: 40px;
-            border-radius: 50%;
-            background-color: var(--light-trans);
+            border-radius: 0%;
+            //background-color: var(--light-trans);
             border: none;
             color: var(--dark);
             font-family: monospace;
             font-weight: bold;
             transition: .5s;
+            color: var(--light-trans-2);
+            /* From https://css.glass */
+            background: rgba(255, 255, 255, 0);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+
+            
+            color: var(--light);       
+            text-shadow:
+                0 0 1.5px #ffffff,
+                0 0 2.5px #ffffff,
+                0 0 5px #ffffff,
+                0 0 10px var(--marin-b-2),
+                0 0 20px var(--marin-b-2),
+                0 0 25px var(--marin-b-2),
+                0 0 30px var(--marin-b)-2,
+                0 0 33px var(--marin-b-2);
+            animation: neonGlow 0.5s ease-in-out infinite alternate;
         }
         button:hover{
             background-color: var(--very-light-gray-trans);
             color: var(--light);
+            /* From https://css.glass */
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(12.6px);
+            -webkit-backdrop-filter: blur(12.6px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
     }
 }

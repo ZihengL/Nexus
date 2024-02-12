@@ -1,4 +1,5 @@
 <template>
+
   <!-- <div v-for="activity in activities" :key="activity.id" class="activities">-->
   <div class="container">
     <img alt="image jeu" class="img">
@@ -7,15 +8,14 @@
       <button class="btn">Voir Plus</button>
     </div>
   </div>
-  <!--</div>-->
 </template>
+
 <style lang="scss">
 .container {
   display: flex;
   justify-content: space-between;
   border: 1px solid black;
   padding: 20px;
-  border-radius: 30px;
   box-shadow: 10px 10px 10px black;
   margin-top: 30px;
 }

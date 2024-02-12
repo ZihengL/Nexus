@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <Homecarrousel />
-    <Info style="margin: auto; margin-top: 2%;"/>
+    <Info style="margin: 2% auto;"/>
   </div>
 </template>
 
