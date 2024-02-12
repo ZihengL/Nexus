@@ -1,6 +1,6 @@
 <template>
   <div class="about">
-
+<div class="container">Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati labore tempore, velit cum iusto quisquam consectetur! Accusamus esse molestiae est architecto? Temporibus sapiente accusantium ullam at pariatur sequi in earum.Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati labore tempore, velit cum iusto quisquam consectetur! Accusamus esse molestiae est architecto? Temporibus sapiente accusantium ullam at pariatur sequi in earum.Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati labore tempore, velit cum iusto quisquam consectetur! Accusamus esse molestiae est architecto? Temporibus sapiente accusantium ullam at pariatur sequi in earum.Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati labore tempore, velit cum iusto quisquam consectetur! Accusamus esse molestiae est architecto? Temporibus sapiente accusantium ullam at pariatur sequi in earum.Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati labore tempore, velit cum iusto quisquam consectetur! Accusamus esse molestiae est architecto? Temporibus sapiente accusantium ullam at pariatur sequi in earum.</div>
     <!-- Navbar -->
     <div class="navbar">
       <ul>
