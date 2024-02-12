@@ -28,7 +28,7 @@ global $path;
 $path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd';
 
 // ----- DatabaseManager, PDO & CentralController init
-require_once $path . '/controllers/centralcontroller.php';
+require_once $path . '/controllers/central_controller.php';
 $centralController = CentralController::getInstance();
 
 $database_manager = $centralController->database_manager;
