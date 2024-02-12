@@ -39,25 +39,25 @@
         <form action="#" class="signup">
           <!-- ... Signup form content ... -->
           <div class="field">
-            <input type="text" placeholder="Nom">
+            <input type="text" placeholder="Nom *"  required>
           </div>
           <div class="field">
-            <input type="text" placeholder="Prenom">
+            <input type="text" placeholder="Prenom *"  required>
           </div>
           <div class="field">
-            <input type="text" placeholder="Téléphone" required>
+            <input type="text" placeholder="Téléphone">
           </div>
           <div class="field">
-            <input type="text" placeholder="Username" required>
+            <input type="text" placeholder="Username *" required>
           </div>
           <div class="field">
-            <input type="text" placeholder="Email" required>
+            <input type="text" placeholder="Email *" required>
           </div>
           <div class="field">
-            <input type="password" placeholder="Mot de passe" required>
+            <input type="password" placeholder="Mot de passe *" required>
           </div>
           <div class="field">
-            <input type="password" placeholder="Confirmer le mot de passe" required>
+            <input type="password" placeholder="Confirmer le mot de passe *" required>
           </div>
           <div class="fieldBtn">
             <div class="btn-layer"></div>
@@ -91,16 +91,15 @@ export default {
       this.isLogin = true;
       console.log("c est true");
       var formInner =  document.querySelector(".form-inner");
-      //formInner.style.display = 'block';
-      formInner.style.height = '40svh';
+      //formInner.style.display = 'flex';
+      formInner.style.height = '45svh';
     },
     toggleSignup() {
       this.isLogin = false;
       console.log("c est false");
       var formInner =  document.querySelector(".form-inner");
-      //formInner.style.display = 'flex';
-      //formInner.style.flexDirection = 'row';
-      formInner.style.height = '75svh';
+      //formInner.style.display = 'block';
+      formInner.style.height = '80svh';
     },
     toggleProfile() {
       this.$emit('showProfile');
