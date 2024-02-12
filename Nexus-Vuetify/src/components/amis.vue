@@ -9,14 +9,12 @@
 <style lang="scss">
   .amis {
     display: flex; 
-    margin-left: 30px; 
-    padding: 20px;
     box-shadow: 10px 10px 10px black;
     border: 1px solid black;
     margin-top: 30px;
 
     .img {
-      flex: 3;
+      flex: 1;
       align-self: flex-start;
       width: 10%;
       margin-right: 5%;
@@ -27,6 +25,7 @@
       }
     }
     p {
+      flex: 4;
       align-items: center;
     }
   }
