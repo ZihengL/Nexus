@@ -126,8 +126,6 @@ class BaseModel
     */
     public function updateRelationTable($objectToUpdate, $table_obj_ids = []){
         
-        
-
     }
 
 
