@@ -1,21 +1,27 @@
 <template>
-  <div class="store"> <!--flex colomn-->
-    <div> <!--flex 1-->
+  <div id="store"> <!--flex colomn-->
+    <div class="search"> <!--flex 1-->
       <!--barre de recheche-->
     </div>
-    <div> <!--flex 5--> <!--flex row-->
+    <div class="contenue"> <!--flex 5--> <!--flex row-->
       <!--Boutique--> <!--flex 4-->
+      <ListeJeux class="listeJeux"/>
       <!--filtre--> <!--flex 2-->
+      <div class="filtre">
+        filtre
+      </div>
     </div>
   </div>
 </template>
 
 <script scoped>
   import Card from '../components/Card.vue';
+  import ListeJeux from '../components/StoreComponent.vue';
   
   export default {
     components: {
       Card,
+      ListeJeux,
     },
     data() {
       return {
@@ -40,3 +46,29 @@
     },
   };
 </script>
+
+<style lang="scss">
+  #store {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    margin: 5% auto 5% auto;
+
+    .search {
+      flex: 1;
+    }
+    .contenue {
+      flex: 5;
+      display: flex;
+      gap: 2%;
+      flex-direction: row;
+      
+      .listeJeux {
+        flex: 4;
+      }
+      .filtre {
+        flex: 2;
+      }
+    }
+  }
+</style>

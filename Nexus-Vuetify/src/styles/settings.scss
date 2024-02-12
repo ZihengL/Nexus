@@ -51,9 +51,18 @@ body {
         background: rgb(3,34,76);
         background: linear-gradient(153deg, rgb(3, 33, 76) 0%, rgba(3,34,76,1) 75%);
         
-        .glass {
+        .glass, .glass2 {
             /* From https://css.glass */
             background: rgba(255, 255, 255, 0.06);
+            border-radius: 0px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
+            border: 1px solid rgba(255, 255, 255, 0);
+        }
+        .glass2:hover {
+            /* From https://css.glass */
+            background: rgba(255, 255, 255, 0.250);
             border-radius: 0px;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(0px);
