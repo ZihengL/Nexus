@@ -4,13 +4,81 @@ require_once "$path/models/base_model.php";
 
 class UserModel extends BaseModel
 {
+    // + Construct()
+    // + getByEmail(String): User
+    // + getByName(String): [User]
+    // + getByLastname(String): [User]
+    // + getByPhoneNumber(int): User
+    // + getByPrivilege(Bool): [User]
+    // + getByDescription(String): [User]
+    // + createUser(data): Bool
+    // + updateUser(int, data): Bool
+    // + deleteUser(int): Bool
+
 
 
     public function __construct($pdo)
     {
-        $table = "user";
+        $tableName = "user";
 
-        parent::__construct($pdo, $table);
+        parent::__construct($pdo, $tableName);
+    }
+
+    //Gets
+    public function getByEmail($email, $columnName)
+    {
+        return parent::getAll($columnName, $email, parent::getColumns(true));
+    }
+
+    public function getByName( $name, $columnName)
+    {
+        return parent::getAll( $columnName, $name, parent::getColumns(true));
+    }
+
+    public function getByLastname($columnName, $lastname)
+    {
+        return parent::getAll( $columnName, $lastname, parent::getColumns(true));
+    }
+
+    public function getByPhoneNumber($columnName, $phoneNumber)
+    {
+        return parent::getAll( $columnName, $phoneNumber, parent::getColumns(true));
+    }
+
+    public function getByPrivilege($columnName, $privilege)
+    {
+        return parent::getAll( $columnName, $privilege, parent::getColumns(true));
+    }
+
+    public function getByDescription($columnName, $description)
+    {
+        return parent::getAll($columnName, $description, parent::getColumns(true));
+    }
+
+    //other cruds
+
+    public function applyFiltersAndSorting( $filters , $sorting){
+        return parent::applyFiltersAndSorting($filters , $sorting );
+    }
+
+    public function updateUser($id, $data)
+    {
+        $formattedData = $this->formatData($data);
+        $pairs = implode(' = ?, ', array_keys($formattedData)) . ' = ?';
+        $formattedData['id'] = $id;
+
+        $sql = "UPDATE $this->tableName SET $pairs WHERE id = ?";
+        // print_r($sql);
+        if ($this->query($sql, $formattedData)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function deleteUser($id)
+    {
+        return parent::delete($id);
     }
 
     public function create($data)
@@ -32,6 +100,7 @@ class UserModel extends BaseModel
         if (in_array('password', array_keys($data))) {
             $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
         }
+
 
         return parent::formatData($data);
     }

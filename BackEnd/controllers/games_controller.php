@@ -1,8 +1,19 @@
 <?php
-require_once "$path/models/game.php";
+require_once "$path/models/game_model.php";
 
 class GamesController {
+
     protected $model;
+    protected $id = "id";
+    protected $name = "name";
+    protected $rating = "rating";
+    protected $tags = "tags";
+    protected $price = "price";
+    protected $images = "images";
+    protected $devNames = "devNames";
+    protected $releaseDate = "releaseDate"; 
+    protected $description = "description";
+    protected $stripeID = "stripeID";
 
     public function __construct($pdo) {
         $this->model = new GameModel($pdo);
@@ -11,31 +22,27 @@ class GamesController {
     // GETTERS
 
     public function getById($id) {
-        return $this->model->getById($id);
+        return $this->model->getById($this->id);
     }
 
     public function getByReleaseDate($releaseDate) {
-        return $this->model->getByReleaseDate($releaseDate);
+        return $this->model->getByReleaseDate($this->releaseDate, $releaseDate);
     }
 
     public function getByTags($tags) {
-        return $this->model->getByTags($tags);
+        return $this->model->getByTags($this->tags, $tags);
     }
 
     public function getByDescription($description) {
-        return $this->model->getByDescription($description);
+        return $this->model->getByDescription($this->description, $description);
     }
 
     public function getByImages($images) {
-        return $this->model->getByImages($images);
+        return $this->model->getByImages($this->images, $images);
     }
 
     public function getByDevs($devName) {
-        return $this->model->getByDevs($devName);
-    }
-
-    public function getMinMaxPrice() {
-        return $this->model->getMinMaxPrice();
+        return $this->model->getByDevs($this->devName, $devName);
     }
     
     public function getAllGames() {
@@ -44,10 +51,19 @@ class GamesController {
 
 
     // Other CRUDs 
+
+    //Create/Add games
     public function addGame($data) {
         return $this->model->addGame($data);
     }
 
+
+    //Validate games before adding them in the database
+
+
+
+    //update and delete games
+    //determine what can be updated or not
     public function updateGame($id, $data) {
         return $this->model->updateGame($id, $data);
     }
@@ -56,7 +72,13 @@ class GamesController {
         return $this->model->deleteGame($id);
     }
 
-    // public function filterGames($filters, $columns = []) {
+    public function applyFiltersAndSorting($filters, $sorting){
+        return $this->model->applyFiltersAndSorting($filters , $sorting );
+    }
+
+}
+
+ // public function filterGames($filters, $columns = []) {
     //     return $this->model->filterGames($filters, $columns);
     // }
 
@@ -120,4 +142,3 @@ class GamesController {
     // public function getMappedValues() {
     //     return $this->model->getMappedValues();
     // }
-}

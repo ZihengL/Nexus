@@ -41,7 +41,7 @@ $baseURL = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOS
 // Pathing and URL
 // require_once "$path/transactions/routines.php";
 require_once "$path/controllers/database.php";
-require_once "$path/controllers/centralcontroller.php";
+require_once "$path/controllers/centralController.php";
 
 
 // centralController
