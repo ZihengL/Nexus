@@ -9,22 +9,22 @@
       <ListeJeux class="listeJeux"/>
       <!--filtre--> <!--flex 2-->
       <div class="filtre">
-        filtre
+        <Filter/>
       </div>
     </div>
   </div>
 </template>
 
 <script scoped>
-  import Card from '../components/Card.vue';
   import ListeJeux from '../components/StoreComponent.vue';
-  import Search from '../components/Search.vue'
+  import Search from '../components/Search.vue';
+  import Filter from '../components/Filter.vue'
   
   export default {
     components: {
-      Card,
       ListeJeux,
       Search,
+      Filter,
     },
     data() {
       return {

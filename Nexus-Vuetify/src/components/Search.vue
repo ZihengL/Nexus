@@ -4,7 +4,7 @@
       <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     </head>
     <div class="search-container">
-      <input type="text" class="search-input" placeholder="Search games...">
+      <input type="text" class="search-input" placeholder="Trouver un jeux...">
       <button class="search-button">
         <i class="fa-solid fa-magnifying-glass"></i> <!-- FontAwesome icon for search -->
       </button>
@@ -13,9 +13,8 @@
   
   <style scoped>
   .search-container {
-    margin-top:5%;
+    margin-top:2%;
     margin-left: 30%;
-    margin-right: 15%;
     position: relative;
     display: flex;
     justify-content: flex-end; /* Aligns the search bar to the right */
