@@ -1,6 +1,7 @@
 <template>
   <div class="store"> <!--flex colomn-->
     <div> <!--flex 1-->
+      <Search/>
       <!--barre de recheche-->
     </div>
     <div> <!--flex 5--> <!--flex row-->
@@ -11,11 +12,11 @@
 </template>
 
 <script scoped>
-  import Card from '../components/Card.vue';
+import Search from '../components/Search.vue'
   
   export default {
     components: {
-      Card,
+      Search,
     },
     data() {
       return {
