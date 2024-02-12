@@ -1,10 +1,10 @@
 <?php
 
-require_once "$path/controllers/database.php";
+require_once "$path/controllers/database_manager.php";
 // require_once "$path/controllers/reviews.php";
 // require_once "$path/controllers/notifications.php";
-require_once "$path/controllers/gamescontroller.php";
-require_once "$path/controllers/userscontroller.php";
+require_once "$path/controllers/games_controller.php";
+require_once "$path/controllers/users_controller.php";
 
 require_once "$path/remote/secrets.php";
 

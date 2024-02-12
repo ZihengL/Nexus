@@ -1,5 +1,5 @@
 <?php
-require_once "$path/models/gamemodel.php";
+require_once "$path/models/game_model.php";
 
 class GamesController {
 
