@@ -14,8 +14,6 @@ class GamesController {
     protected $releaseDate = "releaseDate"; 
     protected $description = "description";
     protected $stripeID = "stripeID";
-  
-
 
     public function __construct($pdo) {
         $this->model = new GameModel($pdo);
@@ -53,10 +51,19 @@ class GamesController {
 
 
     // Other CRUDs 
+
+    //Create/Add games
     public function addGame($data) {
         return $this->model->addGame($data);
     }
 
+
+    //Validate games before adding them in the database
+
+
+
+    //update and delete games
+    //determine what can be updated or not
     public function updateGame($id, $data) {
         return $this->model->updateGame($id, $data);
     }

@@ -118,6 +118,25 @@ class BaseModel
         }
     }
 
+
+
+    /*To update the relational tables 
+    $table_obj_ids = [] - is an array because for gameTags there's gameId and tagId 
+    but for Reviews there's Id gameId, userId and maybe a third
+    */
+    public function updateRelationTable($objectToUpdate, $table_obj_ids = []){
+        
+        
+
+    }
+
+
+
+    // /* 
+    // */
+    // public function updateRelationTable($objectToUpdate, $table_obj_ids = []){  
+    // }
+
     public function delete($id)
     {
         $sql = "DELETE FROM $this->table WHERE id = ?";

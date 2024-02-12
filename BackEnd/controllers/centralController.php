@@ -38,6 +38,8 @@ class CentralController {
         return $this->gamesController;
     }
 
+}
+
     // // USER
 
     // public function login($email, $password) {
@@ -118,4 +120,3 @@ class CentralController {
     // public function getJsonEncoded($items) {
     //     return json_encode($items);
     // }
-}
