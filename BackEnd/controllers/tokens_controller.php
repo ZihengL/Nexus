@@ -1,5 +1,5 @@
 <?php
-require_once $path . '/models/token.php';
+require_once $path . '/models/token_model.php';
 require_once $path . '/vendor/autoload.php';
 
 use Firebase\JWT\JWT;
