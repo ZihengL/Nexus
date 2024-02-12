@@ -24,7 +24,7 @@ function printer($content, $title = null)
 global $path;
 $path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd/';
 
-require_once $path . 'controllers/centralcontroller.php';
+require_once $path . 'controllers/central_controller.php';
 $central_controller = CentralController::getInstance();
 
 $users_controller = $central_controller->users_controller;
