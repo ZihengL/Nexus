@@ -7,3 +7,48 @@
 Homestead.json
 Homestead.yaml
 .env
+
+# VUETIFY
+
+# Dependency directories
+node_modules/
+package-lock.json
+yarn.lock
+
+# Production build output
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Vue CLI 3 auto generated files
+/.vuepress/dist
+/.nuxt/
+.nuxtignore
+
+# Local History for Visual Studio Code
+.history/
+
+# Vuetify a-la-carte generated file (if not needed)
+vuetify.js
