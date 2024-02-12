@@ -1,6 +1,12 @@
 <template>
-  <div class="store">
-    <Card/>
+  <div class="store"> <!--flex colomn-->
+    <div> <!--flex 1-->
+      <!--barre de recheche-->
+    </div>
+    <div> <!--flex 5--> <!--flex row-->
+      <!--Boutique--> <!--flex 4-->
+      <!--filtre--> <!--flex 2-->
+    </div>
   </div>
 </template>
 
