@@ -1,6 +1,7 @@
 <?php
 
-function updateDB($controller, $products) {
+function updateDB($controller, $products)
+{
     $hostedImages = [
         "https://freeimage.host/i/JuTPgGp" => "https://iili.io/JuTPgGp.png",
         "https://freeimage.host/i/JuTPr6N" => "https://iili.io/JuTPr6N.png",
@@ -27,11 +28,12 @@ function updateDB($controller, $products) {
     }
 }
 
-function updateSTRIPE($stripe, $products_DB) {
+function updateSTRIPE($stripe, $products_DB)
+{
     foreach ($products_DB as $product_db) {
         if ($product_db['stripeID'] === null) {
             $images = explode(',', $product_db['images']);
-    
+
             // $product_stripe = \Stripe\Product::create([
             //         'name' => $product_db['name'],
             //         'type' => 'good',
@@ -42,13 +44,13 @@ function updateSTRIPE($stripe, $products_DB) {
                 $product_db['stripeID'],
                 ['images' => $images]
             );
-    
+
             // $price = \Stripe\Price::create([
             //         'product' => $product_stripe->id,
             //         'unit_amount' => $product_db['price'] * 100, // Amount in cents
             //         'currency' => 'usd',
             //     ]);
-    
+
             // $product_db['stripeID'] = $product_stripe->id;
             // $controller->gamesController->updateProduct($product_db['id'], $product_db);
         }
@@ -62,7 +64,7 @@ require_once "$path/transactions/secrets.php";
 
 $stripe = new \Stripe\StripeClient($stripeSecretKey);
 
-$gamesController = $controller->gamesController;
+$gamesController = $controller->games_controller;
 
 updateDB($gamesController, $gamesController->getAllProducts());
 updateSTRIPE($stripe, $gamesController->getAllProducts());
@@ -91,4 +93,3 @@ updateSTRIPE($stripe, $gamesController->getAllProducts());
 //         $controller->gamesController->updateProduct($product_db['id'], $product_db);
 //     }
 // }
-

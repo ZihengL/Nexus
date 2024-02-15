@@ -8,7 +8,6 @@ class GamesController {
     protected $name = "name";
     protected $rating = "rating";
     protected $tags = "tags";
-    protected $price = "price";
     protected $images = "images";
     protected $devNames = "devNames";
     protected $releaseDate = "releaseDate"; 
@@ -42,7 +41,7 @@ class GamesController {
     }
 
     public function getByDevs($devName) {
-        return $this->model->getByDevs($this->devName, $devName);
+        return $this->model->getByDevs($this->devNames, $devName);
     }
     
     public function getAllGames() {

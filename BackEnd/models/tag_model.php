@@ -10,7 +10,6 @@ class TagsModel extends BaseModel {
     public function __construct($pdo) {
         parent::__construct($pdo, $this->tableName);
     }
-
     
     public function getByName($columnName, $name){
         return parent::getAll($columnName, $name);
@@ -40,19 +39,19 @@ class TagsModel extends BaseModel {
     // }
 
 
-    public function updateRelationTable($id, $gameId, $tagId){
-        $formattedData = $this->formatData($Game);
-        $pairs = implode(' = ?, ', array_keys($formattedData)) . ' = ?';
-        $formattedData['id'] = $id;
+    // public function updateRelationTable($id, $gameId, $tagId){
+    //     $formattedData = $this->formatData($Game);
+    //     $pairs = implode(' = ?, ', array_keys($formattedData)) . ' = ?';
+    //     $formattedData['id'] = $id;
 
-        $sql = "UPDATE $this->table SET $pairs WHERE id = ?";
-        // print_r($sql);
-        if ($this->query($sql, $formattedData)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+    //     $sql = "UPDATE $this->table SET $pairs WHERE id = ?";
+    //     // print_r($sql);
+    //     if ($this->query($sql, $formattedData)) {
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // }
 
     public function delete($id){
         return parent::delete($id);
