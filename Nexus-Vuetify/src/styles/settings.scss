@@ -60,6 +60,15 @@ body {
             -webkit-backdrop-filter: blur(0px);
             border: 1px solid rgba(255, 255, 255, 0);
         }
+        .glass3 {
+            /* From https://css.glass */
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 0px;
+            box-shadow: 10px 10px 10px black;
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
+            border: 1px solid rgba(255, 255, 255, 0);
+        }
         .glass2:hover {
             /* From https://css.glass */
             background: rgba(255, 255, 255, 0.250);

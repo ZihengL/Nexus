@@ -1,5 +1,5 @@
 <template>
-  <div class="amis  glow">
+  <div class="amis glass3 glow">
     <div class="img">
       <img src="../assets//img/apex.png" alt="image jeu">
     </div>

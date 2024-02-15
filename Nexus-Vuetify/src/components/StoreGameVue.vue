@@ -61,6 +61,7 @@ export default {
         p {
             display: none;
             position: absolute;
+            text-align: justify;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -68,19 +69,23 @@ export default {
         }
     }
 
-    .img:hover img {
-        opacity: 0.3; /* Réduit l'opacité de l'image lorsqu'elle est survolée */
-    }
 
-    .img:hover p {
-        display: inline-block;
-    }
 
     ul {
         display: flex;
         justify-content: space-around;
         flex-direction: row;
         list-style: none;
+    }
+}
+.glass2:hover {
+    .img img {
+        opacity: 0.3; /* Réduit l'opacité de l'image lorsqu'elle est survolée */
+    }
+
+    .img p {
+        display: inline-block;
+        width: 90%;
     }
 }
 </style>
