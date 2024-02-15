@@ -16,15 +16,12 @@ class DatabaseManager
 
     private function __construct()
     {
-        // $this->host = $env->host;
-        // $this->database = $env->database;
-        // $this->username = $env->username;
-        // $this->password = $env->password;
-
         $this->host = $_ENV['DB_HOST'];
         $this->database = $_ENV['DB_NAME'];
         $this->username = $_ENV['DB_USER'];
         $this->password = $_ENV['DB_PASS'];
+
+        print($this->username . ' ' . $this->password);
 
         $connection_string = 'mysql:host=' . $this->host . ';dbname=' . $this->database;
         $this->pdo = new PDO($connection_string, $this->username, $this->password);

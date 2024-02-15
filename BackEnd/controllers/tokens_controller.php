@@ -85,6 +85,7 @@ class TokensController
         return $this->generateToken($user_id, true);
     }
 
+    // Prefer not using.
     public function generateTokenPair($user_id)
     {
         $refresh_token = $this->generateRefreshToken($user_id);
