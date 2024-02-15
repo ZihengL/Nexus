@@ -1,10 +1,10 @@
 <template>
     <div id="storeComp" class="glass">
-        <GameVue :link="'/Game'"/>
-        <GameVue :link="'/Game'"/>
-        <GameVue :link="'/Game'"/>
-        <GameVue :link="'/Game'"/>
-        <GameVue :link="'/Game'"/>
+        <GameVue :link="'/Game'" class="vuee"/>
+        <GameVue :link="'/Game'" class="vuee"/>
+        <GameVue :link="'/Game'" class="vuee"/>
+        <GameVue :link="'/Game'" class="vuee"/>
+        <GameVue :link="'/Game'" class="vuee"/>
     </div>
 </template>
 <script>
@@ -25,10 +25,18 @@
 </script>
 
 <style lang="scss">
-    #storeComp {  
+    #storeComp { 
+        /*border: 2px solid black; 
+        display: flex;
+        flex-direction: row;
+        padding: 0%;*/
+
         display: grid;
+
         grid-template-columns: auto auto;
         gap: 2%;
         padding: 2% 2% 5% 2%;
+        width: 100%;
+
     }
 </style>
