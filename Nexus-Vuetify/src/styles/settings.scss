@@ -47,9 +47,8 @@ body {
 }
 .app {
     .all {
-        //background: rgb(0,0,0);
-        background: rgb(3,34,76);
-        background: linear-gradient(153deg, rgb(3, 33, 76) 0%, rgba(3,34,76,1) 75%);
+        background: rgba(3, 33, 76);
+        background-color: linear-gradient(153deg, rgba(3, 34, 76, 0) 0%, rgba(3,33,76,1) 75%);
         
         .glass, .glass2 {
             /* From https://css.glass */
@@ -64,7 +63,6 @@ body {
             /* From https://css.glass */
             background: rgba(255, 255, 255, 0.06);
             border-radius: 0px;
-            box-shadow: 10px 10px 10px black;
             backdrop-filter: blur(0px);
             -webkit-backdrop-filter: blur(0px);
             border: 1px solid rgba(255, 255, 255, 0);
