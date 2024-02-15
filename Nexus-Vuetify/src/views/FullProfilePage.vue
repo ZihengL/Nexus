@@ -44,7 +44,7 @@
 <style lang="scss" scoped>
 #fullProfile {
   width: 100%;
-  margin: 0% auto 3% auto;
+  margin: 0 auto 3% auto;
   /*max-height: 90%;
   margin: 20px auto;
   background-color: #ffffff;

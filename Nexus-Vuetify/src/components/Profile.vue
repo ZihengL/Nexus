@@ -25,7 +25,7 @@
             </div>
           </div>
         </div>
-        <div style="display: flex; margin-top: 1.5%;" class=" glass">
+        <div style="display: flex; margin-top: 1.5%; padding: 30px;" class=" glass">
           <div class="laListeJeu">
             <h2>Liste de jeu</h2>
             <liste-de-jeu />
