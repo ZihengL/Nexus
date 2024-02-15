@@ -6,6 +6,10 @@
 -- Generation Time: Feb 12, 2024 at 04:46 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
+-- Host: 127.0.0.1
+-- Generation Time: Feb 12, 2024 at 04:46 PM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -19,11 +23,13 @@ SET time_zone = "+00:00";
 
 --
 -- Database: `nexus`
+-- Database: `nexus`
 --
 
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `createdgames`
 -- Table structure for table `createdgames`
 --
 
@@ -36,6 +42,7 @@ CREATE TABLE `createdgames` (
 
 --
 -- Table structure for table `friends`
+-- Table structure for table `friends`
 --
 
 CREATE TABLE `friends` (
@@ -45,6 +52,7 @@ CREATE TABLE `friends` (
 
 --
 -- Dumping data for table `friends`
+-- Dumping data for table `friends`
 --
 
 INSERT INTO `friends` (`id`, `friendID`) VALUES
@@ -53,6 +61,7 @@ INSERT INTO `friends` (`id`, `friendID`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `games`
 -- Table structure for table `games`
 --
 
@@ -89,9 +98,34 @@ INSERT INTO `games` (`id`, `developperID`, `name`, `description`, `files`, `imag
 CREATE TABLE `gamestags` (
   `gameId` int(11) NOT NULL,
   `tagId` int(11) NOT NULL
+  `releaseDate` date DEFAULT NULL,
+  `ratingAverage` float DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
+-- Dumping data for table `games`
+--
+
+INSERT INTO `games` (`id`, `developperID`, `name`, `description`, `files`, `images`, `videos`, `tags`, `releaseDate`, `ratingAverage`) VALUES
+(1, 1, 'Super Game', 'An amazing game', 'game.exe', 'a', '', '', '2024-02-01', 2),
+(2, 3, 'Fantastic Adventure', 'Embark on an epic journey', 'adventure.exe', 'b', '', '', '2024-01-26', 5),
+(3, 4, 'Space Odyssey', 'Explore the depths of outer space', 'space.exe', 'a,b', '', '', '2024-02-06', 3),
+(4, 2, 'Medieval Kingdoms', 'Rule your own kingdom', 'kingdoms.exe', 'a', '', '', '2024-01-17', 8),
+(8, 4, 'Super Cat', 'Flying kitty', 'kitty.exe', '', '', '', '2024-01-14', 7);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `gamestags`
+--
+
+CREATE TABLE `gamestags` (
+  `gameId` int(11) NOT NULL,
+  `tagId` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `gamestags`
 -- Dumping data for table `gamestags`
 --
 
@@ -103,6 +137,7 @@ INSERT INTO `gamestags` (`gameId`, `tagId`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `notification`
 -- Table structure for table `notification`
 --
 
@@ -118,6 +153,7 @@ CREATE TABLE `notification` (
 
 --
 -- Dumping data for table `notification`
+-- Dumping data for table `notification`
 --
 
 INSERT INTO `notification` (`id`, `recipientID`, `senderID`, `message`, `timestamp`, `typeMessage`, `IsRead`) VALUES
@@ -126,6 +162,29 @@ INSERT INTO `notification` (`id`, `recipientID`, `senderID`, `message`, `timesta
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `revoked_tokens`
+--
+
+CREATE TABLE `revoked_tokens` (
+  `id` varchar(255) NOT NULL,
+  `sub` int(11) NOT NULL COMMENT 'user_id',
+  `exp` time NOT NULL COMMENT 'expiry_time',
+  `rev` time NOT NULL DEFAULT current_timestamp() COMMENT 'revocation_time'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `revoked_tokens`
+--
+
+INSERT INTO `revoked_tokens` (`id`, `sub`, `exp`, `rev`) VALUES
+('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwNzQ5NDgyNywiZXhwIjoxNzA3NTgxMjI3LCJzdWIiOjF9.c_OXHd2XawVLF27Vh3qh-S454ckFDaCek9F7zF-gxW8', 1, '838:59:59', '838:59:59'),
+('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwNzQ5NDkzNiwiZXhwIjoxNzA3NTgxMzM2LCJzdWIiOjF9.__j98QV-ypyjIFFABojO91ZxvxqrA-MiWOQorZ5dz4E', 1, '838:59:59', '838:59:59'),
+('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwNzQzNDYyOCwiZXhwIjoxNzA3NTIxMDI4LCJzdWIiOjF9.s2fsWD1rFYfTvHf9TR-pUKvkvi5uB5rKGeHT1HXgyWA', 1, '838:59:59', '838:59:59');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `rewiews`
 -- Table structure for table `revoked_tokens`
 --
 
