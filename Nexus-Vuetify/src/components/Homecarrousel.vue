@@ -5,7 +5,10 @@
       <!-- list item -->
       <div class="list">
         <div v-for="(item, index) in carouselItems" :key="index" class="item">
-          <img :src="item.image">
+          <div class="imgContainer">
+            <div class="overlayGrad"></div>
+            <img :src="item.image">
+          </div>
           <div class="content">
             <div class="title">{{ item.title }}</div>
             <div class="buttons">
