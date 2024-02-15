@@ -1,9 +1,9 @@
 <template>
   <!-- Created By CodingNepal -->
   <div class="allP">
-    <div class="containerProfile  glass">
+    <div class="containerProfile">
       <div class="wrapper">
-        <div class="description">
+        <div class="description  glass">
           <div :class="isHimself ? 'imgContainerFull' : 'imgContainer'">
             <img src="../assets/Rich_Ricasso.png" alt="John" class="imgProfil" />
           </div>
@@ -25,7 +25,7 @@
             </div>
           </div>
         </div>
-        <div style="display: flex; margin-top: 40px;">
+        <div style="display: flex; margin-top: 1.5%;" class=" glass">
           <div class="laListeJeu">
             <h2>Liste de jeu</h2>
             <liste-de-jeu />
