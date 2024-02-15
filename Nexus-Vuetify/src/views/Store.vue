@@ -8,7 +8,7 @@
       <!--Boutique--> <!--flex 4-->
       <ListeJeux class="listeJeux"/>
       <!--filtre--> <!--flex 2-->
-      <div class="filtre">
+      <div class="filtre glass">
         <Filter/>
       </div>
     </div>
@@ -56,13 +56,11 @@
     flex-direction: column;
     width: 70%;
     margin: 5% auto 5% auto;
-    border: 2px solid red;
 
     .search {
       flex: 1;
       text-align: right;
       justify-content: right;
-      border: 2px solid red;
       margin-bottom: 1%;
 
       .barreR{
@@ -72,18 +70,22 @@
     }
     .contenue {
       flex: 5;
-      display: flex;
-      gap: 2%;
-      flex-direction: row;
-      border: 2px solid red;
+      display: block;
+      width: 100%;
+      padding: 0%;
+      //lex-direction: row;
       
       .listeJeux {
-        flex: 4;
-      border: 2px solid red;
+        //flex: 4;
+        //display: inline-block;
+        float: left;
+        width: 65%;
+        margin-right: 2%;
       }
       .filtre {
-        flex: 2;
-      border: 2px solid red;
+        //flex: 2;
+        display: inline-block;
+        width: 33%;
       }
     }
   }

@@ -1,5 +1,5 @@
 <template>
-  <div class="amis  glow">
+  <div class="amis glass3 glow">
     <div class="img">
       <img src="../assets//img/apex.png" alt="image jeu">
     </div>
@@ -9,7 +9,6 @@
 <style lang="scss">
   .amis {
     display: flex; 
-    box-shadow: 10px 10px 10px black;
     border: 1px solid black;
     margin-top: 30px;
 

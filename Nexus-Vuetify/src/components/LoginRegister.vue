@@ -38,10 +38,8 @@
 
         <form action="#" class="signup">
           <!-- ... Signup form content ... -->
-          <div class="field">
+          <div class="field field2">
             <input type="text" placeholder="Nom *"  required>
-          </div>
-          <div class="field">
             <input type="text" placeholder="Prenom *"  required>
           </div>
           <div class="field">

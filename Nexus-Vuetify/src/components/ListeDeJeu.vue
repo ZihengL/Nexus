@@ -1,7 +1,7 @@
 <template>
 
   <!-- <div v-for="activity in activities" :key="activity.id" class="activities">-->
-  <div class="container glow">
+  <div class="container glass3 glow">
     <div class="img">
       <img src="../assets//img/apex.png" alt="image jeu">
     </div>
@@ -23,8 +23,7 @@
   justify-content: space-between;
   border: 1px solid rgba(0, 0, 0, 0.132);
   padding: 20px;
-  box-shadow: 10px 10px 10px black;
-  margin-top: 30px;
+  margin-top: 1.5%;
   gap: 40%;
 }
 

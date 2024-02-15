@@ -101,6 +101,11 @@
         width: 50%;
         transition: all 0.6s cubic-bezier(0.68,-0.55,0.265,1.55);
 
+        .field2 {
+          display: flex;
+          flex-direction: row;
+          gap: 3%;
+        }
         .btn {
           width: 100%;
         }
@@ -110,10 +115,11 @@
         .signup-link{
           text-align: center;
           margin-top: 30px;
+          color: var(--light-trans-2);
         }
         .pass-link a,
         .signup-link a{
-          color: var(--dark-blue);
+          color: var(--light-trans);
           text-decoration: none;
         }
         .pass-link a:hover,
