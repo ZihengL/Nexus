@@ -115,10 +115,11 @@
         .signup-link{
           text-align: center;
           margin-top: 30px;
+          color: var(--light-trans-2);
         }
         .pass-link a,
         .signup-link a{
-          color: var(--dark-blue);
+          color: var(--light-trans);
           text-decoration: none;
         }
         .pass-link a:hover,
