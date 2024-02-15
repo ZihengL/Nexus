@@ -14,7 +14,7 @@
       </ul>
     </div>
   </template>
-  
+
   <script setup>
   import { ref, onMounted, onBeforeUnmount } from 'vue';
   const tabImgGame = [
@@ -29,32 +29,32 @@
   const next = ref(null);
   const prev = ref(null);
   const dots = ref(null);
-  
+
   let lengthItems = 0;
   let active = 0;
   let refreshInterval;
-  
+
   onMounted(() => {
     items.value = sliderList.value.querySelectorAll('.item');
     lengthItems = items.value.length - 1;
     next.value = document.getElementById('next');
     prev.value = document.getElementById('prev');
     dots.value = sliderList.value.querySelectorAll('.dots li');
-  
+
     refreshInterval = setInterval(() => {
       next.value.click();
     }, 3000);
   });
-  
+
   onBeforeUnmount(() => {
     clearInterval(refreshInterval);
   });
-  
+
   const nextFunc = () => {
     active = active + 1 <= lengthItems ? active + 1 : 0;
     reloadSlider();
   };
-  
+
   const prevFunc = () => {
     active = active - 1 >= 0 ? active - 1 : lengthItems;
     reloadSlider();
@@ -67,7 +67,7 @@ const reloadSlider = () => {
     if (lastActiveDot) {
         lastActiveDot.classList.remove('active');
     }
-    
+
     dots.value[active].classList.add('active');
 
     clearInterval(refreshInterval);
@@ -76,12 +76,12 @@ const reloadSlider = () => {
     }, 3000);
 };
 
-  
+
   const goToSlide = (index) => {
     active = index;
     reloadSlider();
   };
   </script>
 
-  
+
 <style src="../styles/GameCarrouselStyle.scss"></style>

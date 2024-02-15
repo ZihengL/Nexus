@@ -27,7 +27,9 @@
       </div>
       <!-- next prev -->
       <div class="arrows">
-        <button @click="showSlider('prev')"><</button>
+        <button @click="showSlider('prev')">
+        </button>
+
         <button @click="showSlider('next')">></button>
       </div>
       <!-- time running -->
@@ -36,39 +38,17 @@
   </div>
 </template>
 <script src="../JS/carrouselScript.js">
-var tabCarousell = []; 
-/*const tabCarousell = [
-  {id: 1, image: '../assets/3f3rg', title: 'titre', description: 'fweg3rg'},
-  {id: 2, image: '../assets/3f3rg', title: 'titre', description: 'fweg3rg'},
-  {id: 4, image: '../assets/3f3rg', title: 'titre', description: 'fweg3rg'},
-];*/
-const account = {
-  id: this.id,
-  image: this.image,
-  title: this.title,
-  description: this.description
-};
 
-  const url = "https://localhost:4208/nexus/BackEnd/getAllProducts";
-    fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(account),
-    })
-    .then(response => {
-      if (response.status !== 200) {
-        console.log('Error: Non-200 status code');
-        return [];
-      }
-      // console.log(response.text())
-      return response.json();
-    }).then(data => {
-      
-      tabCarousell = this.processFetchedData(data)
-    })
-    .catch(error => console.log(error));
-console.log(tabCarousell);
+/*function processFetchedData(data) {
+
+}*/
+
+
+
+
+
+
+
+
 </script>
 <style src="../styles/HomeCarousselStyle.scss" scoped></style>

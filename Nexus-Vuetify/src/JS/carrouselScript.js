@@ -1,3 +1,5 @@
+import fetch from '../JS/Fetch';
+
 export default {
     data() {
       return {
@@ -50,18 +52,24 @@ export default {
         } else {
           this.carouselItems.unshift(this.carouselItems.pop());
         }
-  
+
         clearTimeout(this.runTimeOut);
         this.runTimeOut = setTimeout(() => {
           // Reset animation classes
           this.$el.classList.remove("next");
           this.$el.classList.remove("prev");
         }, this.timeRunning);
-  
+
         clearTimeout(this.runNextAuto);
         this.runNextAuto = setTimeout(() => {
           this.showSlider("next");
         }, this.timeAutoNext);
       },
     },
+    mounted() {
+      fetch("getAllProducts", "GET")
+    },
   };
+
+
+getAllProducts

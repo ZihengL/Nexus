@@ -6,8 +6,9 @@
 //   title: this.title,
 //   description: this.description,
 // };
-export function fetch(uri, jsonBody = null , method,) {
-  fetch("https://localhost:4208/Nexus/backend/"+uri, {
+//onDataReceived=null
+export function fetch(uri, jsonBody = null, method) {
+  fetch("https://localhost:4208/Nexus/backend/" + uri, {
     method: method,
     headers: {
       "Content-Type": "application/json",
@@ -23,8 +24,8 @@ export function fetch(uri, jsonBody = null , method,) {
       return response.json();
     })
     .then((data) => {
-      // tabCarousell = this.processFetchedData(data)
-      console.log("fetched data : ", data);
+      // onDataReceived(data);
+      console.log(data);
     })
     .catch((error) => console.log(error));
 

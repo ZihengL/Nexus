@@ -40,8 +40,8 @@ $baseURL = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOS
 
 // Pathing and URL
 // require_once "$path/transactions/routines.php";
-require_once "$path/controllers/database.php";
-require_once "$path/controllers/centralController.php";
+require_once "$path/controllers/database_manager.php";
+require_once "$path/controllers/central_controller.php";
 
 
 // centralController
@@ -58,7 +58,7 @@ $result = null;
 if ($method === 'GET') {
     switch ($endURI) {
         case 'getAllProducts':
-            $result = $centralController->games_controller->getAllProducts();
+            $result = $centralController->games_controller->getAllGames();
             break;
         default:
             $result = [];
