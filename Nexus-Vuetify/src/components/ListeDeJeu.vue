@@ -9,7 +9,7 @@
       <span>Joué à Super Mario Bros le 17/04/2022</span><br />
       <div class="fieldBtn">
         <div class="btn-layer"></div>
-        <v-btn density="default" class="submit glow">
+        <v-btn  to="/Game" density="default" class="submit glow">
           Voir plus
         </v-btn>
       </div>
