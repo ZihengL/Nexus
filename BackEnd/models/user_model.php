@@ -55,6 +55,10 @@ class UserModel extends BaseModel
         return parent::getAll($columnName, $description, parent::getColumns(true));
     }
 
+    public function getAll_users() {
+        return parent::getAll();
+    }
+
     //other cruds
 
     public function applyFiltersAndSorting( $filters , $sorting = null){

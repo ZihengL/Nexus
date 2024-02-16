@@ -48,9 +48,9 @@ class UsersController
 
 
     // ONLY FOR TESTING, DELETE IN FUTURE
-    public function getAllUsers($columns = [])
+    public function getAll_users($columns = [])
     {
-        return $this->model->getAll();
+        return $this->model->getAll_users();
     }
 
     public function getById($id)
