@@ -32,5 +32,9 @@ class TagsController {
         return $this->model->applyFiltersAndSorting($filters , $sorting );
     }
 
+    public function delete($id) {
+        return $this->model->delete($id);
+    }
+
 }
 

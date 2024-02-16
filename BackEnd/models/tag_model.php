@@ -24,6 +24,10 @@ class TagsModel extends BaseModel {
         return parent::applyFiltersAndSorting($filters , $sorting);
     }
 
+    public function delete($id){
+        return parent::delete($id);
+    }
+
     // public function update($id, $gameId, $tagId){
     //     $formattedData = $this->formatData($Game);
     //     $pairs = implode(' = ?, ', array_keys($formattedData)) . ' = ?';
@@ -53,8 +57,6 @@ class TagsModel extends BaseModel {
     //     }
     // }
 
-    public function delete($id){
-        return parent::delete($id);
-    }
+ 
     
 }
