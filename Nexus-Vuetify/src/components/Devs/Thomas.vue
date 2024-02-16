@@ -1,0 +1,9 @@
+<template>
+<slot>
+  <h1>bla</h1>
+  </slot>
+  </template>
+<style>
+</style>
+<script>
+</script>

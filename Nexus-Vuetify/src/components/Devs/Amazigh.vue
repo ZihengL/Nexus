@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="amazon">
     <div class="profile">
       <img src="/src/assets/Dev_Picture/amazigh.png" alt="Amazigh">
     </div>
@@ -9,13 +9,14 @@
       <p>Développeur web junior, qui s'intéresse beaucoup à la creation de site innovant.
         s'intéresse beaucoup à l'intéraction client.
       </p>
-      <a href="https://github.com/FrontEndJuniorDev" target="_blank" class="info-link">Visitez mon portfolio</a>
+      <a href="https://github.com/FrontEndJuniorDev" target="_blank" class="info-link">Visitez mon Github</a>
     </div>
   </div>
 </template>
 
 <style>
-.container {
+
+.amazon {
   display: flex;
   align-items: center; 
   gap: 10%; 
