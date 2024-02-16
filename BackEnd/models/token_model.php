@@ -1,4 +1,5 @@
 <?php
+
 require_once $path . '/models/base_model.php';
 
 class RevokedTokenModel extends BaseModel
@@ -19,7 +20,10 @@ class RevokedTokenModel extends BaseModel
 
     public function deleteExpiredTokens()
     {
-        $sql = "DELETE FROM $this->table WHERE exp < " . 5000;
+        $sql = "DELETE FROM $this->table WHERE exp < " . time();
+
+        $res = parent::query($sql);
+        echo $res;
 
         return parent::query($sql);
     }

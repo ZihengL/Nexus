@@ -1,30 +1,33 @@
 <?php
 
-
-// require_once "$path/controllers/base_controller.php";
-
-
-// require_once "$path/controllers/base_controller.php";
-
-// require_once "$path/controllers/base_controller.php";
 require_once "$path/models/user_model.php";
 
 class UsersController
 {
     private $model;
-    protected $tableName = "user";
-    protected $emailColumn = "email";
-    protected $nameColumn = "name";
-    protected $lastNameColumn = "lastname";
-    protected $phoneNumberColumn = "phone_number";
-    protected $privilegeColumn = "privilege";
-    protected $descriptionColumn = "description";
-    private $token_manager;
+    protected $table = "user";
+    protected $email = "email";
+    protected $name = "name";
+    protected $lastname = "lastname";
+    protected $phonenumber = "phone_number";
+    protected $privilege = "privilege";
+    protected $description = "description";
+    private $tokens_controller;
 
-    public function __construct($pdo, $token_manager)
+    public function __construct($pdo, $tokens_controller)
     {
         $this->model = new UserModel($pdo);
-        $this->token_manager = $token_manager;
+        $this->tokens_controller = $tokens_controller;
+    }
+
+    public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
+    {
+        return $this->model->getAllMatching($filters, $sorting, $included_columns);
+    }
+
+    public function getOneMatchingColumn($column, $value, $included_columns = [])
+    {
+        return $this->model->getOne($column, $value, $included_columns);
     }
 
     public function getUserById($id, $columns = [])
@@ -34,17 +37,17 @@ class UsersController
 
     public function getUserByEmail($email, $columnName)
     {
-        return $this->model->getOne($this->emailColumn, $email);
+        return $this->model->getOne($this->email, $email);
     }
 
     public function getUsersByName($name, $columnName)
     {
-        return $this->model->get($this->nameColumn, $name);
+        return $this->model->get($this->name, $name);
     }
 
     public function getUsersByLastName($lastname, $columnName)
     {
-        return $this->model->get($this->lastName, $lastname);
+        return $this->model->get($this->lastname, $columnName);
     }
 
     public function applyFiltersAndSorting($filters, $sorting)
@@ -54,9 +57,9 @@ class UsersController
 
 
     // ONLY FOR TESTING, DELETE IN FUTURE
-    public function getAllUsers($columns = [])
+    public function getAllUsers($included_columns = [])
     {
-        return $this->model->getAll();
+        return $this->model->getAll($included_columns);
     }
 
     public function getById($id)
@@ -71,26 +74,26 @@ class UsersController
         return $this->model->create($data);
     }
 
-    public function updateUser($id, $data)
+    public function updateUser($id, $data, $tokens)
     {
         $user = $this->model->getById($id);
 
-        // if ($this->isAuthenticated() && $user && $user['id'] === $_SESSION['user']['id']) {
-        return $this->model->update($id, $data);
-        // }
+        if ($user && $this->isAuthenticated($tokens)) {
+            return $this->model->update($id, $data);
+        }
 
-        // return false;
+        return false;
     }
 
-    public function deleteUser($id)
+    public function deleteUser($id, $tokens)
     {
         $user = $this->model->getById($id);
 
-        // if ($this->isAuthenticated() && $user && $user['id'] === $_SESSION['user']) {
+        if ($user && $this->isAuthenticated($tokens)) {
         return $this->model->delete($id);
-        // }
+        }
 
-        // return false;
+        return false;
     }
 
     public function userExists($data)
@@ -98,29 +101,22 @@ class UsersController
         return isset($data['email']) && !empty($this->getUserByEmail($data['email'], ['email']));
     }
 
-    // SESSION
+    //  ACCESS & SECURITY
 
     public function login($email, $password)
     {
-        $user = $this->getUserByEmail($email);
+        $user = $this->getOneMatchingColumn($email, 'email');
 
         if ($this->verifyUser($user, $email, $password)) {
-            // TODO: REPLACE SESSIONS WITH WEB TOKENS(JWT).
-            // $_SESSION['user'] = $user['id'];
-            // $_SESSION['authentified'] = true;
-
-            return $user;
+            return $this->tokens_controller->generateTokenPair($user['id']);
         }
 
         return false;
     }
 
-
-    public function logout($refreshToken)
+    public function logout($tokens)
     {
-        if ($this->isAuthenticated($refreshToken)) {
-            // TODO: Revoke token
-        }
+        return $this->tokens_controller->revokeTokens($tokens);
     }
 
     private function verifyUser($user, $email, $password)
@@ -130,8 +126,8 @@ class UsersController
             password_verify($password, $user['password']);
     }
 
-    public function isAuthenticated($refresh_token)
+    public function isAuthenticated($tokens)
     {
-        return $this->token_manager->validateRefreshToken($refresh_token);
+        return $this->tokens_controller->validateRefreshToken($tokens);
     }
 }

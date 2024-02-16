@@ -29,7 +29,6 @@ class CentralController
         $dotenv = Dotenv::createImmutable($path);
         $dotenv->load();
 
-        // $this->database_manager = $this->instanciateDatabaseManager();
         $this->database_manager = DatabaseManager::getInstance();
 
         $pdo = $this->database_manager->getPDO();
@@ -48,50 +47,21 @@ class CentralController
         return self::$instance;
     }
 
-    // CONTROLLERS & MANAGERS
-
-    // private function instanciateTokensController($pdo)
-    // {
-    //     $env = new stdClass();
-    //     $env->access_key = $_ENV['JWT_ACCESS_KEY'];
-    //     $env->refresh_key = $_ENV['JWT_REFRESH_KEY'];
-    //     $env->algorithm = $_ENV['JWT_ALGORITHM'];
-    //     $env->issuer = $_ENV['JWT_ISSUER'];
-    //     $env->audience = $_ENV['JWT_AUDIENCE'];
-
-    //     return TokensController::getInstance($pdo, $env);
-    // }
-
-    // private function instanciateDatabaseManager()
-    // {
-    //     $env = new stdClass();
-    //     $env->host = $_ENV['DB_HOST'];
-    //     $env->database = $_ENV['DB_NAME'];
-    //     $env->username = $_ENV['DB_USER'];
-    //     $env->password = $_ENV['DB_PASS'];
-
-    //     return DatabaseManager::getInstance($env);
-    // }
-
-    // private function instanciateRoutines()
-    // {
-    //     $config = new stdClass();
-    //     $config->run = true;
-    //     $config->central_controller = $this;
-
-    //     return Routines::getInstance($config);
-    // }
-
     // GETTERS
 
-    public function getUsersController()
-    {
-        return $this->users_controller;
-    }
+    // public function getUsersController()
+    // {
+    //     return $this->users_controller;
+    // }
 
-    public function getGamesController()
+    // public function getGamesController()
+    // {
+    //     return $this->games_controller;
+    // }
+
+    public function getAllMatching($controller, $filters = [], $sorting = [], $included_columns = [])
     {
-        return $this->games_controller;
+        return $controller->getAllMatching($filters, $sorting, $included_columns);
     }
 
     // COMMANDS
