@@ -1,10 +1,10 @@
 <template>
   <!-- Created By CodingNepal -->
-  <div class="wrapper glass">
+  <div class="wrapper glass roundBorderSmall">
 
     <div class="form-container">
 
-      <div class="slide-controls">
+      <div class="slide-controls roundBorderSmall">
         <input type="radio" name="slide" id="login" v-model="isLogin" value="true" checked>
         <input type="radio" name="slide" id="signup" v-model="isLogin" value="false">
         <label for="login" class="slide login">Connexion</label>

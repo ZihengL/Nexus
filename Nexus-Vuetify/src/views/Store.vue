@@ -6,9 +6,9 @@
     </div>
     <div class="contenue"> <!--flex 5--> <!--flex row-->
       <!--Boutique--> <!--flex 4-->
-      <ListeJeux class="listeJeux"/>
+      <ListeJeux class="listeJeux roundBorderSmall"/>
       <!--filtre--> <!--flex 2-->
-      <div class="filtre glass">
+      <div class="filtre glass roundBorderSmall">
         <Filter/>
       </div>
     </div>
@@ -55,7 +55,7 @@
     display: flex;
     flex-direction: column;
     width: 70%;
-    margin: 5% auto 5% auto;
+    margin: 1% auto 5% auto;
 
     .search {
       flex: 1;
@@ -64,7 +64,7 @@
       margin-bottom: 1%;
 
       .barreR{
-        width: 50%;
+        width: 100%;
 
       }
     }
