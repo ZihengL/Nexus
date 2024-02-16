@@ -22,8 +22,8 @@ class TagsController {
         return $this->model->getByName($this->name, $name);
     }
 
-    public function getAll() {
-        return $this->model->getAll();
+    public function getAllTags() {
+        return $this->model->getAllTags();
     }
 
     // Other CRUDs 

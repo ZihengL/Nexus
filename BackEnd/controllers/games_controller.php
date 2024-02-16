@@ -44,8 +44,8 @@ class GamesController {
         return $this->model->getByDevs($this->devNames, $devName);
     }
     
-    public function getAll_games() {
-        return $this->model->getAll_games();
+    public function getAll_games($sorting = ['ratingAverage' => true]) {
+        return $this->model->getAll_games($sorting);
     }
 
 
@@ -71,73 +71,9 @@ class GamesController {
         return $this->model->deleteGame($id);
     }
 
-    public function applyFiltersAndSorting($filters, $sorting){
+    public function applyFiltersAndSorting($filters, $sorting = null){
         return $this->model->applyFiltersAndSorting($filters , $sorting );
     }
 
 }
 
- // public function filterGames($filters, $columns = []) {
-    //     return $this->model->filterGames($filters, $columns);
-    // }
-
-
-    // public function getAllFields() {
-    //     return $this->model->fields;
-    // }
-
-    // public function getField($fieldIndex) {
-    //     if ($fieldIndex < count($this->model->fields)) {
-    //         return $this->model->fields[$fieldIndex];
-    //     }
-
-    //     return null;
-    // }
-
-    // public function filterProducts($tags, $color, $size, $minprice, $maxprice) {
-    //     return $this->model->filterProduct($tags, $color, $size, $minprice, $maxprice);
-    // }
-
-    // public function getFilterMap() {
-    //     return $this->model->getMappedSets();
-    // }
-
-    // public function filterProductByField($products, $field, $value) {
-    //     $filtered = [];
-
-    //     foreach ($products as $product) {
-    //         $fieldValue = $product[$field];
-
-    //         if ($product[$field] == $value || (is_array($product[$field]) && in_array($product[$field], $value))) {
-    //             $filtered[] = $product;
-    //         }
-    //     }
-
-    //     return $filtered;
-    // }
-
-    // public function filterProductByPriceRange($products, $lowest, $highest) {
-    //     $filtered = [];
-
-    //     foreach ($products as $product) {
-    //         if ($product['price'] >= $lowest) {
-    //             if ($product['price'] <= $highest || $highest == -1) {
-    //                 $filtered[] = $product;
-    //             }
-    //         }
-    //     }
-
-    //     return $filtered;
-    // }
-
-    // public function setSessionProduct($id) {
-    //     if (session_status() !== PHP_SESSION_ACTIVE) {
-    //         session_start();
-    //     }
-
-    //     $_SESSION['productId'] = $id;
-    // }
-
-    // public function getMappedValues() {
-    //     return $this->model->getMappedValues();
-    // }

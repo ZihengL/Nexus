@@ -51,16 +51,34 @@ class BaseModel
     // GETTERS/READ
 
     // Retourne un tableau avec tous les resultats comprenant la valeur.
-    public function getAll($column = null, $value = null, $columns = [])
+    // public function getAll($column = null, $value = null, $columns = [])
+    // {
+    //     if (!$column && !$value) {
+    //         $sql = "SELECT " . $this->parseColumns($columns) . " FROM $this->table";
+    //         return $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    //     }
+
+    //     $sql = "SELECT " . $this->parseColumns($columns) . " FROM $this->table WHERE $column = ?";
+
+    //     return $this->query($sql, [$value])->fetchAll(PDO::FETCH_ASSOC);
+    // }
+
+    public function getAll($column = null, $value = null, $columns = [], $sorting = [])
     {
-        if (!$column && !$value) {
-            $sql = "SELECT " . $this->parseColumns($columns) . " FROM $this->table";
-            return $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        $sql = "SELECT " . $this->parseColumns($columns) . " FROM $this->table";
+
+        $params = [];
+        if ($column && $value) {
+            $sql .= " WHERE $column = ?";
+            $params[] = $value;
         }
 
-        $sql = "SELECT " . $this->parseColumns($columns) . " FROM $this->table WHERE $column = ?";
+        $sortingSql = $this->applySorting($sorting);
+        if (!empty($sortingSql)) {
+            $sql .= " ORDER BY " . $sortingSql;
+        }
 
-        return $this->query($sql, [$value])->fetchAll(PDO::FETCH_ASSOC);
+        return $this->query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
     }
 
     //  Explicitement retour d'une seule valeur.
@@ -127,8 +145,9 @@ class BaseModel
     $table_obj_ids = [] - is an array because for gameTags there's gameId and tagId 
     but for Reviews there's Id gameId, userId and maybe a third
     */
-    public function updateRelationTable($objectToUpdate, $table_obj_ids = []){
-        
+    public function updateRelationTable($objectToUpdate, $table_obj_ids = [])
+    {
+
     }
 
 
@@ -300,7 +319,7 @@ class BaseModel
     }
 
 
-    public function applySorting($sorting)
+    public function applySorting($sorting = null)
     {
         // Check if $sorting is null or not an array
         if (!is_array($sorting)) {
@@ -325,7 +344,7 @@ class BaseModel
     }
 
 
-    public function applyFiltersAndSorting($filters, $sorting)
+    public function applyFiltersAndSorting($filters, $sorting = null)
     {
         $filterResults = $this->applyFilters($filters);
         $sortingResults = $this->applySorting($sorting);

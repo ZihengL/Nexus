@@ -39,9 +39,9 @@ class GameModel extends BaseModel
         return parent::getAll($columnName, $devName);
     }
 
-    public function getAll_games()
+    public function getAll_games($sorting)
     {
-        return parent::getAll($column = null, $value = null, $columns = []);
+        return parent::getAll($column = null, $value = null, $columns = [], $sorting );
     }
 
     public function getMinMaxPrice()
@@ -65,17 +65,9 @@ class GameModel extends BaseModel
     }
 
 
-    // public function getPriceRange($filters) {
-    //     $minPrice = intval($filters['minprice']);
-    //     $maxPrice = intval($filters['maxprice']) === 0 ? 999999 : $filters['maxprice'];
-
-    //     return "$minPrice, $maxPrice";
-    // }
-
-
     //Other Cruds
 
-    public function applyFiltersAndSorting($filters, $sorting)
+    public function applyFiltersAndSorting($filters, $sorting = null)
     {
         return parent::applyFiltersAndSorting($filters, $sorting);
     }
@@ -111,33 +103,6 @@ class GameModel extends BaseModel
 
         // return $stmt->fetch();
     }
-
-    // public function filter($filters = [], $columns = []) {
-    //     $priceRange = $this->getPriceRange($filters);
-    //     unset($filters['minprice'], $filters['maxprice']);
-
-    //     $filters = array_filter($filters, fn($filter) => !empty($filter));
-    //     $mappedKeys = $this->implodeFiltersMap($filters);
-
-    //     $sql =  "SELECT " . parseColumns($columns) . " FROM $this->table" .
-    //             (!empty($mappedKeys) || !empty($priceRange) ? " WHERE " : "");
-
-    //     if (!empty($mappedKeys)) {
-    //         $sql .= $mappedKeys . (!empty($priceRange) ? " AND " : "");
-    //     }
-    //     $sql .= $priceRange;
-
-    //     // TO DELETE
-    //     // print($sql . "<br>");
-
-    //     return $this->bindingQuery($sql, $filters);
-    // }
-
-    // public function implodeFiltersMap($filters) {
-    //     $mappedKeys = array_map(fn($filter) => $filter . " = :$filter", array_keys($filters));
-
-    //     return implode(' AND ', $mappedKeys);
-    // }
 
 
 

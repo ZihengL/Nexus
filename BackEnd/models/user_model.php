@@ -57,7 +57,7 @@ class UserModel extends BaseModel
 
     //other cruds
 
-    public function applyFiltersAndSorting( $filters , $sorting){
+    public function applyFiltersAndSorting( $filters , $sorting = null){
         return parent::applyFiltersAndSorting($filters , $sorting );
     }
 

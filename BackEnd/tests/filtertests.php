@@ -69,7 +69,7 @@ $databaseManager = $centralController->database_manager;
 
 //FILTER ON TAGS
 $filters = ['tagId' => ['relatedTable' => 'gamesTags', 'values' => ['1', '3'], 'wantedColumn' => 'gameId']];
-$results_1 = $centralController->games_controller->applyFiltersAndSorting($filters, null);
+$results_1 = $centralController->games_controller->applyFiltersAndSorting($filters);
 echo "<pre>";
 
 echo "<br> <strong>testindex - tag results : </strong> <br>\n";
@@ -91,7 +91,7 @@ echo " <pre> <br>";
 
 //FILTER ON NAMES
 $filters = ['name' => 'Super Game'];
-$results_2 = $centralController->games_controller->applyFiltersAndSorting($filters, null);
+$results_2 = $centralController->games_controller->applyFiltersAndSorting($filters);
 echo "<pre>";
 echo "<br> <strong>testindex - exact name results :</strong>  <br>\n";
 print_r($results_2);

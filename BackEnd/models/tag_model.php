@@ -15,7 +15,7 @@ class TagsModel extends BaseModel {
         return parent::getAll($columnName, $name);
     }
 
-    public function getAll() {
+    public function getAllTags() {
         return parent::getAll();
     }
 
@@ -27,36 +27,6 @@ class TagsModel extends BaseModel {
     public function delete($id){
         return parent::delete($id);
     }
-
-    // public function update($id, $gameId, $tagId){
-    //     $formattedData = $this->formatData($Game);
-    //     $pairs = implode(' = ?, ', array_keys($formattedData)) . ' = ?';
-    //     $formattedData['id'] = $id;
-
-    //     $sql = "UPDATE $this->table SET $pairs WHERE id = ?";
-    //     // print_r($sql);
-    //     if ($this->query($sql, $formattedData)) {
-    //         return true;
-    //     } else {
-    //         return false;
-    //     }
-    // }
-
-
-    // public function updateRelationTable($id, $gameId, $tagId){
-    //     $formattedData = $this->formatData($Game);
-    //     $pairs = implode(' = ?, ', array_keys($formattedData)) . ' = ?';
-    //     $formattedData['id'] = $id;
-
-    //     $sql = "UPDATE $this->table SET $pairs WHERE id = ?";
-    //     // print_r($sql);
-    //     if ($this->query($sql, $formattedData)) {
-    //         return true;
-    //     } else {
-    //         return false;
-    //     }
-    // }
-
  
     
 }
