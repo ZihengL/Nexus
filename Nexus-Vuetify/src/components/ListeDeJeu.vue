@@ -1,9 +1,9 @@
 <template>
 
   <!-- <div v-for="activity in activities" :key="activity.id" class="activities">-->
-  <div class="container glass3 glow">
+  <div class="container glass3 glow  roundBorderSmall">
     <div class="img">
-      <img src="../assets//img/apex.png" alt="image jeu">
+      <img src="../assets//img/apex.png" alt="image jeu" class=" roundBorderSmall">
     </div>
     <div class="jeu">
       <span>Joué à Super Mario Bros le 17/04/2022</span><br />

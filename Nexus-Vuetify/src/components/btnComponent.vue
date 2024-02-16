@@ -8,17 +8,17 @@
 </template>
 
 <script setup>
-    import { defineProps, ref } from 'vue';
+    import { defineProps } from 'vue';
 
     const props = defineProps(['contenu']);
     console.log(props.contenu);
 
-    /*const toggleBtn = () => {
+    const toggleBtn = () => {
         // Ajoutez votre logique de bascule (toggle) ici si nécessaire
 
         // Émettez un événement pour informer le parent de la bascule
         this.emit('toggle-btn');
-    };*/
+    };
 </script>
 
 <style lang="scss">

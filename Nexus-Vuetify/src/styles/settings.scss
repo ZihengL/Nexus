@@ -54,7 +54,7 @@ body {
         .glass, .glass2 {
             /* From https://css.glass */
             background: rgba(255, 255, 255, 0.06);
-            border-radius: 0px;
+            //border-radius: 0px;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(0px);
             -webkit-backdrop-filter: blur(0px);
@@ -63,7 +63,7 @@ body {
         .glass3 {
             /* From https://css.glass */
             background: rgba(255, 255, 255, 0.06);
-            border-radius: 0px;
+            //border-radius: 0px;
             backdrop-filter: blur(0px);
             -webkit-backdrop-filter: blur(0px);
             border: 1px solid rgba(255, 255, 255, 0);
@@ -71,7 +71,7 @@ body {
         .glass2:hover {
             /* From https://css.glass */
             background: rgba(255, 255, 255, 0.250);
-            border-radius: 0px;
+            //border-radius: 0px;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(0px);
             -webkit-backdrop-filter: blur(0px);
@@ -134,10 +134,10 @@ body {
               border-bottom-width: 2px;
               font-size: 17px;
               transition: all 0.3s ease;
+              border-radius: 5px;
 
               /* From https://css.glass */
               background: rgba(255, 255, 255, 0.123);
-              border-radius: 0px;
               box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
               backdrop-filter: blur(0px);
               -webkit-backdrop-filter: blur(0px);
@@ -176,6 +176,7 @@ body {
                     margin-top: 2%;
                     position: relative;
                     overflow: hidden;
+                    border-radius: 5px;
                 
                     .btn-layer{
                         height: 100%;
