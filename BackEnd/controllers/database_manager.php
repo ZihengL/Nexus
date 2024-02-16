@@ -21,8 +21,6 @@ class DatabaseManager
         $this->username = $_ENV['DB_USER'];
         $this->password = $_ENV['DB_PASS'];
 
-        print($this->username . ' ' . $this->password);
-
         $connection_string = 'mysql:host=' . $this->host . ';dbname=' . $this->database;
         $this->pdo = new PDO($connection_string, $this->username, $this->password);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

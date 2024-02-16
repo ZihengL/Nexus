@@ -1,6 +1,23 @@
 <?php
 
-// require_once "$path/models/dbmanager.php";
+function parseColumns($columns = [])
+{
+    return empty($columns) ? "*" : implode(', ', $columns);
+}
+
+function getDataType($column)
+{
+    switch ($column) {
+        case is_null($column):
+            return PDO::PARAM_NULL;
+        case is_int($column):
+            return PDO::PARAM_INT;
+        case is_bool($column):
+            return PDO::PARAM_BOOL;
+        default:
+            return PDO::PARAM_STR;
+    }
+}
 
 class BaseModel
 {
@@ -63,10 +80,18 @@ class BaseModel
         return $this->query($sql, [$value])->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    //  Explicitement retour d'une seule valeur.
-    public function getOne($column, $value, $columns = [])
+    public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
     {
-        $sql = "SELECT " . $this->parseColumns($columns) . " FROM $this->table WHERE $column = ?";
+        $result = $this->applyFilters($filters, $included_columns);
+        $sql = $result['sql'] . $this->applySorting($sorting);
+
+        return $this->query($sql, $result['params']);
+    }
+
+    //  Explicitement retour d'une seule valeur.
+    public function getOne($column, $value, $included_columns = [])
+    {
+        $sql = "SELECT " . $this->parseColumns($included_columns) . " FROM $this->table WHERE $column = ?";
 
         return $this->query($sql, [$value])->fetch(PDO::FETCH_ASSOC);
     }
@@ -107,9 +132,7 @@ class BaseModel
         $formattedData = $this->formatData($data);
         $pairs = implode(' = ?, ', array_keys($formattedData)) . ' = ?';
         $formattedData['id'] = $id;
-
         $sql = "UPDATE $this->table SET $pairs WHERE id = ?";
-        echo "<br>UPDATE SQL<br>$sql<br>";
 
         if ($this->query($sql, $formattedData)) {
             return true;
@@ -118,20 +141,14 @@ class BaseModel
         }
     }
 
-
-
     /*To update the relational tables 
     $table_obj_ids = [] - is an array because for gameTags there's gameId and tagId 
     but for Reviews there's Id gameId, userId and maybe a third
     */
-    public function updateRelationTable($objectToUpdate, $table_obj_ids = []){
-        
+    public function updateRelationTable($objectToUpdate, $table_obj_ids = [])
+    {
     }
 
-
-
-    // /* 
-    // */
     // public function updateRelationTable($objectToUpdate, $table_obj_ids = []){  
     // }
 
@@ -143,15 +160,6 @@ class BaseModel
     }
 
     // FILTERS
-
-
-
-    // TOOLS
-
-    function parseColumns($columns = [])
-    {
-        return empty($columns) ? "*" : implode(', ', $columns);
-    }
 
     public function getColumns($includeID = false)
     {
@@ -188,30 +196,23 @@ class BaseModel
         return $params;
     }
 
-
-    public function applyFilters($filters)
+    public function applyFilters($filters, $included_columns = [])
     {
-        $sql = 'SELECT * FROM ' . $this->table . ' WHERE 1 = 1';
+        $cols = $this->parseColumns($included_columns);
+        $sql = 'SELECT ' . $cols . ' FROM ' . $this->table . ' WHERE 1 = 1';
         $params = [];
 
         foreach ($filters as $filterKey => $filterValue) {
             if (is_array($filterValue)) { // Corrected check to use $filterValue
                 if (isset($filterValue['relatedTable'], $filterValue['values'], $filterValue['wantedColumn'])) {
                     $result = $this->executeRelatedTableFilterAndGetIds($filterKey, $filterValue); // Adjusted to pass current filter info
-                    // echo "<br> applyFilters result : $result  <br>\n";
-                    // print_r($result);
-                    // echo "<br><br>";
                     $sql .= ' AND ' . $result;
                 } else {
                     $result = $this->handleRangeCondition($filterKey, $filterValue); // Assuming range conditions are structured as arrays
                     $sql .= ' AND ' . $result['sql'];
                     $params = array_merge($params, $result['params']);
                 }
-                // echo "<br> applyFilters - sql :  $sql <br>\n";
-                // print_r($$result['sql']);
-                // echo "<br>";
             } else {
-                // Handling for non-array values, assuming direct equality check
                 $sql .= " AND $filterKey = :$filterKey";
                 $params[":$filterKey"] = $filterValue;
             }
@@ -219,8 +220,6 @@ class BaseModel
 
         return ['sql' => $sql, 'params' => $params];
     }
-
-
 
     function handleRangeCondition($column, $conditions)
     {
@@ -251,14 +250,8 @@ class BaseModel
             }
         }
 
-        // echo "<br> handleRangeCondition - params :  <br>\n";
-        // print_r($params);
-        // echo "<br>";
-
-
         return ['sql' => implode(' AND ', $sqlParts), 'params' => $params];
     }
-
 
     protected function executeRelatedTableFilterAndGetIds($filterKey, $filterValue)
     {
@@ -275,15 +268,6 @@ class BaseModel
         $stmt->execute($filterValues);
         $ids = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
 
-        // echo "<br> executeRelatedTableFilterAndGetIds sql :  - $sql  : <br>\n";
-        // echo "<br> executeRelatedTableFilterAndGetIds filterValue :  <br>\n";
-        // print_r($filterValue);
-        // echo "<br>";
-        // echo "<br> executeRelatedTableFilterAndGetIds ids :  <br>\n";
-        // print_r($ids);
-        // echo "<br>";
-
-
         // Build the 'IN' clause for the main query using fetched IDs
         if (!empty($ids)) {
             // Sanitize IDs if necessary to ensure they're safe for inclusion
@@ -295,7 +279,6 @@ class BaseModel
 
         return '';
     }
-
 
     public function applySorting($sorting)
     {
@@ -313,14 +296,12 @@ class BaseModel
         $result = '';
         foreach ($validEntries as $column) {
             $direction = $sorting[$column] ? 'ASC' : 'DESC';
-            // echo "<br> applySorting - direction :   $sorting[$column] <br>\n";
             $result .= $column . ' ' . $direction . ', ';
         }
         $result = rtrim($result, ', ');
 
         return $result; // This will be appended to the SQL query if not empty
     }
-
 
     public function applyFiltersAndSorting($filters, $sorting)
     {
@@ -330,20 +311,12 @@ class BaseModel
         $params = $filterResults['params'];
         $sqlWithFiltersAndSorting = $sortingResults ? $sqlWithFilters . ' ORDER BY ' . $sortingResults : $sqlWithFilters;
 
-        // echo "<br> applyFiltersAndSorting - sqlWithFiltersAndSorting :  <br>\n";
-        // print_r($sqlWithFiltersAndSorting);
-        // echo "<br>";
-
         $stmt = $this->pdo->prepare($sqlWithFiltersAndSorting);
 
         // Dynamically binding parameters
         foreach ($params as $placeholder => $value) {
             $stmt->bindValue($placeholder, $value);
         }
-
-        // echo "<br> applyFiltersAndSorting - params :  <br>\n";
-        // print_r($params);
-        // echo "<br>";
 
         // Executing the statement
         $stmt->execute();
@@ -354,25 +327,11 @@ class BaseModel
 
         return $results;
     }
+
+    // TOOLS
+
+    function parseColumns($columns = [])
+    {
+        return empty($columns) ? "*" : implode(', ', $columns);
+    }
 }
-
-
-
-// function parseColumns($columns = [])
-// {
-//     return empty($columns) ? "*" : implode(', ', $columns);
-// }
-
-// function getDataType($column)
-// {
-//     switch ($column) {
-//         case is_null($column):
-//             return PDO::PARAM_NULL;
-//         case is_int($column):
-//             return PDO::PARAM_INT;
-//         case is_bool($column):
-//             return PDO::PARAM_BOOL;
-//         default:
-//             return PDO::PARAM_STR;
-//     }
-// }

@@ -49,14 +49,19 @@ class CentralController
 
     // GETTERS
 
-    public function getUsersController()
-    {
-        return $this->users_controller;
-    }
+    // public function getUsersController()
+    // {
+    //     return $this->users_controller;
+    // }
 
-    public function getGamesController()
+    // public function getGamesController()
+    // {
+    //     return $this->games_controller;
+    // }
+
+    public function getAllMatching($controller, $filters = [], $sorting = [], $included_columns = [])
     {
-        return $this->games_controller;
+        return $controller->getAllMatching($filters, $sorting, $included_columns);
     }
 
     // COMMANDS

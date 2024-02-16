@@ -103,14 +103,20 @@ class TokensController
         try {
             return (array) JWT::decode($token, new Key($key, $this->algorithm));
         } catch (Exception $e) {
-            // TODO: IMPLEMENT ERROR HANDLING
-            return false;
+            return false;            // TODO: IMPLEMENT ERROR HANDLING
         }
     }
 
-    public function isExpired($token, $isRefresh = false)
+    private function validateTokenByType($token, $is_refresh = false)
     {
-        $decoded = $this->validateToken($token, $isRefresh ? $this->refresh_key : $this->access_key);
+        $key = $is_refresh ? $this->refresh_key : $this->access_key;
+
+        return $this->validateToken($token, $key);
+    }
+
+    public function isExpired($token, $is_refresh = false)
+    {
+        $decoded = $this->validateToken($token, $is_refresh ? $this->refresh_key : $this->access_key);
 
         return !$decoded || $decoded['exp'] < time();
     }
@@ -146,18 +152,26 @@ class TokensController
         return $this->model->getById($refresh_token);
     }
 
-    public function revokeToken($refresh_token)
+    public function revokeToken($token, $is_refresh)
     {
-        $decoded = $this->validateRefreshToken($refresh_token);
+        $decoded = $this->validateTokenByType($token, $is_refresh);
 
         if ($decoded) {
-            $decoded['id'] = $refresh_token;
+            $decoded['id'] = $token;
             $decoded['rev'] = time();
 
             return $this->model->create($decoded);
         }
 
         return false;
+    }
+
+    public function revokeTokens($tokens)
+    {
+        $access_token = $tokens['access_token'];
+        $refresh_token = $tokens['refresh_token'];
+
+        return $this->revokeToken($access_token, false) && $this->revokeToken($refresh_token, true);
     }
 
     public function deleteExpiredTokens()
