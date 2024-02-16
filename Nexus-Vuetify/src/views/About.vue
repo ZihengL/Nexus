@@ -18,7 +18,7 @@
       <div v-else-if="selectedTab === 'Thomas'" class="devs"><Thomas/></div>
       <div v-else-if="selectedTab === 'Debraise'" class="devs"><Debraise/></div>
       <div v-else-if="selectedTab === 'Amazigh'" class="devs"><Amazigh/></div>
-      <div v-else  class="devs teamDes glass">Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati labore tempore, velit cum iusto 
+      <div v-else  class="devs teamDes roundBorderSmall glass">Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati labore tempore, velit cum iusto 
         quisquam consectetur! Accusamus esse molestiae est architecto? Temporibus sapiente accusantium ullam at pariatur sequi 
         in earum.Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati labore tempore, velit cum iusto quisquam
         consectetur! Accusamus esse molestiae est architecto? Temporibus sapiente accusantium ullam at pariatur sequi in earum.
@@ -105,8 +105,7 @@ export default {
   }
 
   .content {
-    margin-top: 20px;
-    padding: 20px;
+    margin-top: 1%;
     width: 100%; /* Ensure content width matches navbar */
 
     .devs {
@@ -114,7 +113,7 @@ export default {
       margin: auto;
     }
     .teamDes {
-      margin-top: 7%;
+      margin-top: 1%;
       padding: 3% 2%;
       color: var(--light-trans);
     }

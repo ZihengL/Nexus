@@ -68,23 +68,22 @@ a{
                     .btn{
                         border: none;
                         background-color: #eee;
-                        padding: 2% 1%;
+                        padding: 2% 2%;
                         letter-spacing: 3px;
                         font-family: Poppins;
                         font-weight: 500;
                         color: black;
-                        border-radius: 0px;
                     }
                     .btn:nth-child(1):hover{
                         background-color: rgba(114, 114, 114, 0.2);
                     }
                     .btn:nth-child(2){
-                        background-color: transparent;
-                        border: 1px solid rgba(255, 255, 255, 0.212);
+                        background:  var(--light-trans-3);
                         color: var(--light-trans-2);
                     }
                     .btn:nth-child(2):hover{
-                        background-color: rgba(128, 128, 128, 0.348);
+                        background: rgba(128, 128, 128, 0.348);
+                        color: var(--light-trans-3-hover);
                     }
                 }
             }
@@ -111,7 +110,6 @@ a{
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
-                border-radius: 0px;
             }
             .content{
                 color: var(--light);
@@ -133,10 +131,9 @@ a{
     .arrows{
         position: absolute;
         top: 50%;
-        right: 12%;
+        right: 19%;
         z-index: 100;
-        width: 30%;
-        max-width: 30%;
+        width: 15%;
         display: flex;
         justify-content: space-between;
         gap: 10px;
@@ -154,7 +151,6 @@ a{
             transition: .5s;
             color: var(--light-trans-2);
             font-size: 3rem;
-            //border: 1px solid rgba(255, 255, 255, 0.3);
 
             
             color: var(--light);       
