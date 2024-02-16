@@ -16,8 +16,8 @@
   <style lang="scss" scoped>
   #search {
     .search-container {
-    margin-top:2%;
-    margin-left: 30%;
+    margin-top:5%;
+    margin-left: 67%;
     position: relative;
     display: flex;
     justify-content: flex-end; 
