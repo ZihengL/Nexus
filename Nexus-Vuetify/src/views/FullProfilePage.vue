@@ -10,11 +10,9 @@
             ></v-img>
           </v-avatar>
           <!-- ... Signup form content ... -->
-          <div class="field">
-            <input type="text" placeholder="Nom">
-          </div>
-          <div class="field">
-            <input type="text" placeholder="Prenom">
+          <div class="field field2">
+            <input type="text" placeholder="Nom *"  required>
+            <input type="text" placeholder="Prenom *"  required>
           </div>
           <div class="field">
             <input type="text" placeholder="Téléphone" required>
@@ -57,6 +55,12 @@
     width: 50%;
     padding: 2% 2%;
     margin: auto;
+
+    .field2 {
+      display: flex;
+      flex-direction: row;
+      gap: 3%;
+    }
 
   }
 }

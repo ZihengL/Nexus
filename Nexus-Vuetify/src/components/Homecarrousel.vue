@@ -12,8 +12,8 @@
           <div class="content">
             <div class="title">{{ item.title }}</div>
             <div class="buttons">
-              <router-link to="/Game" class="btn">Voir le jeu</router-link>
-              <router-link to="/Dev" class="btn">Decouvrir le developeur</router-link>
+              <router-link to="/Game" class="btn roundBorderSmall">Voir le jeu</router-link>
+              <router-link to="/Dev" class="btn roundBorderSmall">Decouvrir le developeur</router-link>
             </div>
           </div>
         </div>
@@ -21,7 +21,7 @@
       <!-- list thumbnail -->
       <div class="thumbnail">
         <div v-for="(item, index) in carouselItems" :key="index" class="item">
-          <img :src="item.image">
+          <img :src="item.image" class=" roundBorderSmall">
           <div class="content">
             <div class="title">{{ item.thumbnailTitle }}</div>
             <div class="description">{{ item.thumbnailDescription }}</div>
