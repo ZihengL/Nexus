@@ -48,7 +48,7 @@ require_once $path . '/controllers/central_controller.php';
 $central_controller = CentralController::getInstance();
 
 // centralController
-$centralController = CentralController::getInstance($dbUsername, $dbPassword);
+// $centralController = CentralController::getInstance($dbUsername, $dbPassword);
 
 // METHOD & URI
 $method = $_SERVER["REQUEST_METHOD"];
@@ -61,7 +61,7 @@ $result = null;
 if ($method === 'GET') {
     switch ($endURI) {
         case 'getAllProducts':
-            $result = $centralController->games_controller->getAll();
+            $result = $central_controller->games_controller->getAllGames();
             break;
         default:
             $result = [];

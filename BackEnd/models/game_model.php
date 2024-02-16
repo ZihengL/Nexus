@@ -39,9 +39,9 @@ class GameModel extends BaseModel
         return parent::getAll($columnName, $devName);
     }
 
-    public function getAll()
+    public function getAllGames()
     {
-        return parent::getAll();
+        return parent::getAll($column = null, $value = null, $columns = []);
     }
 
     public function getMinMaxPrice()
