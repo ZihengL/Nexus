@@ -1,9 +1,9 @@
 <template>
   <!-- Created By CodingNepal -->
   <div class="allP">
-    <div class="containerProfile">
+    <div class="containerProfile" :class="isHimself ? 'container1' : 'container2'">
       <div class="wrapper">
-        <div class="description  glass">
+        <div class="description  glass roundBorderSmall" >
           <div :class="isHimself ? 'imgContainerFull' : 'imgContainer'">
             <img src="../assets/Rich_Ricasso.png" alt="John" class="imgProfil" />
           </div>
@@ -25,7 +25,7 @@
             </div>
           </div>
         </div>
-        <div style="display: flex; margin-top: 1.5%; padding: 30px;" class=" glass">
+        <div style="display: flex; margin-top: 1.5%;" class=" glass roundBorderSmall">
           <div class="laListeJeu">
             <h2>Liste de jeu</h2>
             <liste-de-jeu />
@@ -35,7 +35,7 @@
         </div>
       </div>
     </div>
-    <div class="listeFriends glass">
+    <div v-if="isHimself" class="listeFriends glass roundBorderSmall">
       <h2> liste amis</h2>
       <amis />
       <amis />

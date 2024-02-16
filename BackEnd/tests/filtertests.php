@@ -28,11 +28,12 @@ global $path;
 $path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd';
 
 // ----- DatabaseManager, PDO & CentralController init
-require_once $path . '/controllers/database_manager.php';
+// require_once $path . '/controllers/database_manager.php';
 require_once $path . '/controllers/central_Controller.php';
 
-$databaseManager = DatabaseManager::getInstance();
+// $databaseManager = DatabaseManager::getInstance();
 $centralController = CentralController::getInstance();
+$databaseManager = $centralController->database_manager;
 
 
 // // ----- Request URL & Routing
@@ -64,16 +65,16 @@ $centralController = CentralController::getInstance();
 // $result = $usersCtrl->getById($user['id']);
 // printer($result, 'UPDATED USER RESULT');
 
-                    //FILTER BY NON EXACT VALUES
+//FILTER BY NON EXACT VALUES
 
 //FILTER ON TAGS
-$filters = [ 'tagId' => ['relatedTable' => 'gamesTags', 'values' => ['1', '3'], 'wantedColumn' => 'gameId']];
-$results_1 = $centralController->gamesController->applyFiltersAndSorting($filters, null);
+$filters = ['tagId' => ['relatedTable' => 'gamesTags', 'values' => ['1', '3'], 'wantedColumn' => 'gameId']];
+$results_1 = $centralController->games_controller->applyFiltersAndSorting($filters, null);
 echo "<pre>";
 
 echo "<br> <strong>testindex - tag results : </strong> <br>\n";
-        print_r($results_1);
-        echo "<pre><br>";
+print_r($results_1);
+echo "<pre><br>";
 
 //FILTER ON RATINGS AND SORT ON RATINGS
 $filters = ['ratingAverage' => ['gt' => 1, 'lte' => 5]];
@@ -81,20 +82,20 @@ $sorting = [
     'ratingAverage' => true
 ];
 
-$results_2 = $centralController->gamesController->applyFiltersAndSorting($filters, $sorting);
+$results_2 = $centralController->games_controller->applyFiltersAndSorting($filters, $sorting);
 echo "<pre>";
 echo "<br> <strong>testindex - filter on ratings and sort on ratings results : </strong>  <br>\n";
-        print_r($results_2);
-        echo " <pre> <br>";
+print_r($results_2);
+echo " <pre> <br>";
 
 
 //FILTER ON NAMES
 $filters = ['name' => 'Super Game'];
-$results_2 = $centralController->gamesController->applyFiltersAndSorting($filters, null);
+$results_2 = $centralController->games_controller->applyFiltersAndSorting($filters, null);
 echo "<pre>";
 echo "<br> <strong>testindex - exact name results :</strong>  <br>\n";
-        print_r($results_2);
-        echo "<pre><br>";
+print_r($results_2);
+echo "<pre><br>";
 
 
 //FILTER ON RATINGS, NAMES, AND SORT ON DATE
@@ -102,33 +103,32 @@ $filters = [
     'ratingAverage' => ['gt' => 1, 'lte' => 7],
     'name' => ['contain' => 'super'],
     // 'developperID' => '4',
-    ];
+];
 $sorting = [
     'releaseDate' => false
 ];
 
-$results_2 = $centralController->gamesController->applyFiltersAndSorting($filters, $sorting);
+$results_2 = $centralController->games_controller->applyFiltersAndSorting($filters, $sorting);
 
 
 echo "<br> <strong>testindex - filter ON RATINGS, NAMES(contain), AND SORT ON DATE results : </strong> <br>\n";
-        echo "<pre>";   
-        print_r($results_2);
-        echo "<pre><br>";
+echo "<pre>";
+print_r($results_2);
+echo "<pre><br>";
 
-                    
+
 //FILTER ON RATINGS, NAMES, AND SORT ON DATE
 $filters = [
     'ratingAverage' => ['gt' => 1, 'lte' => 7],
     'name' => ['contain' => 'super'],
     'developperID' => '4',
-    ];
+];
 $sorting = [
     'releaseDate' => false  //most recent to oldes date
 ];
 
-$results_2 = $centralController->gamesController->applyFiltersAndSorting($filters, $sorting);
+$results_2 = $centralController->games_controller->applyFiltersAndSorting($filters, $sorting);
 echo "<pre>";
 echo "<br> <strong>testindex - filter ON RATINGS, NAMES(contain), developperID AND SORT ON DATE results : </strong> <br>\n";
-        print_r($results_2);
-        echo "<pre><br>";
-              
+print_r($results_2);
+echo "<pre><br>";

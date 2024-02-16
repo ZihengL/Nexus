@@ -1,8 +1,8 @@
 <template>
-    <router-link :to="link" class="glass2">
-        <div class="img">
-            <img src="../assets/img/dontstarve.png" alt="#">
-            <p>
+    <router-link :to="link" class="glass2  roundBorderSmall">
+        <div class="img roundBorderSmall">
+            <img src="../assets/img/dontstarve.png" alt="#" class=" roundBorderSmall">
+            <p  class=" roundBorderSmall">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex,
                 nam distinctio velit laborum quo qui ullam in? Hic corporis
                 dolorem dolores expedita vitae! Vero dolores commodi aliquam 

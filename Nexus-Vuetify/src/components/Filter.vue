@@ -1,5 +1,5 @@
 <template>
-    <div class="filter-container glass">
+    <div class="filter-container roundBorderSmall glass">
         <h3>Game Filters</h3>
         <div class="checkbox-group">
             <label class="filter-label glow">
