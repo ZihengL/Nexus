@@ -15,12 +15,12 @@ class TagsModel extends BaseModel {
         return parent::getAll($columnName, $name);
     }
 
-    public function getAllTags() {
+    public function getAll_tags() {
         return parent::getAll();
     }
 
     //Other Cruds
-    public function applyFiltersAndSorting( $filters , $sorting){
+    public function applyFiltersAndSorting( $filters , $sorting = null){
         return parent::applyFiltersAndSorting($filters , $sorting);
     }
 

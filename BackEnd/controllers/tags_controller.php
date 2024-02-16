@@ -23,12 +23,12 @@ class TagsController {
     }
 
     public function getAllTags() {
-        return $this->model->getAllTags();
+        return $this->model->getAll_tags();
     }
 
     // Other CRUDs 
 
-    public function applyFiltersAndSorting($filters, $sorting){
+    public function applyFiltersAndSorting($filters, $sorting = null){
         return $this->model->applyFiltersAndSorting($filters , $sorting );
     }
 
