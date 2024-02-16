@@ -9,7 +9,7 @@
       <span>Joué à Super Mario Bros le 17/04/2022</span><br />
       <div class="fieldBtn">
         <div class="btn-layer"></div>
-        <v-btn density="default" class="submit glow">
+        <v-btn to="/Game"  density="default" class="submit glow">
           Voir plus
         </v-btn>
       </div>
@@ -43,19 +43,5 @@
   margin-left: 40px;
   align-self: flex-end;
   justify-content: space-around;
-/*`
-  .fieldBtn{
-    height: 50px;
-    width: 50%;
-
-    .btn-layer{
-        height: 100%;
-        width: 150%;
-    }
-    .submit{
-        height: 100%;
-        width: 50%;
-    }
-  }*/
 }
 </style>
