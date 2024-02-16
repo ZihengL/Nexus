@@ -39,7 +39,7 @@ class GameModel extends BaseModel
         return parent::getAll($columnName, $devName);
     }
 
-    public function getAllGames()
+    public function getAll_games()
     {
         return parent::getAll($column = null, $value = null, $columns = []);
     }

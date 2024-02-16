@@ -44,8 +44,8 @@ class GamesController {
         return $this->model->getByDevs($this->devNames, $devName);
     }
     
-    public function getAllGames() {
-        return $this->model->getAllGames();
+    public function getAll_games() {
+        return $this->model->getAll_games();
     }
 
 
