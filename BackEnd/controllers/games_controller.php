@@ -5,14 +5,15 @@ class GamesController
 {
     protected $model;
     protected $id = "id";
+    protected $developerID = "developerID";
+    protected $stripeID = "stripeID";
     protected $title = "title";
-    protected $rating = "rating";
+    protected $files = "files";
+    protected $description = "description";
     protected $tags = "tags";
     protected $media = "media";
-    protected $developerID = "developerID";
     protected $releaseDate = "releaseDate";
-    protected $description = "description";
-    protected $stripeID = "stripeID";
+    protected $rating = "rating";
 
     public function __construct($pdo)
     {
@@ -39,6 +40,11 @@ class GamesController
     public function getByDeveloperID($developerID)
     {
         return $this->model->getAll($this->developerID, $developerID);
+    }
+
+    public function getByStripeID($stripeID)
+    {
+        return $this->model->getAll($this->stripeID, $stripeID);
     }
 
     public function getByTitle($title)

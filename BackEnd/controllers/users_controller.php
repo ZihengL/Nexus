@@ -7,12 +7,17 @@ class UsersController
     private $model;
     private $tokens_controller;
     protected $table = "user";
+    protected $id = "id";
+    protected $password = "password";
     protected $email = "email";
+    protected $phoneNumber = "phoneNumber";
+    protected $picture = "picture";
+    protected $isAdmin = "isAdmin";
+    protected $isOnline = "isOnline";
+    protected $description = "description";
     protected $name = "name";
     protected $lastname = "lastname";
-    protected $phonenumber = "phone_number";
     protected $privilege = "privilege";
-    protected $description = "description";
 
     public function __construct($pdo, $tokens_controller)
     {
@@ -37,7 +42,7 @@ class UsersController
 
     public function getById($id, $included_columns = [])
     {
-        return $this->model->getAll($id, $included_columns);
+        return $this->model->getAll($id, $this->id, $included_columns);
     }
 
     public function getByEmail($email)
@@ -62,9 +67,14 @@ class UsersController
 
     // OTHER CRUDS
 
+    // Returns tokens to log the user in
     public function createUser($data)
     {
-        return $this->model->create($data);
+        if ($this->model->create($data)) {
+            $user = $this->getOneMatchingColumn($this->email, $data['email'], [$this->id]);
+
+            return $this->tokens_controller->generateTokenPair($user[$this->id]);
+        }
     }
 
     public function updateUser($id, $data, $tokens)
