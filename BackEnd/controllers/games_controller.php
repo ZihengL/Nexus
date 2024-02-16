@@ -5,11 +5,11 @@ class GamesController
 {
     protected $model;
     protected $id = "id";
-    protected $name = "name";
+    protected $title = "title";
     protected $rating = "rating";
     protected $tags = "tags";
-    protected $images = "images";
-    protected $devNames = "devNames";
+    protected $media = "media";
+    protected $developerID = "developerID";
     protected $releaseDate = "releaseDate";
     protected $description = "description";
     protected $stripeID = "stripeID";
@@ -21,53 +21,57 @@ class GamesController
 
     // GETTERS
 
+    public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
+    {
+        return $this->model->getAllMatching($filters, $sorting, $included_columns);
+    }
+
+    public function getAllGames($included_columns = [])
+    {
+        return $this->model->getAll();
+    }
+
     public function getById($id)
     {
         return $this->model->getById($this->id);
     }
 
-    public function getByReleaseDate($releaseDate)
+    public function getByDeveloperID($developerID)
     {
-        return $this->model->getByReleaseDate($this->releaseDate, $releaseDate);
+        return $this->model->getAll($this->developerID, $developerID);
     }
 
-    public function getByTags($tags)
+    public function getByTitle($title)
     {
-        return $this->model->getByTags($this->tags, $tags);
+        return $this->model->getAll($this->title, $title);
     }
 
     public function getByDescription($description)
     {
-        return $this->model->getByDescription($this->description, $description);
+        return $this->model->getAll($this->description, $description);
     }
 
-    public function getByImages($images)
+    public function getByTags($tags)
     {
-        return $this->model->getByImages($this->images, $images);
+        return $this->model->getAll($this->tags, $tags);
     }
 
-    public function getByDevs($devName)
+    public function getByMedia($media)
     {
-        return $this->model->getByDevs($this->devNames, $devName);
+        return $this->model->getAll($this->media, $media);
     }
-
-    public function getAllGames()
+    public function getByReleaseDate($releaseDate)
     {
-        return $this->model->getAllGames();
+        return $this->model->getAll($this->releaseDate, $releaseDate);
     }
 
     // Other CRUDs 
 
-    //Create/Add games
     public function addGame($data)
     {
         return $this->model->addGame($data);
     }
 
-    //Validate games before adding them in the database
-
-    //update and delete games
-    //determine what can be updated or not
     public function updateGame($id, $data)
     {
         return $this->model->updateGame($id, $data);
@@ -83,68 +87,3 @@ class GamesController
         return $this->model->applyFiltersAndSorting($filters, $sorting);
     }
 }
-
- // public function filterGames($filters, $columns = []) {
-    //     return $this->model->filterGames($filters, $columns);
-    // }
-
-
-    // public function getAllFields() {
-    //     return $this->model->fields;
-    // }
-
-    // public function getField($fieldIndex) {
-    //     if ($fieldIndex < count($this->model->fields)) {
-    //         return $this->model->fields[$fieldIndex];
-    //     }
-
-    //     return null;
-    // }
-
-    // public function filterProducts($tags, $color, $size, $minprice, $maxprice) {
-    //     return $this->model->filterProduct($tags, $color, $size, $minprice, $maxprice);
-    // }
-
-    // public function getFilterMap() {
-    //     return $this->model->getMappedSets();
-    // }
-
-    // public function filterProductByField($products, $field, $value) {
-    //     $filtered = [];
-
-    //     foreach ($products as $product) {
-    //         $fieldValue = $product[$field];
-
-    //         if ($product[$field] == $value || (is_array($product[$field]) && in_array($product[$field], $value))) {
-    //             $filtered[] = $product;
-    //         }
-    //     }
-
-    //     return $filtered;
-    // }
-
-    // public function filterProductByPriceRange($products, $lowest, $highest) {
-    //     $filtered = [];
-
-    //     foreach ($products as $product) {
-    //         if ($product['price'] >= $lowest) {
-    //             if ($product['price'] <= $highest || $highest == -1) {
-    //                 $filtered[] = $product;
-    //             }
-    //         }
-    //     }
-
-    //     return $filtered;
-    // }
-
-    // public function setSessionProduct($id) {
-    //     if (session_status() !== PHP_SESSION_ACTIVE) {
-    //         session_start();
-    //     }
-
-    //     $_SESSION['productId'] = $id;
-    // }
-
-    // public function getMappedValues() {
-    //     return $this->model->getMappedValues();
-    // }

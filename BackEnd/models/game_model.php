@@ -1,11 +1,8 @@
 <?php
-
 require_once "$path/models/base_model.php";
-// require_once "$path/controllers/games.php";
 
 class GameModel extends BaseModel
 {
-
     protected $tableName = "games";
 
 
@@ -14,30 +11,30 @@ class GameModel extends BaseModel
         parent::__construct($pdo, $this->tableName);
     }
 
-    public function getByReleaseDate($columnName, $date)
-    {
-        return parent::getAll($columnName, $date);
-    }
+    // public function getByReleaseDate($column, $date)
+    // {
+    //     return parent::getAll($column, $date);
+    // }
 
-    public function getByTags($columnName, $tags)
-    {
-        return parent::getAll($columnName, $tags);
-    }
+    // public function getByTags($column, $tags)
+    // {
+    //     return parent::getAll($column, $tags);
+    // }
 
-    public function getByDescription($columnName, $description)
-    {
-        return parent::getAll($columnName, $description);
-    }
+    // public function getByDescription($column, $description)
+    // {
+    //     return parent::getAll($column, $description);
+    // }
 
-    public function getByImages($columnName, $img)
-    {
-        return parent::getAll($columnName, $img);
-    }
+    // public function getByMedia($column, $media)
+    // {
+    //     return parent::getAll($column, $media);
+    // }
 
-    public function getByDevs($columnName, $devName)
-    {
-        return parent::getAll($columnName, $devName);
-    }
+    // public function getByDevs($column, $devName)
+    // {
+    //     return parent::getAll($column, $devName);
+    // }
 
     public function getAllGames()
     {
@@ -63,15 +60,6 @@ class GameModel extends BaseModel
             ];
         }
     }
-
-
-    // public function getPriceRange($filters) {
-    //     $minPrice = intval($filters['minprice']);
-    //     $maxPrice = intval($filters['maxprice']) === 0 ? 999999 : $filters['maxprice'];
-
-    //     return "$minPrice, $maxPrice";
-    // }
-
 
     //Other Cruds
 
@@ -106,39 +94,5 @@ class GameModel extends BaseModel
     public function deleteGame($id)
     {
         return parent::delete($id);
-        // $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE id = ?");
-        // $stmt->execute([$id]);
-
-        // return $stmt->fetch();
     }
-
-    // public function filter($filters = [], $columns = []) {
-    //     $priceRange = $this->getPriceRange($filters);
-    //     unset($filters['minprice'], $filters['maxprice']);
-
-    //     $filters = array_filter($filters, fn($filter) => !empty($filter));
-    //     $mappedKeys = $this->implodeFiltersMap($filters);
-
-    //     $sql =  "SELECT " . parseColumns($columns) . " FROM $this->table" .
-    //             (!empty($mappedKeys) || !empty($priceRange) ? " WHERE " : "");
-
-    //     if (!empty($mappedKeys)) {
-    //         $sql .= $mappedKeys . (!empty($priceRange) ? " AND " : "");
-    //     }
-    //     $sql .= $priceRange;
-
-    //     // TO DELETE
-    //     // print($sql . "<br>");
-
-    //     return $this->bindingQuery($sql, $filters);
-    // }
-
-    // public function implodeFiltersMap($filters) {
-    //     $mappedKeys = array_map(fn($filter) => $filter . " = :$filter", array_keys($filters));
-
-    //     return implode(' AND ', $mappedKeys);
-    // }
-
-
-
 }

@@ -68,14 +68,14 @@ class BaseModel
     // GETTERS/READ
 
     // Retourne un tableau avec tous les resultats comprenant la valeur.
-    public function getAll($column = null, $value = null, $columns = [])
+    public function getAll($column = null, $value = null, $included_columns = [])
     {
         if (!$column && !$value) {
-            $sql = "SELECT " . $this->parseColumns($columns) . " FROM $this->table";
+            $sql = "SELECT " . $this->parseColumns($included_columns) . " FROM $this->table";
             return $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
         }
 
-        $sql = "SELECT " . $this->parseColumns($columns) . " FROM $this->table WHERE $column = ?";
+        $sql = "SELECT " . $this->parseColumns($included_columns) . " FROM $this->table WHERE $column = ?";
 
         return $this->query($sql, [$value])->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -147,7 +147,6 @@ class BaseModel
     */
     public function updateRelationTable($objectToUpdate, $table_obj_ids = [])
     {
-        
     }
 
     // public function updateRelationTable($objectToUpdate, $table_obj_ids = []){  
