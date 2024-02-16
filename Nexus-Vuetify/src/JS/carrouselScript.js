@@ -1,3 +1,5 @@
+import {fetchData}  from "../JS/fetch";
+
 export default {
   data() {
     return {
@@ -72,6 +74,6 @@ export default {
     },
   },
   mounted() {
-    // fetchData("getAllProducts", "GET");
+    fetchData("getAllProducts", "GET");
   },
 };

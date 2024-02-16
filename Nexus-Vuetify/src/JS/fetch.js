@@ -28,7 +28,7 @@ export function fetchData(uri, jsonBody = null, method = "GET") {
         //   console.log(`Error: Non-200 status code (${response.status})`);
           return Promise.reject(response);
         }
-        // console.log("response",response.json)
+        console.log("response",response.text())
         return response.json();
       })
       .then((data) => {
