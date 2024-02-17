@@ -26,6 +26,11 @@ class BaseController
         return CentralController::getInstance();
     }
 
+    protected function getControllersAccess2()
+    {
+        return CentralController::getInstance();
+    }
+
     public function getAllMatching()
     {
     }
