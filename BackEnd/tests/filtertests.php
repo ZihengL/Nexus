@@ -115,7 +115,7 @@ $includedColumns = [
 $results_2 = $centralController->games_controller->applyFiltersAndSorting($filters, $sorting, $includedColumns);
 
 
-echo "<br> <strong>testindex - filter ON RATINGS, NAMES(contain), AND SORT ON DATE results : </strong> <br>\n";
+echo "<br> <strong>testindex - filter ON RATINGS, NAMES(contain), only return the developperID AND sort on releasedDate <br> results : </strong> <br>\n";
 echo "<pre>";
 print_r($results_2);
 echo "<pre><br>";
@@ -136,7 +136,7 @@ $sorting = [
 ];
 $results_2 = $centralController->games_controller->applyFiltersAndSorting($filters, $sorting);
 echo "<pre>";
-echo "<br> <strong>testindex - filter ON RATINGS, NAMES(contain), developperID ; only return the developperID AND sort on releasedDate <br> results : </strong> <br>\n";
+echo "<br> <strong>testindex - filter ON RATINGS, NAMES(contain), developperID </strong> <br>\n";
 print_r($results_2);
 echo "<pre><br>";
 

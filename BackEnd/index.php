@@ -61,16 +61,16 @@ switch ($method) {
         handleGet($table, $crud_action, $central_controller, $columName, $value);
         break;
     case 'POST':
-        handlePost($table, $decodedData, $centralController);
+        handlePost($table, $crud_action, $central_controller, $columName, $value, $decodedData);
         break;
     case 'PUT':
-        handlePut($table, $decodedData, $centralController);
+        handlePut();
         break;
     case 'DELETE':
-        handleDelete($table, $centralController);
+        handleDelete();
         break;
     case 'OTHERS':
-        handleOthers($table, $centralController);
+        handleOthers();
         break;
     default:
         // Handle unsupported methods
@@ -89,7 +89,6 @@ function handleGet($table, $crud_action, $centralController, $columName, $value)
     $getByColumnName = 'getBy' . $columName;
     //
 
-
     switch ($crud_action) {
         case 'getAll':
             // echo "<br>  getAllFromTable : " . $getAllFromTable;
@@ -101,9 +100,30 @@ function handleGet($table, $crud_action, $centralController, $columName, $value)
             $result = $centralController->$controllerName->$getByColumnName($value);
             echo json_encode($result);
             break;
-        case 'filter':
+        default:
+            http_response_code(405);
+            echo json_encode(['error' => "Table Doesn't Exist"]);
+            break;
+    }
+}
+
+
+// Function to handle POST requests
+function handlePost($table, $crud_action, $centralController, $columName, $value, $decodedData)
+{
+    $controllerName = $table . '_controller';
+
+    switch ($crud_action) {
+        case 'login':
+            handleLogin($centralController, $decodedData, $controllerName, $crud_action);
+            break;
+        case 'logout':
+            handleLogout($centralController, $decodedData, $controllerName, $crud_action);
+            break;
+        case 'applyFiltersAndSorting':
             // echo "<br>  getByColumnName : " . $getByColumnName;
-            $result = $centralController->$controllerName->$getByColumnName($value);
+            $result = handleRawData($centralController, $decodedData, $controllerName, $crud_action);
+            // $result = $centralController->$controllerName->$crud_action($value);
             echo json_encode($result);
             break;
         default:
@@ -111,6 +131,46 @@ function handleGet($table, $crud_action, $centralController, $columName, $value)
             echo json_encode(['error' => "Table Doesn't Exist"]);
             break;
     }
+}
+
+
+function handleRawData($centralController, $decodedData, $controllerName, $crud_action)
+{
+    if (empty($decodedData)) {
+        echo "No data provided or data is empty.";
+        return false;
+    } else {
+        if (isset($decodedData['filters'])) {
+          return filterData($centralController, $decodedData, $controllerName, $crud_action);
+        } else if (isset($decodedData['login'])){
+
+        }else if (isset($decodedData['logout'])){
+
+        }
+        else {
+            echo "Invalid data structure.";
+            return false;
+        }
+    }
+}
+
+
+function filterData($centralController, $decodedData, $controllerName, $crud_action)
+{
+    $filters = $decodedData['filters'];
+    $sorting = isset($decodedData['sorting']) ? $decodedData['sorting'] : null;
+    $includedColumns = isset($decodedData['includedColumns']) ? $decodedData['includedColumns'] : null;
+    return $centralController->$controllerName->$crud_action($filters, $sorting, $includedColumns);
+}
+
+function handleLogin($centralController, $decodedData, $controllerName, $crud_action)
+{
+ 
+}
+
+function handleLogout($centralController, $decodedData, $controllerName, $crud_action)
+{
+ 
 }
 
 // Add similar functions for POST, PUT, DELETE...

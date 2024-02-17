@@ -21,7 +21,7 @@ export function fetchData (
   }
 
   if ((method === 'POST' || method === 'PUT') && jsonBody) { 
-    console.log("hi");
+    // console.log("hi");
     fetchOptions.body = JSON.stringify(jsonBody)
   }
   console.log(`Fetching: ${uri} with options:`, fetchOptions)

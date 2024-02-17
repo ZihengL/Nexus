@@ -9,12 +9,12 @@ class GamesController {
     protected $rating = "ratingAverage";
     protected $tags = "tags";
     protected $images = "images";
-    protected $videos = "videos";
-    protected $files = "files";
+    protected $videos = "videos"; //missing
+    protected $files = "files"; // missing
     protected $devNames = "developperID";
     protected $releaseDate = "releaseDate"; 
     protected $description = "description";
-    protected $stripeID = "stripeID";
+    protected $stripeID = "stripeID"; // not sure yet
 
     public function __construct($pdo) {
         $this->model = new GameModel($pdo);
