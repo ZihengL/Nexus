@@ -6,10 +6,12 @@ class GamesController {
     protected $model;
     protected $id = "id";
     protected $name = "name";
-    protected $rating = "rating";
+    protected $rating = "ratingAverage";
     protected $tags = "tags";
     protected $images = "images";
-    protected $devNames = "devNames";
+    protected $videos = "videos";
+    protected $files = "files";
+    protected $devNames = "developperID";
     protected $releaseDate = "releaseDate"; 
     protected $description = "description";
     protected $stripeID = "stripeID";
@@ -71,8 +73,8 @@ class GamesController {
         return $this->model->deleteGame($id);
     }
 
-    public function applyFiltersAndSorting($filters, $sorting = null){
-        return $this->model->applyFiltersAndSorting($filters , $sorting );
+    public function applyFiltersAndSorting($filters, $sorting = null, $includedColumns = null){
+        return $this->model->applyFiltersAndSorting($filters , $sorting, $includedColumns);
     }
 
 }

@@ -74,7 +74,7 @@ export default {
     },
   },
   mounted() {
-    // fetchData("games", "getBy", "Id", "2", null, "GET");
-    fetchData("games", "getAll", "GET");
+    fetchData("games", "getBy", "Id", "2", null, "GET");
+    // fetchData("games", "getAll", "GET");
   },
 };

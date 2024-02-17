@@ -46,7 +46,7 @@ $explodedURI = explode('/', trim($uriPath, '/'));
 $table = $explodedURI[0] ?? null;
 $crud_action = $explodedURI[1] ?? null;
 $columName = $explodedURI[2] ?? null;
-$value = $explodedURI[3] ?? null; 
+$value = $explodedURI[3] ?? null;
 
 // Read the input data for POST, PUT, DELETE methods
 $rawData = file_get_contents('php://input');
@@ -82,18 +82,29 @@ switch ($method) {
 // Function to handle GET requests
 function handleGet($table, $crud_action, $centralController, $columName, $value)
 {
+
+    //Do these if they arent empty
     $controllerName = $table . '_controller';
+    $getAllFromTable = 'getAll_' . $table;
+    $getByColumnName = 'getBy' . $columName;
+    //
+
+
     switch ($crud_action) {
         case 'getAll':
-                $getAllFromTable = 'getAll_' . $table;
-                $result = $centralController->$controllerName->$getAllFromTable();
-                echo json_encode($result);
+            // echo "<br>  getAllFromTable : " . $getAllFromTable;
+            $result = $centralController->$controllerName->$getAllFromTable();
+            echo json_encode($result);
             break;
         case 'getBy':
-                $getByColumnName = 'getBy' . $columName;
-                // echo "<br>  getByColumnName : " . $getByColumnName;
-                $result = $centralController->$controllerName->$getByColumnName($value);
-                echo json_encode($result);
+            // echo "<br>  getByColumnName : " . $getByColumnName;
+            $result = $centralController->$controllerName->$getByColumnName($value);
+            echo json_encode($result);
+            break;
+        case 'filter':
+            // echo "<br>  getByColumnName : " . $getByColumnName;
+            $result = $centralController->$controllerName->$getByColumnName($value);
+            echo json_encode($result);
             break;
         default:
             http_response_code(405);

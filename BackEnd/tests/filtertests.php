@@ -108,7 +108,11 @@ $sorting = [
     'releaseDate' => false
 ];
 
-$results_2 = $centralController->games_controller->applyFiltersAndSorting($filters, $sorting);
+$includedColumns = [
+    'developperID' 
+];
+
+$results_2 = $centralController->games_controller->applyFiltersAndSorting($filters, $sorting, $includedColumns);
 
 
 echo "<br> <strong>testindex - filter ON RATINGS, NAMES(contain), AND SORT ON DATE results : </strong> <br>\n";
@@ -117,7 +121,11 @@ print_r($results_2);
 echo "<pre><br>";
 
 
-//FILTER ON RATINGS, NAMES, AND SORT ON DATE
+/*
+FILTER ON RATINGS, NAMES, developperID
+SORT ON DATE
+And only recieve developperID
+*/
 $filters = [
     'ratingAverage' => ['gt' => 1, 'lte' => 7],
     'name' => ['contain' => 'super'],
@@ -126,9 +134,10 @@ $filters = [
 $sorting = [
     'releaseDate' => false  //most recent to oldes date
 ];
-
 $results_2 = $centralController->games_controller->applyFiltersAndSorting($filters, $sorting);
 echo "<pre>";
-echo "<br> <strong>testindex - filter ON RATINGS, NAMES(contain), developperID AND SORT ON DATE results : </strong> <br>\n";
+echo "<br> <strong>testindex - filter ON RATINGS, NAMES(contain), developperID ; only return the developperID AND sort on releasedDate <br> results : </strong> <br>\n";
 print_r($results_2);
 echo "<pre><br>";
+
+

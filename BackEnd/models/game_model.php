@@ -67,9 +67,9 @@ class GameModel extends BaseModel
 
     //Other Cruds
 
-    public function applyFiltersAndSorting($filters, $sorting = null)
+    public function applyFiltersAndSorting($filters, $sorting = null, $includedColumns = null)
     {
-        return parent::applyFiltersAndSorting($filters, $sorting);
+        return parent::applyFiltersAndSorting($filters, $sorting, $includedColumns);
     }
 
     public function addGame($game)

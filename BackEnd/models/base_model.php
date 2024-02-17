@@ -167,11 +167,12 @@ class BaseModel
     // FILTERS
 
 
-
     // TOOLS
 
     function parseColumns($columns = [])
     {
+        // echo "<br> returned columns : <br>";
+        // print_r($columns);
         return empty($columns) ? "*" : implode(', ', $columns);
     }
 
@@ -213,7 +214,7 @@ class BaseModel
 
     public function applyFilters($filters)
     {
-        $sql = 'SELECT * FROM ' . $this->table . ' WHERE 1 = 1';
+        $sql_filters = "";
         $params = [];
 
         foreach ($filters as $filterKey => $filterValue) {
@@ -223,23 +224,23 @@ class BaseModel
                     // echo "<br> applyFilters result : $result  <br>\n";
                     // print_r($result);
                     // echo "<br><br>";
-                    $sql .= ' AND ' . $result;
+                    $sql_filters .= ' AND ' . $result;
                 } else {
                     $result = $this->handleRangeCondition($filterKey, $filterValue); // Assuming range conditions are structured as arrays
-                    $sql .= ' AND ' . $result['sql'];
+                    $sql_filters .= ' AND ' . $result['sql'];
                     $params = array_merge($params, $result['params']);
                 }
-                // echo "<br> applyFilters - sql :  $sql <br>\n";
-                // print_r($$result['sql']);
+                // echo "<br> applyFilters - sql_filters :  $sql_filters <br>\n";
+                // print_r($$result['sql_filters']);
                 // echo "<br>";
             } else {
                 // Handling for non-array values, assuming direct equality check
-                $sql .= " AND $filterKey = :$filterKey";
+                $sql_filters .= " AND $filterKey = :$filterKey";
                 $params[":$filterKey"] = $filterValue;
             }
         }
 
-        return ['sql' => $sql, 'params' => $params];
+        return ['sql' => $sql_filters, 'params' => $params];
     }
 
 
@@ -344,14 +345,16 @@ class BaseModel
     }
 
 
-    public function applyFiltersAndSorting($filters, $sorting = null)
+    public function applyFiltersAndSorting($filters, $sorting = null, $includedColumns = null)
     {
+        // $sql = 'SELECT * FROM ' . $this->table . ' WHERE 1 = 1';
+        $sql = "SELECT " . $this->parseColumns($includedColumns) . " FROM $this->table WHERE 1 = 1";
         $filterResults = $this->applyFilters($filters);
         $sortingResults = $this->applySorting($sorting);
         $sqlWithFilters = $filterResults['sql'];
         $params = $filterResults['params'];
         $sqlWithFiltersAndSorting = $sortingResults ? $sqlWithFilters . ' ORDER BY ' . $sortingResults : $sqlWithFilters;
-
+        $sqlWithFiltersAndSorting = $sql . $sqlWithFiltersAndSorting;
         // echo "<br> applyFiltersAndSorting - sqlWithFiltersAndSorting :  <br>\n";
         // print_r($sqlWithFiltersAndSorting);
         // echo "<br>";
