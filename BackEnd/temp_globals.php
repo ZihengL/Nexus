@@ -31,5 +31,5 @@ $users_controller = $central_controller->users_controller;
 $games_controller = $central_controller->games_controller;
 
 // MANAGERS
-$token_manager = $central_controller->token_manager;
+$tokens_controller = $central_controller->tokens_controller;
 $database_manager = $central_controller->database_manager;

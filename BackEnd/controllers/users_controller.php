@@ -84,12 +84,14 @@ class UsersController extends BaseController
         }
     }
 
-    public function updateUser($id, $data, $tokens)
+    public function updateUser($id, $password, $data, $tokens)
     {
         $user = $this->model->getById($id);
 
-        if ($user && $this->isAuthenticated($tokens)) {
-            return $this->model->update($id, $data);
+        if ($user && $this->verifyUser($user, $user[$this->email], $password)) {
+            if ($this->isAuthenticated($tokens)) {
+                return $this->model->update($id, $data);
+            }
         }
 
         return false;

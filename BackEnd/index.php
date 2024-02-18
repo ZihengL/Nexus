@@ -31,20 +31,6 @@ $path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd/';
 require_once $path . '/controllers/central_controller.php';
 $central_controller = CentralController::getInstance();
 
-//
-$token_manager = $central_controller->token_manager;
-
-$token = $token_manager->generateRefreshToken(1);
-echo $token;
-$token_manager->revokeToken($token);
-
-$revoked = $token_manager->getAll();
-
-foreach ($revoked as $token) {
-    $exp = $token['exp'];
-    echo $token['exp'] . '<br>';
-}
-
 // METHOD & URI
 $method = $_SERVER["REQUEST_METHOD"];
 $requestUri = $_SERVER['REQUEST_URI'];
@@ -87,7 +73,7 @@ switch ($method) {
         echo json_encode(['error' => 'Method Not Allowed']);
         break;
 }
-           
+
 // Function to handle GET requests
 function handleGet($table, $crud_action, $centralController, $columName, $value)
 {
@@ -122,12 +108,12 @@ function handlePost($table, $crud_action, $centralController, $columName, $value
     $controllerName = $table . '_controller';
 
     switch ($crud_action) {
-        // case 'login':
-        //     handleLogin($centralController, $decodedData, $controllerName, $crud_action);
-        //     break;
-        // case 'logout':
-        //     handleLogout($centralController, $decodedData, $controllerName, $crud_action);
-        //     break;
+            // case 'login':
+            //     handleLogin($centralController, $decodedData, $controllerName, $crud_action);
+            //     break;
+            // case 'logout':
+            //     handleLogout($centralController, $decodedData, $controllerName, $crud_action);
+            //     break;
         case 'login':
         case 'logout':
         case 'applyFiltersAndSorting':
@@ -151,13 +137,11 @@ function handleRawData($centralController, $decodedData, $controllerName, $crud_
         return false;
     } else {
         if (isset($decodedData['filters'])) {
-          return handle_filterData($centralController, $decodedData, $controllerName, $crud_action);
-        } else if (isset($decodedData['login'])){
             return handle_filterData($centralController, $decodedData, $controllerName, $crud_action);
-        }else if (isset($decodedData['logout'])){
-
-        }
-        else {
+        } else if (isset($decodedData['login'])) {
+            return handle_filterData($centralController, $decodedData, $controllerName, $crud_action);
+        } else if (isset($decodedData['logout'])) {
+        } else {
             echo "Invalid data structure.";
             return false;
         }
@@ -175,13 +159,8 @@ function handle_filterData($centralController, $decodedData, $controllerName, $c
 
 function handleLogin($centralController, $decodedData, $controllerName, $crud_action)
 {
- 
 }
 
 function handleLogout($centralController, $decodedData, $controllerName, $crud_action)
 {
- 
 }
-
-
-?>

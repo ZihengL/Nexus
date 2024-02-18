@@ -92,7 +92,7 @@ class TokensController extends BaseController
         try {
             return (array) JWT::decode($token, new Key($key, $this->algorithm));
         } catch (Exception $e) {
-            return false;            // TODO: IMPLEMENT ERROR HANDLING
+            return false;
         }
     }
 

@@ -99,6 +99,6 @@ class Routines
     private function execHourlyRoutine()
     {
         // Deleting expired tokens
-        $this->central_controller->token_manager->deleteExpiredTokens();
+        $this->central_controller->tokens_controller->deleteExpiredTokens();
     }
 }
