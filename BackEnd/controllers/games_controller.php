@@ -1,9 +1,11 @@
 <?php
+
+require_once "$path/controllers/base_controller.php";
 require_once "$path/models/game_model.php";
 
-class GamesController
+class GamesController extends BaseController
 {
-    protected $model;
+    // protected $model;
     protected $id = "id";
     protected $developerID = "developerID";
     protected $stripeID = "stripeID";
@@ -14,9 +16,9 @@ class GamesController
     protected $media = "media";
     protected $releaseDate = "releaseDate";
 
-    public function __construct($pdo)
+    public function __construct($central_controller, $pdo)
     {
-        $this->model = new GameModel($pdo);
+        parent::__construct($central_controller, $pdo, new UserModel($pdo));
     }
 
     // GETTERS
@@ -86,4 +88,12 @@ class GamesController
         }
         return $this->model->applyFiltersAndSorting($filters, $sorting, $includedColumns);
     }
+
+    // ZI
+
+
+
+    // REBECCA
+
+
 }

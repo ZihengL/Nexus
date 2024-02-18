@@ -1,14 +1,14 @@
 <?php
+
+require_once "$path/controllers/base_controller.php";
 require_once $path . '/models/token_model.php';
 require_once $path . '/vendor/autoload.php';
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
-class TokensController
+class TokensController extends BaseController
 {
-    private static $instance = null;
-
     // COLUMNS
     public const USER_ID = 'user_id';
     public const EXPIRY_DATE = 'expiry_date';
@@ -18,35 +18,24 @@ class TokensController
     private const ACCESS_TIMEOUT = 3600;
     private const REFRESH_TIMEOUT = 86400;
 
-    private $model;
+    // private $model;
     private $access_key;        // Permission for secure API calls
     private $refresh_key;      // Authentified for access keys issuing
     private $algorithm;
     private $issuer;
     private $audience;
 
-    // TODO: Create revocated tokens list. Tokens list stay in memory somewhere.
-
     // CONSTRUCTOR
 
-    public function __construct($pdo)
+    public function __construct($central_controller, $pdo)
     {
-        $this->model = new RevokedTokenModel($pdo);
+        parent::__construct($central_controller, $pdo, new RevokedTokenModel($pdo));
 
         $this->access_key = $_ENV['JWT_ACCESS_KEY'];
         $this->refresh_key = $_ENV['JWT_REFRESH_KEY'];
         $this->algorithm = $_ENV['JWT_ALGORITHM'];
         $this->issuer = $_ENV['JWT_ISSUER'];
         $this->audience = $_ENV['JWT_AUDIENCE'];
-    }
-
-    public static function getInstance($pdo)
-    {
-        if (self::$instance == null) {
-            self::$instance = new TokensController($pdo);
-        }
-
-        return self::$instance;
     }
 
     // GENERATION

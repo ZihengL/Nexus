@@ -1,11 +1,11 @@
 <?php
 
+require_once "$path/controllers/base_controller.php";
 require_once "$path/models/user_model.php";
 
-class UsersController
+class UsersController extends BaseController
 {
-    private $model;
-    private $tokens_controller;
+    // private $model;
     protected $table = "user";
     protected $id = "id";
     protected $password = "password";
@@ -19,10 +19,10 @@ class UsersController
     protected $lastname = "lastname";
     protected $privilege = "privilege";
 
-    public function __construct($pdo, $tokens_controller)
+
+    public function __construct($central_controller, $pdo)
     {
-        $this->model = new UserModel($pdo);
-        $this->tokens_controller = $tokens_controller;
+        parent::__construct($central_controller, $pdo, new UserModel($pdo));
     }
 
     public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
@@ -77,10 +77,12 @@ class UsersController
     // Returns tokens to log the user in
     public function createUser($data)
     {
+        $tokens_controller = $this->central_controller->tokens_controller;
+
         if ($this->model->create($data)) {
             $user = $this->getOneMatchingColumn($this->email, $data[$this->email], [$this->id]);
 
-            return $this->tokens_controller->generateTokenPair($user[$this->id]);
+            return $tokens_controller->generateTokenPair($user[$this->id]);
         }
     }
 
@@ -115,10 +117,11 @@ class UsersController
 
     public function login($email, $password)
     {
+        $tokens_controller = $this->central_controller->tokens_controller;
         $user = $this->getByEmail($email);
 
         if ($this->verifyUser($user, $email, $password)) {
-            return $this->tokens_controller->generateTokenPair($user[$this->id]);
+            return $tokens_controller->generateTokenPair($user[$this->id]);
         }
 
         return false;
@@ -126,7 +129,9 @@ class UsersController
 
     public function logout($tokens)
     {
-        return $this->tokens_controller->revokeTokens($tokens);
+        $tokens_controller = $this->central_controller->tokens_controller;
+
+        return $tokens_controller->revokeTokens($tokens);
     }
 
     private function verifyUser($user, $email, $password)
@@ -138,6 +143,8 @@ class UsersController
 
     public function isAuthenticated($tokens)
     {
-        return $this->tokens_controller->validateRefreshToken($tokens['refresh_token']);
+        $tokens_controller = $this->central_controller->tokens_controller;
+
+        return $tokens_controller->validateRefreshToken($tokens['refresh_token']);
     }
 }

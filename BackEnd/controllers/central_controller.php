@@ -15,30 +15,13 @@ class CentralController
     private static $instance = null;
 
     public $database_manager;
-    public $token_manager;
+    public $tokens_controller;
     public $routines_controller;
-
     public $users_controller;
     public $games_controller;
 
     // CONSTRUCTOR
 
-    private function __construct()
-    {
-        global $path;
-        $dotenv = Dotenv::createImmutable($path);
-        $dotenv->load();
-
-        $this->database_manager = DatabaseManager::getInstance();
-
-        $pdo = $this->database_manager->getPDO();
-        $this->token_manager = TokensController::getInstance($pdo);
-        $this->users_controller = new UsersController($pdo, $this->token_manager);
-        $this->games_controller = new GamesController($pdo);
-        // $this->routines_controller = $this->instanciateRoutines();
-    }
-
-    // MODIFIED CONSTRUCTOR FOR BASE CONTROLLER IMPLEMENTATION
     // private function __construct()
     // {
     //     global $path;
@@ -46,12 +29,28 @@ class CentralController
     //     $dotenv->load();
 
     //     $this->database_manager = DatabaseManager::getInstance();
-    //     $pdo = $this->database_manager->getPDO();
 
-    //     $this->token_manager = new TokensController($this, $pdo);
-    //     $this->users_controller = new UsersController($this, $pdo);
-    //     $this->games_controller = new GamesController($this, $pdo);
+    //     $pdo = $this->database_manager->getPDO();
+    //     $this->token_manager = TokensController::getInstance($pdo);
+    //     $this->users_controller = new UsersController($pdo, $this->token_manager);
+    //     $this->games_controller = new GamesController($pdo);
+    //     // $this->routines_controller = $this->instanciateRoutines();
     // }
+
+    // MODIFIED CONSTRUCTOR FOR BASE CONTROLLER IMPLEMENTATION
+    private function __construct()
+    {
+        global $path;
+        $dotenv = Dotenv::createImmutable($path);
+        $dotenv->load();
+
+        $this->database_manager = DatabaseManager::getInstance();
+        $pdo = $this->database_manager->getPDO();
+
+        $this->tokens_controller = new TokensController($this, $pdo);
+        $this->users_controller = new UsersController($this, $pdo);
+        $this->games_controller = new GamesController($this, $pdo);
+    }
 
     public static function getInstance()
     {
@@ -86,7 +85,7 @@ class CentralController
         $this->routines_controller->setRunningState($toRunning);
     }
 
-    // // USER
+    // USER
 
     // public function login($email, $password) {
     //     return $this->usersController->login($email, $password);
