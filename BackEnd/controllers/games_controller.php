@@ -31,8 +31,8 @@ class GamesController
         return $this->model->getAll_games($sorting);
     }
 
-
-    public function getById($id) {
+    public function getById($id)
+    {
         return $this->model->getById($id);
     }
 
@@ -78,13 +78,12 @@ class GamesController
         return $this->model->deleteGame($id);
     }
 
-    public function applyFiltersAndSorting($filters, $sorting, $includedColumns = null){
+    public function applyFiltersAndSorting($filters, $sorting, $includedColumns = null)
+    {
 
         if (empty($sorting)) {
             $sorting = ['ratingAverage' => true];
         }
-        return $this->model->applyFiltersAndSorting($filters , $sorting, $includedColumns);
+        return $this->model->applyFiltersAndSorting($filters, $sorting, $includedColumns);
     }
-
 }
-

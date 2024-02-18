@@ -72,18 +72,13 @@ class UsersController
         return $this->model->getAll_users($included_columns);
     }
 
-    public function getById($id)
-    {
-        return $this->model->getById($id);
-    }
-
     // OTHER CRUDS
 
     // Returns tokens to log the user in
     public function createUser($data)
     {
         if ($this->model->create($data)) {
-            $user = $this->getOneMatchingColumn($this->email, $data['email'], [$this->id]);
+            $user = $this->getOneMatchingColumn($this->email, $data[$this->email], [$this->id]);
 
             return $this->tokens_controller->generateTokenPair($user[$this->id]);
         }
@@ -113,7 +108,7 @@ class UsersController
 
     public function userExists($data)
     {
-        return isset($data['email']) && !empty($this->getByEmail($data['email']));
+        return isset($data[$this->email]) && !empty($this->getByEmail($data[$this->email]));
     }
 
     //  ACCESS & SECURITY
@@ -123,7 +118,7 @@ class UsersController
         $user = $this->getByEmail($email);
 
         if ($this->verifyUser($user, $email, $password)) {
-            return $this->tokens_controller->generateTokenPair($user['id']);
+            return $this->tokens_controller->generateTokenPair($user[$this->id]);
         }
 
         return false;
@@ -137,8 +132,8 @@ class UsersController
     private function verifyUser($user, $email, $password)
     {
         return $user &&
-            $user['email'] === $email &&
-            password_verify($password, $user['password']);
+            $user[$this->email] === $email &&
+            password_verify($password, $user[$this->password]);
     }
 
     public function isAuthenticated($tokens)

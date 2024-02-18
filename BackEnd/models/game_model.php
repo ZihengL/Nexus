@@ -19,9 +19,8 @@ class GameModel extends BaseModel
 
     public function getAll_games($sorting)
     {
-        return parent::getAll($column = null, $value = null, $columns = [], $sorting );
+        return parent::getAll($column = null, $value = null, $columns = [], $sorting);
     }
-
 
     //Other Cruds
 
@@ -65,22 +64,23 @@ class GameModel extends BaseModel
 
 
     //WORKING ON IT
-    function updateGameTags($pdo, $gameId, array $newTagIds) {
+    function updateGameTags($pdo, $gameId, array $newTagIds)
+    {
         // Begin a transaction
         $pdo->beginTransaction();
-        
+
         try {
             // Remove existing tags for the game
             $stmt = $pdo->prepare('DELETE FROM game_tags WHERE game_id = :game_id');
             $stmt->execute([':game_id' => $gameId]);
-    
+
             // Insert new tags
             $sql = 'INSERT INTO game_tags (game_id, tag_id) VALUES (:game_id, :tag_id)';
             $stmt = $pdo->prepare($sql);
             foreach ($newTagIds as $tagId) {
                 $stmt->execute([':game_id' => $gameId, ':tag_id' => $tagId]);
             }
-    
+
             // Commit the transaction
             $pdo->commit();
         } catch (Exception $e) {
@@ -89,7 +89,4 @@ class GameModel extends BaseModel
             throw $e;
         }
     }
-
-
-
 }

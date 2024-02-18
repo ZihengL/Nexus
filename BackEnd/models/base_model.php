@@ -127,7 +127,6 @@ class BaseModel
         // return $this->getOne('id', $id, $this->columns); // retuned a boolean temporary comment
         $stmt = $this->pdo->query("SELECT * " . " FROM $this->table WHERE id = $id");
         return $stmt->fetch(PDO::FETCH_ASSOC);
-
     }
 
     // OTHER CRUDS
@@ -171,7 +170,7 @@ class BaseModel
         return $this->query($sql, [$id]);
     }
 
-  
+
     // TOOLS
 
     function parseColumns($columns = [])
@@ -366,20 +365,15 @@ class BaseModel
 
 
 
-    
+
     /*To update the relational tables 
     $table_obj_ids = [] - is an array because for gameTags there's gameId and tagId 
     but for Reviews there's Id gameId, userId and maybe a third
     */
     public function updateRelationTable($objectToUpdate, $table_obj_ids = [])
     {
-
     }
 
     // public function updateRelationTable($objectToUpdate, $table_obj_ids = []){  
     // }
 }
-
-
-
-
