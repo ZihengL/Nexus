@@ -5,10 +5,10 @@ class BaseController
     protected $central_controller;
     protected $model;
 
-    public function __construct($central_controller, $model)
+    public function __construct($central_controller)
     {
         $this->central_controller = $central_controller;
-        $this->$model = $model;
+        // $this->$model = $model;
     }
 
     // ZI

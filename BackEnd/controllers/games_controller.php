@@ -5,7 +5,6 @@ require_once "$path/models/game_model.php";
 
 class GamesController extends BaseController
 {
-    // protected $model;
     protected $id = "id";
     protected $developerID = "developerID";
     protected $stripeID = "stripeID";
@@ -18,7 +17,8 @@ class GamesController extends BaseController
 
     public function __construct($central_controller, $pdo)
     {
-        parent::__construct($central_controller, new UserModel($pdo));
+        $this->model = new UserModel($pdo);
+        parent::__construct($central_controller);
     }
 
     // GETTERS

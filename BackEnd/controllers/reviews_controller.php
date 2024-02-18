@@ -15,7 +15,8 @@ class ReviewsController extends BaseController
 
     public function __construct($central_controller, $pdo)
     {
-        parent::__construct($central_controller, new ReviewModel($pdo));
+        $this->model = new ReviewModel($pdo);
+        parent::__construct($central_controller);
     }
 
     // GETTERS

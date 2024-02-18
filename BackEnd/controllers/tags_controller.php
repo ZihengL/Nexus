@@ -13,7 +13,8 @@ class TagsController extends BaseController
 
     public function __construct($central_controller, $pdo)
     {
-        parent::__construct($central_controller, new TagsModel($pdo));
+        $this->model = new TagsModel($pdo);
+        parent::__construct($central_controller);
     }
 
     // GETTERS

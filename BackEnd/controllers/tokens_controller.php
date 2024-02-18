@@ -18,7 +18,6 @@ class TokensController extends BaseController
     private const ACCESS_TIMEOUT = 3600;
     private const REFRESH_TIMEOUT = 86400;
 
-    // private $model;
     private $access_key;        // Permission for secure API calls
     private $refresh_key;      // Authentified for access keys issuing
     private $algorithm;
@@ -29,7 +28,8 @@ class TokensController extends BaseController
 
     public function __construct($central_controller, $pdo)
     {
-        parent::__construct($central_controller, new RevokedTokenModel($pdo));
+        $this->model = new RevokedTokenModel($pdo);
+        parent::__construct($central_controller);
 
         $this->access_key = $_ENV['JWT_ACCESS_KEY'];
         $this->refresh_key = $_ENV['JWT_REFRESH_KEY'];
