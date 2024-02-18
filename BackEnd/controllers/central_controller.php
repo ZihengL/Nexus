@@ -38,6 +38,21 @@ class CentralController
         // $this->routines_controller = $this->instanciateRoutines();
     }
 
+    // MODIFIED CONSTRUCTOR FOR BASE CONTROLLER IMPLEMENTATION
+    // private function __construct()
+    // {
+    //     global $path;
+    //     $dotenv = Dotenv::createImmutable($path);
+    //     $dotenv->load();
+
+    //     $this->database_manager = DatabaseManager::getInstance();
+    //     $pdo = $this->database_manager->getPDO();
+
+    //     $this->token_manager = new TokensController($this, $pdo);
+    //     $this->users_controller = new UsersController($this, $pdo);
+    //     $this->games_controller = new GamesController($this, $pdo);
+    // }
+
     public static function getInstance()
     {
         if (self::$instance == null) {

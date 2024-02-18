@@ -29,7 +29,7 @@ class TokensController
 
     // CONSTRUCTOR
 
-    private function __construct($pdo)
+    public function __construct($pdo)
     {
         $this->model = new RevokedTokenModel($pdo);
 
