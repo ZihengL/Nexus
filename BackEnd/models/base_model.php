@@ -98,6 +98,7 @@ class BaseModel
 
     public function getById($id)
     {
+        // echo "<br> $id <br>";
         // return $this->getOne('id', $id, $this->columns); // retuned a boolean temporary comment
         $stmt = $this->pdo->query("SELECT * " . " FROM $this->table WHERE id = $id");
         return $stmt->fetch(PDO::FETCH_ASSOC);

@@ -74,8 +74,7 @@ export default {
     }
   },
   mounted () {
-    // fetchData("games", "getBy", "Id", "2", null, "GET");
-    // fetchData("games", "getAll", "GET");
+ 
 
     const filters = {
       ratingAverage: { gt: 1, lte: 7 },
@@ -91,6 +90,8 @@ export default {
 
     const jsonBody = { filters, sorting, includedColumns }
 
-    fetchData('games', 'applyFiltersAndSorting', null, null, jsonBody, 'POST')
+    // fetchData('games', 'applyFiltersAndSorting', null, null, jsonBody, 'POST')
+    fetchData("games", "getBy", "Id", "2", null, "GET");
+    // fetchData("games", "getAll", "GET");
   }
 }

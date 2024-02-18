@@ -57,7 +57,7 @@ $decodedData = json_decode($rawData, true);
 switch ($method) {
     case 'GET':
         // print_r($explodedURI);
-        // echo "<br> The requested URI is: " . $requestUri;
+        // echo "<br> The requested URI is: " . $value;
         handleGet($table, $crud_action, $central_controller, $columName, $value);
         break;
     case 'POST':
