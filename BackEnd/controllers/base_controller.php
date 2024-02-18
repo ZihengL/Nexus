@@ -8,10 +8,9 @@ class BaseController
     protected $table;
     protected $model;
 
-    public function __construct($central_controller, $table, $model)
+    public function __construct($central_controller, $model)
     {
         $this->central_controller = $central_controller;
-        $this->table = $table;
         $this->$model = $model;
     }
 

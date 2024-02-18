@@ -18,7 +18,7 @@ class GamesController extends BaseController
 
     public function __construct($central_controller, $pdo)
     {
-        parent::__construct($central_controller, $pdo, new UserModel($pdo));
+        parent::__construct($central_controller, new UserModel($pdo));
     }
 
     // GETTERS

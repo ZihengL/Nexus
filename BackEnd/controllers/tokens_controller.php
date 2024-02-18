@@ -29,7 +29,7 @@ class TokensController extends BaseController
 
     public function __construct($central_controller, $pdo)
     {
-        parent::__construct($central_controller, $pdo, new RevokedTokenModel($pdo));
+        parent::__construct($central_controller, new RevokedTokenModel($pdo));
 
         $this->access_key = $_ENV['JWT_ACCESS_KEY'];
         $this->refresh_key = $_ENV['JWT_REFRESH_KEY'];

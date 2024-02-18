@@ -22,7 +22,7 @@ class UsersController extends BaseController
 
     public function __construct($central_controller, $pdo)
     {
-        parent::__construct($central_controller, $pdo, new UserModel($pdo));
+        parent::__construct($central_controller, new UserModel($pdo));
     }
 
     public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
