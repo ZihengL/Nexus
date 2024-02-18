@@ -10,14 +10,10 @@ class GamesController
     protected $title = "title";
     protected $files = "files";
     protected $description = "description";
-    protected $name = "name";
     protected $rating = "ratingAverage";
-    protected $tags = "tags";
+    protected $media = "media";
     protected $images = "images";
-    protected $devNames = "devNames";
     protected $releaseDate = "releaseDate";
-    protected $description = "description";
-    protected $stripeID = "stripeID";
 
     public function __construct($pdo)
     {
@@ -31,20 +27,12 @@ class GamesController
         return $this->model->getAllMatching($filters, $sorting, $included_columns);
     }
 
-    public function getAllGames($included_columns = [])
+    public function getAll_games($included_columns = [], $sorting = ['ratingAverage' => true])
     {
-        return $this->model->getAll();
+        return $this->model->getAll_games($sorting);
     }
 
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
-    {
-        return $this->model->getAllMatching($filters, $sorting, $included_columns);
-    }
 
-    public function getAllGames($included_columns = [])
-    {
-        return $this->model->getAll();
-    }
 
     public function getById($id) {
         return $this->model->getById($id);
@@ -70,19 +58,9 @@ class GamesController
         return $this->model->getAll($this->description, $description);
     }
 
-    public function getByTags($tags)
-    {
-        return $this->model->getAll($this->tags, $tags);
-    }
-
     public function getByMedia($media)
     {
         return $this->model->getAll($this->media, $media);
-    }
-
-    public function getAllGames()
-    {
-        return $this->model->getAllGames();
     }
 
     // Other CRUDs 

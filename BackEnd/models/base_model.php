@@ -106,14 +106,6 @@ class BaseModel
         return $this->query($sql, $result['params']);
     }
 
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
-    {
-        $result = $this->applyFilters($filters, $included_columns);
-        $sql = $result['sql'] . $this->applySorting($sorting);
-
-        return $this->query($sql, $result['params']);
-    }
-
     //  Explicitement retour d'une seule valeur.
     public function getOne($column, $value, $included_columns = [])
     {
