@@ -1,8 +1,6 @@
 <?php
 //index.php
 
-
-
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     // Return only the headers and not the content
     // Only allow CORS if we're doing a GET - this is a preflight request
