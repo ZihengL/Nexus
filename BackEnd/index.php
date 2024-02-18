@@ -69,9 +69,6 @@ switch ($method) {
     case 'DELETE':
         handleDelete();
         break;
-    case 'OTHERS':
-        handleOthers();
-        break;
     default:
         // Handle unsupported methods
         http_response_code(405); // Method Not Allowed
@@ -102,7 +99,7 @@ function handleGet($table, $crud_action, $centralController, $columName, $value)
             break;
         default:
             http_response_code(405);
-            echo json_encode(['error' => "Table Doesn't Exist"]);
+            echo json_encode(['error' => "Table $table Doesn't Exist"]);
             break;
     }
 }
@@ -114,12 +111,14 @@ function handlePost($table, $crud_action, $centralController, $columName, $value
     $controllerName = $table . '_controller';
 
     switch ($crud_action) {
+        // case 'login':
+        //     handleLogin($centralController, $decodedData, $controllerName, $crud_action);
+        //     break;
+        // case 'logout':
+        //     handleLogout($centralController, $decodedData, $controllerName, $crud_action);
+        //     break;
         case 'login':
-            handleLogin($centralController, $decodedData, $controllerName, $crud_action);
-            break;
         case 'logout':
-            handleLogout($centralController, $decodedData, $controllerName, $crud_action);
-            break;
         case 'applyFiltersAndSorting':
             // echo "<br>  getByColumnName : " . $getByColumnName;
             $result = handleRawData($centralController, $decodedData, $controllerName, $crud_action);
@@ -128,7 +127,7 @@ function handlePost($table, $crud_action, $centralController, $columName, $value
             break;
         default:
             http_response_code(405);
-            echo json_encode(['error' => "Table Doesn't Exist"]);
+            echo json_encode(['error' => "Action $crud_action is unnaplicable"]);
             break;
     }
 }
@@ -141,9 +140,9 @@ function handleRawData($centralController, $decodedData, $controllerName, $crud_
         return false;
     } else {
         if (isset($decodedData['filters'])) {
-          return filterData($centralController, $decodedData, $controllerName, $crud_action);
+          return handle_filterData($centralController, $decodedData, $controllerName, $crud_action);
         } else if (isset($decodedData['login'])){
-
+            return handle_filterData($centralController, $decodedData, $controllerName, $crud_action);
         }else if (isset($decodedData['logout'])){
 
         }
@@ -155,7 +154,7 @@ function handleRawData($centralController, $decodedData, $controllerName, $crud_
 }
 
 
-function filterData($centralController, $decodedData, $controllerName, $crud_action)
+function handle_filterData($centralController, $decodedData, $controllerName, $crud_action)
 {
     $filters = $decodedData['filters'];
     $sorting = isset($decodedData['sorting']) ? $decodedData['sorting'] : null;
@@ -173,9 +172,5 @@ function handleLogout($centralController, $decodedData, $controllerName, $crud_a
  
 }
 
-// Add similar functions for POST, PUT, DELETE...
-// handlePost($table, $decodedData, $centralController) { ... }
-// handlePut($table, $id, $decodedData, $centralController) { ... }
-// handleDelete($table, $id, $centralController) { ... }
 
 ?>
