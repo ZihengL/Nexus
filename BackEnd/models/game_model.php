@@ -1,11 +1,8 @@
 <?php
-
 require_once "$path/models/base_model.php";
-// require_once "$path/controllers/games.php";
 
 class GameModel extends BaseModel
 {
-
     protected $tableName = "games";
 
 
@@ -14,30 +11,30 @@ class GameModel extends BaseModel
         parent::__construct($pdo, $this->tableName);
     }
 
-    public function getByReleaseDate($columnName, $date)
-    {
-        return parent::getAll($columnName, $date);
-    }
+    // public function getByReleaseDate($column, $date)
+    // {
+    //     return parent::getAll($column, $date);
+    // }
 
-    public function getByTags($columnName, $tags)
-    {
-        return parent::getAll($columnName, $tags);
-    }
+    // public function getByTags($column, $tags)
+    // {
+    //     return parent::getAll($column, $tags);
+    // }
 
-    public function getByDescription($columnName, $description)
-    {
-        return parent::getAll($columnName, $description);
-    }
+    // public function getByDescription($column, $description)
+    // {
+    //     return parent::getAll($column, $description);
+    // }
 
-    public function getByImages($columnName, $img)
-    {
-        return parent::getAll($columnName, $img);
-    }
+    // public function getByMedia($column, $media)
+    // {
+    //     return parent::getAll($column, $media);
+    // }
 
-    public function getByDevs($columnName, $devName)
-    {
-        return parent::getAll($columnName, $devName);
-    }
+    // public function getByDevs($column, $devName)
+    // {
+    //     return parent::getAll($column, $devName);
+    // }
 
     public function getAll_games($sorting)
     {

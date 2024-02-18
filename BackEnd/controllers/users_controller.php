@@ -5,14 +5,19 @@ require_once "$path/models/user_model.php";
 class UsersController
 {
     private $model;
+    private $tokens_controller;
     protected $table = "user";
+    protected $id = "id";
+    protected $password = "password";
     protected $email = "email";
+    protected $phoneNumber = "phoneNumber";
+    protected $picture = "picture";
+    protected $isAdmin = "isAdmin";
+    protected $isOnline = "isOnline";
+    protected $description = "description";
     protected $name = "name";
     protected $lastname = "lastname";
-    protected $phonenumber = "phone_number";
     protected $privilege = "privilege";
-    protected $description = "description";
-    private $tokens_controller;
 
     public function __construct($pdo, $tokens_controller)
     {
@@ -30,24 +35,29 @@ class UsersController
         return $this->model->getOne($column, $value, $included_columns);
     }
 
-    public function getUserById($id, $columns = [])
+    public function getAllUsers($included_columns = [])
     {
-        return $this->model->getById($id);
+        return $this->model->getAll($included_columns);
     }
 
-    public function getUserByEmail($email, $columnName)
+    public function getById($id, $included_columns = [])
     {
-        return $this->model->getOne($this->email, $email);
+        return $this->model->getAll($id, $this->id, $included_columns);
     }
 
-    public function getUsersByName($name, $columnName)
+    public function getByEmail($email)
     {
-        return $this->model->get($this->name, $name);
+        return $this->model->getAll($this->email, $email);
     }
 
-    public function getUsersByLastName($lastname, $columnName)
+    public function getByName($name)
     {
-        return $this->model->get($this->lastname, $columnName);
+        return $this->model->getAll($this->name, $name);
+    }
+
+    public function getByLastName($lastname)
+    {
+        return $this->model->getAll($this->lastname, $lastname);
     }
 
     public function applyFiltersAndSorting($filters, $sorting, $includedColumns)
@@ -69,9 +79,14 @@ class UsersController
 
     // OTHER CRUDS
 
+    // Returns tokens to log the user in
     public function createUser($data)
     {
-        return $this->model->create($data);
+        if ($this->model->create($data)) {
+            $user = $this->getOneMatchingColumn($this->email, $data['email'], [$this->id]);
+
+            return $this->tokens_controller->generateTokenPair($user[$this->id]);
+        }
     }
 
     public function updateUser($id, $data, $tokens)
@@ -90,7 +105,7 @@ class UsersController
         $user = $this->model->getById($id);
 
         if ($user && $this->isAuthenticated($tokens)) {
-        return $this->model->delete($id);
+            return $this->model->delete($id);
         }
 
         return false;
@@ -98,14 +113,14 @@ class UsersController
 
     public function userExists($data)
     {
-        return isset($data['email']) && !empty($this->getUserByEmail($data['email'], ['email']));
+        return isset($data['email']) && !empty($this->getByEmail($data['email']));
     }
 
     //  ACCESS & SECURITY
 
     public function login($email, $password)
     {
-        $user = $this->getOneMatchingColumn($email, 'email');
+        $user = $this->getByEmail($email);
 
         if ($this->verifyUser($user, $email, $password)) {
             return $this->tokens_controller->generateTokenPair($user['id']);
@@ -128,6 +143,6 @@ class UsersController
 
     public function isAuthenticated($tokens)
     {
-        return $this->tokens_controller->validateRefreshToken($tokens);
+        return $this->tokens_controller->validateRefreshToken($tokens['refresh_token']);
     }
 }

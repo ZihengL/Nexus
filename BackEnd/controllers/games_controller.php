@@ -5,16 +5,19 @@ class GamesController
 {
     protected $model;
     protected $id = "id";
+    protected $developerID = "developerID";
+    protected $stripeID = "stripeID";
+    protected $title = "title";
+    protected $files = "files";
+    protected $description = "description";
     protected $name = "name";
     protected $rating = "ratingAverage";
     protected $tags = "tags";
     protected $images = "images";
-    protected $videos = "videos"; //missing
-    protected $files = "files"; // missing
-    protected $devNames = "developperID";
-    protected $releaseDate = "releaseDate"; 
+    protected $devNames = "devNames";
+    protected $releaseDate = "releaseDate";
     protected $description = "description";
-    protected $stripeID = "stripeID"; // not sure yet
+    protected $stripeID = "stripeID";
 
     public function __construct($pdo)
     {
@@ -23,51 +26,72 @@ class GamesController
 
     // GETTERS
 
+    public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
+    {
+        return $this->model->getAllMatching($filters, $sorting, $included_columns);
+    }
+
+    public function getAllGames($included_columns = [])
+    {
+        return $this->model->getAll();
+    }
+
+    public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
+    {
+        return $this->model->getAllMatching($filters, $sorting, $included_columns);
+    }
+
+    public function getAllGames($included_columns = [])
+    {
+        return $this->model->getAll();
+    }
+
     public function getById($id) {
         return $this->model->getById($id);
     }
 
-    public function getByReleaseDate($releaseDate)
+    public function getByDeveloperID($developerID)
     {
-        return $this->model->getByReleaseDate($this->releaseDate, $releaseDate);
+        return $this->model->getAll($this->developerID, $developerID);
     }
 
-    public function getByTags($tags)
+    public function getByStripeID($stripeID)
     {
-        return $this->model->getByTags($this->tags, $tags);
+        return $this->model->getAll($this->stripeID, $stripeID);
+    }
+
+    public function getByTitle($title)
+    {
+        return $this->model->getAll($this->title, $title);
     }
 
     public function getByDescription($description)
     {
-        return $this->model->getByDescription($this->description, $description);
+        return $this->model->getAll($this->description, $description);
     }
 
-    public function getByImages($images)
+    public function getByTags($tags)
     {
-        return $this->model->getByImages($this->images, $images);
+        return $this->model->getAll($this->tags, $tags);
     }
 
-    public function getByDevs($devName)
+    public function getByMedia($media)
     {
-        return $this->model->getByDevs($this->devNames, $devName);
+        return $this->model->getAll($this->media, $media);
     }
-    
-    public function getAll_games($sorting = ['ratingAverage' => true]) {
-        return $this->model->getAll_games($sorting);
+
+    public function getAllGames()
+    {
+        return $this->model->getAllGames();
     }
 
     // Other CRUDs 
 
-    //Create/Add games
     public function addGame($data)
     {
         return $this->model->addGame($data);
     }
 
-    //Validate games before adding them in the database
-
-    //update and delete games
-    //determine what can be updated or not
     public function updateGame($id, $data)
     {
         return $this->model->updateGame($id, $data);
