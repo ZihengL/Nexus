@@ -23,9 +23,9 @@ class UserModel extends BaseModel
     }
 
     //Gets
-    public function getByEmail($email)
+    public function getByEmail($email, $columnName)
     {
-        return parent::getAll($email, 'email', parent::getColumns(true));
+        return parent::getAll($email, $columnName, parent::getColumns(true));
     }
 
     public function getByName($name, $columnName)
@@ -53,14 +53,16 @@ class UserModel extends BaseModel
         return parent::getAll($columnName, $description, parent::getColumns(true));
     }
 
-    public function getAll_users() {
+    public function getAll_users()
+    {
         return parent::getAll();
     }
 
     //other cruds
 
-    public function applyFiltersAndSorting($filters, $sorting, $includedColumns){
-        return parent::applyFiltersAndSorting($filters , $sorting, $includedColumns );
+    public function applyFiltersAndSorting($filters, $sorting, $includedColumns)
+    {
+        return parent::applyFiltersAndSorting($filters, $sorting, $includedColumns);
     }
 
     public function updateUser($id, $data)

@@ -90,7 +90,7 @@ export default {
       releaseDate: false
     }
 
-    const includedColumns = ['id', 'developperID']
+    const includedColumns = ['id', 'developerID']
 
     const jsonBody = { filters, sorting, includedColumns }
 

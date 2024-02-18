@@ -11,13 +11,13 @@ class GamesController extends BaseController
     protected $title = "title";
     protected $files = "files";
     protected $description = "description";
-    protected $rating = "ratingAverage";
+    protected $ratingAverage = "ratingAverage";
     protected $media = "media";
     protected $releaseDate = "releaseDate";
 
     public function __construct($central_controller, $pdo)
     {
-        $this->model = new UserModel($pdo);
+        $this->model = new GameModel($pdo);
         parent::__construct($central_controller);
     }
 
@@ -28,7 +28,7 @@ class GamesController extends BaseController
         return $this->model->getAllMatching($filters, $sorting, $included_columns);
     }
 
-    public function getAll_games($included_columns = [], $sorting = ['ratingAverage' => true])
+    public function getAll_games($included_columns = [], $sorting = [$this->ratingAverage => true])
     {
         return $this->model->getAll_games($sorting);
     }
