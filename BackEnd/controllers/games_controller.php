@@ -33,34 +33,33 @@ class GamesController
     }
 
 
-
     public function getById($id) {
         return $this->model->getById($id);
     }
 
     public function getByDeveloperID($developerID)
     {
-        return $this->model->getAll($this->developerID, $developerID);
+        return $this->model->getByColumn($this->developerID, $developerID);
     }
 
     public function getByStripeID($stripeID)
     {
-        return $this->model->getAll($this->stripeID, $stripeID);
+        return $this->model->getByColumn($this->stripeID, $stripeID);
     }
 
     public function getByTitle($title)
     {
-        return $this->model->getAll($this->title, $title);
+        return $this->model->getByColumn($this->title, $title);
     }
 
     public function getByDescription($description)
     {
-        return $this->model->getAll($this->description, $description);
+        return $this->model->getByColumn($this->description, $description);
     }
 
     public function getByMedia($media)
     {
-        return $this->model->getAll($this->media, $media);
+        return $this->model->getByColumn($this->media, $media);
     }
 
     // Other CRUDs 

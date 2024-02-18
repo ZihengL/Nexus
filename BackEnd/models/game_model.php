@@ -11,30 +11,11 @@ class GameModel extends BaseModel
         parent::__construct($pdo, $this->tableName);
     }
 
-    // public function getByReleaseDate($column, $date)
-    // {
-    //     return parent::getAll($column, $date);
-    // }
+    public function getByColumn($column, $value)
+    {
+        return parent::getAll($column, $value);
+    }
 
-    // public function getByTags($column, $tags)
-    // {
-    //     return parent::getAll($column, $tags);
-    // }
-
-    // public function getByDescription($column, $description)
-    // {
-    //     return parent::getAll($column, $description);
-    // }
-
-    // public function getByMedia($column, $media)
-    // {
-    //     return parent::getAll($column, $media);
-    // }
-
-    // public function getByDevs($column, $devName)
-    // {
-    //     return parent::getAll($column, $devName);
-    // }
 
     public function getAll_games($sorting)
     {
