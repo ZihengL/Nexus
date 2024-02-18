@@ -74,12 +74,16 @@ export default {
     }
   },
   mounted () {
- 
 
     const filters = {
-      ratingAverage: { gt: 1, lte: 7 },
-      name: { contain: 'super' },
-      // developperID: '4'
+     	ratingAverage: { gt: 1, lte: 7 },
+        // value LIKE 
+  	  // name: { contain: 'super' },
+        // exact value
+      name: 'Super Cat', 
+  	  // developperID: '4',
+        // only one range
+      // ratingAverage: { gt: 1},
     }
 
     const sorting = {
@@ -93,5 +97,6 @@ export default {
     fetchData('games', 'applyFiltersAndSorting', null, null, jsonBody, 'POST')
     // fetchData("games", "getBy", "Id", "2", null, "GET");
     // fetchData("games", "getAll", "GET");
+    
   }
 }
