@@ -5,8 +5,6 @@ require_once "$path/models/user_model.php";
 
 class UsersController extends BaseController
 {
-    // private $model;
-    protected $table = "user";
     protected $id = "id";
     protected $password = "password";
     protected $email = "email";
