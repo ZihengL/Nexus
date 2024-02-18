@@ -69,7 +69,7 @@ $databaseManager = $centralController->database_manager;
 
 //FILTER ON TAGS
 $filters = ['tagId' => ['relatedTable' => 'gamesTags', 'values' => ['1', '3'], 'wantedColumn' => 'gameId']];
-$results_1 = $centralController->games_controller->applyFiltersAndSorting($filters);
+$results_1 = $centralController->games_controller->applyFiltersAndSorting($filters, null, null);
 echo "<pre>";
 
 echo "<br> <strong>testindex - tag results : </strong> <br>\n";
@@ -82,7 +82,7 @@ $sorting = [
     'ratingAverage' => true
 ];
 
-$results_2 = $centralController->games_controller->applyFiltersAndSorting($filters, $sorting);
+$results_2 = $centralController->games_controller->applyFiltersAndSorting($filters, $sorting, null);
 echo "<pre>";
 echo "<br> <strong>testindex - filter on ratings and sort on ratings results : </strong>  <br>\n";
 print_r($results_2);
@@ -91,7 +91,7 @@ echo " <pre> <br>";
 
 //FILTER ON NAMES
 $filters = ['name' => 'Super Game'];
-$results_2 = $centralController->games_controller->applyFiltersAndSorting($filters);
+$results_2 = $centralController->games_controller->applyFiltersAndSorting($filters, null, null);
 echo "<pre>";
 echo "<br> <strong>testindex - exact name results :</strong>  <br>\n";
 print_r($results_2);
@@ -134,7 +134,7 @@ $filters = [
 $sorting = [
     'releaseDate' => false  //most recent to oldes date
 ];
-$results_2 = $centralController->games_controller->applyFiltersAndSorting($filters, $sorting);
+$results_2 = $centralController->games_controller->applyFiltersAndSorting($filters, $sorting, null);
 echo "<pre>";
 echo "<br> <strong>testindex - filter ON RATINGS, NAMES(contain), developperID </strong> <br>\n";
 print_r($results_2);

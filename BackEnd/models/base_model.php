@@ -345,7 +345,7 @@ class BaseModel
     }
 
 
-    public function applyFiltersAndSorting($filters, $sorting = null, $includedColumns = null)
+    public function applyFiltersAndSorting($filters, $sorting, $includedColumns)
     {
         // $sql = 'SELECT * FROM ' . $this->table . ' WHERE 1 = 1';
         $sql = "SELECT " . $this->parseColumns($includedColumns) . " FROM $this->table WHERE 1 = 1";

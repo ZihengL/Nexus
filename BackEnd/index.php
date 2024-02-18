@@ -75,11 +75,10 @@ switch ($method) {
         echo json_encode(['error' => 'Method Not Allowed']);
         break;
 }
-
+           
 // Function to handle GET requests
 function handleGet($table, $crud_action, $centralController, $columName, $value)
 {
-
     //Do these if they arent empty
     $controllerName = $table . '_controller';
     $getAllFromTable = 'getAll_' . $table;

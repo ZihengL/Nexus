@@ -67,7 +67,7 @@ class GameModel extends BaseModel
 
     //Other Cruds
 
-    public function applyFiltersAndSorting($filters, $sorting = null, $includedColumns = null)
+    public function applyFiltersAndSorting($filters, $sorting, $includedColumns)
     {
         return parent::applyFiltersAndSorting($filters, $sorting, $includedColumns);
     }
@@ -102,6 +102,34 @@ class GameModel extends BaseModel
         // $stmt->execute([$id]);
 
         // return $stmt->fetch();
+    }
+
+
+
+    //WORKING ON IT
+    function updateGameTags($pdo, $gameId, array $newTagIds) {
+        // Begin a transaction
+        $pdo->beginTransaction();
+        
+        try {
+            // Remove existing tags for the game
+            $stmt = $pdo->prepare('DELETE FROM game_tags WHERE game_id = :game_id');
+            $stmt->execute([':game_id' => $gameId]);
+    
+            // Insert new tags
+            $sql = 'INSERT INTO game_tags (game_id, tag_id) VALUES (:game_id, :tag_id)';
+            $stmt = $pdo->prepare($sql);
+            foreach ($newTagIds as $tagId) {
+                $stmt->execute([':game_id' => $gameId, ':tag_id' => $tagId]);
+            }
+    
+            // Commit the transaction
+            $pdo->commit();
+        } catch (Exception $e) {
+            // Rollback if there's an error
+            $pdo->rollBack();
+            throw $e;
+        }
     }
 
 

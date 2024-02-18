@@ -73,7 +73,11 @@ class GamesController {
         return $this->model->deleteGame($id);
     }
 
-    public function applyFiltersAndSorting($filters, $sorting = null, $includedColumns = null){
+    public function applyFiltersAndSorting($filters, $sorting, $includedColumns = null){
+
+        if (empty($sorting)) {
+            $sorting = ['ratingAverage' => true];
+        }
         return $this->model->applyFiltersAndSorting($filters , $sorting, $includedColumns);
     }
 
