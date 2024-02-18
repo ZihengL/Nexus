@@ -50,16 +50,16 @@ class UsersController
         return $this->model->get($this->lastname, $columnName);
     }
 
-    public function applyFiltersAndSorting($filters, $sorting)
+    public function applyFiltersAndSorting($filters, $sorting, $includedColumns)
     {
-        return $this->model->applyFiltersAndSorting($filters, $sorting);
+        return $this->model->applyFiltersAndSorting($filters, $sorting, $includedColumns);
     }
 
 
     // ONLY FOR TESTING, DELETE IN FUTURE
-    public function getAllUsers($included_columns = [])
+    public function getAll_users($included_columns = [])
     {
-        return $this->model->getAll($included_columns);
+        return $this->model->getAll_users($included_columns);
     }
 
     public function getById($id)

@@ -6,13 +6,15 @@ class GamesController
     protected $model;
     protected $id = "id";
     protected $name = "name";
-    protected $rating = "rating";
+    protected $rating = "ratingAverage";
     protected $tags = "tags";
     protected $images = "images";
-    protected $devNames = "devNames";
-    protected $releaseDate = "releaseDate";
+    protected $videos = "videos"; //missing
+    protected $files = "files"; // missing
+    protected $devNames = "developperID";
+    protected $releaseDate = "releaseDate"; 
     protected $description = "description";
-    protected $stripeID = "stripeID";
+    protected $stripeID = "stripeID"; // not sure yet
 
     public function __construct($pdo)
     {
@@ -21,9 +23,8 @@ class GamesController
 
     // GETTERS
 
-    public function getById($id)
-    {
-        return $this->model->getById($this->id);
+    public function getById($id) {
+        return $this->model->getById($id);
     }
 
     public function getByReleaseDate($releaseDate)
@@ -50,10 +51,9 @@ class GamesController
     {
         return $this->model->getByDevs($this->devNames, $devName);
     }
-
-    public function getAllGames()
-    {
-        return $this->model->getAllGames();
+    
+    public function getAll_games($sorting = ['ratingAverage' => true]) {
+        return $this->model->getAll_games($sorting);
     }
 
     // Other CRUDs 
@@ -78,73 +78,13 @@ class GamesController
         return $this->model->deleteGame($id);
     }
 
-    public function applyFiltersAndSorting($filters, $sorting)
-    {
-        return $this->model->applyFiltersAndSorting($filters, $sorting);
+    public function applyFiltersAndSorting($filters, $sorting, $includedColumns = null){
+
+        if (empty($sorting)) {
+            $sorting = ['ratingAverage' => true];
+        }
+        return $this->model->applyFiltersAndSorting($filters , $sorting, $includedColumns);
     }
+
 }
 
- // public function filterGames($filters, $columns = []) {
-    //     return $this->model->filterGames($filters, $columns);
-    // }
-
-
-    // public function getAllFields() {
-    //     return $this->model->fields;
-    // }
-
-    // public function getField($fieldIndex) {
-    //     if ($fieldIndex < count($this->model->fields)) {
-    //         return $this->model->fields[$fieldIndex];
-    //     }
-
-    //     return null;
-    // }
-
-    // public function filterProducts($tags, $color, $size, $minprice, $maxprice) {
-    //     return $this->model->filterProduct($tags, $color, $size, $minprice, $maxprice);
-    // }
-
-    // public function getFilterMap() {
-    //     return $this->model->getMappedSets();
-    // }
-
-    // public function filterProductByField($products, $field, $value) {
-    //     $filtered = [];
-
-    //     foreach ($products as $product) {
-    //         $fieldValue = $product[$field];
-
-    //         if ($product[$field] == $value || (is_array($product[$field]) && in_array($product[$field], $value))) {
-    //             $filtered[] = $product;
-    //         }
-    //     }
-
-    //     return $filtered;
-    // }
-
-    // public function filterProductByPriceRange($products, $lowest, $highest) {
-    //     $filtered = [];
-
-    //     foreach ($products as $product) {
-    //         if ($product['price'] >= $lowest) {
-    //             if ($product['price'] <= $highest || $highest == -1) {
-    //                 $filtered[] = $product;
-    //             }
-    //         }
-    //     }
-
-    //     return $filtered;
-    // }
-
-    // public function setSessionProduct($id) {
-    //     if (session_status() !== PHP_SESSION_ACTIVE) {
-    //         session_start();
-    //     }
-
-    //     $_SESSION['productId'] = $id;
-    // }
-
-    // public function getMappedValues() {
-    //     return $this->model->getMappedValues();
-    // }

@@ -22,14 +22,18 @@ class TagsController {
         return $this->model->getByName($this->name, $name);
     }
 
-    public function getAll() {
-        return $this->model->getAll();
+    public function getAllTags() {
+        return $this->model->getAll_tags();
     }
 
     // Other CRUDs 
 
-    public function applyFiltersAndSorting($filters, $sorting){
+    public function applyFiltersAndSorting($filters, $sorting = null){
         return $this->model->applyFiltersAndSorting($filters , $sorting );
+    }
+
+    public function delete($id) {
+        return $this->model->delete($id);
     }
 
 }

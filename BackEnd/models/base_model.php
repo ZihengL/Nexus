@@ -68,16 +68,42 @@ class BaseModel
     // GETTERS/READ
 
     // Retourne un tableau avec tous les resultats comprenant la valeur.
-    public function getAll($column = null, $value = null, $columns = [])
+    // public function getAll($column = null, $value = null, $columns = [])
+    // {
+    //     if (!$column && !$value) {
+    //         $sql = "SELECT " . $this->parseColumns($columns) . " FROM $this->table";
+    //         return $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    //     }
+
+    //     $sql = "SELECT " . $this->parseColumns($columns) . " FROM $this->table WHERE $column = ?";
+
+    //     return $this->query($sql, [$value])->fetchAll(PDO::FETCH_ASSOC);
+    // }
+
+    public function getAll($column = null, $value = null, $columns = [], $sorting = [])
     {
-        if (!$column && !$value) {
-            $sql = "SELECT " . $this->parseColumns($columns) . " FROM $this->table";
-            return $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        $sql = "SELECT " . $this->parseColumns($columns) . " FROM $this->table";
+
+        $params = [];
+        if ($column && $value) {
+            $sql .= " WHERE $column = ?";
+            $params[] = $value;
         }
 
-        $sql = "SELECT " . $this->parseColumns($columns) . " FROM $this->table WHERE $column = ?";
+        $sortingSql = $this->applySorting($sorting);
+        if (!empty($sortingSql)) {
+            $sql .= " ORDER BY " . $sortingSql;
+        }
 
-        return $this->query($sql, [$value])->fetchAll(PDO::FETCH_ASSOC);
+        return $this->query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
+    {
+        $result = $this->applyFilters($filters, $included_columns);
+        $sql = $result['sql'] . $this->applySorting($sorting);
+
+        return $this->query($sql, $result['params']);
     }
 
     public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
@@ -105,7 +131,11 @@ class BaseModel
 
     public function getById($id)
     {
-        return $this->getOne('id', $id, $this->columns);
+        // echo "<br> $id <br>";
+        // return $this->getOne('id', $id, $this->columns); // retuned a boolean temporary comment
+        $stmt = $this->pdo->query("SELECT * " . " FROM $this->table WHERE id = $id");
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+
     }
 
     // OTHER CRUDS
@@ -147,7 +177,7 @@ class BaseModel
     */
     public function updateRelationTable($objectToUpdate, $table_obj_ids = [])
     {
-        
+
     }
 
     // public function updateRelationTable($objectToUpdate, $table_obj_ids = []){  
@@ -161,6 +191,16 @@ class BaseModel
     }
 
     // FILTERS
+
+
+    // TOOLS
+
+    function parseColumns($columns = [])
+    {
+        // echo "<br> returned columns : <br>";
+        // print_r($columns);
+        return empty($columns) ? "*" : implode(', ', $columns);
+    }
 
     public function getColumns($includeID = false)
     {
@@ -199,27 +239,33 @@ class BaseModel
 
     public function applyFilters($filters, $included_columns = [])
     {
-        $cols = $this->parseColumns($included_columns);
-        $sql = 'SELECT ' . $cols . ' FROM ' . $this->table . ' WHERE 1 = 1';
+        $sql_filters = "";
         $params = [];
 
         foreach ($filters as $filterKey => $filterValue) {
             if (is_array($filterValue)) { // Corrected check to use $filterValue
                 if (isset($filterValue['relatedTable'], $filterValue['values'], $filterValue['wantedColumn'])) {
                     $result = $this->executeRelatedTableFilterAndGetIds($filterKey, $filterValue); // Adjusted to pass current filter info
-                    $sql .= ' AND ' . $result;
+                    // echo "<br> applyFilters result : $result  <br>\n";
+                    // print_r($result);
+                    // echo "<br><br>";
+                    $sql_filters .= ' AND ' . $result;
                 } else {
                     $result = $this->handleRangeCondition($filterKey, $filterValue); // Assuming range conditions are structured as arrays
-                    $sql .= ' AND ' . $result['sql'];
+                    $sql_filters .= ' AND ' . $result['sql'];
                     $params = array_merge($params, $result['params']);
                 }
+                // echo "<br> applyFilters - sql_filters :  $sql_filters <br>\n";
+                // print_r($$result['sql_filters']);
+                // echo "<br>";
             } else {
-                $sql .= " AND $filterKey = :$filterKey";
+                // Handling for non-array values, assuming direct equality check
+                $sql_filters .= " AND $filterKey = :$filterKey";
                 $params[":$filterKey"] = $filterValue;
             }
         }
 
-        return ['sql' => $sql, 'params' => $params];
+        return ['sql' => $sql_filters, 'params' => $params];
     }
 
     function handleRangeCondition($column, $conditions)
@@ -281,7 +327,8 @@ class BaseModel
         return '';
     }
 
-    public function applySorting($sorting)
+
+    public function applySorting($sorting = null)
     {
         // Check if $sorting is null or not an array
         if (!is_array($sorting)) {
@@ -304,13 +351,19 @@ class BaseModel
         return $result; // This will be appended to the SQL query if not empty
     }
 
-    public function applyFiltersAndSorting($filters, $sorting)
+    public function applyFiltersAndSorting($filters, $sorting, $includedColumns)
     {
+        // $sql = 'SELECT * FROM ' . $this->table . ' WHERE 1 = 1';
+        $sql = "SELECT " . $this->parseColumns($includedColumns) . " FROM $this->table WHERE 1 = 1";
         $filterResults = $this->applyFilters($filters);
         $sortingResults = $this->applySorting($sorting);
         $sqlWithFilters = $filterResults['sql'];
         $params = $filterResults['params'];
         $sqlWithFiltersAndSorting = $sortingResults ? $sqlWithFilters . ' ORDER BY ' . $sortingResults : $sqlWithFilters;
+        $sqlWithFiltersAndSorting = $sql . $sqlWithFiltersAndSorting;
+        // echo "<br> applyFiltersAndSorting - sqlWithFiltersAndSorting :  <br>\n";
+        // print_r($sqlWithFiltersAndSorting);
+        // echo "<br>";
 
         $stmt = $this->pdo->prepare($sqlWithFiltersAndSorting);
 
@@ -328,11 +381,8 @@ class BaseModel
 
         return $results;
     }
-
-    // TOOLS
-
-    function parseColumns($columns = [])
-    {
-        return empty($columns) ? "*" : implode(', ', $columns);
-    }
 }
+
+
+
+
