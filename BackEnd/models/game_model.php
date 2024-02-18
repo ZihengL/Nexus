@@ -22,26 +22,6 @@ class GameModel extends BaseModel
         return parent::getAll($column = null, $value = null, $columns = [], $sorting );
     }
 
-    public function getMinMaxPrice()
-    {
-        $sql = "SELECT MIN(price) AS minPrice, MAX(price) AS maxPrice FROM $this->tableName";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($result) {
-            return [
-                'minPrice' => $result['minPrice'],
-                'maxPrice' => $result['maxPrice']
-            ];
-        } else {
-            return [
-                'minPrice' => null,
-                'maxPrice' => null
-            ];
-        }
-    }
-
 
     //Other Cruds
 

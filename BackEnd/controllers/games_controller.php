@@ -12,7 +12,6 @@ class GamesController
     protected $description = "description";
     protected $rating = "ratingAverage";
     protected $media = "media";
-    protected $images = "images";
     protected $releaseDate = "releaseDate";
 
     public function __construct($pdo)
