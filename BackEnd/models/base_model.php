@@ -163,17 +163,6 @@ class BaseModel
         }
     }
 
-    /*To update the relational tables 
-    $table_obj_ids = [] - is an array because for gameTags there's gameId and tagId 
-    but for Reviews there's Id gameId, userId and maybe a third
-    */
-    public function updateRelationTable($objectToUpdate, $table_obj_ids = [])
-    {
-
-    }
-
-    // public function updateRelationTable($objectToUpdate, $table_obj_ids = []){  
-    // }
 
     public function delete($id)
     {
@@ -182,9 +171,7 @@ class BaseModel
         return $this->query($sql, [$id]);
     }
 
-    // FILTERS
-
-
+  
     // TOOLS
 
     function parseColumns($columns = [])
@@ -229,6 +216,9 @@ class BaseModel
         return $params;
     }
 
+
+
+    //  FILTERS AND SORTING
     public function applyFilters($filters, $included_columns = [])
     {
         $sql_filters = "";
@@ -373,6 +363,21 @@ class BaseModel
 
         return $results;
     }
+
+
+
+    
+    /*To update the relational tables 
+    $table_obj_ids = [] - is an array because for gameTags there's gameId and tagId 
+    but for Reviews there's Id gameId, userId and maybe a third
+    */
+    public function updateRelationTable($objectToUpdate, $table_obj_ids = [])
+    {
+
+    }
+
+    // public function updateRelationTable($objectToUpdate, $table_obj_ids = []){  
+    // }
 }
 
 
