@@ -1,52 +1,47 @@
 <?php
+
+require_once "$path/controllers/base_controller.php";
 require_once $path . '/models/token_model.php';
 require_once $path . '/vendor/autoload.php';
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
-class TokensController
+class TokensController extends BaseController
 {
-    private static $instance = null;
-
     // COLUMNS
-    public const USER_ID = 'user_id';
-    public const EXPIRY_DATE = 'expiry_date';
-    public const REVOCATION_DATE = 'revocation_date';
+    protected const ID = 'id';
+    protected const SUB = 'sub';
+    protected const EXP = 'exp';
+    protected const REV = 'rev';
 
     // TIMEOUT
     private const ACCESS_TIMEOUT = 3600;
     private const REFRESH_TIMEOUT = 86400;
 
-    private $model;
+    // TOKENS
+    private const ACCESS = 'access_token';
+    private const REFRESH = 'refresh_token';
+
+    // ENV
     private $access_key;        // Permission for secure API calls
     private $refresh_key;      // Authentified for access keys issuing
     private $algorithm;
     private $issuer;
     private $audience;
 
-    // TODO: Create revocated tokens list. Tokens list stay in memory somewhere.
-
     // CONSTRUCTOR
 
-    private function __construct($pdo)
+    public function __construct($central_controller, $pdo)
     {
         $this->model = new RevokedTokenModel($pdo);
+        parent::__construct($central_controller);
 
         $this->access_key = $_ENV['JWT_ACCESS_KEY'];
         $this->refresh_key = $_ENV['JWT_REFRESH_KEY'];
         $this->algorithm = $_ENV['JWT_ALGORITHM'];
         $this->issuer = $_ENV['JWT_ISSUER'];
         $this->audience = $_ENV['JWT_AUDIENCE'];
-    }
-
-    public static function getInstance($pdo)
-    {
-        if (self::$instance == null) {
-            self::$instance = new TokensController($pdo);
-        }
-
-        return self::$instance;
     }
 
     // GENERATION
@@ -75,8 +70,10 @@ class TokensController
 
     public function generateAccessToken($refresh_token)
     {
-        if ($this->validateRefreshToken($refresh_token)) {
-            return $this->generateToken($refresh_token->sub, false);
+        $decoded = $this->validateRefreshToken($refresh_token);
+
+        if ($decoded) {
+            return $this->generateToken($decoded[self::SUB], false);
         }
     }
 
@@ -91,7 +88,7 @@ class TokensController
         $refresh_token = $this->generateRefreshToken($user_id);
         $access_token = $this->generateAccessToken($refresh_token);
 
-        return ['access_token' => $access_token, 'refresh_token' => $refresh_token];
+        return [self::ACCESS => $access_token, self::REFRESH => $refresh_token];
     }
 
     // VALIDATION
@@ -103,7 +100,7 @@ class TokensController
         try {
             return (array) JWT::decode($token, new Key($key, $this->algorithm));
         } catch (Exception $e) {
-            return false;            // TODO: IMPLEMENT ERROR HANDLING
+            return false;
         }
     }
 
@@ -118,7 +115,7 @@ class TokensController
     {
         $decoded = $this->validateToken($token, $is_refresh ? $this->refresh_key : $this->access_key);
 
-        return !$decoded || $decoded['exp'] < time();
+        return !$decoded || $decoded[self::EXP] < time();
     }
 
     public function validateAccessToken($access_token)
@@ -133,8 +130,8 @@ class TokensController
 
     public function validateTokens($tokens)
     {
-        $access_token = $tokens->access_token;
-        $refresh_token = $tokens->refresh_token;
+        $access_token = $tokens[self::ACCESS];
+        $refresh_token = $tokens[self::REFRESH];
 
         return $this->validateAccessToken($access_token) &&
             $this->validateRefreshToken($refresh_token);
@@ -149,7 +146,7 @@ class TokensController
 
     public function isRevoked($refresh_token)
     {
-        return $this->model->getById($refresh_token);
+        return $this->model->getOne(self::ID, $refresh_token);
     }
 
     public function revokeToken($token, $is_refresh)
@@ -157,8 +154,8 @@ class TokensController
         $decoded = $this->validateTokenByType($token, $is_refresh);
 
         if ($decoded) {
-            $decoded['id'] = $token;
-            $decoded['rev'] = time();
+            $decoded[self::ID] = $token;
+            $decoded[self::REV] = time();
 
             return $this->model->create($decoded);
         }
@@ -168,8 +165,8 @@ class TokensController
 
     public function revokeTokens($tokens)
     {
-        $access_token = $tokens['access_token'];
-        $refresh_token = $tokens['refresh_token'];
+        $access_token = $tokens[self::ACCESS];
+        $refresh_token = $tokens[self::REFRESH];
 
         return $this->revokeToken($access_token, false) && $this->revokeToken($refresh_token, true);
     }

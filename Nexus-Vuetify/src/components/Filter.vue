@@ -79,10 +79,12 @@ input[type="checkbox"]:checked + span:before {
 }
 
 .filter-label input[type="checkbox"]:checked + span:before {
-    content: "\\2713"; 
-    color: #fff; 
-    font-size: 20px; 
+    content: '\2713'; /* Checkmark symbol */
+    background-color: #0096FF; /* Background color for checked state */
+    color: #fff; /* Color of the checkmark */
+    display: inline-block; 
     text-align: center;
-    line-height: 21px; 
+    line-height: 25px; /* Adjust as needed for vertical alignment */
 }
+
 </style>

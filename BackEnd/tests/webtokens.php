@@ -38,41 +38,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         switch ($type) {
             case 'refresh':
-                $response = $token_manager->generateRefreshToken($user['id']);
+                $response = $tokens_controller->generateRefreshToken($user['id']);
                 break;
             case 'access':
-                $response = $token_manager->generateRefreshToken($user['id']);
+                $response = $tokens_controller->generateRefreshToken($user['id']);
                 break;
             case 'both':
-                $response = $token_manager->generateTokenPair($user['id']);
+                $response = $tokens_controller->generateTokenPair($user['id']);
                 break;
             case 'revoke':
-                $temp = $token_manager->generateRefreshToken($user['id']);
+                $temp = $tokens_controller->generateRefreshToken($user['id']);
                 echo '<br>Temp: </br>';
-                validate($token_manager, $temp, true);
-                $response = $token_manager->revokeToken($temp);
+                validate($tokens_controller, $temp, true);
+                $response = $tokens_controller->revokeToken($temp);
                 echo '<br>Révocation: </br> ' . $response;
-                validate($token_manager, $temp, true);
+                validate($tokens_controller, $temp, true);
         }
 
         if (is_array($response)) {
-            validate($token_manager, $response[0], false);
-            validate($token_manager, $response[1], true);
+            validate($tokens_controller, $response[0], false);
+            validate($tokens_controller, $response[1], true);
         } else {
-            validate($token_manager, $response, $type === 'refresh');
+            validate($tokens_controller, $response, $type === 'refresh');
         }
     } else {
         $type = $_POST['type_action'] ?? 'list';
 
         if ($type === 'delete') {
-            $temp = $token_manager->generateRefreshToken(1);
-            $token_manager->revokeToken($temp);
-            lister($token_manager, 'Ajout du jeton expiré<br>');
+            $temp = $tokens_controller->generateRefreshToken(1);
+            $tokens_controller->revokeToken($temp);
+            lister($tokens_controller, 'Ajout du jeton expiré<br>');
 
-            $token_manager->deleteExpiredTokens();
+            $tokens_controller->deleteExpiredTokens();
         }
 
-        lister($token_manager, 'Jetons invalides');
+        lister($tokens_controller, 'Jetons invalides');
     }
 
     echo '<br>';

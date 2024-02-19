@@ -23,57 +23,62 @@ class UserModel extends BaseModel
     }
 
     //Gets
-    public function getByEmail($email)
-    {
-        return parent::getAll($email, 'email', parent::getColumns(true));
-    }
+    // public function getByEmail($email, $columnName)
+    // {
+    //     return parent::getAll($columnName, $email, parent::getColumns(true));
+    // }
 
-    public function getByName($name, $columnName)
-    {
-        return parent::getAll($columnName, $name, parent::getColumns(true));
-    }
+    // public function getByName($name, $columnName)
+    // {
+    //     return parent::getAll($columnName, $name, parent::getColumns(true));
+    // }
 
-    public function getByLastname($columnName, $lastname)
-    {
-        return parent::getAll($columnName, $lastname, parent::getColumns(true));
-    }
+    // public function getByLastname($columnName, $lastname)
+    // {
+    //     return parent::getAll($columnName, $lastname, parent::getColumns(true));
+    // }
 
-    public function getByPhoneNumber($columnName, $phoneNumber)
-    {
-        return parent::getAll($columnName, $phoneNumber, parent::getColumns(true));
-    }
+    // public function getByPhoneNumber($columnName, $phoneNumber)
+    // {
+    //     return parent::getAll($columnName, $phoneNumber, parent::getColumns(true));
+    // }
 
-    public function getByPrivilege($columnName, $privilege)
-    {
-        return parent::getAll($columnName, $privilege, parent::getColumns(true));
-    }
+    // public function getByPrivilege($columnName, $privilege)
+    // {
+    //     return parent::getAll($columnName, $privilege, parent::getColumns(true));
+    // }
 
-    public function getByDescription($columnName, $description)
+    // public function getByDescription($columnName, $description)
+    // {
+    //     return parent::getAll($columnName, $description, parent::getColumns(true));
+    // }
+
+    public function getAll_users()
     {
-        return parent::getAll($columnName, $description, parent::getColumns(true));
+        return parent::getAll();
     }
 
     //other cruds
 
-    public function applyFiltersAndSorting($filters, $sorting)
+    public function applyFiltersAndSorting($filters, $sorting, $includedColumns)
     {
-        return parent::applyFiltersAndSorting($filters, $sorting);
+        return parent::applyFiltersAndSorting($filters, $sorting, $includedColumns);
     }
 
-    public function updateUser($id, $data)
-    {
-        $formattedData = $this->formatData($data);
-        $pairs = implode(' = ?, ', array_keys($formattedData)) . ' = ?';
-        $formattedData['id'] = $id;
+    // public function update($id, $data)
+    // {
+    //     $formattedData = $this->formatData($data);
+    //     $pairs = implode(' = ?, ', array_keys($formattedData)) . ' = ?';
+    //     $formattedData['id'] = $id;
 
-        $sql = "UPDATE $this->table SET $pairs WHERE id = ?";
+    //     $sql = "UPDATE $this->table SET $pairs WHERE id = ?";
 
-        if ($this->query($sql, $formattedData)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+    //     if ($this->query($sql, $formattedData)) {
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // }
 
     public function deleteUser($id)
     {

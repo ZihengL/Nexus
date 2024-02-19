@@ -1,6 +1,7 @@
 <?php
 
 require_once "$path/controllers/database_manager.php";
+
 require_once "$path/controllers/games_controller.php";
 require_once "$path/controllers/users_controller.php";
 require_once "$path/controllers/tokens_controller.php";
@@ -15,9 +16,8 @@ class CentralController
     private static $instance = null;
 
     public $database_manager;
-    public $token_manager;
+    public $tokens_controller;
     public $routines_controller;
-
     public $users_controller;
     public $games_controller;
 
@@ -30,12 +30,11 @@ class CentralController
         $dotenv->load();
 
         $this->database_manager = DatabaseManager::getInstance();
-
         $pdo = $this->database_manager->getPDO();
-        $this->token_manager = TokensController::getInstance($pdo);
-        $this->users_controller = new UsersController($pdo, $this->token_manager);
-        $this->games_controller = new GamesController($pdo);
-        // $this->routines_controller = $this->instanciateRoutines();
+
+        $this->tokens_controller = new TokensController($this, $pdo);
+        $this->users_controller = new UsersController($this, $pdo);
+        $this->games_controller = new GamesController($this, $pdo);
     }
 
     public static function getInstance()
@@ -49,16 +48,6 @@ class CentralController
 
     // GETTERS
 
-    // public function getUsersController()
-    // {
-    //     return $this->users_controller;
-    // }
-
-    // public function getGamesController()
-    // {
-    //     return $this->games_controller;
-    // }
-
     public function getAllMatching($controller, $filters = [], $sorting = [], $included_columns = [])
     {
         return $controller->getAllMatching($filters, $sorting, $included_columns);
@@ -71,7 +60,7 @@ class CentralController
         $this->routines_controller->setRunningState($toRunning);
     }
 
-    // // USER
+    // USER
 
     // public function login($email, $password) {
     //     return $this->usersController->login($email, $password);
