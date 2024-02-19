@@ -72,6 +72,8 @@ class UserModel extends BaseModel
 
     public function create($data)
     {
+        // echo "<br> create user_model <br>";
+        // print_r($data);
         if (!$this->validateData($data) || $this->userExists($data['email'])) {
             return false;
         }

@@ -43,7 +43,7 @@ export default {
 
     const includedColumns = ['id', 'developerID', 'title']
 
-    const user = {
+    const create = {
       email : "k@k",
       name: 'Katty', 
       password : "1",
@@ -51,21 +51,23 @@ export default {
 
 
     const jsonBody = { filters, sorting, includedColumns }
-    const loginBody = { user }
+    const loginBody = { create }
 
     fetchData('users', 'create', "user", null, loginBody, 'POST')
     // fetchData('games', 'getAllMatching', null, null, jsonBody, 'POST')
-    .then(data => {
-      this.carouselItems = data.map((item, index) => ({ ...item, image: `./src/assets/image/img${index + 1}.png` }));
 
-      console.log('data : ', this.carouselItems);
-      // Now you can access carouselItems with the added 'image' property
+    
+    // .then(data => {
+    //   this.carouselItems = data.map((item, index) => ({ ...item, image: `./src/assets/image/img${index + 1}.png` }));
 
-      // Add the following line to initiate the automatic sliding
-      this.runNextAuto = setTimeout(() => {
-        this.showSlider('next');
-      }, this.timeAutoNext);
-    })
+    //   console.log('data : ', this.carouselItems);
+    //   // Now you can access carouselItems with the added 'image' property
+
+    //   // Add the following line to initiate the automatic sliding
+    //   this.runNextAuto = setTimeout(() => {
+    //     this.showSlider('next');
+    //   }, this.timeAutoNext);
+    // })
     .catch(error => {
       // Handle errors if any
       console.error('Error fetching data:', error);

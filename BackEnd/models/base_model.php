@@ -34,6 +34,8 @@ class BaseModel
 
     protected function query($sql, $params = [])
     {
+        // echo "<br> query base_model <br>";
+        // print_r($params);
         try {
             $stmt = $this->pdo->prepare($sql);
 
@@ -134,6 +136,10 @@ class BaseModel
     {
         $columns = implode(', ', $this->columns);
         $placeholders = substr(str_repeat(",?", count($this->columns)), 1);
+
+        echo "<br> create base_model <br>";
+        print_r($placeholders);
+
 
         $sql = "INSERT INTO $this->table ($columns) VALUES ($placeholders)";
 

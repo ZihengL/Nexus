@@ -55,7 +55,8 @@ $decodedData = json_decode($rawData, true);
 switch ($method) {
     case 'GET':
         // print_r($explodedURI);
-        // echo "<br> The requested URI is: " . $method;
+        // echo "<br> The requested URI is: " . $explodedURI;
+        // echo "<br>  columName : " . $columName;
         handleGet($table, $crud_action, $central_controller, $columName, $value);
         break;
     case 'POST':
@@ -117,7 +118,7 @@ function handlePost($table, $crud_action, $centralController, $columName, $value
         case 'create':
         case 'logout':
         case 'getAllMatching':
-            echo "<br>  getByColumnName : " . $columName;
+            // echo "<br>  getByColumnName : " . $columName;
             // print_r($decodedData);
             $result = handleRawData($centralController, $decodedData, $controllerName, $crud_action);
             // $result = $centralController->$controllerName->$crud_action($value);
@@ -171,9 +172,10 @@ function handleLogout($centralController, $decodedData, $controllerName, $crud_a
 
 function handleRegister($centralController, $decodedData, $controllerName, $crud_action)
 { 
-    $data = $decodedData['login'];
-    echo "<br> login data : <br>";
-    print_r($data);
+    $data = $decodedData['create'];
+
+    // echo "<br> login data : <br>";
+    // print_r($data);
     return $centralController->$controllerName->$crud_action($data);
 }
 
