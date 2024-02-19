@@ -29,20 +29,5 @@ class TagsController extends BaseController
         return $this->model->getByName($this->name, $name);
     }
 
-    public function getAllTags()
-    {
-        return $this->model->getAll_tags();
-    }
-
     // Other CRUDs 
-
-    public function applyFiltersAndSorting($filters, $sorting = null)
-    {
-        return $this->model->getAllMatching($filters, $sorting);
-    }
-
-    public function delete($id)
-    {
-        return $this->model->delete($id);
-    }
 }

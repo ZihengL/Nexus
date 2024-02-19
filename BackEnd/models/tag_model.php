@@ -24,13 +24,4 @@ class TagsModel extends BaseModel
     }
 
     //Other Cruds
-    public function getAllMatching($filters, $sorting = null)
-    {
-        return parent::getAllMatching($filters, $sorting);
-    }
-
-    public function delete($id)
-    {
-        return parent::delete($id);
-    }
 }

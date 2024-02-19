@@ -93,7 +93,7 @@ class UsersController extends BaseController
     {
         $included_columns = $this->restrictAccess($included_columns);
 
-        return $this->model->getAll_users($included_columns);
+        return $this->model->getAll($included_columns);
     }
 
     public function userExists($data)

@@ -56,7 +56,8 @@ class BaseModel
             $stmt = $this->pdo->prepare($sql);
 
             foreach ($params as $param => $value) {
-                $stmt->bindValue(":$param", $value, getDataType($value));
+                // $stmt->bindValue(":$param", $value);
+                $stmt->bindValue($param, $value);
             }
             $stmt->execute();
 
@@ -68,9 +69,9 @@ class BaseModel
 
     // GETTERS/READ
 
-    public function getAll($column = null, $value = null, $columns = [], $sorting = [])
+    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [])
     {
-        $sql = "SELECT " . $this->parseColumns($columns) . " FROM $this->table";
+        $sql = "SELECT " . $this->parseColumns($included_columns) . " FROM $this->table";
 
         $params = [];
         if ($column && $value) {
@@ -86,18 +87,10 @@ class BaseModel
         return $this->query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
-    // {
-    //     $result = $this->applyFilters($filters, $included_columns);
-    //     $sql = $result['sql'] . $this->applySorting($sorting);
-
-    //     return $this->query($sql, $result['params']);
-    // }
-
-    public function getAllMatching($filters, $sorting, $includedColumns)
+    public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
     {
         // $sql = 'SELECT * FROM ' . $this->table . ' WHERE 1 = 1';
-        $sql = "SELECT " . $this->parseColumns($includedColumns) . " FROM $this->table WHERE 1 = 1";
+        $sql = "SELECT " . $this->parseColumns($included_columns) . " FROM $this->table WHERE 1 = 1";
         $filterResults = $this->applyFilters($filters);
         $sortingResults = $this->applySorting($sorting);
 
@@ -130,21 +123,6 @@ class BaseModel
         $sql = "SELECT " . $this->parseColumns($included_columns) . " FROM $this->table WHERE $column = ?";
 
         return $this->query($sql, [$value])->fetch(PDO::FETCH_ASSOC);
-    }
-
-    public function get($columns = [])
-    {
-        $stmt = $this->pdo->query("SELECT " . $this->parseColumns($columns) . " FROM $this->table");
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getById($id)
-    {
-        // echo "<br> $id <br>";
-        // return $this->getOne('id', $id, $this->columns); // retuned a boolean temporary comment
-        $stmt = $this->pdo->query("SELECT * " . " FROM $this->table WHERE id = $id");
-        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     // OTHER CRUDS

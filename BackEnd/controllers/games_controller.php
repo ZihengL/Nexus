@@ -23,18 +23,22 @@ class GamesController extends BaseController
 
     // GETTERS
 
+    // public function getAll($included_columns = [], $sorting = [])
+    // {
+    //     if (empty($sorting)) {
+    //         $sorting = [$this->ratingAverage => true];
+    //     }
+
+    //     return $this->model->getAll_games($sorting);
+    // }
+
     public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
     {
-        return $this->model->getAllMatching($filters, $sorting, $included_columns);
-    }
-
-    public function getAll_games($included_columns = [], $sorting = [])
-    {
-        if (count($sorting) === 0) {
+        if (empty($sorting)) {
             $sorting = [$this->ratingAverage => true];
         }
 
-        return $this->model->getAll_games($sorting);
+        return parent::getAllMatching($filters, $sorting, $included_columns);
     }
 
     public function getById($id)
@@ -44,54 +48,55 @@ class GamesController extends BaseController
 
     public function getByDeveloperID($developerID)
     {
-        return $this->model->getByColumn($this->developerID, $developerID);
+        return $this->model->getOne($this->developerID, $developerID);
     }
 
     public function getByStripeID($stripeID)
     {
-        return $this->model->getByColumn($this->stripeID, $stripeID);
+        return $this->model->getOne($this->stripeID, $stripeID);
     }
 
     public function getByTitle($title)
     {
-        return $this->model->getByColumn($this->title, $title);
+        return $this->model->getOne($this->title, $title);
     }
 
     public function getByDescription($description)
     {
-        return $this->model->getByColumn($this->description, $description);
+        return $this->model->getOne($this->description, $description);
     }
 
     public function getByMedia($media)
     {
-        return $this->model->getByColumn($this->media, $media);
+        return $this->model->getOne($this->media, $media);
     }
 
     // Other CRUDs 
 
-    public function create($data)
+    // TODO: LINK BACK TO USER AUTH
+    public function create($data, $tokens = null)
     {
-        return $this->model->addGame($data);
+        return $this->model->create($data);
     }
 
-    public function update($id, $data)
+    public function update($id, $data, $tokens = null)
     {
-        return $this->model->updateGame($id, $data);
+        return $this->model->update($id, $data);
     }
 
-    public function delete($id)
+    public function delete($id, $tokens = null)
     {
-        return $this->model->deleteGame($id);
+        return $this->model->delete($id);
     }
 
-    public function applyFiltersAndSorting($filters, $sorting, $includedColumns = null)
-    {
+    // public function getAllMatching($filters, $sorting, $includedColumns = null)
+    // {
 
-        if (empty($sorting)) {
-            $sorting = [$this->ratingAverage => true];
-        }
-        return $this->model->getAllMatching($filters, $sorting, $includedColumns);
-    }
+    //     if (empty($sorting)) {
+    //         $sorting = [$this->ratingAverage => true];
+    //     }
+    //     return $this->model->getAllMatching($filters, $sorting, $includedColumns);
+    // }
 
     // ZI
 

@@ -41,22 +41,4 @@ class ReviewModel extends BaseModel
     {
         return parent::getAll($columnName, $timestamp);
     }
-
-
-    public function deleteReview($id)
-    {
-        return parent::delete($id);
-    }
-
-
-    public function getAllMatching($filters,  $sorting = null)
-    {
-        return parent::getAllMatching($filters, $sorting);
-    }
-
-
-    public function getAll_reviews()
-    {
-        return parent::getAll();
-    }
 }
