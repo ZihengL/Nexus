@@ -140,7 +140,8 @@ class TokensController extends BaseController
 
     public function isRevoked($refresh_token)
     {
-        return $this->model->getById($refresh_token);
+        echo 'is revoked ' . $this->model->getOne(self::ID, $refresh_token);
+        return $this->model->getOne(self::ID, $refresh_token);
     }
 
     public function revokeToken($token, $is_refresh)

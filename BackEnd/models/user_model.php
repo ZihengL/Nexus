@@ -65,20 +65,20 @@ class UserModel extends BaseModel
         return parent::applyFiltersAndSorting($filters, $sorting, $includedColumns);
     }
 
-    public function updateUser($id, $data)
-    {
-        $formattedData = $this->formatData($data);
-        $pairs = implode(' = ?, ', array_keys($formattedData)) . ' = ?';
-        $formattedData['id'] = $id;
+    // public function update($id, $data)
+    // {
+    //     $formattedData = $this->formatData($data);
+    //     $pairs = implode(' = ?, ', array_keys($formattedData)) . ' = ?';
+    //     $formattedData['id'] = $id;
 
-        $sql = "UPDATE $this->table SET $pairs WHERE id = ?";
+    //     $sql = "UPDATE $this->table SET $pairs WHERE id = ?";
 
-        if ($this->query($sql, $formattedData)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+    //     if ($this->query($sql, $formattedData)) {
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // }
 
     public function deleteUser($id)
     {
@@ -91,7 +91,6 @@ class UserModel extends BaseModel
             return false;
         }
 
-        
         return parent::create($data);
     }
 

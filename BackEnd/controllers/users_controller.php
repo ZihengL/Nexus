@@ -74,22 +74,18 @@ class UsersController extends BaseController
     // OTHER CRUDS
 
     // Returns tokens to log the user in
-    public function createUser($data)
+    public function create($data)
     {
-        if (in_array('password', array_keys($data))) {
-            $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        if ($this->model->create($data)) {
+            $user = $this->model->getOne($this->email, $data[$this->email]);
 
-            if ($this->model->create($data)) {
-                $user = $this->model->getOne($this->email, $data[$this->email]);
-
-                return $this->getTokensController()->generateTokenPair($user[$this->id]);
-            }
+            return $this->getTokensController()->generateTokenPair($user[$this->id]);
         }
 
         return false;
     }
 
-    public function updateUser($id, $password, $data, $tokens)
+    public function updateUser($id, $data, $password, $tokens)
     {
         $user = $this->model->getOne($this->id, $id);
 
@@ -126,10 +122,7 @@ class UsersController extends BaseController
         $user = $this->model->getOne($this->email, $email);
 
         if ($this->verifyUser($user, $email, $password)) {
-            $tokens_controller = $this->central_controller->tokens_controller;
-            echo 'success';
-
-            return $tokens_controller->generateTokenPair($user[$this->id]);
+            return $this->getTokensController()->generateTokenPair($user[$this->id]);
         }
 
         return false;

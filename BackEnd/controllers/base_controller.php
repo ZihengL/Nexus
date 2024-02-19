@@ -14,6 +14,21 @@ class BaseController
 
     // ZI
 
+    protected function create($data)
+    {
+        return $this->model->create($data);
+    }
+
+    public function update($id, $data)
+    {
+        return $this->model->update($id, $data);
+    }
+
+    protected function delete($id)
+    {
+        return $this->model->delete($id);
+    }
+
     protected function getDatabaseManager()
     {
         return $this->central_controller->DatabaseManager;
