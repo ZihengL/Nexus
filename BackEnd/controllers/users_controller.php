@@ -156,9 +156,7 @@ class UsersController extends BaseController
 
     public function authenticate($id, $tokens)
     {
-        $user = $this->model->getOne($this->id, $id);
-
-        return $user && $this->getTokensController()->validateTokens($id, $tokens);
+        return $this->getTokensController()->validateTokens($id, $tokens);
     }
 
     private function verifyUser($user, $email, $password)
