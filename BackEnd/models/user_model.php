@@ -15,8 +15,6 @@ class UserModel extends BaseModel
     // + updateUser(int, data): Bool
     // + deleteUser(int): Bool
 
-
-
     public function __construct($pdo)
     {
         $tableName = "user";
@@ -25,29 +23,29 @@ class UserModel extends BaseModel
     }
 
     //Gets
-    public function getByEmail($email, $columnName)
+    public function getByEmail($email)
     {
-        return parent::getAll($columnName, $email, parent::getColumns(true));
+        return parent::getAll($email, 'email', parent::getColumns(true));
     }
 
-    public function getByName( $name, $columnName)
+    public function getByName($name, $columnName)
     {
-        return parent::getAll( $columnName, $name, parent::getColumns(true));
+        return parent::getAll($columnName, $name, parent::getColumns(true));
     }
 
     public function getByLastname($columnName, $lastname)
     {
-        return parent::getAll( $columnName, $lastname, parent::getColumns(true));
+        return parent::getAll($columnName, $lastname, parent::getColumns(true));
     }
 
     public function getByPhoneNumber($columnName, $phoneNumber)
     {
-        return parent::getAll( $columnName, $phoneNumber, parent::getColumns(true));
+        return parent::getAll($columnName, $phoneNumber, parent::getColumns(true));
     }
 
     public function getByPrivilege($columnName, $privilege)
     {
-        return parent::getAll( $columnName, $privilege, parent::getColumns(true));
+        return parent::getAll($columnName, $privilege, parent::getColumns(true));
     }
 
     public function getByDescription($columnName, $description)
@@ -57,8 +55,9 @@ class UserModel extends BaseModel
 
     //other cruds
 
-    public function applyFiltersAndSorting( $filters , $sorting){
-        return parent::applyFiltersAndSorting($filters , $sorting );
+    public function applyFiltersAndSorting($filters, $sorting)
+    {
+        return parent::applyFiltersAndSorting($filters, $sorting);
     }
 
     public function updateUser($id, $data)
@@ -67,8 +66,8 @@ class UserModel extends BaseModel
         $pairs = implode(' = ?, ', array_keys($formattedData)) . ' = ?';
         $formattedData['id'] = $id;
 
-        $sql = "UPDATE $this->tableName SET $pairs WHERE id = ?";
-        // print_r($sql);
+        $sql = "UPDATE $this->table SET $pairs WHERE id = ?";
+
         if ($this->query($sql, $formattedData)) {
             return true;
         } else {
@@ -100,7 +99,6 @@ class UserModel extends BaseModel
         if (in_array('password', array_keys($data))) {
             $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
         }
-
 
         return parent::formatData($data);
     }

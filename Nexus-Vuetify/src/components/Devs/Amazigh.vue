@@ -15,6 +15,7 @@
 </template>
 
 <style>
+
 .amazon {
   display: flex;
   align-items: center; 
