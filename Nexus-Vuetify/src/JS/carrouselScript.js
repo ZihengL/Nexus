@@ -1,51 +1,10 @@
+// import { forEach } from 'core-js/core/array'
 import { fetchData } from '../JS/fetch'
 
 export default {
   data () {
     return {
-      carouselItems: [
-        {
-          image: './src/assets/image/img1.png',
-          author: 'LUNDEV',
-          title: 'DESIGN SLIDER',
-          topic: 'ANIMAL',
-          description:
-            'Lorem ipsum dolor, sit amet consectetur adipisicing elit...',
-          thumbnailTitle: 'Name Slider',
-          thumbnailDescription: 'Description'
-        },
-        {
-          image: './src/assets/image/img2.png',
-          author: 'LUNDEV',
-          title: 'DESIGN SLIDER',
-          topic: 'ANIMAL',
-          description:
-            'Lorem ipsum dolor, sit amet consectetur adipisicing elit...',
-          thumbnailTitle: 'Name Slider',
-          thumbnailDescription: 'Description'
-        },
-        {
-          image: './src/assets/image/img3.png',
-          author: 'LUNDEV',
-          title: 'DESIGN SLIDER',
-          topic: 'ANIMAL',
-          description:
-            'Lorem ipsum dolor, sit amet consectetur adipisicing elit...',
-          thumbnailTitle: 'Name Slider',
-          thumbnailDescription: 'Description'
-        },
-        {
-          image: './src/assets/image/img4.png',
-          author: 'LUNDEV',
-          title: 'DESIGN SLIDER',
-          topic: 'ANIMAL',
-          description:
-            'Lorem ipsum dolor, sit amet consectetur adipisicing elit...',
-          thumbnailTitle: 'Name Slider',
-          thumbnailDescription: 'Description'
-        }
-        // Add more items as needed
-      ],
+      carouselItems: [],
       timeRunning: 3000,
       timeAutoNext: 5000,
       runTimeOut: null,
@@ -76,27 +35,31 @@ export default {
   mounted () {
 
     const filters = {
-     	ratingAverage: { gt: 1, lte: 7 },
-        // value LIKE 
-  	  // name: { contain: 'super' },
-        // exact value
-      name: 'Super Cat', 
-  	  // developperID: '4',
-        // only one range
-      // ratingAverage: { gt: 1},
+      ratingAverage: { gt: 1, lte: 7 },
     }
-
     const sorting = {
-      releaseDate: false
+      ratingAverage: true
     }
 
-    const includedColumns = ['id', 'developerID']
+    const includedColumns = ['id', 'developerID', 'title']
 
     const jsonBody = { filters, sorting, includedColumns }
 
     fetchData('games', 'applyFiltersAndSorting', null, null, jsonBody, 'POST')
-    // fetchData("games", "getBy", "Id", "2", null, "GET");
-    // fetchData("games", "getAll", "GET");
-    
+    .then(data => {
+      this.carouselItems = data.map((item, index) => ({ ...item, image: `./src/assets/image/img${index + 1}.png` }));
+
+      console.log('data : ', this.carouselItems);
+      // Now you can access carouselItems with the added 'image' property
+
+      // Add the following line to initiate the automatic sliding
+      this.runNextAuto = setTimeout(() => {
+        this.showSlider('next');
+      }, this.timeAutoNext);
+    })
+    .catch(error => {
+      // Handle errors if any
+      console.error('Error fetching data:', error);
+    });
   }
 }

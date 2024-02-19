@@ -32,12 +32,12 @@ export function fetchData (
       if (!response.ok) {
         return Promise.reject(response)
       }
-      // return response.json();
-      console.log(' response : ', response.text())
+      //console.log(' response : ', response.text())
+      return response.json();
     })
     .then(data => {
-      // return data;
-      console.log(' data : ', data)
+      return data;
+      //console.log(' data : ', data)
     })
     .catch(error => {
       console.log('Fetch error:', error)

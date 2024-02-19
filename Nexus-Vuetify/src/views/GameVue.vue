@@ -7,10 +7,12 @@
                     <img src="../assets/image/img1.png" alt="#">
                 </div>
                 <div class="descript">
+                    <!--{{ LeGame.title }}-->
+                </div>
+                <div class="descript">
+                    <!--<p>{{ LeGame.description }}</p>-->
                     <p>Lorem ipsum dolor sit, amet consectetur adipisicing
-                        elit. Vel debitis illum reprehenderit recusandae 
-                        reiciendis quasi magni eum harum minus ipsam sint optio 
-                        quas expedita doloremque maiores enim minima, voluptas unde.</p>
+                        elit. Vel debitis illum reprehenderit recusandae.</p>
                 </div>
                 <div class="ratings">
                     <v-rating
@@ -33,7 +35,7 @@
                 </div>
                 <div class="fieldBtn">
                     <div class="btn-layer"></div>
-                    <v-btn density="default" class="submit glow" @click="toggleProfile">
+                    <v-btn density="default" class="submit glow">
                         Telecharger
                     </v-btn>
                 </div>
@@ -46,6 +48,24 @@
 
 <script setup>
     import game from '../components/GameCarrousel.vue'
+    import { fetchData } from '../JS/fetch'
+    import { ref, onMounted,  defineProps} from 'vue';
+
+    const props = defineProps(['idGame']);
+    let LeGame;
+
+    onMounted(() => {
+        console.log('Game ID : ', props.idGame);
+        fetchData("games", "getBy", "Id", props.idGame, null, "GET")
+        .then(data => {
+            LeGame = data;
+            console.log('data : ', LeGame);
+        })
+        .catch(error => {
+        // Handle errors if any
+        console.error('Error fetching data:', error);
+        });
+    });
 </script>
 
 <style src="../styles/GameVueStyle.scss" lang="scss"></style>

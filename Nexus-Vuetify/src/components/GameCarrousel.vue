@@ -18,11 +18,11 @@
   <script setup>
   import { ref, onMounted, onBeforeUnmount } from 'vue';
   const tabImgGame = [
-	"./src/assets/image/img1.jpg",
-	"./src/assets/image/img2.jpg",
-	"./src/assets/image/img3.jpg",
-	"./src/assets/image/img1.jpg",
-	"./src/assets/image/img4.jpg",
+	"/src/assets/image/img1.jpg",
+	"/src/assets/image/img2.jpg",
+	"/src/assets/image/img3.jpg",
+	"/src/assets/image/img1.jpg",
+	"/src/assets/image/img4.jpg",
   ];
   const sliderList = ref(null);
   const items = ref(null);
