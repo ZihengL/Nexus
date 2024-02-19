@@ -45,7 +45,7 @@ export default {
 
     const jsonBody = { filters, sorting, includedColumns }
 
-    fetchData('games', 'applyFiltersAndSorting', null, null, jsonBody, 'POST')
+    fetchData('games', 'getAllMatching', null, null, jsonBody, 'POST')
     .then(data => {
       this.carouselItems = data.map((item, index) => ({ ...item, image: `./src/assets/image/img${index + 1}.png` }));
 
