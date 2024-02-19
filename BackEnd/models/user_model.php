@@ -23,35 +23,35 @@ class UserModel extends BaseModel
     }
 
     //Gets
-    public function getByEmail($email, $columnName)
-    {
-        return parent::getAll($columnName, $email, parent::getColumns(true));
-    }
+    // public function getByEmail($email, $columnName)
+    // {
+    //     return parent::getAll($columnName, $email, parent::getColumns(true));
+    // }
 
-    public function getByName($name, $columnName)
-    {
-        return parent::getAll($columnName, $name, parent::getColumns(true));
-    }
+    // public function getByName($name, $columnName)
+    // {
+    //     return parent::getAll($columnName, $name, parent::getColumns(true));
+    // }
 
-    public function getByLastname($columnName, $lastname)
-    {
-        return parent::getAll($columnName, $lastname, parent::getColumns(true));
-    }
+    // public function getByLastname($columnName, $lastname)
+    // {
+    //     return parent::getAll($columnName, $lastname, parent::getColumns(true));
+    // }
 
-    public function getByPhoneNumber($columnName, $phoneNumber)
-    {
-        return parent::getAll($columnName, $phoneNumber, parent::getColumns(true));
-    }
+    // public function getByPhoneNumber($columnName, $phoneNumber)
+    // {
+    //     return parent::getAll($columnName, $phoneNumber, parent::getColumns(true));
+    // }
 
-    public function getByPrivilege($columnName, $privilege)
-    {
-        return parent::getAll($columnName, $privilege, parent::getColumns(true));
-    }
+    // public function getByPrivilege($columnName, $privilege)
+    // {
+    //     return parent::getAll($columnName, $privilege, parent::getColumns(true));
+    // }
 
-    public function getByDescription($columnName, $description)
-    {
-        return parent::getAll($columnName, $description, parent::getColumns(true));
-    }
+    // public function getByDescription($columnName, $description)
+    // {
+    //     return parent::getAll($columnName, $description, parent::getColumns(true));
+    // }
 
     public function getAll_users()
     {

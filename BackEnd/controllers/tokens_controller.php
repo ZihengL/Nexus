@@ -19,6 +19,10 @@ class TokensController extends BaseController
     private const ACCESS_TIMEOUT = 3600;
     private const REFRESH_TIMEOUT = 86400;
 
+    // TOKENS
+    private const ACCESS = 'access_token';
+    private const REFRESH = 'refresh_token';
+
     // ENV
     private $access_key;        // Permission for secure API calls
     private $refresh_key;      // Authentified for access keys issuing
@@ -66,8 +70,10 @@ class TokensController extends BaseController
 
     public function generateAccessToken($refresh_token)
     {
-        if ($this->validateRefreshToken($refresh_token)) {
-            return $this->generateToken($refresh_token->sub, false);
+        $decoded = $this->validateRefreshToken($refresh_token);
+
+        if ($decoded) {
+            return $this->generateToken($decoded[self::SUB], false);
         }
     }
 
@@ -82,7 +88,7 @@ class TokensController extends BaseController
         $refresh_token = $this->generateRefreshToken($user_id);
         $access_token = $this->generateAccessToken($refresh_token);
 
-        return ['access_token' => $access_token, 'refresh_token' => $refresh_token];
+        return [self::ACCESS => $access_token, self::REFRESH => $refresh_token];
     }
 
     // VALIDATION
@@ -109,7 +115,7 @@ class TokensController extends BaseController
     {
         $decoded = $this->validateToken($token, $is_refresh ? $this->refresh_key : $this->access_key);
 
-        return !$decoded || $decoded['exp'] < time();
+        return !$decoded || $decoded[self::EXP] < time();
     }
 
     public function validateAccessToken($access_token)
@@ -140,7 +146,6 @@ class TokensController extends BaseController
 
     public function isRevoked($refresh_token)
     {
-        echo 'is revoked ' . $this->model->getOne(self::ID, $refresh_token);
         return $this->model->getOne(self::ID, $refresh_token);
     }
 
@@ -149,8 +154,8 @@ class TokensController extends BaseController
         $decoded = $this->validateTokenByType($token, $is_refresh);
 
         if ($decoded) {
-            $decoded['id'] = $token;
-            $decoded['rev'] = time();
+            $decoded[self::ID] = $token;
+            $decoded[self::REV] = time();
 
             return $this->model->create($decoded);
         }
@@ -160,8 +165,8 @@ class TokensController extends BaseController
 
     public function revokeTokens($tokens)
     {
-        $access_token = $tokens['access_token'];
-        $refresh_token = $tokens['refresh_token'];
+        $access_token = $tokens[self::ACCESS];
+        $refresh_token = $tokens[self::REFRESH];
 
         return $this->revokeToken($access_token, false) && $this->revokeToken($refresh_token, true);
     }
