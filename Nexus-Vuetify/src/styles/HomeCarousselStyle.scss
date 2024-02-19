@@ -58,6 +58,13 @@ a{
                     text-align: left;
                     font-weight: bold;
                     line-height: 1.3em;
+                    display: block;
+                }
+                .lostTitle {
+                    display: none;
+                }
+                .lostBouttons{
+                    display: none;
                 }
                 .buttons{
                     display: flex;
@@ -75,15 +82,18 @@ a{
                         color: black;
                     }
                     .btn:nth-child(1):hover{
-                        background-color: rgba(114, 114, 114, 0.2);
+                        background-color: rgba(114, 114, 114, 0);
+                        border: 2px solid rgb(255, 255, 255);
+                        color: var(--light);
                     }
                     .btn:nth-child(2){
-                        background:  var(--light-trans-3);
+                        background: rgba(114, 114, 114, 0);
+                        border: 2px solid rgba(255, 253, 253, 0.128);
                         color: var(--light-trans-2);
                     }
                     .btn:nth-child(2):hover{
-                        background: rgba(128, 128, 128, 0.348);
-                        color: var(--light-trans-3-hover);
+                        background: rgba(128, 128, 128, 0.432);
+                        //color: var(--light-trans-3-hover);
                     }
                 }
             }
@@ -295,6 +305,7 @@ a{
 .carousel.prev .arrows button{
     pointer-events: none;
 }
+
 .carousel.prev .list .item:nth-child(2) .content .author,
 .carousel.prev .list .item:nth-child(2) .content .title,
 .carousel.prev .list .item:nth-child(2) .content .topic,

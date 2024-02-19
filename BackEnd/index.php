@@ -55,7 +55,7 @@ $decodedData = json_decode($rawData, true);
 switch ($method) {
     case 'GET':
         // print_r($explodedURI);
-        echo "<br> The requested URI is: " . $method;
+        // echo "<br> The requested URI is: " . $method;
         handleGet($table, $crud_action, $central_controller, $columName, $value);
         break;
     case 'POST':
@@ -80,7 +80,7 @@ function handleGet($table, $crud_action, $centralController, $columName, $value)
     //Do these if they arent empty
     $controllerName = $table . '_controller';
     $getAllFromTable = 'getAll_' . $table;
-    $getByColumnName = 'getBy' . $columName;
+    // $getByColumnName = 'getBy' . $columName;
     //
 
     switch ($crud_action) {
@@ -89,9 +89,9 @@ function handleGet($table, $crud_action, $centralController, $columName, $value)
             $result = $centralController->$controllerName->$getAllFromTable();
             echo json_encode($result);
             break;
-        case 'getBy':
+        case 'getOne':
             // echo "<br>  getByColumnName : " . $getByColumnName;
-            $result = $centralController->$controllerName->$getByColumnName($value);
+            $result = $centralController->$controllerName->getOne($columName, $value);
             echo json_encode($result);
             break;
         default:
