@@ -11,12 +11,6 @@ class GameModel extends BaseModel
         parent::__construct($pdo, $this->tableName);
     }
 
-    public function getByColumn($column, $value)
-    {
-        return parent::getAll($column, $value);
-    }
-
-
     public function getAll_games($sorting)
     {
         return parent::getAll($column = null, $value = null, $columns = [], $sorting);
@@ -24,12 +18,7 @@ class GameModel extends BaseModel
 
     //Other Cruds
 
-    public function applyFiltersAndSorting($filters, $sorting, $includedColumns)
-    {
-        return parent::applyFiltersAndSorting($filters, $sorting, $includedColumns);
-    }
-
-    public function addGame($game)
+    public function create($game)
     {
         $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE game = ?");
         $stmt->execute([$game]);
@@ -37,7 +26,7 @@ class GameModel extends BaseModel
         return $stmt->fetch();
     }
 
-    public function updateGame($id, $Game)
+    public function update($id, $Game)
     {
         $formattedData = $this->formatData($Game);
         $pairs = implode(' = ?, ', array_keys($formattedData)) . ' = ?';
@@ -52,7 +41,7 @@ class GameModel extends BaseModel
         }
     }
 
-    public function deleteGame($id)
+    public function delete($id)
     {
         return parent::delete($id);
         // $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE id = ?");

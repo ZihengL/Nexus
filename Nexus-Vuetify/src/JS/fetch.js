@@ -4,7 +4,7 @@ export function fetchData (
   columnName = null,
   value = null,
   jsonBody = null,
-  method = 'GET'
+  method
 ) {
   const baseURL = 'http://localhost:4208/Nexus/Backend/'
   console.log({table, crud_action, columnName, value});

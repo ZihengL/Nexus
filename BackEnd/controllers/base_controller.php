@@ -14,20 +14,7 @@ class BaseController
 
     // ZI
 
-    protected function create($data)
-    {
-        return $this->model->create($data);
-    }
-
-    public function update($id, $data)
-    {
-        return $this->model->update($id, $data);
-    }
-
-    protected function delete($id)
-    {
-        return $this->model->delete($id);
-    }
+    // ACCESS
 
     protected function getDatabaseManager()
     {
@@ -64,13 +51,31 @@ class BaseController
         return $this->central_controller->reviews_controller;
     }
 
+    // CRUDS
+
+    public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
+    {
+        return $this->model->getAllMatching($filters, $sorting, $included_columns);
+    }
+
     public function getOne($column, $value, $included_columns = [])
     {
         return $this->model->getOne($column, $value, $included_columns);
     }
 
-    public function getAllMatching($sorting = [])
+    protected function create($data)
     {
+        return $this->model->create($data);
+    }
+
+    protected function update($id, $data)
+    {
+        return $this->model->update($id, $data);
+    }
+
+    protected function delete($id)
+    {
+        return $this->model->delete($id);
     }
 
     // REBECCA

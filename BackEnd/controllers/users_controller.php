@@ -82,20 +82,17 @@ class UsersController extends BaseController
         return $this->model->getAll($this->lastname, $lastname);
     }
 
-    public function applyFiltersAndSorting($filters, $sorting, $included_columns)
-    {
-        $included_columns = $this->restrictAccess($included_columns);
-
-        return $this->model->applyFiltersAndSorting($filters, $sorting, $included_columns);
-    }
-
-
-    // ONLY FOR TESTING, DELETE IN FUTURE
     public function getAll_users($included_columns = [])
     {
         $included_columns = $this->restrictAccess($included_columns);
 
-        return $this->model->getAll_users($included_columns);
+        return $this->model->getAll($included_columns);
+    }
+
+    public function userExists($data)
+    {
+        return isset($data[$this->email]) &&
+            !empty($this->model->getOne($this->email, $data[$this->email]));
     }
 
     // OTHER CRUDS
@@ -106,40 +103,28 @@ class UsersController extends BaseController
         if (!$this->userExists($data) && $this->model->create($data)) {
             $user = $this->model->getOne($this->email, $data[$this->email]);
 
-            return $this->getTokensController()->generateTokenPair($user[$this->id]);
+            return $this->login($data[$this->email], $data[$this->password]);
         }
 
         return false;
     }
 
-    public function updateUser($id, $data, $password, $tokens)
+    public function update($id, $data, $tokens = null)
     {
-        $user = $this->model->getOne($this->id, $id);
-
-        if ($user && $this->verifyUser($user[$this->email], $user, $password)) {
-            if ($this->isAuthenticated($tokens)) {
-                return $this->model->update($id, $data);
-            }
+        if ($this->authenticate($id, $tokens)) {
+            return $this->model->update($id, $data);
         }
 
         return false;
     }
 
-    public function deleteUser($id, $data, $password, $tokens)
+    public function delete($id, $tokens = null)
     {
-        $user = $this->model->getOne($this->id, $id);
-
-        if ($user && $this->isAuthenticated($tokens)) {
+        if ($this->authenticate($id, $tokens)) {
             return $this->model->delete($id);
         }
 
         return false;
-    }
-
-    public function userExists($data)
-    {
-        return isset($data[$this->email]) &&
-            !empty($this->model->getOne($this->email, $data[$this->email]));
     }
 
     //  ACCESS & SECURITY
@@ -157,20 +142,17 @@ class UsersController extends BaseController
 
     public function logout($tokens)
     {
-        $tokens_controller = $this->central_controller->tokens_controller;
+        return $this->getTokensController()->revokeTokens($tokens);
+    }
 
-        return $tokens_controller->revokeTokens($tokens);
+    public function authenticate($id, $tokens)
+    {
+        return $this->getTokensController()->validateTokens($id, $tokens);
     }
 
     private function verifyUser($user, $email, $password)
     {
-        return $user &&
-            $user[$this->email] === $email &&
+        return $user[$this->email] === $email &&
             password_verify($password, $user[$this->password]);
-    }
-
-    public function isAuthenticated($tokens)
-    {
-        return $this->getTokensController()->validateTokens($tokens);
     }
 }

@@ -55,7 +55,7 @@ $decodedData = json_decode($rawData, true);
 switch ($method) {
     case 'GET':
         // print_r($explodedURI);
-        // echo "<br> The requested URI is: " . $value;
+        echo "<br> The requested URI is: " . $method;
         handleGet($table, $crud_action, $central_controller, $columName, $value);
         break;
     case 'POST':
@@ -116,8 +116,9 @@ function handlePost($table, $crud_action, $centralController, $columName, $value
             //     break;
         case 'login':
         case 'logout':
-        case 'applyFiltersAndSorting':
+        case 'getAllMatching':
             // echo "<br>  getByColumnName : " . $getByColumnName;
+            print_r($decodedData);
             $result = handleRawData($centralController, $decodedData, $controllerName, $crud_action);
             // $result = $centralController->$controllerName->$crud_action($value);
             echo json_encode($result);

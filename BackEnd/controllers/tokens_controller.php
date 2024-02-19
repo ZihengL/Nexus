@@ -70,14 +70,14 @@ class TokensController extends BaseController
 
     public function generateAccessToken($refresh_token)
     {
-        $decoded = $this->validateRefreshToken($refresh_token);
+        $decoded = $this->validateToken($refresh_token, $this->refresh_key);
 
         if ($decoded) {
             return $this->generateToken($decoded[self::SUB], false);
         }
     }
 
-    public function generateRefreshToken($user_id)
+    private function generateRefreshToken($user_id)
     {
         return $this->generateToken($user_id, true);
     }
@@ -118,23 +118,27 @@ class TokensController extends BaseController
         return !$decoded || $decoded[self::EXP] < time();
     }
 
-    public function validateAccessToken($access_token)
+    public function validateAccessToken($id, $access_token)
     {
-        return $this->validateToken($access_token, $this->access_key);
+        $decoded = $this->validateToken($access_token, $this->access_key);
+
+        return $decoded && $decoded[self::SUB] === $id;
     }
 
-    public function validateRefreshToken($refresh_token)
+    public function validateRefreshToken($id, $refresh_token)
     {
-        return $this->validateToken($refresh_token, $this->refresh_key);
+        $decoded = $this->validateToken($refresh_token, $this->refresh_key);
+
+        return $decoded && $decoded[self::SUB] === $id;
     }
 
-    public function validateTokens($tokens)
+    public function validateTokens($id, $tokens)
     {
         $access_token = $tokens[self::ACCESS];
         $refresh_token = $tokens[self::REFRESH];
 
-        return $this->validateAccessToken($access_token) &&
-            $this->validateRefreshToken($refresh_token);
+        return $this->validateAccessToken($id, $access_token) &&
+            $this->validateRefreshToken($id, $refresh_token);
     }
 
     // DATABASE

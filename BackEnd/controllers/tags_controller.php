@@ -21,7 +21,7 @@ class TagsController extends BaseController
 
     public function getById($id)
     {
-        return $this->model->getById($this->id);
+        return $this->model->getOne($this->id, $id);
     }
 
     public function getByName($name)
@@ -29,20 +29,5 @@ class TagsController extends BaseController
         return $this->model->getByName($this->name, $name);
     }
 
-    public function getAllTags()
-    {
-        return $this->model->getAll_tags();
-    }
-
     // Other CRUDs 
-
-    public function applyFiltersAndSorting($filters, $sorting = null)
-    {
-        return $this->model->applyFiltersAndSorting($filters, $sorting);
-    }
-
-    public function delete($id)
-    {
-        return $this->model->delete($id);
-    }
 }

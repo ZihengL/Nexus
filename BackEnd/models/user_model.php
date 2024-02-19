@@ -53,17 +53,7 @@ class UserModel extends BaseModel
     //     return parent::getAll($columnName, $description, parent::getColumns(true));
     // }
 
-    public function getAll_users()
-    {
-        return parent::getAll();
-    }
-
     //other cruds
-
-    public function applyFiltersAndSorting($filters, $sorting, $includedColumns)
-    {
-        return parent::applyFiltersAndSorting($filters, $sorting, $includedColumns);
-    }
 
     // public function update($id, $data)
     // {
@@ -79,11 +69,6 @@ class UserModel extends BaseModel
     //         return false;
     //     }
     // }
-
-    public function deleteUser($id)
-    {
-        return parent::delete($id);
-    }
 
     public function create($data)
     {
