@@ -98,6 +98,12 @@ class UsersController extends BaseController
         return $this->model->getAll_users($included_columns);
     }
 
+    public function userExists($data)
+    {
+        return isset($data[$this->email]) &&
+            !empty($this->model->getOne($this->email, $data[$this->email]));
+    }
+
     // OTHER CRUDS
 
     // Returns tokens to log the user in
@@ -112,28 +118,22 @@ class UsersController extends BaseController
         return false;
     }
 
-    public function update($id, $data, $password = '', $tokens = null)
+    public function update($id, $data, $tokens = null)
     {
-        if ($this->authenticate($id, $password, $tokens)) {
+        if ($this->authenticate($id, $tokens)) {
             return $this->model->update($id, $data);
         }
 
         return false;
     }
 
-    public function delete($id, $password = '', $tokens = null)
+    public function delete($id, $tokens = null)
     {
-        if ($this->authenticate($id, $password, $tokens)) {
+        if ($this->authenticate($id, $tokens)) {
             return $this->model->delete($id);
         }
 
         return false;
-    }
-
-    public function userExists($data)
-    {
-        return isset($data[$this->email]) &&
-            !empty($this->model->getOne($this->email, $data[$this->email]));
     }
 
     //  ACCESS & SECURITY
@@ -154,15 +154,11 @@ class UsersController extends BaseController
         return $this->getTokensController()->revokeTokens($tokens);
     }
 
-    public function authenticate($id, $password, $tokens)
+    public function authenticate($id, $tokens)
     {
         $user = $this->model->getOne($this->id, $id);
 
-        if ($user && $this->verifyUser($user, $user[$this->email], $password)) {
-            return $this->getTokensController()->validateTokens($tokens);
-        }
-
-        return false;
+        return $user && $this->getTokensController()->validateTokens($id, $tokens);
     }
 
     private function verifyUser($user, $email, $password)
