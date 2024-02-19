@@ -70,14 +70,14 @@ class TokensController extends BaseController
 
     public function generateAccessToken($refresh_token)
     {
-        $decoded = $this->validateRefreshToken($refresh_token);
+        $decoded = $this->validateToken($refresh_token, $this->refresh_key);
 
         if ($decoded) {
             return $this->generateToken($decoded[self::SUB], false);
         }
     }
 
-    public function generateRefreshToken($user_id)
+    private function generateRefreshToken($user_id)
     {
         return $this->generateToken($user_id, true);
     }
