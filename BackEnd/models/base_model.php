@@ -45,7 +45,8 @@ class BaseModel
 
             return $stmt;
         } catch (PDOException $exception) {
-            return $exception;
+            // return $exception;
+            throw new Exception("Database query error: " . $exception->getMessage());
         }
     }
 
@@ -196,6 +197,7 @@ class BaseModel
                 $formattedData[$column] = $data[$column];
             }
         }
+
         return $formattedData;
     }
 

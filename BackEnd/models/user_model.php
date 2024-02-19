@@ -25,7 +25,7 @@ class UserModel extends BaseModel
     //Gets
     public function getByEmail($email, $columnName)
     {
-        return parent::getAll($email, $columnName, parent::getColumns(true));
+        return parent::getAll($columnName, $email, parent::getColumns(true));
     }
 
     public function getByName($name, $columnName)
@@ -91,6 +91,7 @@ class UserModel extends BaseModel
             return false;
         }
 
+        
         return parent::create($data);
     }
 

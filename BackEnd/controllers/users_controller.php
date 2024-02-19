@@ -41,7 +41,7 @@ class UsersController extends BaseController
 
     public function getById($id, $included_columns = [])
     {
-        return $this->model->getAll($id, $this->id, $included_columns);
+        return $this->model->getAll($this->id, $id, $included_columns);
     }
 
     public function getByEmail($email)
@@ -76,20 +76,24 @@ class UsersController extends BaseController
     // Returns tokens to log the user in
     public function createUser($data)
     {
-        $tokens_controller = $this->central_controller->tokens_controller;
+        if (in_array('password', array_keys($data))) {
+            $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
 
-        if ($this->model->create($data)) {
-            $user = $this->getOneMatchingColumn($this->email, $data[$this->email], [$this->id]);
+            if ($this->model->create($data)) {
+                $user = $this->model->getOne($this->email, $data[$this->email]);
 
-            return $tokens_controller->generateTokenPair($user[$this->id]);
+                return $this->getTokensController()->generateTokenPair($user[$this->id]);
+            }
         }
+
+        return false;
     }
 
     public function updateUser($id, $password, $data, $tokens)
     {
-        $user = $this->model->getById($id);
+        $user = $this->model->getOne($this->id, $id);
 
-        if ($user && $this->verifyUser($user, $user[$this->email], $password)) {
+        if ($user && $this->verifyUser($user[$this->email], $user, $password)) {
             if ($this->isAuthenticated($tokens)) {
                 return $this->model->update($id, $data);
             }
@@ -100,7 +104,7 @@ class UsersController extends BaseController
 
     public function deleteUser($id, $tokens)
     {
-        $user = $this->model->getById($id);
+        $user = $this->model->getOne($this->id, $id);
 
         if ($user && $this->isAuthenticated($tokens)) {
             return $this->model->delete($id);
@@ -111,17 +115,20 @@ class UsersController extends BaseController
 
     public function userExists($data)
     {
-        return isset($data[$this->email]) && !empty($this->getByEmail($data[$this->email]));
+        return isset($data[$this->email]) &&
+            !empty($this->model->getOne($this->email, $data[$this->email]));
     }
 
     //  ACCESS & SECURITY
 
     public function login($email, $password)
     {
-        $tokens_controller = $this->central_controller->tokens_controller;
-        $user = $this->getByEmail($email);
+        $user = $this->model->getOne($this->email, $email);
 
         if ($this->verifyUser($user, $email, $password)) {
+            $tokens_controller = $this->central_controller->tokens_controller;
+            echo 'success';
+
             return $tokens_controller->generateTokenPair($user[$this->id]);
         }
 
@@ -144,8 +151,6 @@ class UsersController extends BaseController
 
     public function isAuthenticated($tokens)
     {
-        $tokens_controller = $this->central_controller->tokens_controller;
-
-        return $tokens_controller->validateRefreshToken($tokens['refresh_token']);
+        return $this->getTokensController()->validateRefreshToken($tokens['refresh_token']);
     }
 }

@@ -10,14 +10,16 @@ use Firebase\JWT\Key;
 class TokensController extends BaseController
 {
     // COLUMNS
-    public const USER_ID = 'user_id';
-    public const EXPIRY_DATE = 'expiry_date';
-    public const REVOCATION_DATE = 'revocation_date';
+    protected const ID = 'id';
+    protected const SUB = 'sub';
+    protected const EXP = 'exp';
+    protected const REV = 'rev';
 
     // TIMEOUT
     private const ACCESS_TIMEOUT = 3600;
     private const REFRESH_TIMEOUT = 86400;
 
+    // ENV
     private $access_key;        // Permission for secure API calls
     private $refresh_key;      // Authentified for access keys issuing
     private $algorithm;

@@ -2,12 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Feb 12, 2024 at 04:46 PM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.2.4
--- Host: 127.0.0.1
--- Generation Time: Feb 12, 2024 at 04:46 PM
+-- Host: 127.0.0.1:3306
+-- Generation Time: Feb 19, 2024 at 05:32 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -23,13 +19,11 @@ SET time_zone = "+00:00";
 
 --
 -- Database: `nexus`
--- Database: `nexus`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `createdgames`
 -- Table structure for table `createdgames`
 --
 
@@ -42,7 +36,6 @@ CREATE TABLE `createdgames` (
 
 --
 -- Table structure for table `friends`
--- Table structure for table `friends`
 --
 
 CREATE TABLE `friends` (
@@ -51,7 +44,6 @@ CREATE TABLE `friends` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `friends`
 -- Dumping data for table `friends`
 --
 
@@ -62,16 +54,16 @@ INSERT INTO `friends` (`id`, `friendID`) VALUES
 
 --
 -- Table structure for table `games`
--- Table structure for table `games`
 --
 
 CREATE TABLE `games` (
   `id` int(11) NOT NULL,
-  `developperID` int(11) NOT NULL,
-  `name` varchar(100) NOT NULL,
+  `developerID` int(11) NOT NULL,
+  `stripeID` int(11) NOT NULL,
+  `title` varchar(100) NOT NULL,
   `description` varchar(1000) NOT NULL,
   `files` varchar(100) NOT NULL,
-  `images` set('a','b') NOT NULL,
+  `media` varchar(50) NOT NULL,
   `videos` set('pathVideo') NOT NULL,
   `tags` varchar(100) NOT NULL,
   `releaseDate` date DEFAULT NULL,
@@ -82,36 +74,12 @@ CREATE TABLE `games` (
 -- Dumping data for table `games`
 --
 
-INSERT INTO `games` (`id`, `developperID`, `name`, `description`, `files`, `images`, `videos`, `tags`, `releaseDate`, `ratingAverage`) VALUES
-(1, 1, 'Super Game', 'An amazing game', 'game.exe', 'a', '', '', '2024-02-01', 2),
-(2, 3, 'Fantastic Adventure', 'Embark on an epic journey', 'adventure.exe', 'b', '', '', '2024-01-26', 5),
-(3, 4, 'Space Odyssey', 'Explore the depths of outer space', 'space.exe', 'a,b', '', '', '2024-02-06', 3),
-(4, 2, 'Medieval Kingdoms', 'Rule your own kingdom', 'kingdoms.exe', 'a', '', '', '2024-01-17', 8),
-(8, 4, 'Super Cat', 'Flying kitty', 'kitty.exe', '', '', '', '2024-01-14', 7);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `gamestags`
---
-
-CREATE TABLE `gamestags` (
-  `gameId` int(11) NOT NULL,
-  `tagId` int(11) NOT NULL
-  `releaseDate` date DEFAULT NULL,
-  `ratingAverage` float DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `games`
---
-
-INSERT INTO `games` (`id`, `developperID`, `name`, `description`, `files`, `images`, `videos`, `tags`, `releaseDate`, `ratingAverage`) VALUES
-(1, 1, 'Super Game', 'An amazing game', 'game.exe', 'a', '', '', '2024-02-01', 2),
-(2, 3, 'Fantastic Adventure', 'Embark on an epic journey', 'adventure.exe', 'b', '', '', '2024-01-26', 5),
-(3, 4, 'Space Odyssey', 'Explore the depths of outer space', 'space.exe', 'a,b', '', '', '2024-02-06', 3),
-(4, 2, 'Medieval Kingdoms', 'Rule your own kingdom', 'kingdoms.exe', 'a', '', '', '2024-01-17', 8),
-(8, 4, 'Super Cat', 'Flying kitty', 'kitty.exe', '', '', '', '2024-01-14', 7);
+INSERT INTO `games` (`id`, `developerID`, `stripeID`, `title`, `description`, `files`, `media`, `videos`, `tags`, `releaseDate`, `ratingAverage`) VALUES
+(1, 1, 0, 'Super Game', 'An amazing game', 'game.exe', 'a', '', '', '2024-02-01', 2),
+(2, 3, 0, 'Fantastic Adventure', 'Embark on an epic journey', 'adventure.exe', 'b', '', '', '2024-01-26', 5),
+(3, 4, 0, 'Space Odyssey', 'Explore the depths of outer space', 'space.exe', 'a,b', '', '', '2024-02-06', 3),
+(4, 2, 0, 'Medieval Kingdoms', 'Rule your own kingdom', 'kingdoms.exe', 'a', '', '', '2024-01-17', 8),
+(8, 4, 0, 'Super Cat', 'Flying kitty', 'kitty.exe', '', '', '', '2024-01-14', 7);
 
 -- --------------------------------------------------------
 
@@ -125,7 +93,6 @@ CREATE TABLE `gamestags` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `gamestags`
 -- Dumping data for table `gamestags`
 --
 
@@ -137,7 +104,6 @@ INSERT INTO `gamestags` (`gameId`, `tagId`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `notification`
 -- Table structure for table `notification`
 --
 
@@ -153,7 +119,6 @@ CREATE TABLE `notification` (
 
 --
 -- Dumping data for table `notification`
--- Dumping data for table `notification`
 --
 
 INSERT INTO `notification` (`id`, `recipientID`, `senderID`, `message`, `timestamp`, `typeMessage`, `IsRead`) VALUES
@@ -168,8 +133,8 @@ INSERT INTO `notification` (`id`, `recipientID`, `senderID`, `message`, `timesta
 CREATE TABLE `revoked_tokens` (
   `id` varchar(255) NOT NULL,
   `sub` int(11) NOT NULL COMMENT 'user_id',
-  `exp` time NOT NULL COMMENT 'expiry_time',
-  `rev` time NOT NULL DEFAULT current_timestamp() COMMENT 'revocation_time'
+  `exp` int(11) NOT NULL COMMENT 'expiry_time',
+  `rev` int(11) NOT NULL DEFAULT current_timestamp() COMMENT 'revocation_time'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -177,32 +142,10 @@ CREATE TABLE `revoked_tokens` (
 --
 
 INSERT INTO `revoked_tokens` (`id`, `sub`, `exp`, `rev`) VALUES
-('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwNzQ5NDgyNywiZXhwIjoxNzA3NTgxMjI3LCJzdWIiOjF9.c_OXHd2XawVLF27Vh3qh-S454ckFDaCek9F7zF-gxW8', 1, '838:59:59', '838:59:59'),
-('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwNzQ5NDkzNiwiZXhwIjoxNzA3NTgxMzM2LCJzdWIiOjF9.__j98QV-ypyjIFFABojO91ZxvxqrA-MiWOQorZ5dz4E', 1, '838:59:59', '838:59:59'),
-('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwNzQzNDYyOCwiZXhwIjoxNzA3NTIxMDI4LCJzdWIiOjF9.s2fsWD1rFYfTvHf9TR-pUKvkvi5uB5rKGeHT1HXgyWA', 1, '838:59:59', '838:59:59');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `rewiews`
--- Table structure for table `revoked_tokens`
---
-
-CREATE TABLE `revoked_tokens` (
-  `id` varchar(255) NOT NULL,
-  `sub` int(11) NOT NULL COMMENT 'user_id',
-  `exp` time NOT NULL COMMENT 'expiry_time',
-  `rev` time NOT NULL DEFAULT current_timestamp() COMMENT 'revocation_time'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `revoked_tokens`
---
-
-INSERT INTO `revoked_tokens` (`id`, `sub`, `exp`, `rev`) VALUES
-('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwNzQ5NDgyNywiZXhwIjoxNzA3NTgxMjI3LCJzdWIiOjF9.c_OXHd2XawVLF27Vh3qh-S454ckFDaCek9F7zF-gxW8', 1, '838:59:59', '838:59:59'),
-('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwNzQ5NDkzNiwiZXhwIjoxNzA3NTgxMzM2LCJzdWIiOjF9.__j98QV-ypyjIFFABojO91ZxvxqrA-MiWOQorZ5dz4E', 1, '838:59:59', '838:59:59'),
-('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwNzQzNDYyOCwiZXhwIjoxNzA3NTIxMDI4LCJzdWIiOjF9.s2fsWD1rFYfTvHf9TR-pUKvkvi5uB5rKGeHT1HXgyWA', 1, '838:59:59', '838:59:59');
+('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwNzQ5NDgyNywiZXhwIjoxNzA3NTgxMjI3LCJzdWIiOjF9.c_OXHd2XawVLF27Vh3qh-S454ckFDaCek9F7zF-gxW8', 1, 8385959, 8385959),
+('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwNzQ5NDkzNiwiZXhwIjoxNzA3NTgxMzM2LCJzdWIiOjF9.__j98QV-ypyjIFFABojO91ZxvxqrA-MiWOQorZ5dz4E', 1, 8385959, 8385959),
+('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwNzQzNDYyOCwiZXhwIjoxNzA3NTIxMDI4LCJzdWIiOjF9.s2fsWD1rFYfTvHf9TR-pUKvkvi5uB5rKGeHT1HXgyWA', 1, 8385959, 8385959),
+('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODA0OTQzOSwiZXhwIjoxNzA4MTM1ODM5LCJzdWIiOjF9.q4WbnaZb33--UADcZnnnUzY8gPy3qBghNWn0wY9P_y4', 1, 1708135839, 1708049439);
 
 -- --------------------------------------------------------
 
@@ -303,7 +246,8 @@ ALTER TABLE `friends`
 --
 ALTER TABLE `games`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `developperID` (`developperID`);
+  ADD UNIQUE KEY `idx_developerID` (`id`,`developerID`),
+  ADD KEY `idx_stripeID` (`stripeID`);
 
 --
 -- Indexes for table `gamestags`
@@ -397,7 +341,7 @@ ALTER TABLE `friends`
 -- Constraints for table `games`
 --
 ALTER TABLE `games`
-  ADD CONSTRAINT `games_ibfk_1` FOREIGN KEY (`developperID`) REFERENCES `user` (`id`);
+  ADD CONSTRAINT `games_ibfk_1` FOREIGN KEY (`developerID`) REFERENCES `user` (`id`);
 
 --
 -- Constraints for table `notification`

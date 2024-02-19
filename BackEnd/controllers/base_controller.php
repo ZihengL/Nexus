@@ -49,6 +49,11 @@ class BaseController
         return $this->central_controller->reviews_controller;
     }
 
+    public function getOne($column, $value, $included_columns = [])
+    {
+        return $this->model->getOne($column, $value, $included_columns);
+    }
+
     public function getAllMatching($sorting = [])
     {
     }

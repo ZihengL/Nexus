@@ -28,8 +28,12 @@ class GamesController extends BaseController
         return $this->model->getAllMatching($filters, $sorting, $included_columns);
     }
 
-    public function getAll_games($included_columns = [], $sorting = [$this->ratingAverage => true])
+    public function getAll_games($included_columns = [], $sorting = [])
     {
+        if (count($sorting) === 0) {
+            $sorting = [$this->ratingAverage => true];
+        }
+
         return $this->model->getAll_games($sorting);
     }
 
@@ -91,7 +95,7 @@ class GamesController extends BaseController
 
     // ZI
 
-    
+
 
     // REBECCA
 
