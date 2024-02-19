@@ -134,10 +134,13 @@ class UsersController extends BaseController
         $user = $this->model->getOne($this->email, $email);
 
         if ($this->verifyUser($user, $email, $password)) {
+            // $tokens = $this->getTokensController()->generateTokenPair($user[$this->id]);
+            echo "<br> login data : <br>";
+            // return $tokens;
             return $this->getTokensController()->generateTokenPair($user[$this->id]);
         }
 
-        return false;
+        // return false;
     }
 
     public function logout($tokens)

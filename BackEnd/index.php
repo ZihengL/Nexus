@@ -109,14 +109,15 @@ function handlePost($table, $crud_action, $centralController, $columName, $value
     $controllerName = $table . '_controller';
 
     switch ($crud_action) {
-            // case 'login':
-            //     handleLogin($centralController, $decodedData, $controllerName, $crud_action);
-            //     break;
-            // case 'logout':
-            //     handleLogout($centralController, $decodedData, $controllerName, $crud_action);
-            //     break;
+        // case 'login':
+        //     handleLogin($centralController, $decodedData, $controllerName, $crud_action);
+        //     break;
+        // case 'logout':
+        //     handleLogout($centralController, $decodedData, $controllerName, $crud_action);
+        //     break;
         case 'create':
         case 'logout':
+        case 'login':
         case 'getAllMatching':
             // echo "<br>  getByColumnName : " . $columName;
             // print_r($decodedData);
@@ -136,16 +137,19 @@ function handleRawData($centralController, $decodedData, $controllerName, $crud_
 {
     if (empty($decodedData)) {
         echo "No data provided or data is empty.";
-        return false;
+        // return false;
     } else {
         if (isset($decodedData['filters'])) {
             return handle_filterData($centralController, $decodedData, $controllerName, $crud_action);
         } else if (isset($decodedData['create'])) {
             return handleRegister($centralController, $decodedData, $controllerName, $crud_action);
+        } else if (isset($decodedData['login'])) {
+            return handleLogin($centralController, $decodedData, $controllerName, $crud_action);
         } else if (isset($decodedData['logout'])) {
+            return handleLogout($centralController, $decodedData, $controllerName, $crud_action);
         } else {
             echo "Invalid data structure.";
-            return false;
+            // return false;
         }
     }
 }
@@ -162,7 +166,14 @@ function handle_filterData($centralController, $decodedData, $controllerName, $c
 
 function handleLogin($centralController, $decodedData, $controllerName, $crud_action)
 {
+    $data = $decodedData['login'];
+    $email = $data["email"];
+    $pwd = $data["password"];
 
+    echo "<br> login data : <br>";
+    print_r($email);
+    print_r($pwd);
+    return $centralController->$controllerName->$crud_action($email, $pwd);
 }
 
 function handleLogout($centralController, $decodedData, $controllerName, $crud_action)
@@ -171,10 +182,10 @@ function handleLogout($centralController, $decodedData, $controllerName, $crud_a
 
 
 function handleRegister($centralController, $decodedData, $controllerName, $crud_action)
-{ 
+{
     $data = $decodedData['create'];
 
-    // echo "<br> login data : <br>";
+    // echo "<br> register data : <br>";
     // print_r($data);
     return $centralController->$controllerName->$crud_action($data);
 }

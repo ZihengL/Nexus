@@ -18,13 +18,13 @@ class GameModel extends BaseModel
 
     //Other Cruds
 
-    public function create($game)
-    {
-        $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE game = ?");
-        $stmt->execute([$game]);
+    // public function create($game)
+    // {
+    //     $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE game = ?");
+    //     $stmt->execute([$game]);
 
-        return $stmt->fetch();
-    }
+    //     return $stmt->fetch();
+    // }
 
     public function update($id, $Game)
     {

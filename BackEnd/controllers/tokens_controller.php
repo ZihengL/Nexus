@@ -87,7 +87,6 @@ class TokensController extends BaseController
     {
         $refresh_token = $this->generateRefreshToken($user_id);
         $access_token = $this->generateAccessToken($refresh_token);
-
         return [self::ACCESS => $access_token, self::REFRESH => $refresh_token];
     }
 

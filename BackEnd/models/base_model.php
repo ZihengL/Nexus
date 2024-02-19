@@ -137,16 +137,16 @@ class BaseModel
         $columns = implode(', ', $this->columns);
         $placeholders = substr(str_repeat(",?", count($this->columns)), 1);
 
-        echo "<br> create base_model <br>";
-        print_r($placeholders);
-
+        // echo "<br> create base_model <br>";
+        // print_r($placeholders);
 
         $sql = "INSERT INTO $this->table ($columns) VALUES ($placeholders)";
 
         if ($this->query($sql, $this->formatData($data))) {
             return true;
         } else {
-            return false;
+         
+            // return false;
         }
     }
 

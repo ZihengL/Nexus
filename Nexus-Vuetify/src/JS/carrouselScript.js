@@ -44,17 +44,24 @@ export default {
     const includedColumns = ['id', 'developerID', 'title']
 
     const create = {
-      email : "k@k",
+      email : "d",
       name: 'Katty', 
+      password : "1",
+    }
+
+    const login = {
+      email : "d",
       password : "1",
     }
 
 
     const jsonBody = { filters, sorting, includedColumns }
-    const loginBody = { create }
+    const registerBody = { create }
+    const loginBody = { login }
 
-    fetchData('users', 'create', "user", null, loginBody, 'POST')
+    // fetchData('users', 'create', "null", null, registerBody, 'POST')
     // fetchData('games', 'getAllMatching', null, null, jsonBody, 'POST')
+    fetchData('users', 'login', null, null, loginBody, 'POST')
 
     
     // .then(data => {

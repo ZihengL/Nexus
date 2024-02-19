@@ -75,10 +75,10 @@ class UserModel extends BaseModel
         // echo "<br> create user_model <br>";
         // print_r($data);
         if (!$this->validateData($data) || $this->userExists($data['email'])) {
-            return false;
+            // return false;
         }
-
-        return parent::create($data);
+        $new_data = $this->formatData($data);
+        return parent::create($new_data);
     }
 
     public function userExists($email)
@@ -86,23 +86,58 @@ class UserModel extends BaseModel
         return !empty($this->getOne('email', $email, ['email']));
     }
 
+
     public function formatData($data)
     {
-        if (in_array('password', array_keys($data))) {
-            $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
-        }
+        $formattedData = [];
+        foreach ($this->columns as $column) {
+            if ($column == 'id') {
+                continue;
+            }
 
-        return parent::formatData($data);
+            if (in_array($column, ['email', 'password'])) {
+                // Process 'email' and 'password' if present in data
+                if (array_key_exists($column, $data)) {
+                    $formattedData[$column] = $data[$column];
+                }
+            } elseif ($column == 'creationDate') {
+                $formattedData[$column] = date('Y-m-d');
+            } else {
+                $formattedData[$column] = null;
+            }
+        }
+        
+        if (array_key_exists('password', $formattedData)) {
+            $formattedData['password'] = password_hash($formattedData['password'], PASSWORD_DEFAULT);
+        }
+        return $formattedData;
     }
+    // public function formatData($data)
+    // {
+    //     if (in_array('password', array_keys($data))) {
+    //         $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+    //     }
+
+    //     return parent::formatData($data);
+    // }
 
     public function validateData($data)
     {
-        foreach ($data as $key => $value) {
-            if (empty($value)) {
-                return false;
-            }
+        if (isset($data['email']) && isset($data['password']) && !empty($data['email']) && !empty($data['password'])) {
+            return true;
+        } else {
+            // return false;
         }
-
-        return true;
     }
+
+    // public function validateData($data)
+    // {
+    //     foreach ($data as $key => $value) {
+    //         if (empty($value)) {
+    //             return false;
+    //         }
+    //     }
+
+    //     return true;
+    // }
 }
