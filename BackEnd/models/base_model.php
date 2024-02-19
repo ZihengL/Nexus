@@ -56,7 +56,7 @@ class BaseModel
             $stmt = $this->pdo->prepare($sql);
 
             foreach ($params as $param => $value) {
-                // $stmt->bindValue(":$param", $value);
+                // $stmt->bindValue(":$param", $value, getDataType($value));
                 $stmt->bindValue($param, $value);
             }
             $stmt->execute();
@@ -101,7 +101,7 @@ class BaseModel
         $sqlWithFiltersAndSorting = $sql . $sqlWithFiltersAndSorting;
 
         // echo "<br> applyFiltersAndSorting - sqlWithFiltersAndSorting :  <br>\n";
-        // print_r($sqlWithFiltersAndSorting);
+        // print_r($params);
         // echo "<br>";
 
         // $stmt = $this->pdo->prepare($sqlWithFiltersAndSorting);

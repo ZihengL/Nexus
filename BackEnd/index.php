@@ -118,6 +118,7 @@ function handlePost($table, $crud_action, $centralController, $columName, $value
         case 'logout':
         case 'applyFiltersAndSorting':
             // echo "<br>  getByColumnName : " . $getByColumnName;
+            print_r($decodedData);
             $result = handleRawData($centralController, $decodedData, $controllerName, $crud_action);
             // $result = $centralController->$controllerName->$crud_action($value);
             echo json_encode($result);
