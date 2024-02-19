@@ -80,7 +80,7 @@ export default {
         // value LIKE 
   	  // name: { contain: 'super' },
         // exact value
-      name: 'Super Cat', 
+      title: 'Super Cat', 
   	  // developperID: '4',
         // only one range
       // ratingAverage: { gt: 1},
