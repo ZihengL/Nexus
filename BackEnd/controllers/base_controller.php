@@ -19,7 +19,7 @@ class BaseController
         return $this->model->create($data);
     }
 
-    public function update($id, $data)
+    protected function update($id, $data)
     {
         return $this->model->update($id, $data);
     }

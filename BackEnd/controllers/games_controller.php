@@ -69,17 +69,17 @@ class GamesController extends BaseController
 
     // Other CRUDs 
 
-    public function addGame($data)
+    public function create($data)
     {
         return $this->model->addGame($data);
     }
 
-    public function updateGame($id, $data)
+    public function update($id, $data)
     {
         return $this->model->updateGame($id, $data);
     }
 
-    public function deleteGame($id)
+    public function delete($id)
     {
         return $this->model->deleteGame($id);
     }

@@ -106,30 +106,24 @@ class UsersController extends BaseController
         if (!$this->userExists($data) && $this->model->create($data)) {
             $user = $this->model->getOne($this->email, $data[$this->email]);
 
-            return $this->getTokensController()->generateTokenPair($user[$this->id]);
+            return $this->login($data[$this->email], $data[$this->password]);
         }
 
         return false;
     }
 
-    public function updateUser($id, $data, $password, $tokens)
+    public function update($id, $data, $password = '', $tokens = null)
     {
-        $user = $this->model->getOne($this->id, $id);
-
-        if ($user && $this->verifyUser($user[$this->email], $user, $password)) {
-            if ($this->isAuthenticated($tokens)) {
-                return $this->model->update($id, $data);
-            }
+        if ($this->authenticate($id, $password, $tokens)) {
+            return $this->model->update($id, $data);
         }
 
         return false;
     }
 
-    public function deleteUser($id, $data, $password, $tokens)
+    public function delete($id, $password = '', $tokens = null)
     {
-        $user = $this->model->getOne($this->id, $id);
-
-        if ($user && $this->isAuthenticated($tokens)) {
+        if ($this->authenticate($id, $password, $tokens)) {
             return $this->model->delete($id);
         }
 
@@ -157,20 +151,23 @@ class UsersController extends BaseController
 
     public function logout($tokens)
     {
-        $tokens_controller = $this->central_controller->tokens_controller;
+        return $this->getTokensController()->revokeTokens($tokens);
+    }
 
-        return $tokens_controller->revokeTokens($tokens);
+    public function authenticate($id, $password, $tokens)
+    {
+        $user = $this->model->getOne($this->id, $id);
+
+        if ($user && $this->verifyUser($user, $user[$this->email], $password)) {
+            return $this->getTokensController()->validateTokens($tokens);
+        }
+
+        return false;
     }
 
     private function verifyUser($user, $email, $password)
     {
-        return $user &&
-            $user[$this->email] === $email &&
+        return $user[$this->email] === $email &&
             password_verify($password, $user[$this->password]);
-    }
-
-    public function isAuthenticated($tokens)
-    {
-        return $this->getTokensController()->validateTokens($tokens);
     }
 }
