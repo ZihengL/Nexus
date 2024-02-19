@@ -25,12 +25,13 @@ const routes = [
         component: () => import('@/views/Store.vue'),
       },
       {
-        path: '/Profile',
+        path: '/Profile/:IdDev',
         name: 'Profile',
         // route level code-splitting
         // this generates a separate chunk (Home-[hash].js) for this route
         // which is lazy-loaded when the route is visited.
         component: () => import('@/views/FullProfilePage.vue'),
+        props: true, 
       },
       {
         path: '/About',
@@ -41,12 +42,13 @@ const routes = [
         component: () => import('@/views/About.vue'),
       },
       {
-        path: '/Game',
+        path: '/Game/:idGame',
         name: 'Game',
         // route level code-splitting
         // this generates a separate chunk (Home-[hash].js) for this route
         // which is lazy-loaded when the route is visited.
         component: () => import('@/views/GameVue.vue'),
+        props: true, 
       },
       {
         path: '/Dev',
