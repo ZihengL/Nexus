@@ -43,6 +43,25 @@
 
 <script setup>
     import game from '../components/GameCarrousel.vue'
+    import { fetchData } from '../JS/fetch'
+    import { ref, onMounted,  defineProps} from 'vue';
+
+    const props = defineProps(['idGame']);
+    let LeGame;
+
+    onMounted(() => {
+        console.log('Game ID : ', props.idGame);
+        fetchData("games", "getOne", "id", props.idGame, null, "GET")
+        .then(data => {
+            LeGame = data;
+            console.log('LeGame : ', LeGame);
+        })
+        .catch(error => {
+        // Handle errors if any
+        console.error('Error fetching data:', error);
+        });
+    });
 </script>
 
 <style src="../styles/GameVueStyle.scss" lang="scss"></style>
+
