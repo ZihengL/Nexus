@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-  let hover = true;
+  let hover = false;
   let logoURL = '/src/assets/logos/Nexus_c5c3c0.svg';
   let logo2URL = '/src/assets/logos/Nexus_171d25.svg';
 
