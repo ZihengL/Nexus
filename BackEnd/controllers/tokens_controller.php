@@ -130,8 +130,8 @@ class TokensController extends BaseController
 
     public function validateTokens($tokens)
     {
-        $access_token = $tokens->access_token;
-        $refresh_token = $tokens->refresh_token;
+        $access_token = $tokens[self::ACCESS];
+        $refresh_token = $tokens[self::REFRESH];
 
         return $this->validateAccessToken($access_token) &&
             $this->validateRefreshToken($refresh_token);

@@ -171,6 +171,6 @@ class UsersController extends BaseController
 
     public function isAuthenticated($tokens)
     {
-        return $this->getTokensController()->validateRefreshToken($tokens['refresh_token']);
+        return $this->getTokensController()->validateTokens($tokens);
     }
 }
