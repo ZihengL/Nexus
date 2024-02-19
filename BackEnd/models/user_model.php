@@ -60,9 +60,9 @@ class UserModel extends BaseModel
 
     //other cruds
 
-    public function applyFiltersAndSorting($filters, $sorting, $includedColumns)
+    public function getAllMatching($filters, $sorting, $includedColumns)
     {
-        return parent::applyFiltersAndSorting($filters, $sorting, $includedColumns);
+        return parent::getAllMatching($filters, $sorting, $includedColumns);
     }
 
     // public function update($id, $data)

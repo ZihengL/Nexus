@@ -21,7 +21,7 @@ class TagsController extends BaseController
 
     public function getById($id)
     {
-        return $this->model->getById($this->id);
+        return $this->model->getOne($this->id, $id);
     }
 
     public function getByName($name)
@@ -38,7 +38,7 @@ class TagsController extends BaseController
 
     public function applyFiltersAndSorting($filters, $sorting = null)
     {
-        return $this->model->applyFiltersAndSorting($filters, $sorting);
+        return $this->model->getAllMatching($filters, $sorting);
     }
 
     public function delete($id)

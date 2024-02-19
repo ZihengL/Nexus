@@ -24,9 +24,9 @@ class GameModel extends BaseModel
 
     //Other Cruds
 
-    public function applyFiltersAndSorting($filters, $sorting, $includedColumns)
+    public function getAllMatching($filters, $sorting, $includedColumns)
     {
-        return parent::applyFiltersAndSorting($filters, $sorting, $includedColumns);
+        return parent::getAllMatching($filters, $sorting, $includedColumns);
     }
 
     public function addGame($game)

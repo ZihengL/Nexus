@@ -39,7 +39,7 @@ class GamesController extends BaseController
 
     public function getById($id)
     {
-        return $this->model->getById($id);
+        return $this->model->getOne($this->id, $id);
     }
 
     public function getByDeveloperID($developerID)
@@ -90,7 +90,7 @@ class GamesController extends BaseController
         if (empty($sorting)) {
             $sorting = [$this->ratingAverage => true];
         }
-        return $this->model->applyFiltersAndSorting($filters, $sorting, $includedColumns);
+        return $this->model->getAllMatching($filters, $sorting, $includedColumns);
     }
 
     // ZI

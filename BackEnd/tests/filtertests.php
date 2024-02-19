@@ -69,7 +69,7 @@ $databaseManager = $centralController->database_manager;
 
 //FILTER ON TAGS
 $filters = ['tagId' => ['relatedTable' => 'gamesTags', 'values' => ['1', '3'], 'wantedColumn' => 'gameId']];
-$results_1 = $centralController->games_controller->applyFiltersAndSorting($filters, null, null);
+$results_1 = $centralController->games_controller->getAllMatching($filters, null, null);
 echo "<pre>";
 
 echo "<br> <strong>testindex - tag results : </strong> <br>\n";
@@ -82,7 +82,7 @@ $sorting = [
     'ratingAverage' => true
 ];
 
-$results_2 = $centralController->games_controller->applyFiltersAndSorting($filters, $sorting, null);
+$results_2 = $centralController->games_controller->getAllMatching($filters, $sorting, null);
 echo "<pre>";
 echo "<br> <strong>testindex - filter on ratings and sort on ratings results : </strong>  <br>\n";
 print_r($results_2);
@@ -91,7 +91,7 @@ echo " <pre> <br>";
 
 //FILTER ON NAMES
 $filters = ['name' => 'Super Game'];
-$results_2 = $centralController->games_controller->applyFiltersAndSorting($filters, null, null);
+$results_2 = $centralController->games_controller->getAllMatching($filters, null, null);
 echo "<pre>";
 echo "<br> <strong>testindex - exact name results :</strong>  <br>\n";
 print_r($results_2);
@@ -109,10 +109,10 @@ $sorting = [
 ];
 
 $includedColumns = [
-    'developperID' 
+    'developperID'
 ];
 
-$results_2 = $centralController->games_controller->applyFiltersAndSorting($filters, $sorting, $includedColumns);
+$results_2 = $centralController->games_controller->getAllMatching($filters, $sorting, $includedColumns);
 
 
 echo "<br> <strong>testindex - filter ON RATINGS, NAMES(contain), only return the developperID AND sort on releasedDate <br> results : </strong> <br>\n";
@@ -134,10 +134,8 @@ $filters = [
 $sorting = [
     'releaseDate' => false  //most recent to oldes date
 ];
-$results_2 = $centralController->games_controller->applyFiltersAndSorting($filters, $sorting, null);
+$results_2 = $centralController->games_controller->getAllMatching($filters, $sorting, null);
 echo "<pre>";
 echo "<br> <strong>testindex - filter ON RATINGS, NAMES(contain), developperID </strong> <br>\n";
 print_r($results_2);
 echo "<pre><br>";
-
-

@@ -23,7 +23,7 @@ class ReviewsController extends BaseController
 
     public function getById($id)
     {
-        return $this->model->getById($id);
+        return $this->model->getOne($this->id, $id);
     }
 
     public function getByGameId($gameId)
@@ -60,6 +60,6 @@ class ReviewsController extends BaseController
 
     public function applyFiltersAndSorting($filters, $sorting = null)
     {
-        return $this->model->applyFiltersAndSorting($filters, $sorting);
+        return $this->model->getAllMatching($filters, $sorting);
     }
 }
