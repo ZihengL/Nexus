@@ -100,7 +100,7 @@ class BaseModel
         $sqlWithFiltersAndSorting = $sortingResults ? $sqlWithFilters . ' ORDER BY ' . $sortingResults : $sqlWithFilters;
         $sqlWithFiltersAndSorting = $sql . $sqlWithFiltersAndSorting;
 
-        // echo "<br> applyFiltersAndSorting - sqlWithFiltersAndSorting :  <br>\n";
+        // echo "<br> getAllMatching - sqlWithFiltersAndSorting :  <br>\n";
         // print_r($params);
         // echo "<br>";
 

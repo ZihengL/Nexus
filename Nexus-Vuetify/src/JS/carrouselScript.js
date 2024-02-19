@@ -94,7 +94,7 @@ export default {
 
     const jsonBody = { filters, sorting, includedColumns }
 
-    fetchData('games', 'applyFiltersAndSorting', null, null, jsonBody, 'POST')
+    fetchData('games', 'getAllMatching', null, null, jsonBody, 'POST')
     // fetchData("games", "getBy", "Id", "2", null, "GET");
     // fetchData("games", "getAll", "GET");
     

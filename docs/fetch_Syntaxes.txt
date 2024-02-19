@@ -17,7 +17,7 @@ $sorting = [
 $includedColumns = [
     'developperID' 
 ];
-$results_2 = $centralController->games_controller->applyFiltersAndSorting($filters, $sorting, $includedColumns);
+$results_2 = $centralController->games_controller->getAllMatching($filters, $sorting, $includedColumns);
 echo "<pre>";
 echo "<br> <strong>testindex - filter ON RATINGS, NAMES(contain), developperID ; only return the developperID AND sort on releasedDate <br> results : </strong> <br>\n";
 print_r($results_2);

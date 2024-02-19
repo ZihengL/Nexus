@@ -58,8 +58,5 @@ class ReviewsController extends BaseController
         return $this->model->delete($id);
     }
 
-    public function applyFiltersAndSorting($filters, $sorting = null)
-    {
-        return $this->model->getAllMatching($filters, $sorting);
-    }
+
 }

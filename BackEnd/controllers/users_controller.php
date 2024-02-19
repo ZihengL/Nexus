@@ -82,13 +82,6 @@ class UsersController extends BaseController
         return $this->model->getAll($this->lastname, $lastname);
     }
 
-    public function applyFiltersAndSorting($filters, $sorting, $included_columns)
-    {
-        $included_columns = $this->restrictAccess($included_columns);
-
-        return $this->model->getAllMatching($filters, $sorting, $included_columns);
-    }
-
     public function getAll_users($included_columns = [])
     {
         $included_columns = $this->restrictAccess($included_columns);
