@@ -25,21 +25,22 @@
 </template>
 
 <script setup>
-  let hover = false;
-  let logoURL = '/src/assets/logos/Nexus_c5c3c0.svg';
-  let logo2URL = '/src/assets/logos/Nexus_171d25.svg';
+import { ref } from 'vue';
 
+let hover = ref(false);
+let logoURL = '/src/assets/logos/Nexus_c5c3c0.svg';
+let logo2URL = '/src/assets/logos/Nexus_171d25.svg';
 
-  const changeUrl = () => {
-    console.log('changeUrl called');
-    hover = true;
-  };
+const changeUrl = () => {
+  console.log('changeUrl called');
+  hover.value = true;
+};
 
 const rechangeUrl = () => {
   console.log('rechangeUrl called');
-  hover = false;
+  hover.value = false;
 };
-
 </script>
+
 
 <style src="../styles/NavBarStyle.scss" scoped></style>

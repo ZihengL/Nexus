@@ -23,68 +23,69 @@
         </div>
     </div>    
 </template>
-
 <style scoped>
 .filter-container {
-    width: 90%;
-    background: #0698e1;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
     padding: 20px;
-    box-shadow: 0 2px 5px rgba(227, 224, 224, 0.707);
-    margin: 10% auto 7% auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    margin: 2% auto;
+    width: auto;
 }
 
 .filter-container h3 {
-    margin-bottom: 10px;
-    font-size: 30px;
-    color: var(--light-trans-2);
+    color: #66c0f4;
+    margin-bottom: 15px;
 }
 
 .checkbox-group {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
 }
 
 .filter-label {
+    background: rgba(77, 77, 77, 0.8); 
+    padding: 5px 10px;
+    border-radius: 4px;
     display: flex;
     align-items: center;
-    margin-bottom: 5px;
+    justify-content: start;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.3s ease;
 }
 
-.filter-label span {
-    margin-left: 5px;
-    font-size: 20px; 
-}
-
-input[type="checkbox"] {
-    display: none; 
+.filter-label:hover {
+    background: rgba(102, 192, 244, 0.2); 
 }
 
 .filter-label:before {
     content: '';
-    display: inline-block;
-    width: 25px;
-    height: 25px; 
+    width: 20px;
+    height: 20px;
     margin-right: 10px;
-    background-color: transparent; 
-    border: 2px solid #ffffff75; 
-    cursor: pointer;
+    background-color: #ccc; 
+    border-radius: 3px;
+    position: relative;
+    display: inline-block;
 }
 
-input[type="checkbox"]:checked + span:before {
-    background-color: #0096FF; 
+input[type="checkbox"]:checked + .filter-label {
+    background-color: #0aade8;
+    color: #13aebf; 
 }
 
-.filter-label:hover:before {
-    border-color: #0096FF; 
-}
-
-.filter-label input[type="checkbox"]:checked + span:before {
-    content: '\2713'; /* Checkmark symbol */
-    background-color: #0096FF; /* Background color for checked state */
-    color: #fff; /* Color of the checkmark */
-    display: inline-block; 
+input[type="checkbox"]:checked + .filter-label:before {
+    content: '\2713'; 
+    color: #10cde2; 
+    font-size: 14px; 
     text-align: center;
-    line-height: 25px; /* Adjust as needed for vertical alignment */
+    line-height: 20px; 
 }
 
+input[type="checkbox"] {
+    display: none;
+}
 </style>
