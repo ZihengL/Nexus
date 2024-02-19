@@ -84,14 +84,14 @@ class GamesController extends BaseController
     {
 
         if (empty($sorting)) {
-            $sorting = ['ratingAverage' => true];
+            $sorting = [$this->ratingAverage => true];
         }
         return $this->model->applyFiltersAndSorting($filters, $sorting, $includedColumns);
     }
 
     // ZI
 
-
+    
 
     // REBECCA
 

@@ -1,6 +1,7 @@
 <?php
 
 require_once "$path/controllers/database_manager.php";
+
 require_once "$path/controllers/games_controller.php";
 require_once "$path/controllers/users_controller.php";
 require_once "$path/controllers/tokens_controller.php";
@@ -22,22 +23,6 @@ class CentralController
 
     // CONSTRUCTOR
 
-    // private function __construct()
-    // {
-    //     global $path;
-    //     $dotenv = Dotenv::createImmutable($path);
-    //     $dotenv->load();
-
-    //     $this->database_manager = DatabaseManager::getInstance();
-
-    //     $pdo = $this->database_manager->getPDO();
-    //     $this->token_manager = TokensController::getInstance($pdo);
-    //     $this->users_controller = new UsersController($pdo, $this->token_manager);
-    //     $this->games_controller = new GamesController($pdo);
-    //     // $this->routines_controller = $this->instanciateRoutines();
-    // }
-
-    // MODIFIED CONSTRUCTOR FOR BASE CONTROLLER IMPLEMENTATION
     private function __construct()
     {
         global $path;
@@ -62,16 +47,6 @@ class CentralController
     }
 
     // GETTERS
-
-    // public function getUsersController()
-    // {
-    //     return $this->users_controller;
-    // }
-
-    // public function getGamesController()
-    // {
-    //     return $this->games_controller;
-    // }
 
     public function getAllMatching($controller, $filters = [], $sorting = [], $included_columns = [])
     {

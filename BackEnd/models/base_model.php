@@ -162,14 +162,12 @@ class BaseModel
         }
     }
 
-
     public function delete($id)
     {
         $sql = "DELETE FROM $this->table WHERE id = ?";
 
         return $this->query($sql, [$id]);
     }
-
 
     // TOOLS
 
@@ -201,7 +199,6 @@ class BaseModel
         return $formattedData;
     }
 
-
     public function bindParams($data)
     {
         $params = [];
@@ -214,8 +211,6 @@ class BaseModel
 
         return $params;
     }
-
-
 
     //  FILTERS AND SORTING
     public function applyFilters($filters, $included_columns = [])
@@ -308,7 +303,6 @@ class BaseModel
         return '';
     }
 
-
     public function applySorting($sorting = null)
     {
         // Check if $sorting is null or not an array
@@ -362,9 +356,6 @@ class BaseModel
 
         return $results;
     }
-
-
-
 
     /*To update the relational tables 
     $table_obj_ids = [] - is an array because for gameTags there's gameId and tagId 
