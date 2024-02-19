@@ -114,10 +114,10 @@ function handlePost($table, $crud_action, $centralController, $columName, $value
             // case 'logout':
             //     handleLogout($centralController, $decodedData, $controllerName, $crud_action);
             //     break;
-        case 'login':
+        case 'create':
         case 'logout':
         case 'getAllMatching':
-            // echo "<br>  getByColumnName : " . $getByColumnName;
+            echo "<br>  getByColumnName : " . $columName;
             // print_r($decodedData);
             $result = handleRawData($centralController, $decodedData, $controllerName, $crud_action);
             // $result = $centralController->$controllerName->$crud_action($value);
@@ -139,8 +139,8 @@ function handleRawData($centralController, $decodedData, $controllerName, $crud_
     } else {
         if (isset($decodedData['filters'])) {
             return handle_filterData($centralController, $decodedData, $controllerName, $crud_action);
-        } else if (isset($decodedData['login'])) {
-            return handle_filterData($centralController, $decodedData, $controllerName, $crud_action);
+        } else if (isset($decodedData['create'])) {
+            return handleRegister($centralController, $decodedData, $controllerName, $crud_action);
         } else if (isset($decodedData['logout'])) {
         } else {
             echo "Invalid data structure.";
@@ -158,10 +158,31 @@ function handle_filterData($centralController, $decodedData, $controllerName, $c
     return $centralController->$controllerName->$crud_action($filters, $sorting, $includedColumns);
 }
 
+
 function handleLogin($centralController, $decodedData, $controllerName, $crud_action)
 {
+
 }
 
 function handleLogout($centralController, $decodedData, $controllerName, $crud_action)
 {
 }
+
+
+function handleRegister($centralController, $decodedData, $controllerName, $crud_action)
+{ 
+    $data = $decodedData['login'];
+    echo "<br> login data : <br>";
+    print_r($data);
+    return $centralController->$controllerName->$crud_action($data);
+}
+
+
+
+
+
+
+
+
+
+

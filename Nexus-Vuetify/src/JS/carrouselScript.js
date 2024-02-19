@@ -92,9 +92,18 @@ export default {
 
     const includedColumns = ['id', 'developerID']
 
-    const jsonBody = { filters, sorting, includedColumns }
+    const user = {
+      email : "k@k",
+      name: 'Katty', 
+      password : "1",
+    }
 
-    fetchData('games', 'getAllMatching', null, null, jsonBody, 'POST')
+
+    const jsonBody = { filters, sorting, includedColumns }
+    const loginBody = { user }
+
+    fetchData('users', 'create', "user", null, loginBody, 'POST')
+    // fetchData('games', 'getAllMatching', null, null, jsonBody, 'POST')
     // fetchData("games", "getBy", "Id", "2", null, "GET");
     // fetchData("games", "getAll", "GET");
     
