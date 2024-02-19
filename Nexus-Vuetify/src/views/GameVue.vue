@@ -7,6 +7,10 @@
           <img src="../assets/image/img1.png" alt="#">
         </div>
         <div class="descript">
+            {{ LeGame.title }}
+        </div>
+        <div class="descript">
+            <p>{{ LeGame.description }}</p>
           <p>Lorem ipsum dolor sit, amet consectetur adipisicing
             elit. Vel debitis illum reprehenderit recusandae
             reiciendis quasi magni eum harum minus ipsam sint optio
