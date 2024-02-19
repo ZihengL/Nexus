@@ -54,12 +54,12 @@ $user = $usersCtrl->getUserById(1);
 printer($user, 'User fetch test');
 
 // Token manager
-$token_manager = $centralController->token_manager;
+$tokens_controller = $centralController->tokens_controller;
 
 
 // Token is stored client-side with local storage, session storage, or cookies.
 // TODO: Store token locally, and send token in the url header.
-$tokens = $token_manager->generateTokens($user);
+$tokens = $tokens_controller->generateTokens($user);
 printer($tokens, 'Token generation test');
 
 

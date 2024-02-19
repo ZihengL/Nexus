@@ -2,12 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Feb 12, 2024 at 04:46 PM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.2.4
--- Host: 127.0.0.1
--- Generation Time: Feb 12, 2024 at 04:46 PM
+-- Host: 127.0.0.1:3306
+-- Generation Time: Feb 19, 2024 at 07:06 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -23,13 +19,11 @@ SET time_zone = "+00:00";
 
 --
 -- Database: `nexus`
--- Database: `nexus`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `createdgames`
 -- Table structure for table `createdgames`
 --
 
@@ -42,7 +36,6 @@ CREATE TABLE `createdgames` (
 
 --
 -- Table structure for table `friends`
--- Table structure for table `friends`
 --
 
 CREATE TABLE `friends` (
@@ -51,7 +44,6 @@ CREATE TABLE `friends` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `friends`
 -- Dumping data for table `friends`
 --
 
@@ -62,16 +54,16 @@ INSERT INTO `friends` (`id`, `friendID`) VALUES
 
 --
 -- Table structure for table `games`
--- Table structure for table `games`
 --
 
 CREATE TABLE `games` (
   `id` int(11) NOT NULL,
-  `developperID` int(11) NOT NULL,
-  `name` varchar(100) NOT NULL,
+  `developerID` int(11) NOT NULL,
+  `stripeID` int(11) NOT NULL,
+  `title` varchar(100) NOT NULL,
   `description` varchar(1000) NOT NULL,
   `files` varchar(100) NOT NULL,
-  `images` set('a','b') NOT NULL,
+  `media` varchar(50) NOT NULL,
   `videos` set('pathVideo') NOT NULL,
   `tags` varchar(100) NOT NULL,
   `releaseDate` date DEFAULT NULL,
@@ -82,36 +74,12 @@ CREATE TABLE `games` (
 -- Dumping data for table `games`
 --
 
-INSERT INTO `games` (`id`, `developperID`, `name`, `description`, `files`, `images`, `videos`, `tags`, `releaseDate`, `ratingAverage`) VALUES
-(1, 1, 'Super Game', 'An amazing game', 'game.exe', 'a', '', '', '2024-02-01', 2),
-(2, 3, 'Fantastic Adventure', 'Embark on an epic journey', 'adventure.exe', 'b', '', '', '2024-01-26', 5),
-(3, 4, 'Space Odyssey', 'Explore the depths of outer space', 'space.exe', 'a,b', '', '', '2024-02-06', 3),
-(4, 2, 'Medieval Kingdoms', 'Rule your own kingdom', 'kingdoms.exe', 'a', '', '', '2024-01-17', 8),
-(8, 4, 'Super Cat', 'Flying kitty', 'kitty.exe', '', '', '', '2024-01-14', 7);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `gamestags`
---
-
-CREATE TABLE `gamestags` (
-  `gameId` int(11) NOT NULL,
-  `tagId` int(11) NOT NULL
-  `releaseDate` date DEFAULT NULL,
-  `ratingAverage` float DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `games`
---
-
-INSERT INTO `games` (`id`, `developperID`, `name`, `description`, `files`, `images`, `videos`, `tags`, `releaseDate`, `ratingAverage`) VALUES
-(1, 1, 'Super Game', 'An amazing game', 'game.exe', 'a', '', '', '2024-02-01', 2),
-(2, 3, 'Fantastic Adventure', 'Embark on an epic journey', 'adventure.exe', 'b', '', '', '2024-01-26', 5),
-(3, 4, 'Space Odyssey', 'Explore the depths of outer space', 'space.exe', 'a,b', '', '', '2024-02-06', 3),
-(4, 2, 'Medieval Kingdoms', 'Rule your own kingdom', 'kingdoms.exe', 'a', '', '', '2024-01-17', 8),
-(8, 4, 'Super Cat', 'Flying kitty', 'kitty.exe', '', '', '', '2024-01-14', 7);
+INSERT INTO `games` (`id`, `developerID`, `stripeID`, `title`, `description`, `files`, `media`, `videos`, `tags`, `releaseDate`, `ratingAverage`) VALUES
+(1, 1, 0, 'Super Game', 'An amazing game', 'game.exe', 'a', '', '', '2024-02-01', 2),
+(2, 3, 0, 'Fantastic Adventure', 'Embark on an epic journey', 'adventure.exe', 'b', '', '', '2024-01-26', 5),
+(3, 4, 0, 'Space Odyssey', 'Explore the depths of outer space', 'space.exe', 'a,b', '', '', '2024-02-06', 3),
+(4, 2, 0, 'Medieval Kingdoms', 'Rule your own kingdom', 'kingdoms.exe', 'a', '', '', '2024-01-17', 8),
+(8, 4, 0, 'Super Cat', 'Flying kitty', 'kitty.exe', '', '', '', '2024-01-14', 7);
 
 -- --------------------------------------------------------
 
@@ -125,7 +93,6 @@ CREATE TABLE `gamestags` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `gamestags`
 -- Dumping data for table `gamestags`
 --
 
@@ -137,7 +104,6 @@ INSERT INTO `gamestags` (`gameId`, `tagId`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `notification`
 -- Table structure for table `notification`
 --
 
@@ -153,7 +119,6 @@ CREATE TABLE `notification` (
 
 --
 -- Dumping data for table `notification`
--- Dumping data for table `notification`
 --
 
 INSERT INTO `notification` (`id`, `recipientID`, `senderID`, `message`, `timestamp`, `typeMessage`, `IsRead`) VALUES
@@ -168,8 +133,8 @@ INSERT INTO `notification` (`id`, `recipientID`, `senderID`, `message`, `timesta
 CREATE TABLE `revoked_tokens` (
   `id` varchar(255) NOT NULL,
   `sub` int(11) NOT NULL COMMENT 'user_id',
-  `exp` time NOT NULL COMMENT 'expiry_time',
-  `rev` time NOT NULL DEFAULT current_timestamp() COMMENT 'revocation_time'
+  `exp` int(11) NOT NULL COMMENT 'expiry_time',
+  `rev` int(11) NOT NULL DEFAULT current_timestamp() COMMENT 'revocation_time'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -177,32 +142,20 @@ CREATE TABLE `revoked_tokens` (
 --
 
 INSERT INTO `revoked_tokens` (`id`, `sub`, `exp`, `rev`) VALUES
-('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwNzQ5NDgyNywiZXhwIjoxNzA3NTgxMjI3LCJzdWIiOjF9.c_OXHd2XawVLF27Vh3qh-S454ckFDaCek9F7zF-gxW8', 1, '838:59:59', '838:59:59'),
-('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwNzQ5NDkzNiwiZXhwIjoxNzA3NTgxMzM2LCJzdWIiOjF9.__j98QV-ypyjIFFABojO91ZxvxqrA-MiWOQorZ5dz4E', 1, '838:59:59', '838:59:59'),
-('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwNzQzNDYyOCwiZXhwIjoxNzA3NTIxMDI4LCJzdWIiOjF9.s2fsWD1rFYfTvHf9TR-pUKvkvi5uB5rKGeHT1HXgyWA', 1, '838:59:59', '838:59:59');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `rewiews`
--- Table structure for table `revoked_tokens`
---
-
-CREATE TABLE `revoked_tokens` (
-  `id` varchar(255) NOT NULL,
-  `sub` int(11) NOT NULL COMMENT 'user_id',
-  `exp` time NOT NULL COMMENT 'expiry_time',
-  `rev` time NOT NULL DEFAULT current_timestamp() COMMENT 'revocation_time'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `revoked_tokens`
---
-
-INSERT INTO `revoked_tokens` (`id`, `sub`, `exp`, `rev`) VALUES
-('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwNzQ5NDgyNywiZXhwIjoxNzA3NTgxMjI3LCJzdWIiOjF9.c_OXHd2XawVLF27Vh3qh-S454ckFDaCek9F7zF-gxW8', 1, '838:59:59', '838:59:59'),
-('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwNzQ5NDkzNiwiZXhwIjoxNzA3NTgxMzM2LCJzdWIiOjF9.__j98QV-ypyjIFFABojO91ZxvxqrA-MiWOQorZ5dz4E', 1, '838:59:59', '838:59:59'),
-('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwNzQzNDYyOCwiZXhwIjoxNzA3NTIxMDI4LCJzdWIiOjF9.s2fsWD1rFYfTvHf9TR-pUKvkvi5uB5rKGeHT1HXgyWA', 1, '838:59:59', '838:59:59');
+('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwNzQ5NDgyNywiZXhwIjoxNzA3NTgxMjI3LCJzdWIiOjF9.c_OXHd2XawVLF27Vh3qh-S454ckFDaCek9F7zF-gxW8', 1, 8385959, 8385959),
+('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwNzQ5NDkzNiwiZXhwIjoxNzA3NTgxMzM2LCJzdWIiOjF9.__j98QV-ypyjIFFABojO91ZxvxqrA-MiWOQorZ5dz4E', 1, 8385959, 8385959),
+('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwNzQzNDYyOCwiZXhwIjoxNzA3NTIxMDI4LCJzdWIiOjF9.s2fsWD1rFYfTvHf9TR-pUKvkvi5uB5rKGeHT1HXgyWA', 1, 8385959, 8385959),
+('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODA0OTQzOSwiZXhwIjoxNzA4MTM1ODM5LCJzdWIiOjF9.q4WbnaZb33--UADcZnnnUzY8gPy3qBghNWn0wY9P_y4', 1, 1708135839, 1708049439),
+('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODMyMTcwNywiZXhwIjoxNzA4MzI1MzA3LCJzdWIiOjF9.N99tYrA9dxe-3xHyh8Q9xLwW2ZUPAI82l-1nUBlyiDw', 1, 1708325307, 1708321707),
+('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODMyMTcwNywiZXhwIjoxNzA4NDA4MTA3LCJzdWIiOjF9.EaEYi7OqQFeWzWjBVtG3ssOwFKN-5G4CrOxxePH7N-w', 1, 1708408107, 1708321707),
+('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODMyMTczNSwiZXhwIjoxNzA4MzI1MzM1LCJzdWIiOjF9.XCZpQatqALug8KnVI11vK43vD4FdoQBwAmlVdQhZxhI', 1, 1708325335, 1708321735),
+('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODMyMTczNSwiZXhwIjoxNzA4NDA4MTM1LCJzdWIiOjF9.zPqbdv1h88TuKZeyiTJUAbr9y-EciHYhMBLP1bCGKcs', 1, 1708408135, 1708321735),
+('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODMyMTg1MCwiZXhwIjoxNzA4MzI1NDUwLCJzdWIiOjF9.F50FD7MS0PtZyS8pq8LGB9V8FgD8zLMcSSLwBPNhsfg', 1, 1708325450, 1708321850),
+('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODMyMTg1MCwiZXhwIjoxNzA4NDA4MjUwLCJzdWIiOjF9.Ui7080qtOEpiGdJVHp3TUU-Zxyqe7prlFF4rjVybYfk', 1, 1708408250, 1708321850),
+('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODMyMTkxMiwiZXhwIjoxNzA4MzI1NTEyLCJzdWIiOjF9.Te74WpqwC08juAOZGcpnNc2uEi6mUDrVVlEAEIFpZAc', 1, 1708325512, 1708321912),
+('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODMyMTkxMiwiZXhwIjoxNzA4NDA4MzEyLCJzdWIiOjF9.qeZD2nmNfi_yEvAWVg-VY7yX3kE-cse7qe0sdOIzKDA', 1, 1708408312, 1708321912),
+('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODMyMTM0MiwiZXhwIjoxNzA4MzI0OTQyLCJzdWIiOjF9.j3lK_EEVx9e_PgBNCrM5tI8KsCdvVtblg0qcPwTqYkw', 1, 1708324942, 1708321342),
+('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODMyMTM0MiwiZXhwIjoxNzA4NDA3NzQyLCJzdWIiOjF9.EZdWcuEb0rDAHe89Ub64naBOZ_hysTeg1NglIMh1hD0', 1, 1708407742, 1708321342);
 
 -- --------------------------------------------------------
 
@@ -273,12 +226,12 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `user`, `password`, `email`, `phoneNumber`, `picture`, `IsAdmin`, `IsOnline`, `description`, `name`, `lastName`, `creationDate`) VALUES
-(1, 'john_doe', 'password123', 'john.doe@example.com', 1234567890, 'cvatar_path', 0, 0, '', '', '', 0),
-(2, 'alice_smith', 'pass123', 'alice.smith@example.com', 987654321, 'avatar_alice.jpg', 0, 0, '', '', '', 0),
-(3, 'bob_jones', 'bobpass', 'bob.jones@example.com', 555666777, 'avatar_bob.png', 0, 0, '', '', '', 0),
-(4, 'emma_davis', 'password123', 'emma.davis@example.com', 111222333, 'avatar_emma.jpg', 0, 0, '', '', '', 0),
-(5, 'john_doe', 'password123 	', 'john.doe@example.com 	', 2234567890, 'bvatar_path ', 0, 0, '0', '0', '0', 0),
-(6, 'john_doe', 'mlem', 'addaasda', 33344555, 'avatar_path ', 0, 0, '', '', '', 0);
+(1, 'john_doe', '$2y$10$nmakzte3PwS/95V/K2cqUO/EN8nxutO6BYnXVWqBXB63gcvAYdbne', 'john.doe@example.com', 1234567890, 'cvatar_path', 0, 0, '', '', '', 0),
+(2, 'alice_smith', '$2y$10$bD0KtNARFKLJ3e51sxTqv..X91IkIbkASHxccYPWcUhNezNRcjJx6', 'alice.smith@example.com', 987654321, 'avatar_alice.jpg', 0, 0, '', '', '', 0),
+(3, 'bob_jones', '$2y$10$QroH2ylQrU3aqx7zeLMS2eUhuPAgT1byd89aeyv5zpv2vo4B/Vf5C', 'bob.jones@example.com', 555666777, 'avatar_bob.png', 0, 0, '', '', '', 0),
+(4, 'emma_davis', '$2y$10$roDD0M7SrdDJFKwSYhI4qePO1XkHs7C4h5Sn/pEjD6si9RD/OfTqe', 'emma.davis@example.com', 111222333, 'avatar_emma.jpg', 0, 0, '', '', '', 0),
+(5, 'john_doe', '$2y$10$nZV2jn6b1ExK9MHQOZmKY.hjmFnmWanw2XRu5p8.uaj0K5Wie0zzO', 'john.doe@example.com 	', 2234567890, 'bvatar_path ', 0, 0, '0', '0', '0', 0),
+(6, 'john_doe', '$2y$10$xpynWrLMrU.CS/gkl.HszuvgpMtDxQ4QuiFxEIuB4Kxug99zI5gDy', 'addaasda', 33344555, 'avatar_path ', 0, 0, '', '', '', 0);
 
 --
 -- Indexes for dumped tables
@@ -303,7 +256,8 @@ ALTER TABLE `friends`
 --
 ALTER TABLE `games`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `developperID` (`developperID`);
+  ADD UNIQUE KEY `idx_developerID` (`id`,`developerID`),
+  ADD KEY `idx_stripeID` (`stripeID`);
 
 --
 -- Indexes for table `gamestags`
@@ -397,7 +351,7 @@ ALTER TABLE `friends`
 -- Constraints for table `games`
 --
 ALTER TABLE `games`
-  ADD CONSTRAINT `games_ibfk_1` FOREIGN KEY (`developperID`) REFERENCES `user` (`id`);
+  ADD CONSTRAINT `games_ibfk_1` FOREIGN KEY (`developerID`) REFERENCES `user` (`id`);
 
 --
 -- Constraints for table `notification`

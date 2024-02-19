@@ -1,73 +1,79 @@
 <?php
+
+require_once "$path/controllers/base_controller.php";
 require_once "$path/models/game_model.php";
 
-class GamesController
+class GamesController extends BaseController
 {
-    protected $model;
     protected $id = "id";
-    protected $name = "name";
-    protected $rating = "rating";
-    protected $tags = "tags";
-    protected $images = "images";
-    protected $devNames = "devNames";
-    protected $releaseDate = "releaseDate";
-    protected $description = "description";
+    protected $developerID = "developerID";
     protected $stripeID = "stripeID";
+    protected $title = "title";
+    protected $files = "files";
+    protected $description = "description";
+    protected $ratingAverage = "ratingAverage";
+    protected $media = "media";
+    protected $releaseDate = "releaseDate";
 
-    public function __construct($pdo)
+    public function __construct($central_controller, $pdo)
     {
         $this->model = new GameModel($pdo);
+        parent::__construct($central_controller);
     }
 
     // GETTERS
 
+    public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
+    {
+        return $this->model->getAllMatching($filters, $sorting, $included_columns);
+    }
+
+    public function getAll_games($included_columns = [], $sorting = [])
+    {
+        if (count($sorting) === 0) {
+            $sorting = [$this->ratingAverage => true];
+        }
+
+        return $this->model->getAll_games($sorting);
+    }
+
     public function getById($id)
     {
-        return $this->model->getById($this->id);
+        return $this->model->getById($id);
     }
 
-    public function getByReleaseDate($releaseDate)
+    public function getByDeveloperID($developerID)
     {
-        return $this->model->getByReleaseDate($this->releaseDate, $releaseDate);
+        return $this->model->getByColumn($this->developerID, $developerID);
     }
 
-    public function getByTags($tags)
+    public function getByStripeID($stripeID)
     {
-        return $this->model->getByTags($this->tags, $tags);
+        return $this->model->getByColumn($this->stripeID, $stripeID);
+    }
+
+    public function getByTitle($title)
+    {
+        return $this->model->getByColumn($this->title, $title);
     }
 
     public function getByDescription($description)
     {
-        return $this->model->getByDescription($this->description, $description);
+        return $this->model->getByColumn($this->description, $description);
     }
 
-    public function getByImages($images)
+    public function getByMedia($media)
     {
-        return $this->model->getByImages($this->images, $images);
-    }
-
-    public function getByDevs($devName)
-    {
-        return $this->model->getByDevs($this->devNames, $devName);
-    }
-
-    public function getAllGames()
-    {
-        return $this->model->getAllGames();
+        return $this->model->getByColumn($this->media, $media);
     }
 
     // Other CRUDs 
 
-    //Create/Add games
     public function addGame($data)
     {
         return $this->model->addGame($data);
     }
 
-    //Validate games before adding them in the database
-
-    //update and delete games
-    //determine what can be updated or not
     public function updateGame($id, $data)
     {
         return $this->model->updateGame($id, $data);
@@ -78,73 +84,20 @@ class GamesController
         return $this->model->deleteGame($id);
     }
 
-    public function applyFiltersAndSorting($filters, $sorting)
+    public function applyFiltersAndSorting($filters, $sorting, $includedColumns = null)
     {
-        return $this->model->applyFiltersAndSorting($filters, $sorting);
+
+        if (empty($sorting)) {
+            $sorting = [$this->ratingAverage => true];
+        }
+        return $this->model->applyFiltersAndSorting($filters, $sorting, $includedColumns);
     }
+
+    // ZI
+
+
+
+    // REBECCA
+
+
 }
-
- // public function filterGames($filters, $columns = []) {
-    //     return $this->model->filterGames($filters, $columns);
-    // }
-
-
-    // public function getAllFields() {
-    //     return $this->model->fields;
-    // }
-
-    // public function getField($fieldIndex) {
-    //     if ($fieldIndex < count($this->model->fields)) {
-    //         return $this->model->fields[$fieldIndex];
-    //     }
-
-    //     return null;
-    // }
-
-    // public function filterProducts($tags, $color, $size, $minprice, $maxprice) {
-    //     return $this->model->filterProduct($tags, $color, $size, $minprice, $maxprice);
-    // }
-
-    // public function getFilterMap() {
-    //     return $this->model->getMappedSets();
-    // }
-
-    // public function filterProductByField($products, $field, $value) {
-    //     $filtered = [];
-
-    //     foreach ($products as $product) {
-    //         $fieldValue = $product[$field];
-
-    //         if ($product[$field] == $value || (is_array($product[$field]) && in_array($product[$field], $value))) {
-    //             $filtered[] = $product;
-    //         }
-    //     }
-
-    //     return $filtered;
-    // }
-
-    // public function filterProductByPriceRange($products, $lowest, $highest) {
-    //     $filtered = [];
-
-    //     foreach ($products as $product) {
-    //         if ($product['price'] >= $lowest) {
-    //             if ($product['price'] <= $highest || $highest == -1) {
-    //                 $filtered[] = $product;
-    //             }
-    //         }
-    //     }
-
-    //     return $filtered;
-    // }
-
-    // public function setSessionProduct($id) {
-    //     if (session_status() !== PHP_SESSION_ACTIVE) {
-    //         session_start();
-    //     }
-
-    //     $_SESSION['productId'] = $id;
-    // }
-
-    // public function getMappedValues() {
-    //     return $this->model->getMappedValues();
-    // }
