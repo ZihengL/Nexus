@@ -170,9 +170,8 @@ function handleLogin($centralController, $decodedData, $controllerName, $crud_ac
     $email = $data["email"];
     $pwd = $data["password"];
 
-    echo "<br> login data : <br>";
-    print_r($email);
-    print_r($pwd);
+    echo "Email Address: ", print_r($email, true), "<br>";
+    echo "Password: ", print_r($pwd, true), "<br>";
     return $centralController->$controllerName->$crud_action($email, $pwd);
 }
 
