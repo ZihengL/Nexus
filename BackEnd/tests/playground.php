@@ -1,12 +1,5 @@
 <?php
 
-function printall($users)
-{
-    echo '<hr><pre>';
-    print_r($users);
-    echo '</pre>';
-}
-
 global $path;
 $path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd/';
 require_once $path . 'tests/temp_globals.php';
@@ -27,16 +20,16 @@ require_once $path . 'tests/temp_globals.php';
 // print_r($new);
 // echo '</pre>';
 
-$email = 'john.doe@example.com';
-$password = 'password123';
+// $email = 'john.doe@example.com';
+// $password = 'password123';
 
-$login_tokens = $users_controller->login($email, $password);
+// $login_tokens = $users_controller->login($email, $password);
 
-printall($login_tokens);
+// printall($login_tokens);
 
-$logout = $users_controller->logout($login_tokens);
+// $logout = $users_controller->logout($login_tokens);
 
-printall($logout);
+// printall($logout);
 
 // $arr = ['a' => 1, 'b' => 2, 'c' => 5];
 
@@ -46,9 +39,13 @@ printall($logout);
 
 // printall($arr);
 
-$originalArray = [
-    'a' => 'Apple',
-    'b' => 'Banana',
-    'c' => 'Cherry',
-    'd' => 'Dragonfruit'
-];
+// $originalArray = [
+//     'a' => 'Apple',
+//     'b' => 'Banana',
+//     'c' => 'Cherry',
+//     'd' => 'Dragonfruit'
+// ];
+
+$drive = $central_controller->drive_controller;
+
+$drive->createUserSubfolder(14);

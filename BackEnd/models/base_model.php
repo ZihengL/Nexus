@@ -210,6 +210,7 @@ class BaseModel
     }
 
     //  FILTERS AND SORTING
+    
     public function applyFilters($filters, $included_columns = [])
     {
         $sql_filters = "";

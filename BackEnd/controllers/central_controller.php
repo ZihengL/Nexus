@@ -6,6 +6,8 @@ require_once "$path/controllers/games_controller.php";
 require_once "$path/controllers/users_controller.php";
 require_once "$path/controllers/tokens_controller.php";
 
+require_once "$path/controllers/google/drive_controller.php";
+
 require_once "$path/remote/routines.php";
 
 use Dotenv\Dotenv as Dotenv;
@@ -21,6 +23,8 @@ class CentralController
     public $users_controller;
     public $games_controller;
 
+    public $drive_controller;
+
     // CONSTRUCTOR
 
     private function __construct()
@@ -33,8 +37,11 @@ class CentralController
         $pdo = $this->database_manager->getPDO();
 
         $this->tokens_controller = new TokensController($this, $pdo);
+
         $this->users_controller = new UsersController($this, $pdo);
         $this->games_controller = new GamesController($this, $pdo);
+
+        $this->drive_controller = new DriveController($this);
     }
 
     public static function getInstance()

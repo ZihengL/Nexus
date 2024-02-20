@@ -40,7 +40,7 @@ class UsersController extends BaseController
         return $this->model->getAllMatching($filters, $sorting, $included_columns);
     }
 
-    public function getOneMatchingColumn($column, $value, $included_columns = [])
+    public function getOne($column, $value, $included_columns = [])
     {
         $included_columns = $this->restrictAccess($included_columns);
 
@@ -134,7 +134,7 @@ class UsersController extends BaseController
         $user = $this->model->getOne($this->email, $email);
 
         if ($this->verifyUser($user, $email, $password)) {
-            return $this->getTokensController()->generateTokenPair($user[$this->id]);
+            return $this->getTokensController()->generateTokens($user[$this->id]);
         }
 
         return false;

@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $response = $tokens_controller->generateRefreshToken($user['id']);
                 break;
             case 'both':
-                $response = $tokens_controller->generateTokenPair($user['id']);
+                $response = $tokens_controller->generateTokens($user['id']);
                 break;
             case 'revoke':
                 $temp = $tokens_controller->generateRefreshToken($user['id']);
