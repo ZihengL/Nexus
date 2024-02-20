@@ -7,7 +7,7 @@ export function fetchData (
   method
 ) {
   const baseURL = 'http://localhost:4208/Nexus/Backend/'
-  console.log({table, crud_action, columnName, value});
+  //console.log({table, crud_action, columnName, value});
   // let uri = `${baseURL}${table}/${crud_action}/${columName}/${value}`;
   let uri = `${baseURL}${table}/${crud_action}`
   if (columnName && value) {
@@ -24,7 +24,7 @@ export function fetchData (
     // console.log("hi");
     fetchOptions.body = JSON.stringify(jsonBody)
   }
-  console.log(`Fetching: ${uri} with options:`, fetchOptions)
+  //console.log(`Fetching: ${uri} with options:`, fetchOptions)
 
   // Use the 'uri' variable directly instead of concatenating the baseURL and uri again
   return fetch(uri, fetchOptions)
