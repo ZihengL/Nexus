@@ -1,20 +1,20 @@
 <template>
   <div id="gameVue">
-    <div class="content">
+    <div v-if="LeGame" class="content">
       <game class="gameCarrousel" />
-      <div class="gameInfo glass">
+      <div class="gameInfo roundBorderSmall glass">
         <div class="gameImg">
-          <img src="../assets/image/img1.png" alt="#">
+          <img src="../assets/image/img1.png" alt="#" class="roundBorderSmall">
         </div>
         <div class="descript">
-            {{ LeGame.title }}
+           <p>{{ LeGame.title }}</p>
         </div>
         <div class="descript">
-            <p>{{ LeGame.description }}</p>
-          <p>Lorem ipsum dolor sit, amet consectetur adipisicing
+          <p>{{ LeGame.description }}</p>
+          <!--<p>Lorem ipsum dolor sit, amet consectetur adipisicing
             elit. Vel debitis illum reprehenderit recusandae
             reiciendis quasi magni eum harum minus ipsam sint optio
-            quas expedita doloremque maiores enim minima, voluptas unde.</p>
+            quas expedita doloremque maiores enim minima, voluptas unde.</p>-->
         </div>
         <div class="ratings">
           <v-rating hover :length="5" :size="32" :model-value="3" active-color="primary" class="rat" />
@@ -37,8 +37,8 @@
       </div>
     </div>
     <div class="Avis">
-      <AvisRecent />
-      <AvisRating />
+      <AvisRecent class="recent"/>
+      <AvisRating class="rate"/>
 
     </div>
 
@@ -46,25 +46,28 @@
 </template>
 
 <script setup>
-    import game from '../components/GameCarrousel.vue'
-    import { fetchData } from '../JS/fetch'
-    import { ref, onMounted,  defineProps} from 'vue';
+  import game from '../components/GameCarrousel.vue'
+  import { fetchData } from '../JS/fetch';
+  import { defineProps, ref, onMounted } from 'vue';
+  import AvisRecent from '../components/AvisRecent.vue'
+  import AvisRating from '../components/AvisRating.vue'
 
-    const props = defineProps(['idGame']);
-    let LeGame;
+  const props = defineProps(['idGame']);
+  const LeGame = ref(null);
+  const devName = ref(null);
 
-    onMounted(() => {
-        console.log('Game ID : ', props.idGame);
-        fetchData("games", "getOne", "id", props.idGame, null, "GET")
-        .then(data => {
-            LeGame = data;
-            console.log('LeGame : ', LeGame);
-        })
-        .catch(error => {
-        // Handle errors if any
-        console.error('Error fetching data:', error);
-        });
-    });
+  onMounted(async () => {
+    try {
+      const dataGame = await fetchData("games", "getOne", "id",  props.idGame, null, "GET");
+      LeGame.value = dataGame;
+
+      const dataDevs = await fetchData("user", "getOne", "id",  LeGame.developerId, null, "GET");
+      devName.value = dataDevs;
+      console.log('devs : ' , devName)
+    } catch (error) { 
+      console.error('Error fetching data:', error);
+    }
+  });
 </script>
 
 <style src="../styles/GameVueStyle.scss" lang="scss"></style>

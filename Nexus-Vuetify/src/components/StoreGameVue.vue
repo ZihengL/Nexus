@@ -1,15 +1,12 @@
 <template>
-    <router-link :to="link" class="glass2  roundBorderSmall">
+    <router-link :to="{ name: 'Game', params: { idGame: LeGame.id } }" class="glass2  roundBorderSmall">
         <div class="img roundBorderSmall">
             <img src="../assets/img/dontstarve.png" alt="#" class=" roundBorderSmall">
             <p  class=" roundBorderSmall">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex,
-                nam distinctio velit laborum quo qui ullam in? Hic corporis
-                dolorem dolores expedita vitae! Vero dolores commodi aliquam 
-                explicabo placeat sequi.
+                {{ LeGame.description }}
             </p>
         </div>
-        <h3>Title</h3>
+        <h3>{{ LeGame.title }}</h3>
         <h4>Developeur</h4>
         <div class="ratings">
             <v-rating
@@ -30,15 +27,27 @@
 </template>
 
 <script>
+
+import { fetchData } from '../JS/fetch'
 export default {
     props: {
-        link: String,
-    },
-    methods: {
-        removeGame() {
-            this.$emit('remove-game');
-        },
-    },
+        idGame: String,
+    },  
+    data () {
+    return {
+        LeGame: [],
+    }
+  },
+    mounted () {
+        try {
+            fetchData("games", "getOne", "id",  this.props.idGame, null, "GET")
+            .then(data => {
+                this.LeGame = data;
+            })
+        } catch (error) { 
+            console.error('Error fetching data:', error);
+        }
+    }
 };
 </script>
 

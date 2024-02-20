@@ -13,6 +13,7 @@
         gap: 1%;
         justify-content: space-between;
         align-items: center;
+        margin-bottom: 3%;
 
         .gameCarrousel {
             flex: 4;
@@ -78,5 +79,12 @@
     .Avis{
         display: flex;
         gap :1%;
+        .recent {
+            flex: 4;
+        }
+        .rate{
+
+            flex: 2;
+        }
     }
 }

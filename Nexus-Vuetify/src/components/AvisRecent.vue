@@ -4,7 +4,7 @@
       <h2>Avis par les derniers sortie</h2>
 
       <ul>
-        <li v-for="avis in avisRecents" :key="avis.id" class="glass roundBorderAll padding">
+        <li v-for="avis in avisRecents" :key="avis.id" class="glass roundBorderSmall padding">
           <div class="containerStar">
             <div class="containerAvis">
               <div class="containerIMG">
@@ -20,7 +20,7 @@
         </li>
       </ul>
       <div class="containerFormAvis">
-        <input type="text" id="AvisId" placeholder="Votre Avis..." class="SaisieText glass roundBorderAll" />
+        <input type="text" id="AvisId" placeholder="Votre Avis..." class="SaisieText glass roundBorderSmall" />
         <div class="starContainer">
           <h3>Votre Évaluation:</h3>
           <div class="ratings">
@@ -55,11 +55,11 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 @import "../styles/settings.scss";
 
 .Recent {
-  flex-basis: 200%;
+  //flex-basis: 200%;
   padding: 20px;
   position: relative;
 

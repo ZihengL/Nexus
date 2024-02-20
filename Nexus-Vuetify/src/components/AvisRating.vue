@@ -4,7 +4,7 @@
       <h2>Avis par les meilleurs notes</h2>
 
       <ul>
-        <li v-for="avis in avisRecents" :key="avis.id" class="glass roundBorderAll padding">
+        <li v-for="avis in avisRecents" :key="avis.id" class="glass roundBorderSmall padding">
           <div class="containerStar">
             <div class="containerAvis">
               <div class="containerIMG">
@@ -39,12 +39,12 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 @import "../styles/settings.scss";
 
 .ratingLast {
   height: 100%;
-  flex-basis: 100%;
+  //flex-basis: 100%;
   padding: 20px;
   position: relative;
 
