@@ -46,6 +46,11 @@ require_once $path . 'tests/temp_globals.php';
 //     'd' => 'Dragonfruit'
 // ];
 
-$drive = $central_controller->drive_controller;
+$client_manager = $central_controller->google_client_manager;
 
-$drive->createUserSubfolder(14);
+
+$drive_controller = $client_manager->drive_controller;
+
+$name = $drive_controller->createUserSubfolder(29);
+
+echo $name;

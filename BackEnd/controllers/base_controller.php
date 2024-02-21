@@ -31,11 +31,6 @@ class BaseController
         return $this->central_controller->games_controller;
     }
 
-    protected function getDriveController()
-    {
-        // return $this->central_controller->games_controller;
-    }
-
     protected function getTokensController()
     {
         return $this->central_controller->tokens_controller;
@@ -49,6 +44,18 @@ class BaseController
     protected function getReviewsController()
     {
         return $this->central_controller->reviews_controller;
+    }
+
+    // GOOGLE
+
+    protected function getGoogleClientManager()
+    {
+        return $this->central_controller->client_manager;
+    }
+
+    protected function getDriveController()
+    {
+        return $this->getGoogleClientManager()->drive_controller;
     }
 
     // CRUDS

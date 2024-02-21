@@ -3,8 +3,6 @@
 require_once "$path/vendor/autoload.php";
 
 use Google\Client;
-use Google\Collection;
-use Google\Service;
 use Google\Service\Drive;
 use Google\Service\Drive\DriveFile;
 
@@ -12,28 +10,21 @@ use Google\Service\Drive\DriveFile;
 // composer require google/apiclient:^2.15.0
 class DriveController
 {
-    private const SERVICE_ACCOUNT_FILE = 'remote/nexus-414517-7a72c55fec4d.json';
+    private const SCOPE = 'https://www.googleapis.com/auth/drive';
     private const GAMES_FOLDER_ID = '1b6KuDPnX_fyN6t2LUHeiumPZclX32Ak0';
 
-    private $central_controller;
-    private $client;
-    // private $permission;
+    private $client_manager;
     private $service;
 
-    public function __construct($central_controller)
+    public function __construct($client_manager)
     {
-        global $path;
+        $this->client_manager = $client_manager;
 
-        $this->central_controller = $central_controller;
-
-        $this->client = new Google\Client();
-        $this->client->setApplicationName('Nexus');
-        $this->client->setScopes(Google\Service\Drive::DRIVE);
-        $this->client->setAuthConfig($path . self::SERVICE_ACCOUNT_FILE);
-        $this->client->setAccessType('offline');
-
-        $this->service = new Google\Service\Drive($this->client);
+        $this->service = new Google\Service\Drive($this->client_manager->getClient());
+        $this->client_manager->getClient()->setScopes([self::SCOPE]);
     }
+
+    // GENERAL
 
     private function createFolder($folder_name, $parent_folder_id)
     {
@@ -45,12 +36,37 @@ class DriveController
 
         try {
             $folder = $this->service->files->create($fileMetadata, ['fields' => 'id']);
+
             return $folder->id;
         } catch (Exception $e) {
             echo 'An error occurred: ' . $e->getMessage();
+
             return null;
         }
     }
+
+    private function updateFolderName($new_folder_name, $folder_id)
+    {
+        $fileMetadata = new Google\Service\Drive\DriveFile([
+            'name' => $new_folder_name
+        ]);
+
+        try {
+            $this->service->files->update($folder_id, $fileMetadata, ['fields' => 'id, name']);
+
+            return true;
+        } catch (Exception $e) {
+            echo 'An error occurred: ' . $e->getMessage();
+            return false;
+        }
+    }
+
+    private function deleteFolder($folder_id)
+    {
+    }
+
+
+    // SPECIFIC REQUESTS
 
     public function createUserSubfolder($user_id)
     {
