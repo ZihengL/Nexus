@@ -34,7 +34,8 @@ export default {
     const registerBody = { create };
     const loginBody = { login };
 
-   fetchData('reviews', 'getAll', "id", 1, null, 'GET')
+  //  fetchData('reviews', 'getAll', "id", 1, null, 'GET')
+   fetchData('users', 'getOne', "id", 1, ["id", "user"], null, 'GET')
     // fetchData('users', 'create', "null", null, registerBody, 'POST')
     // fetchData('games', 'getAllMatching', null, null, jsonBody, 'POST')
 

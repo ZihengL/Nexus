@@ -45,6 +45,10 @@ $table = $explodedURI[0] ?? null;
 $crud_action = $explodedURI[1] ?? null;
 $columName = $explodedURI[2] ?? null;
 $value = $explodedURI[3] ?? null;
+$columnToRecieve = $explodedURI[4] ?? null;
+$includedColumns = explode(',', $columnToRecieve);
+$columnToSort = $explodedURI[4] ?? null;
+$sorting = explode(',', $columnToSort);
 
 // Read the input data for POST, PUT, DELETE methods
 $rawData = file_get_contents('php://input');
@@ -57,10 +61,10 @@ switch ($method) {
         // print_r($explodedURI);
         // echo "<br> The requested URI is: " . $explodedURI;
         // echo "<br>  columName : " . $columName;
-        handleGet($table, $crud_action, $central_controller, $columName, $value);
+        handleGet($table, $crud_action, $central_controller, $columName, $value, $includedColumns, $sorting);
         break;
     case 'POST':
-        handlePost($table, $crud_action, $central_controller, $columName, $value, $decodedData);
+        handlePost($table, $crud_action, $central_controller, $columName, $value, $includedColumns, $sorting, $decodedData);
         break;
     case 'PUT':
         handlePut();
@@ -76,7 +80,7 @@ switch ($method) {
 }
 
 // Function to handle GET requests
-function handleGet($table, $crud_action, $centralController, $columName, $value)
+function handleGet($table, $crud_action, $centralController, $columName, $value, $includedColumns, $sorting)
 {
     //Do these if they arent empty
     $controllerName = $table . '_controller';
@@ -86,13 +90,13 @@ function handleGet($table, $crud_action, $centralController, $columName, $value)
 
     switch ($crud_action) {
         case 'getAll':
-            // echo "<br>  getAllFromTable : " . $value;
-            $result = $centralController->$controllerName->getAll($columName, $value, [], []);
+            // echo "<br>  getAllFromTable : " . $includedColumns;
+            $result = $centralController->$controllerName->getAll($columName, $value, $includedColumns, $sorting);
             echo json_encode($result);
             break;
         case 'getOne':
-            // echo "<br>  getByColumnName : " . $getByColumnName;
-            $result = $centralController->$controllerName->getOne($columName, $value);
+            // echo "<br>  getByColumnName : " . $includedColumns;
+            $result = $centralController->$controllerName->getOne($columName, $value, $includedColumns);
             echo json_encode($result);
             break;
         default:

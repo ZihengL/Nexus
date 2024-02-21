@@ -66,7 +66,7 @@ class BaseController
 
     public function getAll($column = null, $value = null, $included_columns = [], $sorting = [])
     {
-        return $this->model-> getAll($column = null, $value = null, $included_columns = [], $sorting = []);
+        return $this->model-> getAll($column = null, $value = null, $included_columns, $sorting);
     }
 
     protected function create($data)
