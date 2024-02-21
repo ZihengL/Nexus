@@ -2,12 +2,13 @@
   <div class="about">
     <!-- Navbar -->
     <div class="navbar">
-      <ul>
-        <li :class="{ active: selectedTab === 'Zi' }" @click="selectedTab = 'Zi'" class="glow">Zi Heng Liu</li>
-        <li :class="{ active: selectedTab === 'Rebecca' }" @click="selectedTab = 'Rebecca'" class="glow">Rebecca</li>
-        <li :class="{ active: selectedTab === 'Thomas' }" @click="selectedTab = 'Thomas'" class="glow">Thomas</li>
-        <li :class="{ active: selectedTab === 'Debraise' }" @click="selectedTab = 'Debraise'" class="glow">Debraise</li>
-        <li :class="{ active: selectedTab === 'Amazigh' }" @click="selectedTab = 'Amazigh'" class="glow">Amazigh</li>
+      <ul id="liste">
+        <input type="radio" name="liste" id="Team" v-model="selectedTab" value="Team" checked><label for="Team" class="glow team">Team</label>
+        <li><input type="radio" name="liste" id="zi" v-model="selectedTab" value="Zi"><label for="zi" class="glow">Zi Heng Liu</label></li>
+        <li><input type="radio" name="liste" id="Rebecca" v-model="selectedTab" value="Rebecca"><label for="Rebecca" class="glow">Rebecca</label></li>
+        <li><input type="radio" name="liste" id="Thomas" v-model="selectedTab" value="Thomas"><label for="Thomas" class="glow">Thomas</label></li>
+        <li><input type="radio" name="liste" id="Debraise" v-model="selectedTab" value="Debraise"><label for="Debraise" class="glow">Debraise</label></li>
+        <li><input type="radio" name="liste" id="Amazigh" v-model="selectedTab" value="Amazigh"><label for="Amazigh" class="glow">Amazigh</label></li>
       </ul>
     </div>
 
@@ -79,29 +80,34 @@ export default {
       justify-content: center; /* Center items horizontally */
       gap: 20px; /* Space between items */
       text-align: center;
-      
+
+
       li {
         cursor: pointer;
         margin: 0% 6% ;
         transition: background-color 0.3s, border-color 0.3s;
-
-        &.active {
-          border-bottom: 2px solid var(--light);
-          
-          color: var(--light);       
-            text-shadow:
-                0 0 1.5px #ffffffa1,
-                0 0 2.5px #ffffffa1,
-                0 0 5px #ffffffa1,
-                0 0 10px var(--marin-b),
-                0 0 20px var(--marin-b),
-                0 0 25px var(--marin-b),
-                0 0 30px var(--marin-b),
-                0 0 33px var(--marin-b);
-            animation: neonGlow 0.5s ease-in-out infinite alternate;
-        }
+        
       }
     }
+    input {
+        display: none;
+      }
+    input:checked ~ label {
+      color: var(--light);       
+      text-shadow:
+        0 0 1.5px #ffffffa1,
+        0 0 2.5px #ffffffa1,
+        0 0 5px #ffffffa1,
+        0 0 10px var(--marin-b),
+        0 0 20px var(--marin-b),
+        0 0 25px var(--marin-b),
+        0 0 30px var(--marin-b),
+        0 0 33px var(--marin-b);
+      animation: neonGlow 0.5s ease-in-out infinite alternate;
+  }
+  .team {
+    //font-size: 1.5rem;
+  }
   }
 
   .content {
