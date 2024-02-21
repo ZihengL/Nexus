@@ -1,6 +1,6 @@
 <template>
   <div id="gameVue">
-    <div v-if="LeGame" class="content">
+    <div v-if="LeGame && devName" class="content">
       <game class="gameCarrousel" />
       <div class="gameInfo roundBorderSmall glass">
         <div class="gameImg">
@@ -11,16 +11,12 @@
         </div>
         <div class="descript">
           <p>{{ LeGame.description }}</p>
-          <!--<p>Lorem ipsum dolor sit, amet consectetur adipisicing
-            elit. Vel debitis illum reprehenderit recusandae
-            reiciendis quasi magni eum harum minus ipsam sint optio
-            quas expedita doloremque maiores enim minima, voluptas unde.</p>-->
         </div>
         <div class="ratings">
           <v-rating hover :length="5" :size="32" :model-value="3" active-color="primary" class="rat" />
         </div>
         <div class="devs">
-          <p><b>Developeur : </b> 2Braise</p>
+          <p><b>Developeur : </b> {{ devName }}</p>
         </div>
         <div class="tags">
           <a href="#" class="glow">Fps</a>
@@ -60,10 +56,31 @@
     try {
       const dataGame = await fetchData("games", "getOne", "id",  props.idGame, null, "GET");
       LeGame.value = dataGame;
+      //console.log('LeGame : ' , LeGame._rawValue.developerID)
 
-      const dataDevs = await fetchData("user", "getOne", "id",  LeGame.developerId, null, "GET");
-      devName.value = dataDevs;
-      console.log('devs : ' , devName)
+      if(LeGame.value){
+        const devId =  LeGame._rawValue.developerID
+        console.log('devId : ' , devId)
+        
+        const filters = {
+          id: devId,
+        }
+        const sorting = {
+          id: false
+        }
+
+        const includedColumns = ['id', 'user']
+        const jsonBody = { filters, sorting, includedColumns }
+
+        //fetchData("users", "getOne", "id", devId, null, "GET")
+        
+        const dataDevs = await fetchData('users', 'getAllMatching', null, null, jsonBody, 'POST');
+        let devName2 = dataDevs;
+        //console.log('devs : ' , devName2[0].user)
+        devName.value = devName2[0].user
+        console.log('devs : ' , devName._value)
+      }
+    
     } catch (error) { 
       console.error('Error fetching data:', error);
     }

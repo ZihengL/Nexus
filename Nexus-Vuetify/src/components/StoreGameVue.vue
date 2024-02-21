@@ -1,5 +1,5 @@
 <template>
-    <router-link :to="{ name: 'Game', params: { idGame: LeGame.id } }" class="glass2  roundBorderSmall">
+    <router-link v-if="LeGame && devName" :to="{ name: 'Game', params: { idGame: LeGame.id } }" class="glass2  roundBorderSmall">
         <div class="img roundBorderSmall">
             <img src="../assets/img/dontstarve.png" alt="#" class=" roundBorderSmall">
             <p  class=" roundBorderSmall">
@@ -7,7 +7,7 @@
             </p>
         </div>
         <h3>{{ LeGame.title }}</h3>
-        <h4>Developeur</h4>
+        <h4>{{ devName }}</h4>
         <div class="ratings">
             <v-rating
                 hover
@@ -26,29 +26,48 @@
     </router-link>
 </template>
 
-<script>
+<script setup>
 
 import { fetchData } from '../JS/fetch'
-export default {
-    props: {
-        idGame: String,
-    },  
-    data () {
-    return {
-        LeGame: [],
-    }
-  },
-    mounted () {
-        try {
-            fetchData("games", "getOne", "id",  this.props.idGame, null, "GET")
-            .then(data => {
-                this.LeGame = data;
-            })
-        } catch (error) { 
-            console.error('Error fetching data:', error);
+import { ref, onMounted } from 'vue';
+
+const props = defineProps(['idGame']);
+const LeGame = ref(null);
+const devName = ref(null);
+
+onMounted(async () => {
+    try {
+        const dataGame = await fetchData("games", "getOne", "id",  props.idGame, null, "GET");
+            
+        //console.log('un jeu : ', dataGame)
+        LeGame.value = dataGame;
+
+        if(LeGame.value){
+        const devId =  LeGame._rawValue.developerID
+        console.log('devId : ' , devId)
+        
+        const filters = {
+          id: devId,
         }
+        const sorting = {
+          id: false
+        }
+
+        const includedColumns = ['id', 'user']
+        const jsonBody = { filters, sorting, includedColumns }
+
+        //fetchData("users", "getOne", "id", devId, null, "GET")
+        
+        const dataDevs = await fetchData('users', 'getAllMatching', null, null, jsonBody, 'POST');
+        let devName2 = dataDevs;
+        //console.log('devs : ' , devName2[0].user)
+        devName.value = devName2[0].user
+        console.log('devs : ' , devName._value)
+      }
+    } catch (error) { 
+      console.error('Error fetching data:', error);
     }
-};
+  });
 </script>
 
 <style lang="scss">
@@ -70,7 +89,7 @@ export default {
         p {
             display: none;
             position: absolute;
-            text-align: justify;
+            text-align: center;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);

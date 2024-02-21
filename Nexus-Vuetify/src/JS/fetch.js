@@ -10,7 +10,7 @@ export function fetchData (
   //console.log({table, crud_action, columnName, value});
   // let uri = `${baseURL}${table}/${crud_action}/${columName}/${value}`;
   let uri = `${baseURL}${table}/${crud_action}`
-  if (columnName && value) {
+  if (columnName || value) {
     uri += `/${columnName}/${value}`
   }
   const fetchOptions = {

@@ -6,19 +6,18 @@
 
 // Plugins
 import { registerPlugins } from '@/plugins'
+import { createApp } from 'vue'
 
 // Components
 import App from './App.vue';
-//import { Vue }  from 'vue';
-//import { isConnected } from './JS/GlobalVar';
-
-// Composables
-import { createApp } from 'vue'
-
 
 const app = createApp(App)
 
-registerPlugins(app)
-//Vue.prototype.$isConnected = isConnected
+// Utilisez app.config.globalProperties pour définir une propriété globale
+app.config.globalProperties.$isConnected = false;
 
+// Enregistrez les plugins
+registerPlugins(app)
+
+// Montez l'application
 app.mount('#app')
