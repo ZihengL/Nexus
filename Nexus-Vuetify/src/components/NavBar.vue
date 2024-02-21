@@ -40,7 +40,11 @@ const rechangeUrl = () => {
   console.log('rechangeUrl called');
   hover.value = false;
 };
+
+// Accédez directement à la propriété globale sans utiliser "this"
+//console.log('var glob : ', $isConnected);
 </script>
+
 
 
 <style src="../styles/NavBarStyle.scss" scoped></style>

@@ -1,54 +1,56 @@
 <template>
-    <div  id="storeComp" class="glass" >
-        <div v-for="(item, index) in listeJeux" :key="index">
-            <GameVue :idGame="listeJeux.id" class="vuee"/>
-        </div>
+    <div v-if="listeJeux" id="storeComp" class="glass">
+      <GameVue v-for="game in listeJeux" :key="game.id" :idGame="game.id" class="vuee" />
     </div>
-</template>
-<script>
-    import GameVue from '../components/StoreGameVue.vue';
-    import { fetchData } from '../JS/fetch'
-    export default {
-        components: {
-            GameVue,
-        },
-        data() {
-            return {
-                listeJeux: [],
-            };
-        },
-        methods: {
-        // Define the method to handle icon click
-        },
-        mounted () {
-            const includedColumns = ['id']
-            const jsonBody = { includedColumns }
-
-            fetchData('games', 'getAll', null, null, jsonBody, 'POST')
-                .then(data => {
-                    this.listeJeux = data;
-
-                    console.log('data : ', this.listeJeux);
-                }
-            )
-            .catch(error => {
-            console.error('Error fetching data:', error);
-            });
-        }
-    };
-</script>
+  </template>
+  
+  <script setup>
+  import GameVue from '../components/StoreGameVue.vue';
+  import { fetchData } from '../JS/fetch';
+  import { ref, onMounted } from 'vue';
+  
+  let listeJeux = ref(null);
+  
+  onMounted(async () => {
+    try {
+      const filters = {
+        id: { gt: 0, lte: 20 },
+      };
+  
+      const sorting = {
+        id: false,
+      };
+  
+      const includedColumns = ['id'];
+      const jsonBody = { filters, sorting, includedColumns };
+  
+      fetchData('games', 'getAllMatching', null, null, jsonBody, 'POST')
+        .then((data) => {
+          listeJeux.value = data;
+          //console.log('data : ', data)
+          //console.log('liste : ', listeJeux)
+        })
+        .catch((error) => {
+          // Handle errors if any
+          console.error('Error fetching data:', error);
+        });
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  });
+  
+  console.log('liste : ', listeJeux);
+  </script>
+  
 
 <style lang="scss">
     #storeComp { 
         padding: 0%;
         width: 100%;
-        div {
-            width: 100%;
-            display: grid;
-            grid-template-columns: auto auto;
-            gap: 2%;
-            padding: 2% 2% 5% 2%;
-        }
+        display: grid;
+        grid-template-columns: auto auto;
+        gap: 2%;
+        padding: 2% 2% 5% 2%;
 
     }
 </style>
