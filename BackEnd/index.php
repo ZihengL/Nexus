@@ -46,9 +46,9 @@ $crud_action = $explodedURI[1] ?? null;
 $columName = $explodedURI[2] ?? null;
 $value = $explodedURI[3] ?? null;
 $columnToRecieve = $explodedURI[4] ?? null;
-$includedColumns = explode(',', $columnToRecieve);
+$includedColumns = $columnToRecieve ? explode(',', $columnToRecieve) : null;
 $columnToSort = $explodedURI[4] ?? null;
-$sorting = explode(',', $columnToSort);
+$sorting = $columnToSort ? explode(',', $columnToSort) : null;
 
 // Read the input data for POST, PUT, DELETE methods
 $rawData = file_get_contents('php://input');
@@ -96,6 +96,7 @@ function handleGet($table, $crud_action, $centralController, $columName, $value,
             break;
         case 'getOne':
             // echo "<br>  getByColumnName : " . $includedColumns;
+            // print_r($includedColumns) ;
             $result = $centralController->$controllerName->getOne($columName, $value, $includedColumns);
             echo json_encode($result);
             break;
