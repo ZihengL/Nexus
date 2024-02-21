@@ -102,6 +102,7 @@ class UsersController extends BaseController
     {
         if (!$this->userExists($data) && $this->model->create($data)) {
             $user = $this->model->getOne($this->email, $data[$this->email]);
+            // echo "users_controller: " .$user . "<br>";
 
             return $this->login($data[$this->email], $data[$this->password]);
         }
@@ -135,12 +136,12 @@ class UsersController extends BaseController
 
         if ($this->verifyUser($user, $email, $password)) {
             // $tokens = $this->getTokensController()->generateTokenPair($user[$this->id]);
-            echo "<br> login data : <br>";
+            // echo "<br> login data : <br>";
             // return $tokens;
             return $this->getTokensController()->generateTokenPair($user[$this->id]);
         }
 
-        // return false;
+        return false;
     }
 
     public function logout($tokens)
@@ -155,7 +156,10 @@ class UsersController extends BaseController
 
     private function verifyUser($user, $email, $password)
     {
-        return $user[$this->email] === $email &&
-            password_verify($password, $user[$this->password]);
+        // echo "password: " .$password . "<br>";
+        // // echo "user[$this->password]: " .$user[$this->password] . "<br>";
+        // $isVerifiedPwd = password_verify($password, $hashed);
+        // echo "isVerifiedPwd: " . $isVerifiedPwd . "<br>";
+        return $user[$this->email] === $email && password_verify($password, $user[$this->password]);
     }
 }

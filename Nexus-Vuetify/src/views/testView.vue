@@ -1,20 +1,14 @@
-<template>
+<!-- <template>
   <div class="test_view">
-    <!-- <Homecarrousel /> -->
-    <!-- <Info style="margin: 2% auto" /> -->
     TEST
   </div>
 </template>
 
 <script scoped>
-// import { forEach } from 'core-js/core/array'
-import { fetchData } from '../JS/fetch'
-//import Card from '../components/Card.vue';
+import { fetchData } from "../JS/fetch";
 
 export default {
-  components: {
-
-  },
+  components: {},
   mounted() {
     const filters = {
       ratingAverage: { gt: 1, lte: 7 },
@@ -26,14 +20,14 @@ export default {
     const includedColumns = ["id", "developerID", "title"];
 
     const create = {
-      email: "d",
+      email: "e",
       name: "Katty",
-      password: "1",
+      password: "e",
     };
 
     const login = {
-      email: "d",
-      password: "1",
+      email: "e",
+      password: "e",
     };
 
     const jsonBody = { filters, sorting, includedColumns };
@@ -42,22 +36,32 @@ export default {
 
     // fetchData('users', 'create', "null", null, registerBody, 'POST')
     // fetchData('games', 'getAllMatching', null, null, jsonBody, 'POST')
-    fetchData("users", "login", null, null, loginBody, "POST")
-      // .then(data => {
-      //   this.carouselItems = data.map((item, index) => ({ ...item, image: `./src/assets/image/img${index + 1}.png` }));
+    const login_tokens = fetchData(
+      "users",
+      "login",
+      null,
+      null,
+      loginBody,
+      "POST"
+    );
+    
 
-      //   console.log('data : ', this.carouselItems);
-      //   // Now you can access carouselItems with the added 'image' property
+    if (login_tokens) {
+        console.log("login tokens : ", login_tokens);
+      const logout = {
+        email: "e",
+        password: "e",
+        access_token: login_tokens["access_token"],
+        refresh_token: login_tokens["refresh_token"],
+      };
+      const logoutBody = { logout };
 
-      //   // Add the following line to initiate the automatic sliding
-      //   this.runNextAuto = setTimeout(() => {
-      //     this.showSlider('next');
-      //   }, this.timeAutoNext);
-      // })
-      .catch((error) => {
-        // Handle errors if any
-        console.error("Error fetching data:", error);
-      });
+      console.log(
+        "logout infos : ",
+        fetchData("users", "logout", null, null, logoutBody, "POST")
+      );
+    }
+
   },
 };
 </script>
@@ -68,4 +72,70 @@ export default {
   font-size: 40;
   color: aliceblue;
 }
-</style>
+</style> -->
+
+
+
+<template>
+    <div class="test_view">
+      TEST
+    </div>
+  </template>
+  
+  <script>
+  import { fetchData } from "../JS/fetch";
+  
+  export default {
+    async mounted() {
+      const loginBody = {
+        login: {
+          email: "e",
+          password: "e",
+        }
+      };
+  
+      try {
+        // Perform the login operation and wait for its completion
+        // const loginResponse = await fetchData("users", "login", null, null, loginBody, "POST");
+        
+        // Assuming fetchData resolves with the response body directly
+        // if (loginResponse && loginResponse.access_token && loginResponse.refresh_token) {
+        //   console.log("login tokens : ", loginResponse);
+          
+          const logoutBody = {
+            logout: {
+              email: "e",
+              password: "e",
+              tokens: {
+                access_token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODQ4MTUzNywiZXhwIjoxNzA4NDg1MTM3LCJzdWIiOjM0fQ.irjaTzteo0DtpwcMgW2xlPyYKEFNedEWSqpY-B8D28g",
+                refresh_token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODQ4MTUzNywiZXhwIjoxNzA4NTY3OTM3LCJzdWIiOjM0fQ.DtzXxw5mjQGPRpO92rH2wP-MYhvp4A6KK92jzlrtxU8",
+              }
+            }
+          };
+  
+          // Perform the logout operation
+        //   const logoutResponse = 
+        //   await fetchData("users", "logout", null, null, logoutBody, "POST");
+          console.log("logout infos : ",  await fetchData("users", "logout", null, null, logoutBody, "POST"));
+        // } else {
+        //   console.error("Login failed or tokens missing");
+        // }
+      } catch (error) {
+        console.error("Error in login/logout process:", error);
+      }
+    },
+  };
+  </script>
+  
+  <style lang="scss" scoped>
+  .test_view {
+    text-align: center;
+    font-size: 40px;
+    color: aliceblue;
+  }
+  </style>
+
+
+
+
+

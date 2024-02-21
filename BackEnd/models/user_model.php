@@ -4,16 +4,6 @@ require_once "$path/models/base_model.php";
 
 class UserModel extends BaseModel
 {
-    // + Construct()
-    // + getByEmail(String): User
-    // + getByName(String): [User]
-    // + getByLastname(String): [User]
-    // + getByPhoneNumber(int): User
-    // + getByPrivilege(Bool): [User]
-    // + getByDescription(String): [User]
-    // + createUser(data): Bool
-    // + updateUser(int, data): Bool
-    // + deleteUser(int): Bool
 
     public function __construct($pdo)
     {
@@ -23,35 +13,6 @@ class UserModel extends BaseModel
     }
 
     //Gets
-    // public function getByEmail($email, $columnName)
-    // {
-    //     return parent::getAll($columnName, $email, parent::getColumns(true));
-    // }
-
-    // public function getByName($name, $columnName)
-    // {
-    //     return parent::getAll($columnName, $name, parent::getColumns(true));
-    // }
-
-    // public function getByLastname($columnName, $lastname)
-    // {
-    //     return parent::getAll($columnName, $lastname, parent::getColumns(true));
-    // }
-
-    // public function getByPhoneNumber($columnName, $phoneNumber)
-    // {
-    //     return parent::getAll($columnName, $phoneNumber, parent::getColumns(true));
-    // }
-
-    // public function getByPrivilege($columnName, $privilege)
-    // {
-    //     return parent::getAll($columnName, $privilege, parent::getColumns(true));
-    // }
-
-    // public function getByDescription($columnName, $description)
-    // {
-    //     return parent::getAll($columnName, $description, parent::getColumns(true));
-    // }
 
     //other cruds
 
@@ -75,9 +36,9 @@ class UserModel extends BaseModel
         // echo "<br> create user_model <br>";
         // print_r($data);
         if (!$this->validateData($data) || $this->userExists($data['email'])) {
-            // return false;
+            return false;
         }
-        $new_data = $this->formatData($data);
+        $new_data = $this->formDataProperly($data);
         return parent::create($new_data);
     }
 
@@ -87,8 +48,9 @@ class UserModel extends BaseModel
     }
 
 
-    public function formatData($data)
+    public function formDataProperly($data)
     {
+        error_log(print_r(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), true));
         $formattedData = [];
         foreach ($this->columns as $column) {
             if ($column == 'id') {
@@ -106,8 +68,13 @@ class UserModel extends BaseModel
                 $formattedData[$column] = null;
             }
         }
-        
+
+        // echo "Plaintext Password2 (for debugging only): " . $formattedData['password'] . "<br>";
+
         if (array_key_exists('password', $formattedData)) {
+
+            // echo "Plaintext Password3 (for debugging only): " . $formattedData['password'] . "<br>";
+
             $formattedData['password'] = password_hash($formattedData['password'], PASSWORD_DEFAULT);
         }
         return $formattedData;
@@ -126,7 +93,7 @@ class UserModel extends BaseModel
         if (isset($data['email']) && isset($data['password']) && !empty($data['email']) && !empty($data['password'])) {
             return true;
         } else {
-            // return false;
+            return false;
         }
     }
 

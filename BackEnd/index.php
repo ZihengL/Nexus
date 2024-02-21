@@ -109,14 +109,8 @@ function handlePost($table, $crud_action, $centralController, $columName, $value
     $controllerName = $table . '_controller';
 
     switch ($crud_action) {
-        // case 'login':
-        //     handleLogin($centralController, $decodedData, $controllerName, $crud_action);
-        //     break;
-        // case 'logout':
-        //     handleLogout($centralController, $decodedData, $controllerName, $crud_action);
-        //     break;
-        case 'create':
         case 'logout':
+        case 'create':
         case 'login':
         case 'getAllMatching':
             // echo "<br>  getByColumnName : " . $columName;
@@ -169,14 +163,21 @@ function handleLogin($centralController, $decodedData, $controllerName, $crud_ac
     $data = $decodedData['login'];
     $email = $data["email"];
     $pwd = $data["password"];
-
-    echo "Email Address: ", print_r($email, true), "<br>";
-    echo "Password: ", print_r($pwd, true), "<br>";
+    // echo "<br>  getByColumnName : " . $crud_action;
+    // echo "Email Address: ", print_r($email, true), "<br>";
+    // echo "Password: ", print_r($pwd, true), "<br>";
     return $centralController->$controllerName->$crud_action($email, $pwd);
 }
 
 function handleLogout($centralController, $decodedData, $controllerName, $crud_action)
 {
+    $data = $decodedData['logout'];
+    $tokens = $data['tokens'];
+
+    // echo "<br> logout data : <br>";
+    // // return "logout test";
+    // print_r($tokens);
+    return $centralController->$controllerName->$crud_action($tokens);
 }
 
 
