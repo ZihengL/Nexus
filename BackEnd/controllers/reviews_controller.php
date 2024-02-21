@@ -28,34 +28,45 @@ class ReviewsController extends BaseController
 
     public function getByGameId($gameId)
     {
-        return $this->model->getByGameId($this->gameID, $gameId);
+        return $this->model->getOne($this->gameID, $gameId);
     }
 
     public function getByUserId($userId)
     {
-        return $this->model->getByUserId($this->userID, $userId);
+        return $this->model->getOne($this->userID, $userId);
     }
 
     public function getByComment($comment)
     {
-        return $this->model->getByComment($this->comment, $comment);
+        return $this->model->getOne($this->comment, $comment);
     }
 
     public function getBytimestampt($timestamp)
     {
-        return $this->model->getBytimestamp($this->timestamp, $timestamp);
+        return $this->model->getOne($this->timestamp, $timestamp);
     }
 
 
-    public function getAll_reviews()
-    {
-        return $this->model->getAll();
-    }
+    // public function getAll_reviews()
+    // {
+    //     return $this->model->getAll();
+    // }
 
 
     public function deleteReview($id)
     {
         return $this->model->delete($id);
+    }
+
+
+    
+    public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
+    {
+        if (empty($sorting)) {
+            $sorting = [$this->ratingAverage => true];
+        }
+
+        return parent::getAllMatching($filters, $sorting, $included_columns);
     }
 
 

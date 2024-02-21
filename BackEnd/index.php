@@ -80,14 +80,14 @@ function handleGet($table, $crud_action, $centralController, $columName, $value)
 {
     //Do these if they arent empty
     $controllerName = $table . '_controller';
-    $getAllFromTable = 'getAll_' . $table;
+    // $getAllFromTable = 'getAll_' . $table;
     // $getByColumnName = 'getBy' . $columName;
     //
 
     switch ($crud_action) {
         case 'getAll':
-            // echo "<br>  getAllFromTable : " . $getAllFromTable;
-            $result = $centralController->$controllerName->$getAllFromTable();
+            // echo "<br>  getAllFromTable : " . $value;
+            $result = $centralController->$controllerName->getAll($columName, $value, [], []);
             echo json_encode($result);
             break;
         case 'getOne':
@@ -113,6 +113,8 @@ function handlePost($table, $crud_action, $centralController, $columName, $value
         case 'create':
         case 'login':
         case 'getAllMatching':
+        case 'insert':
+        case 'update':
             // echo "<br>  getByColumnName : " . $columName;
             // print_r($decodedData);
             $result = handleRawData($centralController, $decodedData, $controllerName, $crud_action);
@@ -136,7 +138,7 @@ function handleRawData($centralController, $decodedData, $controllerName, $crud_
         if (isset($decodedData['filters'])) {
             return handle_filterData($centralController, $decodedData, $controllerName, $crud_action);
         } else if (isset($decodedData['create'])) {
-            return handleRegister($centralController, $decodedData, $controllerName, $crud_action);
+            return handleCreate($centralController, $decodedData, $controllerName, $crud_action);
         } else if (isset($decodedData['login'])) {
             return handleLogin($centralController, $decodedData, $controllerName, $crud_action);
         } else if (isset($decodedData['logout'])) {
@@ -181,7 +183,7 @@ function handleLogout($centralController, $decodedData, $controllerName, $crud_a
 }
 
 
-function handleRegister($centralController, $decodedData, $controllerName, $crud_action)
+function handleCreate($centralController, $decodedData, $controllerName, $crud_action)
 {
     $data = $decodedData['create'];
 

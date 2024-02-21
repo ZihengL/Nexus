@@ -5,6 +5,7 @@ require_once "$path/controllers/database_manager.php";
 require_once "$path/controllers/games_controller.php";
 require_once "$path/controllers/users_controller.php";
 require_once "$path/controllers/tokens_controller.php";
+require_once "$path/controllers/reviews_controller.php";
 
 require_once "$path/remote/routines.php";
 
@@ -20,6 +21,7 @@ class CentralController
     public $routines_controller;
     public $users_controller;
     public $games_controller;
+    public $reviews_controller;
 
     // CONSTRUCTOR
 
@@ -35,6 +37,7 @@ class CentralController
         $this->tokens_controller = new TokensController($this, $pdo);
         $this->users_controller = new UsersController($this, $pdo);
         $this->games_controller = new GamesController($this, $pdo);
+        $this->reviews_controller = new ReviewsController($this, $pdo);
     }
 
     public static function getInstance()

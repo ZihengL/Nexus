@@ -142,10 +142,10 @@ class TokensController extends BaseController
 
     // DATABASE
 
-    public function getAll()
-    {
-        return $this->model->getAll();
-    }
+    // public function getAll()
+    // {
+    //     return $this->model->getAll();
+    // }
 
     public function isRevoked($refresh_token)
     {

@@ -1,4 +1,4 @@
-<!-- <template>
+<template>
   <div class="test_view">
     TEST
   </div>
@@ -34,33 +34,36 @@ export default {
     const registerBody = { create };
     const loginBody = { login };
 
+   fetchData('reviews', 'getAll', "id", 1, null, 'GET')
     // fetchData('users', 'create', "null", null, registerBody, 'POST')
     // fetchData('games', 'getAllMatching', null, null, jsonBody, 'POST')
-    const login_tokens = fetchData(
-      "users",
-      "login",
-      null,
-      null,
-      loginBody,
-      "POST"
-    );
+
+//     const login_tokens = fetchData(
+//       "users",
+//       "login",
+//       null,
+//       null,
+//       loginBody,
+//       "POST"
+//     );
+//         console.log("login tokens : ", login_tokens);
+
     
 
-    if (login_tokens) {
-        console.log("login tokens : ", login_tokens);
-      const logout = {
-        email: "e",
-        password: "e",
-        access_token: login_tokens["access_token"],
-        refresh_token: login_tokens["refresh_token"],
-      };
-      const logoutBody = { logout };
+//     if (login_tokens) {
+//       const logout = {
+//         email: "e",
+//         password: "e",
+//         access_token: login_tokens["access_token"],
+//         refresh_token: login_tokens["refresh_token"],
+//       };
+//       const logoutBody = { logout };
 
-      console.log(
-        "logout infos : ",
-        fetchData("users", "logout", null, null, logoutBody, "POST")
-      );
-    }
+//       console.log(
+//         "logout infos : ",
+//         fetchData("users", "logout", null, null, logoutBody, "POST")
+//       );
+//     }
 
   },
 };
@@ -72,10 +75,10 @@ export default {
   font-size: 40;
   color: aliceblue;
 }
-</style> -->
+</style>
 
 
-
+<!-- 
 <template>
     <div class="test_view">
       TEST
@@ -116,7 +119,7 @@ export default {
           // Perform the logout operation
         //   const logoutResponse = 
         //   await fetchData("users", "logout", null, null, logoutBody, "POST");
-          console.log("logout infos : ",  await fetchData("users", "logout", null, null, logoutBody, "POST"));
+        //   console.log("logout infos : ",  await fetchData("users", "logout", null, null, logoutBody, "POST"));
         // } else {
         //   console.error("Login failed or tokens missing");
         // }
@@ -138,4 +141,4 @@ export default {
 
 
 
-
+ -->
