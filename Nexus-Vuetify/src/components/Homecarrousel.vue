@@ -13,7 +13,7 @@
             <div :class="index == 0 ? 'title' : 'lostTitle'">{{ item.title }}</div>
             <div :class="index == 0 ? 'buttons' : 'lostBouttons'">
               <router-link :to="{ name: 'Game', params: { idGame: item.id } }" class="btn roundBorderSmall">Voir le jeu</router-link>
-              <router-link :to="{ name: 'Dev', params: { IdDev: item.developerID } }" class="btn roundBorderSmall">Decouvrir le developeur</router-link>
+              <router-link :to="{ name: 'Dev', params: { idDevl: item.developerID } }" class="btn roundBorderSmall">Decouvrir le developeur</router-link>
             </div>
           </div>
         </div>

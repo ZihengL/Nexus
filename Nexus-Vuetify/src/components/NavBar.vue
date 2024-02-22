@@ -42,7 +42,7 @@ const rechangeUrl = () => {
 };
 
 // Accédez directement à la propriété globale sans utiliser "this"
-//console.log('var glob : ', $isConnected);
+//console.log('var glob : ', $isGlobalVariable);
 </script>
 
 

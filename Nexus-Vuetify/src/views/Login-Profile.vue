@@ -1,13 +1,12 @@
 <template>
   <div class="loginProfile">
     <LoginRegister v-if="isProfileVisible" @showProfile="toggleProfileForm "/>
-    <Profile  v-else @showLogin="toggleLoginForm" :isHimself="true"/>
+    <Profile  v-else @showLogin="toggleLoginForm" :isHimself="true" :idDev="'3'"/>
   </div>
 </template>
 <script setup>
   import LoginRegister from '/src/components/LoginRegister.vue';
   import Profile from '/src/components/Profile.vue';
-
   import { ref } from 'vue';
   // Récupérer la valeur depuis le stockage local
   /*const storedIsConnected = localStorage.getItem('isConnected');

@@ -47,11 +47,12 @@ export default {
 
     fetchData('games', 'getAllMatching', null, null, jsonBody, 'POST')
     .then(data => {
-      this.carouselItems = data.map((item, index) => ({ ...item, image: `./src/assets/image/img${index + 1}.png` }));
-
+      // Take only the first 4 items
+      this.carouselItems = data.slice(0, 4).map((item, index) => ({ ...item, image: `./src/assets/image/img${index + 1}.png` }));
+    
       console.log('data : ', this.carouselItems);
       // Now you can access carouselItems with the added 'image' property
-
+    
       // Add the following line to initiate the automatic sliding
       this.runNextAuto = setTimeout(() => {
         this.showSlider('next');
