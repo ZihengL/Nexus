@@ -71,7 +71,7 @@ class ReviewsController extends BaseController
 
     public function create($data)
     {
-        // echo "<br> create user_model <br>";
+        // echo "<br> create reviews_controller <br>";
         // print_r($data);
         if ($this->validateReview($data)) {
             if (!$this->checkReviewExists($data)) {
@@ -87,10 +87,40 @@ class ReviewsController extends BaseController
                 }
             }
         }
-
         // echo "not validated review data: ";
         return false;
     }
+
+
+
+    public function delete($data)
+    {
+        // echo "<br> delete reviews_controller <br>";
+        /* validate the data :
+                check the review, the user, game exist and valid tokens
+             
+
+        */
+
+        // print_r($data);
+        if ($this->validateReview($data)) {
+            if (!$this->checkReviewExists($data)) {
+                // echo "delete review: ";
+                //delete review, remove the tokens and send infos without tokens
+                unset($data['tokens']);
+                $data['timestamp'] = date('Y-m-d');
+
+                // echo "proper review  : ", print_r($data, true), "<br>";
+                if ($this->model->create($data)) {
+                    return $this->updateGameRatingAverage($data["gameID"]);
+                    // return true; 
+                }
+            }
+        }
+        // echo "not validated review data: ";
+        return false;
+    }
+
 
 
     public function checkReviewExists($data)
