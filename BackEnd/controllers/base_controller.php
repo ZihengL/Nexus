@@ -6,6 +6,7 @@ class BaseController
 {
     protected $central_controller;
     protected $model;
+    protected $restricted_columns = [];
 
     public function __construct($central_controller)
     {
@@ -13,6 +14,13 @@ class BaseController
     }
 
     // ZI
+
+    protected function restrictAccess($included_columns = [])
+    {
+        return array_filter($included_columns, function ($key) {
+            return !in_array($key, $this->restricted_columns);
+        }, ARRAY_FILTER_USE_KEY);
+    }
 
     // ACCESS
 
@@ -62,11 +70,15 @@ class BaseController
 
     public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
     {
+        $included_columns = $this->restrictAccess($included_columns);
+
         return $this->model->getAllMatching($filters, $sorting, $included_columns);
     }
 
     public function getOne($column, $value, $included_columns = [])
     {
+        $included_columns = $this->restrictAccess($included_columns);
+
         return $this->model->getOne($column, $value, $included_columns);
     }
 

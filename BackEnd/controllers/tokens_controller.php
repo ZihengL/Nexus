@@ -51,7 +51,7 @@ class TokensController extends BaseController
 
     // ENCODE & DECODE
 
-    private function decodeJWT($jwt, $is_refresh = false)
+    private function decodeTokens($jwt, $is_refresh = false)
     {
         try {
             $key = $is_refresh ? $this->refresh_key : $this->access_key;
@@ -96,7 +96,7 @@ class TokensController extends BaseController
 
     private function refreshAccessToken($refresh_token)
     {
-        $decoded = $this->decodeJWT($refresh_token, true);
+        $decoded = $this->decodeTokens($refresh_token, true);
 
         $issued_at = time();
         $decoded[self::IAT] = $issued_at;
@@ -130,7 +130,7 @@ class TokensController extends BaseController
 
     public function validateAccessToken($jwt)
     {
-        $decoded = $this->decodeJWT($jwt);
+        $decoded = $this->decodeTokens($jwt);
 
         return $decoded && $decoded[self::EXP] < time();
     }
@@ -163,6 +163,7 @@ class TokensController extends BaseController
         if ($decoded) {
             $decoded[self::SHA] = hash(self::HASHING, $decoded);
 
+            $this->$this->delete($decoded[self::SUB]);
             return parent::create($decoded);
         }
 
@@ -171,7 +172,7 @@ class TokensController extends BaseController
 
     protected function update($user_id, $jwt)
     {
-        $decoded = $this->decodeJWT($jwt, true);
+        $decoded = $this->decodeTokens($jwt, true);
 
         if ($decoded) {
             return parent::update($user_id, $decoded);

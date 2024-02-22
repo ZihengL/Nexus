@@ -5,7 +5,7 @@ require_once "$path/models/user_model.php";
 
 class UsersController extends BaseController
 {
-    private const RESTRICTED = ['password', 'email', 'phoneNumber', 'isAdmin'];
+    private $restricted_columns;
 
     protected $id = "id";
     protected $password = "password";
@@ -23,15 +23,16 @@ class UsersController extends BaseController
     public function __construct($central_controller, $pdo)
     {
         $this->model = new UserModel($pdo);
+        $this->restricted_columns = ['password', 'email', 'phoneNumber', 'isAdmin'];
         parent::__construct($central_controller);
     }
 
-    private function restrictAccess($included_columns = [])
-    {
-        return array_filter($included_columns, function ($key) {
-            return !in_array($key, self::RESTRICTED);
-        }, ARRAY_FILTER_USE_KEY);
-    }
+    // private function restrictAccess($included_columns = [])
+    // {
+    //     return array_filter($included_columns, function ($key) {
+    //         return !in_array($key, $this->restricted_columns);
+    //     }, ARRAY_FILTER_USE_KEY);
+    // }
 
     public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
     {
@@ -47,47 +48,47 @@ class UsersController extends BaseController
         return $this->model->getOne($column, $value, $included_columns);
     }
 
-    public function getAllUsers($included_columns = [])
-    {
-        $included_columns = $this->restrictAccess($included_columns);
+    // public function getAllUsers($included_columns = [])
+    // {
+    //     $included_columns = $this->restrictAccess($included_columns);
 
-        return $this->model->getAll($included_columns);
-    }
+    //     return $this->model->getAll($included_columns);
+    // }
 
-    public function getById($id, $included_columns = [])
-    {
-        $included_columns = $this->restrictAccess($included_columns);
+    // public function getById($id, $included_columns = [])
+    // {
+    //     $included_columns = $this->restrictAccess($included_columns);
 
-        return $this->model->getAll($this->id, $id, $included_columns);
-    }
+    //     return $this->model->getAll($this->id, $id, $included_columns);
+    // }
 
-    public function getByEmail($email, $included_columns = [])
-    {
-        $included_columns = $this->restrictAccess($included_columns);
+    // public function getByEmail($email, $included_columns = [])
+    // {
+    //     $included_columns = $this->restrictAccess($included_columns);
 
-        return $this->model->getAll($this->email, $email);
-    }
+    //     return $this->model->getAll($this->email, $email);
+    // }
 
-    public function getByName($name, $included_columns = [])
-    {
-        $included_columns = $this->restrictAccess($included_columns);
+    // public function getByName($name, $included_columns = [])
+    // {
+    //     $included_columns = $this->restrictAccess($included_columns);
 
-        return $this->model->getAll($this->name, $name);
-    }
+    //     return $this->model->getAll($this->name, $name);
+    // }
 
-    public function getByLastName($lastname, $included_columns = [])
-    {
-        $included_columns = $this->restrictAccess($included_columns);
+    // public function getByLastName($lastname, $included_columns = [])
+    // {
+    //     $included_columns = $this->restrictAccess($included_columns);
 
-        return $this->model->getAll($this->lastname, $lastname);
-    }
+    //     return $this->model->getAll($this->lastname, $lastname);
+    // }
 
-    public function getAll_users($included_columns = [])
-    {
-        $included_columns = $this->restrictAccess($included_columns);
+    // public function getAll_users($included_columns = [])
+    // {
+    //     $included_columns = $this->restrictAccess($included_columns);
 
-        return $this->model->getAll($included_columns);
-    }
+    //     return $this->model->getAll($included_columns);
+    // }
 
     public function userExists($data)
     {
@@ -104,25 +105,24 @@ class UsersController extends BaseController
         if (!$this->userExists($data) && $this->model->create($data)) {
             $user = $this->model->getOne($this->email, $data[$this->email]);
 
-
             return $this->login($data[$this->email], $data[$this->password]);
         }
 
         return false;
     }
 
-    public function update($id, $data, $tokens = null)
+    public function update($id, $data, $jwts = null)
     {
-        if ($this->authenticate($id, $tokens)) {
+        if ($this->authenticate($id, $jwts)) {
             return $this->model->update($id, $data);
         }
 
         return false;
     }
 
-    public function delete($id, $tokens = null)
+    public function delete($id, $jwts = null)
     {
-        if ($this->authenticate($id, $tokens)) {
+        if ($this->authenticate($id, $jwts)) {
             return $this->model->delete($id);
         }
 
@@ -131,6 +131,13 @@ class UsersController extends BaseController
 
     //  ACCESS & SECURITY
 
+    // Do this if user has valid tokens stored
+    public function authenticate($id, $tokens)
+    {
+        return $this->getTokensController()->validateTokens($id, $tokens);
+    }
+
+    // Do this if user needs to do a fresh login
     public function login($email, $password)
     {
         $user = $this->model->getOne($this->email, $email);
@@ -142,14 +149,9 @@ class UsersController extends BaseController
         return false;
     }
 
-    public function logout($tokens)
+    public function logout($jwts)
     {
-        return $this->getTokensController()->revokeTokens($tokens);
-    }
-
-    public function authenticate($id, $tokens)
-    {
-        return $this->getTokensController()->validateTokens($id, $tokens);
+        return $this->getTokensController()->revokeTokens($jwts);
     }
 
     private function verifyUser($user, $email, $password)
