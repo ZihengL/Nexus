@@ -5,8 +5,6 @@ require_once "$path/models/user_model.php";
 
 class UsersController extends BaseController
 {
-    private $restricted_columns;
-
     protected $id = "id";
     protected $password = "password";
     protected $email = "email";

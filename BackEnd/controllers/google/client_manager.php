@@ -12,7 +12,7 @@ class GoogleClientManager
 
     private const SERVICE_ACCOUNT_FILE = 'remote/Nexus_OAuth2_Client_ID.json';
 
-    // private $client;
+    private $client;
     public $central_controller;
     public $drive_controller;
 
@@ -26,17 +26,17 @@ class GoogleClientManager
 
         $this->central_controller = $central_controller;
 
-        $this->client_id = $_ENV['GOOGLE_CLIENT_ID'];
-        $this->client_secret = $_ENV['GOOGLE_CLIENT_SECRET'];
-        $this->redirect_uri = $_ENV['GOOGLE_REDIRECT_URI'];
+        // $this->client_id = $_ENV['GOOGLE_CLIENT_ID'];
+        // $this->client_secret = $_ENV['GOOGLE_CLIENT_SECRET'];
+        // $this->redirect_uri = $_ENV['GOOGLE_REDIRECT_URI'];
+
+        $this->client = new Google\Client();
+        $this->client->setApplicationName('Nexus');
+        $this->client->setScopes(Google\Service\Drive::DRIVE);
+        $this->client->setAuthConfig($path . self::SERVICE_ACCOUNT_FILE);
+        $this->client->setAccessType('offline');
 
         $this->drive_controller = new DriveController($this);
-
-        // $this->client = new Google\Client();
-        // $this->client->setApplicationName('Nexus');
-        // $this->client->setScopes(Google\Service\Drive::DRIVE);
-        // $this->client->setAuthConfig($path . self::SERVICE_ACCOUNT_FILE);
-        // $this->client->setAccessType('offline');
     }
 
     public static function getInstance($central_controller)
@@ -50,14 +50,14 @@ class GoogleClientManager
 
     public function getClient()
     {
-        $client = new Google\Client();
-        $client->setClientId($this->client_id);
-        $client->setClientSecret($this->client_secret);
-        $client->setRedirectUri($this->redirect_uri);
-        $client->setScopes(Google\Service\Drive::DRIVE);
-        $client->setAccessType('offline');
+        // $client = new Google\Client();
+        // $client->setClientId($this->client_id);
+        // $client->setClientSecret($this->client_secret);
+        // $client->setRedirectUri($this->redirect_uri);
+        // $client->setScopes(Google\Service\Drive::DRIVE);
+        // $client->setAccessType('offline');
 
-        return $client;
+        return $this->client;
     }
 
     public function redirect()
