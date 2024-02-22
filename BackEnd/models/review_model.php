@@ -14,4 +14,21 @@ class ReviewModel extends BaseModel
     }
 
 
+    // public function create($data)
+    // {
+    //     // echo "<br> create user_model <br>";
+    //     // print_r($data);
+    //     if (!$this->validateReview($data)) {
+    //         // return false;
+    //         echo "create review: ";
+
+    //     }
+    //     // return parent::create($new_data);
+    // }
+
+
+ 
+
+
+
 }

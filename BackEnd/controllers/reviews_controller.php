@@ -59,14 +59,114 @@ class ReviewsController extends BaseController
     }
 
 
-    
+
     public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
     {
         if (empty($sorting)) {
-            $sorting = [$this->ratingAverage => true];
+            $sorting = [$this->rating => true];
         }
 
         return parent::getAllMatching($filters, $sorting, $included_columns);
+    }
+
+    public function create($data)
+    {
+        // echo "<br> create user_model <br>";
+        // print_r($data);
+        if ($this->validateReview($data)) {
+            if (!$this->checkReviewExists($data)) {
+                // echo "create review: ";
+                //create review, remove the tokens and send infos without tokens
+                unset($data['tokens']);
+                $data['timestamp'] = date('Y-m-d');
+
+                // echo "proper review  : ", print_r($data, true), "<br>";
+                if ($this->model->create($data)) {
+                    return $this->updateGameRatingAverage($data["gameID"]);
+                    // return true; 
+                }
+            }
+        }
+
+        // echo "not validated review data: ";
+        return false;
+    }
+
+
+    public function checkReviewExists($data)
+    {
+        $userID = $data["userID"];
+        $gameID = $data["gameID"];
+        $filters = [
+            'userID' => $userID,
+            'gameID' => $gameID,
+        ];
+        $review = $this->getAllMatching($filters);
+
+        if ($review) {
+            // echo "reviews already exists : ", print_r($review, true), "<br>";
+            // echo "reviews already exists : ";
+            return true;
+        }
+        return false;
+    }
+
+    public function updateGameRatingAverage($gameID)
+    {
+        $reviews = $this->getAll("gameID", $gameID, null, null);
+        // echo "reviews list : ", print_r($reviews, true), "<br>";
+        if (!empty($reviews)) {
+            $totalRating = 0;
+            foreach ($reviews as $review) {
+                $totalRating += $review['rating'];
+            }
+            $newAverageRating = count($reviews) > 0 ? $totalRating / count($reviews) : 0;
+
+            $gameController = $this->getGamesController();
+            $game = $gameController->getOne("id", $gameID);
+            // echo "game before update : ", print_r($game, true), "<br>";
+            // echo "newAverageRating : ", $newAverageRating, "<br>";
+
+            if ($game) {
+                $game['ratingAverage'] = $newAverageRating;
+                // echo "game after update : ", print_r($game, true), "<br>";
+                return $gameController->update($gameID, $game);
+            }
+        }
+        // echo "updateGameRatingAverage";
+        return false;
+    }
+
+
+
+    public function validateReview($data)
+    {
+        // echo "validateReview: ", print_r($data, true), "<br>";
+        $userID = $data["userID"] ?? null;
+        $gameID = $data["gameID"] ?? null;
+        $rating = $data["rating"] ?? null;
+        $comment = $data["comment"] ?? null;
+        $tokens = $data["tokens"] ?? null;
+        $accessToken = $tokens["access_token"] ?? null;
+        $refreshToken = $tokens["refresh_token"] ?? null;
+
+        // echo "accessToken: " . $accessToken.  "<br>";
+        // echo "refreshToken: " . $refreshToken . "<br>";
+
+
+        $isEmptyData = empty($gameID) || empty($rating) || empty($comment) || empty($accessToken) || empty($refreshToken);
+        $gameExists = $this->getGamesController()->getOne("id", $gameID, null);
+        $userExists = $this->getUsersController()->getOne("id", $userID, null);
+        $areValidTokens = $this->getTokensController()->validateTokens($userID, $tokens);
+        // echo "gameExists: ", print_r($gameExists, true), "<br>";
+        // echo "userExists: ", print_r($userExists, true), "<br>";
+        // echo "areValidTokens: ". $areValidTokens . "<br>";
+        if ($isEmptyData || !$gameExists || !$userExists || $areValidTokens) {
+            // echo "failed";
+            return false;
+        }
+        return true;
+
     }
 
 

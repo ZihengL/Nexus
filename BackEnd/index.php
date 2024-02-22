@@ -53,6 +53,7 @@ $sorting = $columnToSort ? explode(',', $columnToSort) : null;
 // Read the input data for POST, PUT, DELETE methods
 $rawData = file_get_contents('php://input');
 $decodedData = json_decode($rawData, true);
+// print_r($rawData);
 
 // console.log(" response : ", response.text());
 // Routing
@@ -109,7 +110,7 @@ function handleGet($table, $crud_action, $centralController, $columName, $value,
 
 
 // Function to handle POST requests
-function handlePost($table, $crud_action, $centralController, $columName, $value, $decodedData)
+function handlePost($table, $crud_action, $central_controller, $columName, $value, $includedColumns, $sorting, $decodedData)
 {
     $controllerName = $table . '_controller';
 
@@ -120,9 +121,10 @@ function handlePost($table, $crud_action, $centralController, $columName, $value
         case 'getAllMatching':
         case 'insert':
         case 'update':
-            // echo "<br>  getByColumnName : " . $columName;
+            // echo "<br>  getByColumnName : " . $decodedData;
             // print_r($decodedData);
-            $result = handleRawData($centralController, $decodedData, $controllerName, $crud_action);
+            // print_r($decodedData);
+            $result = handleRawData($central_controller, $decodedData, $controllerName, $crud_action);
             // $result = $centralController->$controllerName->$crud_action($value);
             echo json_encode($result);
             break;
@@ -137,7 +139,7 @@ function handlePost($table, $crud_action, $centralController, $columName, $value
 function handleRawData($centralController, $decodedData, $controllerName, $crud_action)
 {
     if (empty($decodedData)) {
-        echo "No data provided or data is empty.";
+        // echo "No data provided or data is empty.";
         // return false;
     } else {
         if (isset($decodedData['filters'])) {
