@@ -16,7 +16,7 @@
   var isConnected = ref(storedIsConnected !== null ? storedIsConnected : false);*/
 
 	const isProfileVisibleTemp = ref(localStorage.getItem("profileVisible"))
-  const isProfileVisible = ref(isProfileVisibleTemp .value !== true ? isProfileVisibleTemp .value : false)
+  const isProfileVisible = ref(isProfileVisibleTemp.value !== true ? isProfileVisibleTemp .value : false)
 	
   console.log(isProfileVisible.value)
 	const toggleProfileForm = () => {

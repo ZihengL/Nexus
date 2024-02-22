@@ -8,7 +8,7 @@ class TokenModel extends BaseModel
     {
         $table = "tokens";
 
-        parent::__construct($pdo, $table, true);
+        parent::__construct($pdo, $table);
     }
 
     public function isExpired($id)
@@ -16,13 +16,6 @@ class TokenModel extends BaseModel
         $token = parent::getOne('id', $id, ['exp']);
 
         return $token && $token['exp'] < time();
-    }
-
-    public function isRevoked($id)
-    {
-        $token = parent::getOne('id', $id);
-
-        return $token && $token['is_revoked'] === true;
     }
 
     public function deleteExpiredTokens()

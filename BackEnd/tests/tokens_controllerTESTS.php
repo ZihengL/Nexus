@@ -67,7 +67,7 @@ class TokensController extends BaseController
         return JWT::encode($payload, $key, $this->algorithm);
     }
 
-    private function decodeTokens($jwt, $is_refresh = false)
+    private function decodeToken($jwt, $is_refresh = false)
     {
         $key = $is_refresh ? $this->refresh_key : $this->access_key;
 
@@ -93,7 +93,7 @@ class TokensController extends BaseController
 
     public function validateAccess($jwt)
     {
-        $decoded = $this->decodeTokens($jwt);
+        $decoded = $this->decodeToken($jwt);
 
         if ($decoded) {
             if ($this->isAuthenticated($decoded[self::SUB])) {
@@ -103,7 +103,7 @@ class TokensController extends BaseController
 
     public function validateJWT($jwt, $is_refresh = false)
     {
-        $decoded = $this->decodeTokens($jwt, $is_refresh);
+        $decoded = $this->decodeToken($jwt, $is_refresh);
 
         $expiration_time = $decoded[self::EXP];
         $user_id = $decoded[self::SUB];

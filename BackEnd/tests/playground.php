@@ -46,11 +46,24 @@ require_once $path . 'tests/temp_globals.php';
 //     'd' => 'Dragonfruit'
 // ];
 
-$client_manager = $central_controller->google_client_manager;
+// $client_manager = $central_controller->google_client_manager;
 
+// $drive_controller = $client_manager->drive_controller;
 
-$drive_controller = $client_manager->drive_controller;
+// $name = $drive_controller->createUserSubfolder(29);
 
-$name = $drive_controller->createUserSubfolder(29);
+// echo $name;
 
-echo $name;
+// $tokens_controller = $central_controller->tokens_controller;
+
+// $refresh = $tokens_controller->generateRefreshToken(1990);
+
+// echo $refresh . '</br>';
+
+// $stored = $tokens_controller->getByHashcode($refresh);
+
+// $tokens_controller->deleteAllFromUser(1990, ['refresh_token' => $refresh]);
+
+// echo '<pre>';
+// print_r($stored);
+// echo '</pre>';

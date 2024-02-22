@@ -44,9 +44,9 @@ class BaseModel
             }
 
             return $stmt;
-        } catch (PDOException $exception) {
+        } catch (PDOException $e) {
             // return $exception;
-            throw new Exception("Database query error: " . $exception->getMessage());
+            throw new Exception("Database query error: " . $e->getMessage());
         }
     }
 
@@ -62,8 +62,8 @@ class BaseModel
             $stmt->execute();
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $exception) {
-            return $exception;
+        } catch (PDOException $e) {
+            throw new Exception("Database query error: " . $e->getMessage());
         }
     }
 
@@ -210,7 +210,7 @@ class BaseModel
     }
 
     //  FILTERS AND SORTING
-    
+
     public function applyFilters($filters, $included_columns = [])
     {
         $sql_filters = "";

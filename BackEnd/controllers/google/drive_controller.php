@@ -65,7 +65,6 @@ class DriveController
     {
     }
 
-
     // SPECIFIC REQUESTS
 
     public function createUserSubfolder($user_id)

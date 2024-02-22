@@ -50,14 +50,14 @@ class GoogleClientManager
 
     public function getClient()
     {
-        // $client = new Google\Client();
-        // $client->setClientId($this->client_id);
-        // $client->setClientSecret($this->client_secret);
-        // $client->setRedirectUri($this->redirect_uri);
-        // $client->setScopes(Google\Service\Drive::DRIVE);
-        // $client->setAccessType('offline');
+        $client = new Google\Client();
+        $client->setClientId($this->client_id);
+        $client->setClientSecret($this->client_secret);
+        $client->setRedirectUri($this->redirect_uri);
+        $client->setScopes(Google\Service\Drive::DRIVE);
+        $client->setAccessType('offline');
 
-        return $this->client;
+        return $client;
     }
 
     public function redirect()

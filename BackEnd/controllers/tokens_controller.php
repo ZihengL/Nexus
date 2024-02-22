@@ -51,7 +51,7 @@ class TokensController extends BaseController
 
     // ENCODE & DECODE
 
-    private function decodeTokens($jwt, $is_refresh = false)
+    private function decodeToken($jwt, $is_refresh = false)
     {
         try {
             $key = $is_refresh ? $this->refresh_key : $this->access_key;
@@ -74,8 +74,7 @@ class TokensController extends BaseController
         ];
         $jwt = JWT::encode($payload, $this->refresh_key, self::ALGORITHM);
 
-        $payload[self::SHA] = hash(self::HASHING, $jwt);
-        $this->create($payload);
+        $this->create($jwt, $payload);
 
         return $jwt;
     }
@@ -96,7 +95,7 @@ class TokensController extends BaseController
 
     private function refreshAccessToken($refresh_token)
     {
-        $decoded = $this->decodeTokens($refresh_token, true);
+        $decoded = $this->decodeToken($refresh_token, true);
 
         $issued_at = time();
         $decoded[self::IAT] = $issued_at;
@@ -115,37 +114,30 @@ class TokensController extends BaseController
 
     // VALIDATION
 
-    public function validateRefreshToken($jwt, $user_id)
+    public function validateRefreshToken($user_id, $jwt)
     {
-        $stored = $this->getByUserId($user_id);
+        $stored = $this->getByHashcode($jwt);
 
-        if ($stored && $stored[self::EXP] < time()) {
-            $hashed_jwt = hash(self::HASHING, $jwt);
-
-            return hash_equals($stored[self::SHA], $hashed_jwt);
-        }
-
-        return false;
+        return $stored && $stored[self::EXP] > time() &&
+            $stored[self::SUB] === $user_id;
     }
 
     public function validateAccessToken($jwt)
     {
-        $decoded = $this->decodeTokens($jwt);
+        $decoded = $this->decodeToken($jwt);
 
-        return $decoded && $decoded[self::EXP] < time();
+        return $decoded && $decoded[self::EXP] > time();
     }
 
-    public function validateTokens($jwts, $user_id)
+    public function validateTokens($user_id, $jwts)
     {
         $refresh_jwt = $jwts[self::REFRESH];
-        $access_jwt = $jwts[self::ACCESS];
 
-        if ($this->validateRefreshToken($refresh_jwt, $user_id)) {
-            if (!$this->validateAccessToken($access_jwt)) {
-                $access_jwt = $this->refreshAccessToken($refresh_jwt);
-            }
+        if ($this->validateRefreshToken($user_id, $refresh_jwt)) {
+            $access_jwt = $jwts[self::ACCESS];
 
-            return [self::ACCESS => $access_jwt, self::REFRESH => $refresh_jwt];
+            return $this->validateAccessToken($access_jwt) ?
+                $access_jwt : $this->refreshAccessToken($refresh_jwt);
         }
 
         return false;
@@ -158,35 +150,56 @@ class TokensController extends BaseController
         return $this->getOne(self::SUB, $user_id);
     }
 
-    protected function create($decoded)
+    protected function getByHashcode($jwt)
     {
-        if ($decoded) {
-            $decoded[self::SHA] = hash(self::HASHING, $decoded);
+        return $this->getOne(self::SHA, hash(self::HASHING, $jwt));
+    }
 
-            $this->$this->delete($decoded[self::SUB]);
+    protected function create($jwt, $decoded = null)
+    {
+        if ($jwt && $decoded) {
+            $decoded[self::SHA] = hash(self::HASHING, $jwt);
+
             return parent::create($decoded);
         }
 
         return false;
     }
 
-    protected function update($user_id, $jwt)
+    public function update($id, $jwt)
     {
-        $decoded = $this->decodeTokens($jwt, true);
+        $decoded = $this->decodeToken($jwt, true);
 
         if ($decoded) {
-            return parent::update($user_id, $decoded);
+            $decoded[self::SHA] = hash(self::HASHING, $jwt);
+
+            return parent::update($id, $decoded);
         }
 
         return false;
     }
 
-    protected function delete($user_id)
+    public function delete($jwt)
     {
-        $stored = $this->getByUserId($user_id);
+        $stored = $this->getByHashcode($jwt);
 
         if ($stored) {
             return parent::delete($stored[self::ID]);
+        }
+
+        return false;
+    }
+
+    public function deleteAllFromUser($user_id, $jwts)
+    {
+        if ($this->validateRefreshToken($user_id, $jwts[self::REFRESH])) {
+            $stored_models = $this->model->getAllMatching([self::SUB => $user_id]);
+
+            foreach ($stored_models as $stored) {
+                $this->model->delete($stored[self::ID]);
+            }
+
+            return true;
         }
 
         return false;

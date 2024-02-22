@@ -106,7 +106,7 @@ class UsersController extends BaseController
             return $this->login($data[$this->email], $data[$this->password]);
         }
 
-        return false;
+        return null;
     }
 
     public function update($id, $data, $jwts = null)
@@ -115,13 +115,14 @@ class UsersController extends BaseController
             return $this->model->update($id, $data);
         }
 
-        return false;
+        return null;
     }
 
     public function delete($id, $jwts = null)
     {
         if ($this->authenticate($id, $jwts)) {
-            return $this->model->delete($id);
+            return $this->model->delete($id) &&
+                $this->getTokensController()->deleteAllFromUser($id, $jwts);
         }
 
         return false;
@@ -130,9 +131,9 @@ class UsersController extends BaseController
     //  ACCESS & SECURITY
 
     // Do this if user has valid tokens stored
-    public function authenticate($id, $tokens)
+    public function authenticate($id, $jwts)
     {
-        return $this->getTokensController()->validateTokens($id, $tokens);
+        return $this->getTokensController()->validateTokens($id, $jwts);
     }
 
     // Do this if user needs to do a fresh login
@@ -144,12 +145,18 @@ class UsersController extends BaseController
             return $this->getTokensController()->generateTokens($user[$this->id]);
         }
 
-        return false;
+        return null;
     }
 
-    public function logout($jwts)
+    public function logout($id, $jwts)
     {
-        return $this->getTokensController()->revokeTokens($jwts);
+        $tokens_controller = $this->getTokensController();
+
+        if ($tokens_controller->validateRefreshToken) {
+            return $this->getTokensController()->delete($id);
+        }
+
+        return false;
     }
 
     private function verifyUser($user, $email, $password)
