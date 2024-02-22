@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $temp = $tokens_controller->generateRefreshToken($user['id']);
                 echo '<br>Temp: </br>';
                 validate($tokens_controller, $temp, true);
-                $response = $tokens_controller->revokeToken($temp);
+                $response = $tokens_controller->revokeRefreshToken($temp);
                 echo '<br>Révocation: </br> ' . $response;
                 validate($tokens_controller, $temp, true);
         }
@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($type === 'delete') {
             $temp = $tokens_controller->generateRefreshToken(1);
-            $tokens_controller->revokeToken($temp);
+            $tokens_controller->revokeRefreshToken($temp);
             lister($tokens_controller, 'Ajout du jeton expiré<br>');
 
             $tokens_controller->deleteExpiredTokens();

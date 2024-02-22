@@ -9,19 +9,24 @@ use Firebase\JWT\Key;
 
 class TokensController extends BaseController
 {
-    // TIMEOUT
-    private const ACCESS_TIMEOUT = 3600;
-    private const REFRESH_TIMEOUT = 86400;
-
     // TOKENS TYPES
-    private const ACCESS = 'access_token';
     private const REFRESH = 'refresh_token';
+    private const REFRESH_TIME = 604800;
+    private const ACCESS = 'access_token';
+    private const ACCESS_TIME = 3600;
+    private const ALGORITHM = 'HS256';
+    private const HASHING = 'sha256';
 
     // COLUMNS
     protected const ID = 'id';
     protected const SUB = 'sub';
     protected const EXP = 'exp';
-    protected const REV = 'rev';
+    protected const SHA = 'sha';    // hashed
+
+    // EXCLUDED IN DB
+    protected const ISS = 'iss';
+    protected const IAT = 'iat';
+    protected const AUD = 'aud';
 
     // ENV
     private $access_key;        // Permission for secure API calls
@@ -40,128 +45,150 @@ class TokensController extends BaseController
         $this->issuer = $_ENV['JWT_ISSUER'];
         $this->audience = $_ENV['JWT_AUDIENCE'];
 
-        $this->model = new RevokedTokenModel($pdo);
+        $this->model = new TokenModel($pdo);
         parent::__construct($central_controller);
     }
 
-    // GENERATION
+    // ENCODE & DECODE
 
-    private function generateToken($user_id, $key, $expiration_time)
+    private function decodeJWT($jwt, $is_refresh = false)
     {
-        $current_time = time();
+        try {
+            $key = $is_refresh ? $this->refresh_key : $this->access_key;
 
-        // if ($isRefresh) {
-        //     $key = $this->refresh_key;
-        //     $expiration_time = self::REFRESH_TIMEOUT;
-        // } else {
-        //     $key = $this->access_key;
-        //     $expiration_time = self::ACCESS_TIMEOUT;
-        // }
-
-        $payload = [
-            'iss' => $this->issuer,
-            'aud' => $this->audience,
-            'iat' => $current_time, // Issued at
-            self::EXP => $current_time + $expiration_time, // Expiration
-            self::SUB => $user_id
-        ];
-
-        return JWT::encode($payload, $key, $this->algorithm);
+            return (array) JWT::decode($jwt, new Key($key, self::ALGORITHM));
+        } catch (Exception $e) {
+            return false;
+        }
     }
 
     private function generateRefreshToken($user_id)
     {
-        return $this->generateToken($user_id, $this->refresh_key, self::REFRESH_TIMEOUT);
+        $issued_at = time();
+        $payload = [
+            self::SUB => $user_id,
+            self::IAT => $issued_at,
+            self::EXP => $issued_at + self::REFRESH_TIME,
+            self::ISS => $this->issuer,
+            self::AUD => $this->audience
+        ];
+        $jwt = JWT::encode($payload, $this->refresh_key, self::ALGORITHM);
+
+        $payload[self::SHA] = hash(self::HASHING, $jwt);
+        $this->create($payload);
+
+        return $jwt;
     }
 
-    public function generateAccessToken($user_id, $refresh_token)
+    private function generateAccessToken($user_id)
     {
-        if ($this->isValid($user_id, $refresh_token, true)) {
-            return $this->generateToken($user_id, $this->access_key, self::ACCESS_TIMEOUT);
-        }
+        $issued_at = time();
+        $payload = [
+            self::SUB => $user_id,
+            self::IAT => $issued_at,
+            self::EXP => $issued_at + self::ACCESS_TIME,
+            self::ISS => $this->issuer,
+            self::AUD => $this->audience
+        ];
 
-        return false;
+        return JWT::encode($payload, $this->access_key, self::ALGORITHM);
+    }
+
+    private function refreshAccessToken($refresh_token)
+    {
+        $decoded = $this->decodeJWT($refresh_token, true);
+
+        $issued_at = time();
+        $decoded[self::IAT] = $issued_at;
+        $decoded[self::EXP] = $issued_at + self::ACCESS_TIME;
+
+        return JWT::encode($decoded, $this->access_key, self::ALGORITHM);
     }
 
     public function generateTokens($user_id)
     {
         $refresh_token = $this->generateRefreshToken($user_id);
-        $access_token = $this->generateAccessToken($user_id, $refresh_token);
+        $access_token = $this->refreshAccessToken($refresh_token);
 
         return [self::ACCESS => $access_token, self::REFRESH => $refresh_token];
     }
 
     // VALIDATION
 
-    private function decodeToken($token, $key)
+    public function validateRefreshToken($jwt, $user_id)
     {
-        try {
-            return (array) JWT::decode($token, new Key($key, $this->algorithm));
-        } catch (Exception $e) {
-            return false;
-        }
-    }
+        $stored = $this->getByUserId($user_id);
 
-    private function isValid($user_id, $token, $is_refresh = false)
-    {
-        $decoded = $this->decodeToken($token, $is_refresh ? $this->refresh_key : $this->access_key);
+        if ($stored && $stored[self::EXP] < time()) {
+            $hashed_jwt = hash(self::HASHING, $jwt);
 
-        if ($this->isRevoked($token) || !$decoded) {
-            return false;
-        } elseif ($decoded[self::EXP] < time() && $user_id === $decoded[self::SUB]) {
-            return true;
-        } else {
-            return $this->revokeToken($token, $is_refresh);
-        }
-    }
-
-    public function validateAccessToken($user_id, $access_token)
-    {
-        return $this->isValid($user_id, $access_token, false);
-    }
-
-    public function validateRefreshToken($user_id, $refresh_token)
-    {
-        return $this->isValid($user_id, $refresh_token, true);
-    }
-
-    public function validateTokens($user_id, $tokens)
-    {
-        $access_token = $tokens[self::ACCESS];
-        $refresh_token = $tokens[self::REFRESH];
-
-        return $this->validateAccessToken($user_id, $access_token) &&
-            $this->validateRefreshToken($user_id, $refresh_token);
-    }
-
-    // DATABASE
-
-    public function isRevoked($token)
-    {
-        return $this->model->getOne(self::ID, $token, [self::ID]);
-    }
-
-    public function revokeToken($token, $is_refresh = false)
-    {
-        $decoded = $this->decodeToken($token, $is_refresh);
-
-        if ($decoded) {
-            $decoded[self::ID] = $token;
-            $decoded[self::REV] = time();
-            $this->model->create($decoded);
-
-            return true;
+            return hash_equals($stored[self::SHA], $hashed_jwt);
         }
 
         return false;
     }
 
-    public function revokeTokens($tokens)
+    public function validateAccessToken($jwt)
     {
-        $access_token = $tokens[self::ACCESS];
-        $refresh_token = $tokens[self::REFRESH];
+        $decoded = $this->decodeJWT($jwt);
 
-        return $this->revokeToken($access_token, false) && $this->revokeToken($refresh_token, true);
+        return $decoded && $decoded[self::EXP] < time();
+    }
+
+    public function validateTokens($jwts, $user_id)
+    {
+        $refresh_jwt = $jwts[self::REFRESH];
+        $access_jwt = $jwts[self::ACCESS];
+
+        if ($this->validateRefreshToken($refresh_jwt, $user_id)) {
+            if (!$this->validateAccessToken($access_jwt)) {
+                $access_jwt = $this->refreshAccessToken($refresh_jwt);
+            }
+
+            return [self::ACCESS => $access_jwt, self::REFRESH => $refresh_jwt];
+        }
+
+        return false;
+    }
+
+    // DATABASE
+
+    protected function getByUserId($user_id)
+    {
+        return $this->getOne(self::SUB, $user_id);
+    }
+
+    protected function create($decoded)
+    {
+        if ($decoded) {
+            $decoded[self::SHA] = hash(self::HASHING, $decoded);
+
+            return parent::create($decoded);
+        }
+
+        return false;
+    }
+
+    protected function update($user_id, $jwt)
+    {
+        $decoded = $this->decodeJWT($jwt, true);
+
+        if ($decoded) {
+            return parent::update($user_id, $decoded);
+        }
+
+        return false;
+    }
+
+    protected function delete($user_id)
+    {
+        $stored = $this->getByUserId($user_id);
+
+        if ($stored) {
+            return parent::delete($stored[self::ID]);
+        }
+
+        return false;
     }
 
     public function deleteExpiredTokens()
