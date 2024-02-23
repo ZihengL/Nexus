@@ -9,9 +9,15 @@
   import LoginRegister from '/src/components/LoginRegister.vue';
   import Profile from '/src/components/Profile.vue';
   import { ref, getCurrentInstance } from 'vue';
+  import { inject } from 'vue';
 
-  const { proxy } = getCurrentInstance();
-  const isConnected = ref(true);
+  //const { proxy } = getCurrentInstance();
+  //const isConnected = ref(true);
+
+const isConnected = inject('isConnected');
+const toggleConnection = inject('toggleConnection');
+
+
   
   const devsId = 3;
   console.log('id devs ', devsId);
@@ -20,17 +26,18 @@
 	
   const toggleProfileForm = () => {
     isProfileVisible.value = false;
-    isConnected.value = true;
-    proxy.$isConnected = isConnected.value; // Assurez-vous que $isConnected est mis à jour ici
+    toggleConnection(); // Corrigé pour appeler la fonction
+    console.log('glob 2 ', isConnected.value)
     localStorage.setItem("profileVisible", isProfileVisible.value.toString());
-  };
+};
 
-  const toggleLoginForm = () => {
+const toggleLoginForm = () => {
     isProfileVisible.value = true;
-    isConnected.value = false;
-    proxy.$isConnected = isConnected.value; // Assurez-vous que $isConnected est mis à jour ici
+    toggleConnection(); // Corrigé pour appeler la fonction
+    console.log('glob 2', isConnected.value)
     localStorage.setItem("profileVisible", isProfileVisible.value.toString());
-  };
+};
+
 </script>
 
 

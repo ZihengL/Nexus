@@ -14,6 +14,8 @@
   import NavBar from '../../components/NavBar.vue';
   import Footer from '../../components/Footer.vue';
   import DefaultView from './View.vue'
+
+  
 </script>
 
 <style src="../../styles//settings.scss"></style>

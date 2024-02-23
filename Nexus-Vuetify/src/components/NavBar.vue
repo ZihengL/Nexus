@@ -17,7 +17,7 @@
         </router-link>
         <v-spacer></v-spacer>
         <router-link to="/Login" class="router glow">
-          <span v-if="proxy.$isConnected" class="link-btn" text>Deconnexion</span>
+          <span v-if="isConnected.value" class="link-btn" text>Deconnexion</span>
           <span v-else class="link-btn" text>Connexion</span>
         </router-link>
 
@@ -28,13 +28,19 @@
 
 <script setup>
 import { ref, getCurrentInstance } from 'vue';
+import { inject } from 'vue';
 
 let hover = ref(false);
 let logoURL = '/src/assets/logos/Nexus_c5c3c0.svg';
 let logo2URL = '/src/assets/logos/Nexus_171d25.svg';
 
-const { proxy } = getCurrentInstance();
-console.log(' global : ', proxy.$isConnected); // Utilisez $blogName pour accéder à la propriété globale
+//const { proxy } = getCurrentInstance();
+//console.log(' global : ', proxy.$isConnected); // Utilisez $blogName pour accéder à la propriété globale
+
+
+// Injection de l'état isConnected
+const isConnected = inject('isConnected');
+console.log('glob ', isConnected.value)
 
 const changeUrl = () => {
   hover.value = true;
@@ -43,6 +49,11 @@ const changeUrl = () => {
 const rechangeUrl = () => {
   hover.value = false;
 };
+import { watchEffect } from 'vue';
+
+watchEffect(() => {
+  console.log('isConnected changed:', isConnected.value);
+});
 </script>
 
 
