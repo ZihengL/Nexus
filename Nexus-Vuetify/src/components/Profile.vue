@@ -1,6 +1,6 @@
 <template>
   <!-- Created By CodingNepal -->
-  <div v-if="leDevs" class="allP">
+  <div v-if="leDevs && gameList" class="allP">
     <div class="containerProfile" :class="isHimself ? 'container1' : 'container2'">
       <div class="wrapper">
         <div class="description  glass roundBorderSmall" >
@@ -27,11 +27,11 @@
           </div>
         </div>
         <div style="display: flex; margin-top: 1.5%;" class=" glass roundBorderSmall">
-          <div class="laListeJeu">
-            <h2>Liste de jeu</h2>
-            <liste-de-jeu />
-            <liste-de-jeu />
-            <liste-de-jeu />
+          <div class="laListeJeu" >
+            <div v-for="(item, index) in gameList" :key="index">
+              <liste-de-jeu :idJeu="item.id" :himself="props.isHimself" class="game"/>
+            </div>
+
           </div>
         </div>
       </div>
@@ -56,12 +56,30 @@ const props = defineProps(['isHimself', 'idDevl']);
 
 console.log(props);
 const leDevs = ref(null);
+const gameList = ref(null);
 
 onMounted(async () => {
     try {
       const dataGame = await fetchData("users", "getOne", "id", props.idDevl, null, "GET");
       leDevs.value = dataGame;
-      //console.log('leDevs : ', leDevs)
+      console.log('leDevs : ', leDevs)
+
+      if(leDevs.value){
+        
+        const filters = {
+          developerID: props.idDevl,
+        }
+        const sorting = {
+          id: false
+        }
+
+        const includedColumns = ['id', 'title']
+        const jsonBody = { filters, sorting, includedColumns }
+        
+        const dataDevs = await fetchData('games', 'getAllMatching', null, null, jsonBody, 'POST');
+        gameList.value = dataDevs;
+        console.log('game ', gameList)
+      }
     } catch (error) {
         console.error('Error fetching data:', error);
     }
