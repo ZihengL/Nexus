@@ -72,11 +72,13 @@ class TokensController extends BaseController
             self::ISS => $this->issuer,
             self::AUD => $this->audience
         ];
+
         $jwt = JWT::encode($payload, $this->refresh_key, self::ALGORITHM);
+        if ($this->create($jwt, $payload)) {
+            return $jwt;
+        }
 
-        $this->create($jwt, $payload);
-
-        return $jwt;
+        return null;
     }
 
     private function generateAccessToken($user_id)
