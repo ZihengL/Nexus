@@ -5,20 +5,63 @@
  */
 
 // Plugins
-import { registerPlugins } from '@/plugins'
-import { createApp } from 'vue'
+import { registerPlugins } from "@/plugins";
 
 // Components
-import App from './App.vue';
+import App from "./App.vue";
+//import { Vue }  from 'vue';
+//import { isConnected } from './JS/GlobalVar';
 
-// Components
-const app = createApp(App)
+// Composables
+import { createApp } from "vue";
 
-// Utilisez app.config.globalProperties pour définir une propriété globale
-app.config.globalProperties.$blogName = false;
+const app = createApp(App);
 
-// Enregistrez les plugins
-registerPlugins(app)
+registerPlugins(app);
+//Vue.prototype.$isConnected = isConnected
 
-// Montez l'application
-app.mount('#app')
+app.config.globalProperties.$fetchData = function (
+  table,
+  crud_action,
+  columnName = null,
+  value = null,
+  jsonBody = null,
+  method
+) {
+  const baseURL = "http://localhost:4208/Nexus/Backend/";
+  let uri = `${baseURL}${table}/${crud_action}`;
+  if (columnName && value) {
+    uri += `/${columnName}/${value}`;
+  }
+
+  const options = {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+    },
+
+    body: method === "POST" ? JSON.stringify(jsonBody) : null,
+  };
+
+  return fetch(uri, options)
+    .then((response) => {
+      if (!response.ok) {
+        console.error(`Error: ${response.status} ${response.statusText}`);
+        return null;
+      }
+      if (response.status !== 200) {
+        console.error(
+          `Error: Non-200 status code(${response.status}), ${response.statusText}`
+        );
+        return [];
+      }
+
+      return response.json();
+    })
+    .catch((error) => {
+      console.error("Network error:", error);
+      return null;
+    });
+};
+
+app.mount("#app");

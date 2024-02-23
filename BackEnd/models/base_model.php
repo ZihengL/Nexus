@@ -34,6 +34,8 @@ class BaseModel
 
     protected function query($sql, $params = [])
     {
+        // echo "<br> query base_model <br>";
+        // print_r($params);
         try {
             $stmt = $this->pdo->prepare($sql);
 
@@ -44,9 +46,9 @@ class BaseModel
             }
 
             return $stmt;
-        } catch (PDOException $exception) {
+        } catch (PDOException $e) {
             // return $exception;
-            throw new Exception("Database query error: " . $exception->getMessage());
+            throw new Exception("Database query error: " . $e->getMessage());
         }
     }
 
@@ -62,8 +64,8 @@ class BaseModel
             $stmt->execute();
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $exception) {
-            return $exception;
+        } catch (PDOException $e) {
+            throw new Exception("Database query error: " . $e->getMessage());
         }
     }
 
@@ -135,12 +137,16 @@ class BaseModel
         $columns = implode(', ', $this->columns);
         $placeholders = substr(str_repeat(",?", count($this->columns)), 1);
 
+        // echo "<br> create base_model <br>";
+        // print_r($placeholders);
+
         $sql = "INSERT INTO $this->table ($columns) VALUES ($placeholders)";
 
         if ($this->query($sql, $this->formatData($data))) {
             return true;
         } else {
-            return false;
+
+            // return false;
         }
     }
 
@@ -158,11 +164,20 @@ class BaseModel
         }
     }
 
+    // public function delete($id)
+    // {
+    //     $sql = "DELETE FROM $this->table WHERE id = ?";
+
+    //     return $this->query($sql, [$id]);
+    // }
+
     public function delete($id)
     {
         $sql = "DELETE FROM $this->table WHERE id = ?";
+        $stmt = $this->pdo->prepare($sql);
 
-        return $this->query($sql, [$id]);
+        // Execute returns true on success, false on failure
+        return $stmt->execute([$id]);
     }
 
     // TOOLS
@@ -210,6 +225,7 @@ class BaseModel
     }
 
     //  FILTERS AND SORTING
+
     public function applyFilters($filters, $included_columns = [])
     {
         $sql_filters = "";

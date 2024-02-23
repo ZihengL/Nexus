@@ -14,31 +14,21 @@ class ReviewModel extends BaseModel
     }
 
 
-    public function getByGameId($columnName, $gameId)
-    {
-        return parent::getAll($columnName, $gameId);
-    }
+    // public function create($data)
+    // {
+    //     // echo "<br> create user_model <br>";
+    //     // print_r($data);
+    //     if (!$this->validateReview($data)) {
+    //         // return false;
+    //         echo "create review: ";
+
+    //     }
+    //     // return parent::create($new_data);
+    // }
 
 
-    public function getByUserId($columnName, $userId)
-    {
-        return parent::getAll($columnName, $userId);
-    }
+ 
 
 
-    public function getByrating($columnName, $userId)
-    {
-        return parent::getAll($columnName, $userId);
-    }
 
-
-    public function getByComment($columnName, $comment)
-    {
-        return parent::getAll($columnName, $comment);
-    }
-
-    public function getBytimestampt($columnName, $timestamp)
-    {
-        return parent::getAll($columnName, $timestamp);
-    }
 }

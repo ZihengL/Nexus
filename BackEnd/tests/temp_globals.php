@@ -21,6 +21,14 @@ function printer($content, $title = null)
     return $result . '<br>';
 }
 
+function printall($users)
+{
+    echo '<hr><pre>';
+    print_r($users);
+    echo '</pre>';
+}
+
+
 global $path;
 $path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd/';
 
