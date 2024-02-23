@@ -6,7 +6,7 @@
 
 // Plugins
 import { registerPlugins } from '@/plugins'
-import { createApp } from 'vue'
+import { createApp, ref } from 'vue';
 
 // Components
 import App from './App.vue';
@@ -15,7 +15,7 @@ import App from './App.vue';
 const app = createApp(App)
 
 // Utilisez app.config.globalProperties pour définir une propriété globale
-app.config.globalProperties.$blogName = false;
+app.config.globalProperties.$isConnected = ref(false);
 
 // Enregistrez les plugins
 registerPlugins(app)

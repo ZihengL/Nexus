@@ -16,9 +16,11 @@
           <span class="link-btn">A propos</span>
         </router-link>
         <v-spacer></v-spacer>
-        <router-link to="/Login" class="router glow"> <!-- v-if="!$isConnected"-->
-          <span class="link-btn" text>Connexion</span>
+        <router-link to="/Login" class="router glow">
+          <span v-if="proxy.$isConnected" class="link-btn" text>Deconnexion</span>
+          <span v-else class="link-btn" text>Connexion</span>
         </router-link>
+
       </div>
     </div>
   </nav>
@@ -32,15 +34,13 @@ let logoURL = '/src/assets/logos/Nexus_c5c3c0.svg';
 let logo2URL = '/src/assets/logos/Nexus_171d25.svg';
 
 const { proxy } = getCurrentInstance();
-console.log(' global : ', proxy.$blogName); // Utilisez $blogName pour accéder à la propriété globale
+console.log(' global : ', proxy.$isConnected); // Utilisez $blogName pour accéder à la propriété globale
 
 const changeUrl = () => {
-  console.log('changeUrl called');
   hover.value = true;
 };
 
 const rechangeUrl = () => {
-  console.log('rechangeUrl called');
   hover.value = false;
 };
 </script>
