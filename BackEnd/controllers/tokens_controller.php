@@ -93,9 +93,9 @@ class TokensController extends BaseController
         return JWT::encode($payload, $this->access_key, self::ALGORITHM);
     }
 
-    private function refreshAccessToken($refresh_token)
+    public function refreshAccessToken($refresh_jwt)
     {
-        $decoded = $this->decodeToken($refresh_token, true);
+        $decoded = $this->decodeToken($refresh_jwt, true);
 
         $issued_at = time();
         $decoded[self::IAT] = $issued_at;
@@ -104,15 +104,27 @@ class TokensController extends BaseController
         return JWT::encode($decoded, $this->access_key, self::ALGORITHM);
     }
 
-    public function generateTokens($user_id)
+    public function generateTokensOnValidation($user, $email, $password)
     {
-        $refresh_token = $this->generateRefreshToken($user_id);
-        $access_token = $this->refreshAccessToken($refresh_token);
+        if ($this->validateUser($user, $email, $password)) {
+            $user_id = $user[self::SUB];
 
-        return [self::ACCESS => $access_token, self::REFRESH => $refresh_token];
+            $refresh_jwt = $this->generateRefreshToken($user_id);
+            $access_jwt = $this->generateAccessToken($user_id);
+
+            return [self::ACCESS => $access_jwt, self::REFRESH => $refresh_jwt];
+        }
+
+        return null;
     }
 
     // VALIDATION
+
+    private function validateUser($user, $email, $password)
+    {
+        return $user && $user['email'] === $email &&
+            password_verify($password, $user['password']);
+    }
 
     public function validateRefreshToken($user_id, $jwt)
     {
@@ -131,16 +143,18 @@ class TokensController extends BaseController
 
     public function validateTokens($user_id, $jwts)
     {
+        $access_jwt = $jwts[self::ACCESS];
         $refresh_jwt = $jwts[self::REFRESH];
 
-        if ($this->validateRefreshToken($user_id, $refresh_jwt)) {
-            $access_jwt = $jwts[self::ACCESS];
+        if ($this->validateAccessToken($access_jwt)) {
+            return $jwts;
+        } elseif ($this->validateRefreshToken($user_id, $refresh_jwt)) {
+            $jwts[self::ACCESS] = $this->refreshAccessToken($refresh_jwt);
 
-            return $this->validateAccessToken($access_jwt) ?
-                $access_jwt : $this->refreshAccessToken($refresh_jwt);
+            return $jwts;
+        } else {
+            return null;
         }
-
-        return false;
     }
 
     // DATABASE
