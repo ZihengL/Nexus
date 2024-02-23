@@ -145,7 +145,7 @@ class BaseModel
         if ($this->query($sql, $this->formatData($data))) {
             return true;
         } else {
-         
+
             // return false;
         }
     }
@@ -164,11 +164,20 @@ class BaseModel
         }
     }
 
+    // public function delete($id)
+    // {
+    //     $sql = "DELETE FROM $this->table WHERE id = ?";
+
+    //     return $this->query($sql, [$id]);
+    // }
+
     public function delete($id)
     {
         $sql = "DELETE FROM $this->table WHERE id = ?";
+        $stmt = $this->pdo->prepare($sql);
 
-        return $this->query($sql, [$id]);
+        // Execute returns true on success, false on failure
+        return $stmt->execute([$id]);
     }
 
     // TOOLS

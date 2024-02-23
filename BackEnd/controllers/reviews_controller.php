@@ -73,7 +73,7 @@ class ReviewsController extends BaseController
     {
         // echo "<br> create reviews_controller <br>";
         // print_r($data);
-        if ($this->validateReview($data)) {
+        if ($this->validateReview("create", $data)) {
             if (!$this->checkReviewExists($data)) {
                 // echo "create review: ";
                 //create review, remove the tokens and send infos without tokens
@@ -96,23 +96,14 @@ class ReviewsController extends BaseController
     public function delete($data)
     {
         // echo "<br> delete reviews_controller <br>";
-        /* validate the data :
-                check the review, the user, game exist and valid tokens
-                
-             
-
-        */
-
         // print_r($data);
-        if ($this->validateReview($data)) {
-            if (!$this->checkReviewExists($data)) {
+        if ($this->validateReview("delete",$data)) {
+            if ($this->getOne("id", $data["id"])) {
                 // echo "delete review: ";
                 //delete review, remove the tokens and send infos without tokens
-                unset($data['tokens']);
-                $data['timestamp'] = date('Y-m-d');
 
-                // echo "proper review  : ", print_r($data, true), "<br>";
-                if ($this->model->create($data)) {
+                // echo "proper review  : ",$data["id"], "<br>";
+                if ($this->model->delete($data["id"])) {
                     return $this->updateGameRatingAverage($data["gameID"]);
                     // return true; 
                 }
@@ -146,6 +137,7 @@ class ReviewsController extends BaseController
     {
         $reviews = $this->getAll("gameID", $gameID, null, null);
         // echo "reviews list : ", print_r($reviews, true), "<br>";
+        //  echo "reviews list : ",, "<br>";
         if (!empty($reviews)) {
             $totalRating = 0;
             foreach ($reviews as $review) {
@@ -170,9 +162,10 @@ class ReviewsController extends BaseController
 
 
 
-    public function validateReview($data)
+    public function validateReview($action, $data)
     {
         // echo "validateReview: ", print_r($data, true), "<br>";
+        $id = $data["id"] ?? null;
         $userID = $data["userID"] ?? null;
         $gameID = $data["gameID"] ?? null;
         $rating = $data["rating"] ?? null;
@@ -185,18 +178,39 @@ class ReviewsController extends BaseController
         // echo "refreshToken: " . $refreshToken . "<br>";
 
 
-        $isEmptyData = empty($gameID) || empty($rating) || empty($comment) || empty($accessToken) || empty($refreshToken);
+        $isEmptyData_forCreateUpdate = empty($userID) || empty($gameID) || empty($rating) || empty($comment) || empty($accessToken) || empty($refreshToken);
+        $isEmptyData_forDelete = empty($id) || empty($userID) || empty($gameID) || empty($accessToken) || empty($refreshToken);
         $gameExists = $this->getGamesController()->getOne("id", $gameID, null);
         $userExists = $this->getUsersController()->getOne("id", $userID, null);
-        $areValidTokens = $this->getTokensController()->validateTokens($userID, $tokens);
+        // $areValidTokens = $this->getTokensController()->validateTokens($userID, $tokens);
         // echo "gameExists: ", print_r($gameExists, true), "<br>";
         // echo "userExists: ", print_r($userExists, true), "<br>";
         // echo "areValidTokens: ". $areValidTokens . "<br>";
-        if ($isEmptyData || !$gameExists || !$userExists || $areValidTokens) {
-            // echo "failed";
-            return false;
+
+        switch ($action) {
+            case 'create':
+                // echo ": hi <br>";
+                if ($isEmptyData_forCreateUpdate || !$gameExists || !$userExists ) {
+                    return false;
+                }else{
+                    // echo ": blue <br>";
+                    return true;
+                }
+            case 'update':
+                if ($isEmptyData_forCreateUpdate || !$gameExists || !$userExists ) {  //|| !$areValidTokens
+                    return false;
+                }else{
+                    return true;
+                }
+            case 'delete':
+                if ($isEmptyData_forDelete || !$gameExists || !$userExists ) {  //|| !$areValidTokens
+                    return false;
+                }else{
+                    return true;
+                }
+            default:
+                return false;
         }
-        return true;
 
     }
 

@@ -34,7 +34,7 @@ export function fetchData (
     }
   }
 
-  if ((method === 'POST' || method === 'PUT') && jsonBody) {
+  if ((method === 'POST' || method === 'PUT' || method === 'DELETE') && jsonBody) {
     // console.log("hi");
     fetchOptions.body = JSON.stringify(jsonBody)
   }
@@ -43,7 +43,7 @@ export function fetchData (
   // Use the 'uri' variable directly instead of concatenating the baseURL and uri again
   return fetch(uri, fetchOptions)
     .then(response => {
-      if (!response.ok) {
+      if (!response.ok) { 
         return Promise.reject(response)
       }
       console.log(' response : ', response.text())

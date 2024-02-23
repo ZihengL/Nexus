@@ -5,7 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     // Return only the headers and not the content
     // Only allow CORS if we're doing a GET - this is a preflight request
     header('Access-Control-Allow-Origin: *');
-    header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
     header('Access-Control-Allow-Headers: Content-Type, Authorization');
     header('Access-Control-Allow-Credentials: true');
     exit;
@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 
 header('Access-Control-Allow-Origin: *');
-// header('Access-Control-Allow-Origin: http://localhost:3001');
+// header('Access-Control-Allow-Origin: http://localhost:3000');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 header('Access-Control-Allow-Credentials: true');
@@ -60,22 +60,16 @@ $decodedData = json_decode($rawData, true);
 switch ($method) {
     case 'GET':
         // print_r($explodedURI);
-        // echo "<br> The requested URI is: " . $explodedURI;
+        echo "<br> The requested URI is: " . $method;
         // echo "<br>  columName : " . $columName;
         handleGet($table, $crud_action, $central_controller, $columName, $value, $includedColumns, $sorting);
         break;
     case 'POST':
+    case "DELETE":
+    case 'PUT':
         handlePost($table, $crud_action, $central_controller, $columName, $value, $includedColumns, $sorting, $decodedData);
         break;
-    case 'PUT':
-        handlePut();
-        break;
-    case 'DELETE':
-        handleDelete();
-        break;
     default:
-        // Handle unsupported methods
-        http_response_code(405); // Method Not Allowed
         echo json_encode(['error' => 'Method Not Allowed']);
         break;
 }
@@ -102,7 +96,6 @@ function handleGet($table, $crud_action, $centralController, $columName, $value,
             echo json_encode($result);
             break;
         default:
-            http_response_code(405);
             echo json_encode(['error' => "Table $table Doesn't Exist"]);
             break;
     }
@@ -121,6 +114,7 @@ function handlePost($table, $crud_action, $central_controller, $columName, $valu
         case 'getAllMatching':
         case 'insert':
         case 'update':
+        case 'delete':
             // echo "<br>  getByColumnName : " . $decodedData;
             // print_r($decodedData);
             // print_r($decodedData);
@@ -129,7 +123,6 @@ function handlePost($table, $crud_action, $central_controller, $columName, $valu
             echo json_encode($result);
             break;
         default:
-            http_response_code(405);
             echo json_encode(['error' => "Action $crud_action is unnaplicable"]);
             break;
     }
@@ -144,8 +137,12 @@ function handleRawData($centralController, $decodedData, $controllerName, $crud_
     } else {
         if (isset($decodedData['filters'])) {
             return handle_filterData($centralController, $decodedData, $controllerName, $crud_action);
-        } else if (isset($decodedData['create'])) {
+        } else if (isset($decodedData['createData'])) {
             return handleCreate($centralController, $decodedData, $controllerName, $crud_action);
+        } else if (isset($decodedData['deleteData'])) {
+            return handleDelete($centralController, $decodedData, $controllerName, $crud_action);
+        } else if (isset($decodedData['updateData'])) {
+            return handleUpdate($centralController, $decodedData, $controllerName, $crud_action);
         } else if (isset($decodedData['login'])) {
             return handleLogin($centralController, $decodedData, $controllerName, $crud_action);
         } else if (isset($decodedData['logout'])) {
@@ -192,15 +189,30 @@ function handleLogout($centralController, $decodedData, $controllerName, $crud_a
 
 function handleCreate($centralController, $decodedData, $controllerName, $crud_action)
 {
-    $data = $decodedData['create'];
+    $data = $decodedData['createData'];
 
     // echo "<br> register data : <br>";
     // print_r($data);
     return $centralController->$controllerName->$crud_action($data);
 }
 
+function handleDelete($centralController, $decodedData, $controllerName, $crud_action)
+{
+    $data = $decodedData['deleteData'];
 
+    // echo "<br> delete data : <br>";
+    // print_r($data);
+    return $centralController->$controllerName->$crud_action($data);
+}
 
+function handleUpdate($centralController, $decodedData, $controllerName, $crud_action)
+{
+    $data = $decodedData['updateData'];
+
+    // echo "<br> update data : <br>";
+    // print_r($data);
+    return $centralController->$controllerName->$crud_action($data);
+}
 
 
 
