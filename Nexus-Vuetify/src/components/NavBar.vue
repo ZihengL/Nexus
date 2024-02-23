@@ -26,6 +26,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import { fetchData } from '@/JS/fetch';
 
 let hover = ref(false);
 let logoURL = '/src/assets/logos/Nexus_c5c3c0.svg';
@@ -41,8 +42,24 @@ const rechangeUrl = () => {
   hover.value = false;
 };
 
-// Accédez directement à la propriété globale sans utiliser "this"
-//console.log('var glob : ', $isConnected);
+
+
+const filters = {
+  ratingAverage: { gt: 1, lte: 7 },
+}
+const sorting = {
+  ratingAverage: true
+}
+
+const includedColumns = ['id', 'developerID', 'title']
+
+const jsonBody = { filters, sorting, includedColumns }
+
+fetchData('games', 'getAllMatching', null, null, jsonBody, 'POST')
+.then(data => {
+
+  console.log(data)
+});
 </script>
 
 

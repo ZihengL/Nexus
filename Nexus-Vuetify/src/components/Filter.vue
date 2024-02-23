@@ -21,6 +21,10 @@
                 <input type="checkbox" name="sports" value="sports"> <span>Sports</span>
             </label>
         </div>
+        <!-- Search Bar moved here, under the filters -->
+        <div class="search-container">
+            <input type="text" id="gameSearch" name="gameSearch" placeholder="Chercher par filtre">
+        </div>
     </div>    
 </template>
 <style scoped>
@@ -87,5 +91,21 @@ input[type="checkbox"]:checked + .filter-label:before {
 
 input[type="checkbox"] {
     display: none;
+}
+.search-container {
+    margin-top: 20px; /* Adjust space above search bar as needed */
+}
+
+#gameSearch {
+    width: 100%;
+    padding: 10px;
+    border-radius: 4px;
+    border: 2px solid #303c3f;
+    background: rgba(4, 148, 251, 0.256);
+    color: #ffffff;
+}
+#gameSearch::placeholder {
+    color: #ffffff; /* Custom color for placeholder text */
+    opacity: 1;
 }
 </style>

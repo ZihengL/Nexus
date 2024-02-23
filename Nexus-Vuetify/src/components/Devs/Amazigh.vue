@@ -6,15 +6,24 @@
     <div class="info">
       <h1>Amazigh</h1>
       <h2>Développeur Front-End</h2>
-      <p>Développeur web junior, qui s'intéresse beaucoup à la creation de site innovant.
-        s'intéresse beaucoup à l'intéraction client.
+      <p>Développeur web junior, qui s'intéresse beaucoup à la création de sites innovants, mais
+        aussi a l'interaction client.
       </p>
+      <div class="all-info">
       <a href="https://github.com/FrontEndJuniorDev" target="_blank" class="info-link">Visitez mon Github</a>
+      <a href="amazighmaloum04@gmail.com" target="_blank" class="info-link">me contacter</a>
+    </div>
     </div>
   </div>
 </template>
 
 <style>
+.all-info {
+  display: flex;
+  gap: 20px; /* Adjusted spacing */
+  justify-content: center;
+  align-items: center;
+}
 
 .amazon {
   display: flex;
