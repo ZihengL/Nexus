@@ -42,8 +42,6 @@ const rechangeUrl = () => {
   hover.value = false;
 };
 
-
-
 const filters = {
   ratingAverage: { gt: 1, lte: 7 },
 }

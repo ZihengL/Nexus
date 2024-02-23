@@ -1,6 +1,6 @@
 <template>
   <!-- Created By CodingNepal -->
-  <div class="allP">
+  <div v-if="leDevs" class="allP">
     <div class="containerProfile" :class="isHimself ? 'container1' : 'container2'">
       <div class="wrapper">
         <div class="description  glass roundBorderSmall" >
@@ -8,7 +8,7 @@
             <img src="../assets/Rich_Ricasso.png" alt="John" class="imgProfil" />
           </div>
           <div class="champUtilisateur">
-            <h3>Nom Prenom</h3>
+            <h3>{{ leDevs.user }}</h3>
             <br>
             <p>description</p>
           </div>
@@ -47,11 +47,26 @@
 
 <script setup>
 import ListeDeJeu from './ListeDeJeu.vue';
-  const props = defineProps(['isHimself']);
-  console.log(props.isHimself);
-
+import { defineProps, ref, onMounted } from 'vue';
 import Amis from './amis.vue';
+import { fetchData } from '../JS/fetch';
+
+const props = defineProps(['isHimself', 'idDevl']);
+
+console.log(props);
+const leDevs = ref(null);
+
+onMounted(async () => {
+    try {
+      const dataGame = await fetchData("users", "getOne", "id", props.idDevl, null, "GET");
+      leDevs.value = dataGame;
+      //console.log('leDevs : ', leDevs)
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+});
 
 </script>
+
 
 <style src="../styles/ProfileStyle.scss"></style>

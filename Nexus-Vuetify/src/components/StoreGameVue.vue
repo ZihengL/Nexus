@@ -11,10 +11,11 @@
         <div class="ratings">
             <v-rating
                 hover
+                half-increments
                 :length="5"
                 :size="32"
-                :model-value="3"
-                active-color="primary"
+                :model-value="LeGame.ratingAverage"
+                active-color= rgba(3,33,76,1)
                 class="rat"
             />
         </div>

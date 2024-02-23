@@ -13,7 +13,14 @@
           <p>{{ LeGame.description }}</p>
         </div>
         <div class="ratings">
-          <v-rating hover :length="5" :size="32" :model-value="3" active-color="primary" class="rat" />
+          <v-rating 
+            hover
+            half-increments
+            :length="5" 
+            :size="32" 
+            :model-value="LeGame.ratingAverage" 
+            active-color="primary" 
+            class="rat" />
         </div>
         <div class="devs">
           <p><b>Developeur : </b> {{ devName }}</p>
@@ -71,12 +78,9 @@
 
         const includedColumns = ['id', 'user']
         const jsonBody = { filters, sorting, includedColumns }
-
-        //fetchData("users", "getOne", "id", devId, null, "GET")
         
         const dataDevs = await fetchData('users', 'getAllMatching', null, null, jsonBody, 'POST');
         let devName2 = dataDevs;
-        //console.log('devs : ' , devName2[0].user)
         devName.value = devName2[0].user
         console.log('devs : ' , devName._value)
       }
