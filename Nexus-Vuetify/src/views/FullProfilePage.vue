@@ -1,5 +1,5 @@
 <template>
-  <div id="fullProfile">
+  <div v-if="user" id="fullProfile">
 
     <form action="#" class=" glass">
           
@@ -11,7 +11,7 @@
           </v-avatar>
           <!-- ... Signup form content ... -->
           <div class="field field2">
-            <input type="text" placeholder="Nom *"  required>
+            <input type="text" :placeholder="user.user"  required>
             <input type="text" placeholder="Prenom *"  required>
           </div>
           <div class="field">
@@ -67,30 +67,39 @@
 
 
 </style>
-<script>
-export default {
-  data() {
-    return {
-      username: '',
-      email: '',
-      bio: '',
-      isUsernameValid: true,
-      isEmailValid: true,
-      isBioValid: true,
-    };
-  },
-  methods: {
-    saveProfile() {
-      this.isUsernameValid = !!this.username;
-      this.isEmailValid = !!this.email;
-      this.isBioValid = !!this.bio;
-      
-      if (this.isUsernameValid && this.isEmailValid && this.isBioValid) {
-        alert('Profile saved successfully!');
-        // Implement the save logic here
-      }
+<script setup>
+import { defineProps, ref, onMounted } from 'vue';
+import { fetchData } from '../JS/fetch';
+
+const props = defineProps(['IdDev']);
+
+const  username = ref(null);
+const  email = ref(null);
+const  bio = ref(null);
+const  isUsernameValid = true;
+const  isEmailValid = true;
+const  isBioValid = true;
+
+const user = ref(null);
+onMounted(async () => {
+    try {
+      const dataUser = await fetchData("users", "getOne", "id",  props.IdDev, null, "GET");
+      user.value = dataUser;
+      //console.log('LeGame : ' , LeGame._rawValue.developerID)    
+    } catch (error) { 
+      console.error('Error fetching data:', error);
     }
+  });
+
+/*const  saveProfile = () => {
+  this.isUsernameValid = !!this.username;
+  this.isEmailValid = !!this.email;
+  this.isBioValid = !!this.bio;
+  
+  if (this.isUsernameValid && this.isEmailValid && this.isBioValid) {
+    alert('Profile saved successfully!');
+    // Implement the save logic here
   }
-}
+};*/
 </script>
 
