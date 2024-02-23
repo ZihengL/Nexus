@@ -103,8 +103,8 @@ class UsersController extends BaseController
         if (!$this->userExists($data) && $this->model->create($data)) {
             $user = $this->model->getOne($this->email, $data[$this->email]);
             // echo "users_controller: " .$user . "<br>";
-
-            return $this->login($data[$this->email], $data[$this->password]);
+            
+            // return $this->login($data[$this->email], $data[$this->password]);
         }
 
         return false;

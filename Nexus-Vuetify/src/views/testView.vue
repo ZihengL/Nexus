@@ -12,6 +12,10 @@ import { fetchData } from "../JS/fetch";
 export default {
   components: {},
   mounted() {
+
+
+
+    //////////////////////////////////////////////////////////
     // const filters = {
     //   ratingAverage: { gt: 1, lte: 7 },
     // };
@@ -74,8 +78,21 @@ export default {
     //     }
   },
   methods: {
-    // Define a method to wrap your fetchData call
+  
     fetchDataMethod() {
+
+    // const create = {
+    //   email: "e",
+    //   name: "Katty",
+    //   password: "e",
+    // };
+
+    // const createBody = { create };
+    // fetchData('users', 'create', null, null, null, null, createBody, 'POST')
+
+
+      ////////////////////////////////////////////////////////////////////////
+
       // const login = {
       //   email: "e",
       //   password: "e",
@@ -91,6 +108,7 @@ export default {
       //   loginBody,
       //   "POST"
       // );
+
       // console.log("login tokens : ", login_tokens);
 
       /////////////////////////////
@@ -112,23 +130,23 @@ export default {
 
       ////////////////////////////////////////
 
-      const updateData = {
-        id: "17",
-        gameID: "4",
-        userID: "2",
-        timestamp : "2024-02-22",
-        rating: "6",
-        tokens: {
-          access_token:
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MDMwMCwiZXhwIjoxNzA4NjUzOTAwLCJzdWIiOjM1fQ.FXa6aLKfyPKIDxDTVwpj-usbg2EARvahUAoMh6pf08Y",
-          refresh_token:
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MDMwMCwiZXhwIjoxNzA4NzM2NzAwLCJzdWIiOjM1fQ.QFVpEGyOyAO87VZgGPGF8WvU2KHM5Ex-RmgMgctmc7s",
-        },
-        comment: "This is a review comment update",
-      };
-      const body = { updateData };
+      // const updateData = {
+      //   id: "17",
+      //   gameID: "4",
+      //   userID: "2",
+      //   timestamp : "2024-02-22",
+      //   rating: "6",
+      //   tokens: {
+      //     access_token:
+      //       "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MDMwMCwiZXhwIjoxNzA4NjUzOTAwLCJzdWIiOjM1fQ.FXa6aLKfyPKIDxDTVwpj-usbg2EARvahUAoMh6pf08Y",
+      //     refresh_token:
+      //       "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MDMwMCwiZXhwIjoxNzA4NzM2NzAwLCJzdWIiOjM1fQ.QFVpEGyOyAO87VZgGPGF8WvU2KHM5Ex-RmgMgctmc7s",
+      //   },
+      //   comment: "This is a review comment update",
+      // };
+      // const body = { updateData };
 
-      fetchData("reviews", "update", null, null, null, null, body, "POST");
+      // fetchData("reviews", "update", null, null, null, null, body, "POST");
 
       //////////////////////////////////////////////
       // const createData = {
