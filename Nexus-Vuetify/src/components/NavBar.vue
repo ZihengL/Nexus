@@ -25,12 +25,14 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { fetchData } from '@/JS/fetch';
+import { ref, getCurrentInstance } from 'vue';
 
 let hover = ref(false);
 let logoURL = '/src/assets/logos/Nexus_c5c3c0.svg';
 let logo2URL = '/src/assets/logos/Nexus_171d25.svg';
+
+const { proxy } = getCurrentInstance();
+console.log(' global : ', proxy.$blogName); // Utilisez $blogName pour accéder à la propriété globale
 
 const changeUrl = () => {
   console.log('changeUrl called');
@@ -41,23 +43,6 @@ const rechangeUrl = () => {
   console.log('rechangeUrl called');
   hover.value = false;
 };
-
-const filters = {
-  ratingAverage: { gt: 1, lte: 7 },
-}
-const sorting = {
-  ratingAverage: true
-}
-
-const includedColumns = ['id', 'developerID', 'title']
-
-const jsonBody = { filters, sorting, includedColumns }
-
-fetchData('games', 'getAllMatching', null, null, jsonBody, 'POST')
-.then(data => {
-
-  console.log(data)
-});
 </script>
 
 

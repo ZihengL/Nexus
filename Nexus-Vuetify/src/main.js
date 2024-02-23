@@ -15,7 +15,7 @@ import App from './App.vue';
 const app = createApp(App)
 
 // Utilisez app.config.globalProperties pour définir une propriété globale
-app.config.globalProperties.$isConnected = false;
+app.config.globalProperties.$blogName = false;
 
 // Enregistrez les plugins
 registerPlugins(app)
