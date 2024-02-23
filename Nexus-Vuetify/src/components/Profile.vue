@@ -56,11 +56,11 @@ const props = defineProps(['isHimself', 'idDevl']);
 console.log(props);
 const leDevs = ref(null);
 
-onMounted(async () => {S
+onMounted(async () => {
     try {
       const dataGame = await fetchData("users", "getOne", "id", props.idDevl, null, "GET");
       leDevs.value = dataGame;
-      console.log('leDevs : ', leDevs)
+      //console.log('leDevs : ', leDevs)
     } catch (error) {
         console.error('Error fetching data:', error);
     }
