@@ -13,10 +13,11 @@
             <p>description</p>
           </div>
           <div class="button"  v-show="isHimself">
-            <router-link to="/Profile" class="router glow">
+            <router-link :to="{ name: 'Profile', params: { IdDev: props.idDevl } }" class="router glow">
               <v-icon icon="mdi-account-circle" />
               <span class="link-btn">Gerer son profil</span>
             </router-link>
+
             <div class="fieldBtn">
               <div class="btn-layer"></div>
               <v-btn density="default" class="submit glow" @click="$emit('showLogin')">
