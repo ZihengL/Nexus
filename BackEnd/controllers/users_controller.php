@@ -147,7 +147,7 @@ class UsersController extends BaseController
     {
         $tokens_controller = $this->getTokensController();
 
-        if ($tokens_controller->validateRefreshToken) {
+        if ($tokens_controller->validateTokens($id, $jwts)) {
             return $this->getTokensController()->delete($id);
         }
 
