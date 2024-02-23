@@ -93,48 +93,60 @@ export default {
       // );
       // console.log("login tokens : ", login_tokens);
 
+      /////////////////////////////
 
-/////////////////////////////
-      
+      //   const deleteData = {
+      //   id : 18,
+      //   userID: "4",
+      //   gameID: "4",
+      //   tokens: {
+      //     access_token:
+      //      "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MDMwMCwiZXhwIjoxNzA4NjUzOTAwLCJzdWIiOjM1fQ.FXa6aLKfyPKIDxDTVwpj-usbg2EARvahUAoMh6pf08Y",
+      //     refresh_token:
+      //       "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MDMwMCwiZXhwIjoxNzA4NzM2NzAwLCJzdWIiOjM1fQ.QFVpEGyOyAO87VZgGPGF8WvU2KHM5Ex-RmgMgctmc7s",
+      //   },
+      // }
+      //  const body = { deleteData };
 
+      //  fetchData("reviews", "delete", null, null, null, null, body, "POST");
 
-      const deleteData = {
-      id : 18,
-      userID: "4",
-      gameID: "4",
-      tokens: {
-        access_token:
-         "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MDMwMCwiZXhwIjoxNzA4NjUzOTAwLCJzdWIiOjM1fQ.FXa6aLKfyPKIDxDTVwpj-usbg2EARvahUAoMh6pf08Y",
-        refresh_token:
-          "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MDMwMCwiZXhwIjoxNzA4NzM2NzAwLCJzdWIiOjM1fQ.QFVpEGyOyAO87VZgGPGF8WvU2KHM5Ex-RmgMgctmc7s",
-      },
-    }
-     const body = { deleteData };
+      ////////////////////////////////////////
 
-     fetchData("reviews", "delete", null, null, null, null, body, "POST");
- 
+      const updateData = {
+        id: "17",
+        gameID: "4",
+        userID: "2",
+        timestamp : "2024-02-22",
+        rating: "6",
+        tokens: {
+          access_token:
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MDMwMCwiZXhwIjoxNzA4NjUzOTAwLCJzdWIiOjM1fQ.FXa6aLKfyPKIDxDTVwpj-usbg2EARvahUAoMh6pf08Y",
+          refresh_token:
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MDMwMCwiZXhwIjoxNzA4NzM2NzAwLCJzdWIiOjM1fQ.QFVpEGyOyAO87VZgGPGF8WvU2KHM5Ex-RmgMgctmc7s",
+        },
+        comment: "This is a review comment update",
+      };
+      const body = { updateData };
 
+      fetchData("reviews", "update", null, null, null, null, body, "POST");
 
- ////////////////////////////////////////
-    // const createData = {
-    //   userID: "4",
-    //   gameID: "4",
-    //   rating: "1",
-    //   tokens: {
-    //    "access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MjM3MywiZXhwIjoxNzA4NjU1OTczLCJzdWIiOjM1fQ.mtB7BxFhkni0dhevIR7e57jz1xwNqQ7bZQsfC5vuRSo",
-    //   "refresh_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MjM3MywiZXhwIjoxNzA4NzM4NzczLCJzdWIiOjM1fQ.f0e2GNXi50jX5nuXYRD3DcukvNQiSEAvtHDVxrUO22E",
-    //   },
-    //   comment: "This is a review comment",
-    // };
+      //////////////////////////////////////////////
+      // const createData = {
+      //   userID: "4",
+      //   gameID: "4",
+      //   rating: "1",
+      //   tokens: {
+      //    "access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MjM3MywiZXhwIjoxNzA4NjU1OTczLCJzdWIiOjM1fQ.mtB7BxFhkni0dhevIR7e57jz1xwNqQ7bZQsfC5vuRSo",
+      //   "refresh_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MjM3MywiZXhwIjoxNzA4NzM4NzczLCJzdWIiOjM1fQ.f0e2GNXi50jX5nuXYRD3DcukvNQiSEAvtHDVxrUO22E",
+      //   },
+      //   comment: "This is a review comment",
+      // };
 
-    //  const createBody = { createData };
-    //   fetchData("reviews", "create", null, null, null, null, createBody, "POST");
- 
-
-
-
-  }},
-  }
+      //  const createBody = { createData };
+      //   fetchData("reviews", "create", null, null, null, null, createBody, "POST");
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
