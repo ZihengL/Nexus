@@ -33,16 +33,16 @@ class GamesController extends BaseController
     // }
 
 
-    // public function getAll($column = null, $value = null, $included_columns = [], $sorting = [])
-    // {
-    //     $filters = ['tagId' => ['relatedTable' => 'gamesTags', 'values' => ['1', '3'], 'wantedColumn' => 'gameId']];
-    //     $results_1 = $centralController->games_controller->getAllMatching($filters, null, null);
+    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [])
+    {
+        $filters = ['tagId' => ['relatedTable' => 'gamesTags', 'values' => ['1', '3'], 'wantedColumn' => 'gameId']];
+        $results_1 = $this->centralController->games_controller->getAllMatching($filters, null, null);
 
-    //     if (empty($sorting)) {
-    //         $sorting = [$this->ratingAverage => true];
-    //     }
-    //     return $this->model-> getAll($column, $value, $included_columns, $sorting);
-    // }
+        if (empty($sorting)) {
+            $sorting = [$this->ratingAverage => true];
+        }
+        return $this->model-> getAll($column, $value, $included_columns, $sorting);
+    }
 
 
 
