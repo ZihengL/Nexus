@@ -12,9 +12,6 @@ import { fetchData } from "../JS/fetch";
 export default {
   components: {},
   mounted() {
-
-
-
     //////////////////////////////////////////////////////////
     // const filters = {
     //   ratingAverage: { gt: 1, lte: 7 },
@@ -78,18 +75,29 @@ export default {
     //     }
   },
   methods: {
-  
     fetchDataMethod() {
+      // const filters = {
+      //   ratingAverage: { gt: 1, lte: 7 },
+      // };
+      // const sorting = {
+      //   ratingAverage: true,
+      // };
+      // const includedColumns = ["id", "developerID", "title"];
 
-    // const create = {
-    //   email: "e",
-    //   name: "Katty",
-    //   password: "e",
-    // };
+      // const jsonBody = { filters, sorting, includedColumns };
 
-    // const createBody = { create };
-    // fetchData('users', 'create', null, null, null, null, createBody, 'POST')
+      // fetchData("games", "getAllMatching", null, null, null, null, jsonBody, "POST")
 
+      //////////////////////////////////////////
+
+      // const create = {
+      //   email: "e",
+      //   name: "Katty",
+      //   password: "e",
+      // };
+
+      // const createBody = { create };
+      // fetchData('users', 'create', null, null, null, null, createBody, 'POST')
 
       ////////////////////////////////////////////////////////////////////////
 
@@ -118,11 +126,9 @@ export default {
       //   userID: "4",
       //   gameID: "4",
       //   tokens: {
-      //     access_token:
-      //      "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MDMwMCwiZXhwIjoxNzA4NjUzOTAwLCJzdWIiOjM1fQ.FXa6aLKfyPKIDxDTVwpj-usbg2EARvahUAoMh6pf08Y",
-      //     refresh_token:
-      //       "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MDMwMCwiZXhwIjoxNzA4NzM2NzAwLCJzdWIiOjM1fQ.QFVpEGyOyAO87VZgGPGF8WvU2KHM5Ex-RmgMgctmc7s",
-      //   },
+      // "access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODcwMjQ2NCwiZXhwIjoxNzA4NzA2MDY0LCJzdWIiOjM1fQ.0IAJjZbSUlposeGDPaPnD0LYj1oOwMuWTR9jNwHaOkg",
+      //  "refresh_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODcwMjQ2NCwiZXhwIjoxNzA4Nzg4ODY0LCJzdWIiOjM1fQ.bOVJEpwyj98vjNTgZ8mITEVzqf2zxle16byzqbLP-rI",
+      // },
       // }
       //  const body = { deleteData };
 
