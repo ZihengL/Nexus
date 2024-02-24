@@ -7,7 +7,7 @@ class UserModel extends BaseModel
 
     public function __construct($pdo)
     {
-        $tableName = "user";
+        $tableName = "users";
 
         parent::__construct($pdo, $tableName);
     }

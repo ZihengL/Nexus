@@ -42,7 +42,7 @@ class CentralController
         $this->games_controller = new GamesController($this, $pdo);
         $this->reviews_controller = new ReviewsController($this, $pdo);
 
-        $this->google_client_manager = GoogleClientManager::getInstance($this);
+        // $this->google_client_manager = GoogleClientManager::getInstance($this);
     }
 
     public static function getInstance()

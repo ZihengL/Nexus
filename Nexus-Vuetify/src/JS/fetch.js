@@ -13,19 +13,18 @@ export function fetchData (
 
   let uri = `${baseURL}${table}/${crud_action}`
   // Convert arrays to comma-separated strings if they are not empty
-  const includedColumnsString =
-    includedColumns ? includedColumns.join(',') : null
-  const sortingString = sorting ? sorting.join(',') : null
+
 
   // Append to URI only if values are present
   if (columnName && value !== null) {
     uri += `/${columnName}/${value}`
   }
-  if (includedColumnsString ) {
-    uri += `/${includedColumnsString}`
+  if (includedColumns && includedColumns.length) {
+    uri += `?includedColumns=${includedColumns.join(',')}`;
   }
-  if ( sortingString) {
-    uri += `/${sortingString}`
+  if (sorting && sorting.length) {
+    // Append sorting as a query parameter, or adjust to match your server's expected format
+    uri += `&sorting=${sorting.join(',')}`;
   }
   const fetchOptions = {
     method: method,

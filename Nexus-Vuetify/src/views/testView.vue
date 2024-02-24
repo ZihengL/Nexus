@@ -12,70 +12,23 @@ import { fetchData } from "../JS/fetch";
 export default {
   components: {},
   mounted() {
-    //////////////////////////////////////////////////////////
-    // const filters = {
-    //   ratingAverage: { gt: 1, lte: 7 },
-    // };
-    // const sorting = {
-    //   ratingAverage: true,
-    // };
-    // const includedColumns = ["id", "developerID", "title"];
-    // const create = {
-    //   email: "e",
-    //   name: "Katty",
-    //   password: "e",
-    // };
-    // const login = {
-    //   email: "e",
-    //   password: "e",
-    // };
-    // const create = {
-    //   userID: "2",
-    //   gameID: "4",
-    //   rating: "3",
-    //   tokens: {
-    //     access_token:
-    //      "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MDMwMCwiZXhwIjoxNzA4NjUzOTAwLCJzdWIiOjM1fQ.FXa6aLKfyPKIDxDTVwpj-usbg2EARvahUAoMh6pf08Y",
-    //     refresh_token:
-    //       "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MDMwMCwiZXhwIjoxNzA4NzM2NzAwLCJzdWIiOjM1fQ.QFVpEGyOyAO87VZgGPGF8WvU2KHM5Ex-RmgMgctmc7s",
-    //   },
-    //   comment: "This is a review comment",
-    // };
-    // const jsonBody = { filters, sorting, includedColumns };
-    // const createBody = { create };
-    // const loginBody = { login };
-    // fetchData("reviews", "create", null, null, null, null, createBody, "POST");
-    //  fetchData("reviews", "getAll", "id", 1, null, null, null, "GET")
-    //  fetchData('users', 'getOne', "id", 1, ["id", "user"], null, null, 'GET')
-    // fetchData('users', 'create', null, null, null, null, createBody, 'POST')
-    // fetchData("games", "getAllMatching", null, null, null, null, jsonBody, "POST")
-    // const login_tokens = fetchData(
-    //   "users",
-    //   "login",
-    //   null,
-    //   null,
-    //   null,
-    //   null,
-    //   loginBody,
-    //   "POST"
-    // );
-    // console.log("login tokens : ", login_tokens);
-    //     if (login_tokens) {
-    //       const logout = {
-    //         email: "e",
-    //         password: "e",
-    //         access_token: login_tokens["access_token"],
-    //         refresh_token: login_tokens["refresh_token"],
-    //       };
-    //       const logoutBody = { logout };
-    //       console.log(
-    //         "logout infos : ",
-    //         fetchData("users", "logout", null, null, logoutBody, "POST")
-    //       );
-    //     }
+   
   },
   methods: {
     fetchDataMethod() {
+      //  fetchData("games", "getAll", null, null, ["id","files","title"],{id: true}, null, "GET")
+      fetchData(
+        "games",
+        "getAll",
+        null,
+        null,
+        ["id", "ratingAverage", "title"],
+        null,
+        null,
+        "GET"
+      );
+
+      ///////////////////////////////////////////////
       // const filters = {
       //   ratingAverage: { gt: 1, lte: 7 },
       // };
