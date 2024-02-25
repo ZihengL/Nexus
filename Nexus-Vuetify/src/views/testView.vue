@@ -71,8 +71,9 @@ export default {
     },
     async login() {
       const login = {
-        email: "e",
-        password: "e",
+        email: "b",
+        name: "charles",
+        password: "b",
       };
       const loginBody = { login };
       try {
@@ -98,12 +99,12 @@ export default {
       }
     },
     register() {
-      const create = {
+      const createData = {
         email: "b",
         name: "charles",
         password: "b",
       };
-      const createBody = { create };
+      const createBody = { createData };
       fetchData('users', 'create', null, null, null, null, createBody, 'POST')
     },
     createData() {

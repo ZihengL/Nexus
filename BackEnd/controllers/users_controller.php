@@ -28,8 +28,8 @@ class UsersController extends BaseController
     protected function restrictAccess($included_columns = [])
     {
         if (!is_array($included_columns)) {
-            $included_columns = []; 
-        }    
+            $included_columns = [];
+        }
 
         return array_filter($included_columns, function ($key) {
             return !in_array($key, $this->restricted_columns);
@@ -45,6 +45,7 @@ class UsersController extends BaseController
 
     public function getOne($column, $value, $included_columns = [])
     {
+
         $included_columns = $this->restrictAccess($included_columns);
 
         return $this->model->getOne($column, $value, $included_columns);
@@ -107,7 +108,7 @@ class UsersController extends BaseController
         if (!$this->userExists($data) && $this->model->create($data)) {
             $user = $this->model->getOne($this->email, $data[$this->email]);
             // echo "users_controller: " .$user . "<br>";
-            
+
             // return $this->login($data[$this->email], $data[$this->password]);
         }
 
@@ -144,8 +145,10 @@ class UsersController extends BaseController
     // Do this if user needs to do a fresh login
     public function login($email, $password)
     {
-        echo "login";
+
         $user = $this->model->getOne($this->email, $email);
+        echo "login user: " . print_r($user, true) . "<br>";
+
         return $this->getTokensController()->generateTokensOnValidation($user, $email, $password);
     }
 
