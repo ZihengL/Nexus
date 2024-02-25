@@ -234,15 +234,4 @@ class ReviewsController extends BaseController
     }
 
 
-    function createResponse($success, $message)
-    {
-        $response = [
-            'success' => $success,
-            'message' => $message,
-        ];
-
-        return json_encode($response);
-    }
-
-
 }

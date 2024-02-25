@@ -58,6 +58,12 @@ class BaseController
         return $this->central_controller->reviews_controller;
     }
 
+
+    protected function getGameTagsController()
+    {
+        return $this->central_controller->gameTags_contoller;
+    }
+
     // GOOGLE
 
     protected function getGoogleClientManager()
@@ -108,4 +114,15 @@ class BaseController
     }
 
     // REBECCA
+
+    
+    public function createResponse($success, $message)
+    {
+        $response = [
+            'isSuccessful' => $success,
+            'message' => $message,
+        ];
+    
+        return json_encode($response);
+    }
 }
