@@ -14,7 +14,7 @@ class GoogleClientManager
 {
     private static $instance = null;
 
-    private const SERVICE_ACCOUNT_FILE = 'remote/Nexus_OAuth2_Client_ID.json';
+    private const SERVICE_ACCOUNT_FILE = '/remote/Nexus_OAuth2_Client_ID.json';
     private const GAMES_FOLDER_ID = '1b6KuDPnX_fyN6t2LUHeiumPZclX32Ak0';
     private const UPLOAD_URL = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable';
 
@@ -27,7 +27,7 @@ class GoogleClientManager
     public $central_controller;
     public $drive_controller;
 
-    private function __construct($central_controller)
+    public function __construct($central_controller)
     {
         global $path;
 
@@ -64,14 +64,14 @@ class GoogleClientManager
     {
         global $path;
 
+        // $client = new GoogleClient();
+        // $client->setAuthConfig($path . self::SERVICE_ACCOUNT_FILE);
+        // $client->addScope(GoogleDrive::DRIVE_FILE);
         $client = new GoogleClient();
         $client->setAuthConfig($path . self::SERVICE_ACCOUNT_FILE);
-        $client->addScope(GoogleDrive::DRIVE_FILE);
-        // $client->setClientId($this->client_id);
-        // $client->setClientSecret($this->client_secret);
-        // $client->setRedirectUri($this->redirect_uri);
-        // $client->setScopes(Google\Service\Drive::DRIVE);
-        // $client->setAccessType('offline');
+        $client->addScope('https://www.googleapis.com/auth/drive');
+
+        // $this->drive_service = new GoogleDrive($this->client);
 
         return $client;
     }
@@ -81,6 +81,8 @@ class GoogleClientManager
     // https://docs.guzzlephp.org/en/stable/overview.html#installation
     public function createUploadSession($filepath)
     {
+        // $client = $this->getClient();
+
         $fileMetadata = new GoogleDriveFile([
             'name' => 'testfile.jpg',
             'parents' => [self::GAMES_FOLDER_ID]
@@ -100,6 +102,9 @@ class GoogleClientManager
 
     public function createUserFolder($user)
     {
+        // $client = $this->getClient();
+        // $drive_service = new GoogleDrive($client);
+
         $fileMetadata = new Google\Service\Drive\DriveFile([
             'name' => $user['id'],
             'mimeType' => 'application/vnd.google-apps.folder',
