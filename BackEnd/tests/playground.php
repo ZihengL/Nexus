@@ -54,15 +54,15 @@ require_once $path . 'tests/temp_globals.php';
 
 // echo $name;
 
-// $tokens_controller = $central_controller->tokens_controller;
+$tokens_controller = $central_controller->tokens_controller;
 
-// $refresh = $tokens_controller->generateRefreshToken(1990);
+$refresh = $tokens_controller->generateRefreshToken(1990);
 
-// echo $refresh . '</br>';
+echo $refresh . '</br>';
 
-// $stored = $tokens_controller->getByHashcode($refresh);
+$stored = $tokens_controller->getByHashcode($refresh);
 
-// $tokens_controller->deleteAllFromUser(1990, ['refresh_token' => $refresh]);
+$tokens_controller->deleteAllFromUser(1990, ['refresh_token' => $refresh]);
 
 // echo '<pre>';
 // print_r($stored);

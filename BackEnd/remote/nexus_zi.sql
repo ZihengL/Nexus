@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Feb 23, 2024 at 05:30 AM
+-- Generation Time: Feb 25, 2024 at 06:02 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -20,17 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `nexus`
 --
-
--- --------------------------------------------------------
-
---
--- Table structure for table `createdgames`
---
-
-CREATE TABLE `createdgames` (
-  `userId` int(11) NOT NULL,
-  `gameId` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -75,10 +64,10 @@ CREATE TABLE `games` (
 --
 
 INSERT INTO `games` (`id`, `developerID`, `stripeID`, `title`, `description`, `files`, `media`, `videos`, `tags`, `releaseDate`, `ratingAverage`) VALUES
-(1, 1, 0, 'Super Game', 'An amazing game', 'game.exe', 'a', '', '', '2024-02-01', 2),
-(2, 3, 0, 'Fantastic Adventure', 'Embark on an epic journey', 'adventure.exe', 'b', '', '', '2024-01-26', 5),
-(3, 4, 0, 'Space Odyssey', 'Explore the depths of outer space', 'space.exe', 'a,b', '', '', '2024-02-06', 3),
-(4, 2, 0, 'Medieval Kingdoms', 'Rule your own kingdom', 'kingdoms.exe', 'a', '', '', '2024-01-17', 8),
+(1, 1, 0, 'Super Game', 'An amazing game', 'game.exe', 'a', '', '', '2024-02-01', 5),
+(2, 3, 0, 'Fantastic Adventure', 'Embark on an epic journey', 'adventure.exe', 'b', '', '', '2024-01-26', 3.5),
+(3, 4, 0, 'Space Odyssey', 'Explore the depths of outer space', 'space.exe', 'a,b', '', '', '2024-02-06', 4),
+(4, 2, 0, 'Medieval Kingdoms', 'Rule your own kingdom', 'kingdoms.exe', 'a', '', '', '2024-01-17', 2.5),
 (8, 4, 0, 'Super Cat', 'Flying kitty', 'kitty.exe', '', '', '', '2024-01-14', 7);
 
 -- --------------------------------------------------------
@@ -127,24 +116,26 @@ INSERT INTO `notification` (`id`, `recipientID`, `senderID`, `message`, `timesta
 -- --------------------------------------------------------
 
 --
--- Table structure for table `rewiews`
+-- Table structure for table `reviews`
 --
 
-CREATE TABLE `rewiews` (
+CREATE TABLE `reviews` (
   `id` int(11) NOT NULL,
   `gameID` int(11) NOT NULL,
   `userID` int(11) NOT NULL,
   `timestamp` date NOT NULL,
-  `rating` int(11) NOT NULL,
+  `rating` float NOT NULL,
   `comment` varchar(1000) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `rewiews`
+-- Dumping data for table `reviews`
 --
 
-INSERT INTO `rewiews` (`id`, `gameID`, `userID`, `timestamp`, `rating`, `comment`) VALUES
-(1, 1, 2, '2024-01-29', 5, 'This game is awesome!');
+INSERT INTO `reviews` (`id`, `gameID`, `userID`, `timestamp`, `rating`, `comment`) VALUES
+(1, 1, 2, '2024-01-29', 5, 'This game is awesome!'),
+(15, 4, 1, '2024-02-22', 2.5, 'This is a review comment'),
+(17, 4, 2, '2024-02-22', 2.5, 'This is a review comment update');
 
 -- --------------------------------------------------------
 
@@ -195,42 +186,36 @@ INSERT INTO `tokens` (`id`, `sub`, `exp`, `sha`) VALUES
 
 CREATE TABLE `user` (
   `id` int(11) NOT NULL,
-  `drive_id` varchar(50) NOT NULL,
-  `user` varchar(100) NOT NULL,
+  `drive_id` varchar(50) DEFAULT NULL,
+  `username` varchar(100) NOT NULL,
   `password` varchar(100) NOT NULL,
   `email` varchar(500) NOT NULL,
-  `phoneNumber` bigint(20) NOT NULL,
-  `picture` varchar(500) NOT NULL,
-  `IsAdmin` tinyint(1) NOT NULL,
-  `IsOnline` tinyint(1) NOT NULL,
-  `description` varchar(500) NOT NULL,
+  `phoneNumber` bigint(20) DEFAULT NULL,
+  `picture` varchar(500) DEFAULT NULL,
+  `IsAdmin` tinyint(1) DEFAULT 0,
+  `IsOnline` tinyint(1) DEFAULT 0,
+  `description` varchar(500) DEFAULT NULL,
   `name` varchar(50) NOT NULL,
   `lastName` varchar(50) NOT NULL,
-  `creationDate` int(11) NOT NULL
+  `creationDate` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`id`, `drive_id`, `user`, `password`, `email`, `phoneNumber`, `picture`, `IsAdmin`, `IsOnline`, `description`, `name`, `lastName`, `creationDate`) VALUES
+INSERT INTO `user` (`id`, `drive_id`, `username`, `password`, `email`, `phoneNumber`, `picture`, `IsAdmin`, `IsOnline`, `description`, `name`, `lastName`, `creationDate`) VALUES
 (1, '', 'john_doe', '$2y$10$nmakzte3PwS/95V/K2cqUO/EN8nxutO6BYnXVWqBXB63gcvAYdbne', 'john.doe@example.com', 1234567890, 'cvatar_path', 0, 0, '', '', '', 0),
 (2, '', 'alice_smith', '$2y$10$bD0KtNARFKLJ3e51sxTqv..X91IkIbkASHxccYPWcUhNezNRcjJx6', 'alice.smith@example.com', 987654321, 'avatar_alice.jpg', 0, 0, '', '', '', 0),
 (3, '', 'bob_jones', '$2y$10$QroH2ylQrU3aqx7zeLMS2eUhuPAgT1byd89aeyv5zpv2vo4B/Vf5C', 'bob.jones@example.com', 555666777, 'avatar_bob.png', 0, 0, '', '', '', 0),
 (4, '', 'emma_davis', '$2y$10$roDD0M7SrdDJFKwSYhI4qePO1XkHs7C4h5Sn/pEjD6si9RD/OfTqe', 'emma.davis@example.com', 111222333, 'avatar_emma.jpg', 0, 0, '', '', '', 0),
 (5, '', 'john_doe', '$2y$10$nZV2jn6b1ExK9MHQOZmKY.hjmFnmWanw2XRu5p8.uaj0K5Wie0zzO', 'john.doe@example.com 	', 2234567890, 'bvatar_path ', 0, 0, '0', '0', '0', 0),
-(6, '', 'john_doe', '$2y$10$xpynWrLMrU.CS/gkl.HszuvgpMtDxQ4QuiFxEIuB4Kxug99zI5gDy', 'addaasda', 33344555, 'avatar_path ', 0, 0, '', '', '', 0);
+(6, '', 'john_doe', '$2y$10$xpynWrLMrU.CS/gkl.HszuvgpMtDxQ4QuiFxEIuB4Kxug99zI5gDy', 'addaasda', 33344555, 'avatar_path ', 0, 0, '', '', '', 0),
+(8, NULL, 'testuser', '$2y$10$Gdhes7P.RwutwB2JqEoJrOLHdVp9xmtWBhOGn9SEfl8Q22RMmFZni', 'caca@caca', NULL, NULL, 0, 0, NULL, 'asdasdas', 'abc', 2024);
 
 --
 -- Indexes for dumped tables
 --
-
---
--- Indexes for table `createdgames`
---
-ALTER TABLE `createdgames`
-  ADD KEY `userId` (`userId`,`gameId`),
-  ADD KEY `gameId` (`gameId`);
 
 --
 -- Indexes for table `friends`
@@ -245,7 +230,8 @@ ALTER TABLE `friends`
 ALTER TABLE `games`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `idx_developerID` (`id`,`developerID`),
-  ADD KEY `idx_stripeID` (`stripeID`);
+  ADD KEY `idx_stripeID` (`stripeID`),
+  ADD KEY `games_ibfk_1` (`developerID`);
 
 --
 -- Indexes for table `gamestags`
@@ -262,9 +248,9 @@ ALTER TABLE `notification`
   ADD KEY `senderID` (`senderID`);
 
 --
--- Indexes for table `rewiews`
+-- Indexes for table `reviews`
 --
-ALTER TABLE `rewiews`
+ALTER TABLE `reviews`
   ADD PRIMARY KEY (`id`),
   ADD KEY `gameID` (`gameID`,`userID`),
   ADD KEY `userID` (`userID`);
@@ -287,8 +273,7 @@ ALTER TABLE `tokens`
 -- Indexes for table `user`
 --
 ALTER TABLE `user`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_drive_folder` (`drive_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -301,10 +286,10 @@ ALTER TABLE `notification`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `rewiews`
+-- AUTO_INCREMENT for table `reviews`
 --
-ALTER TABLE `rewiews`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+ALTER TABLE `reviews`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `tags`
@@ -322,18 +307,11 @@ ALTER TABLE `tokens`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Constraints for dumped tables
 --
-
---
--- Constraints for table `createdgames`
---
-ALTER TABLE `createdgames`
-  ADD CONSTRAINT `createdgames_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `user` (`id`),
-  ADD CONSTRAINT `createdgames_ibfk_2` FOREIGN KEY (`gameId`) REFERENCES `games` (`id`);
 
 --
 -- Constraints for table `friends`
@@ -356,11 +334,11 @@ ALTER TABLE `notification`
   ADD CONSTRAINT `notification_ibfk_2` FOREIGN KEY (`senderID`) REFERENCES `user` (`id`);
 
 --
--- Constraints for table `rewiews`
+-- Constraints for table `reviews`
 --
-ALTER TABLE `rewiews`
-  ADD CONSTRAINT `rewiews_ibfk_1` FOREIGN KEY (`gameID`) REFERENCES `games` (`id`),
-  ADD CONSTRAINT `rewiews_ibfk_2` FOREIGN KEY (`userID`) REFERENCES `user` (`id`);
+ALTER TABLE `reviews`
+  ADD CONSTRAINT `reviews_ibfk_1` FOREIGN KEY (`gameID`) REFERENCES `games` (`id`),
+  ADD CONSTRAINT `reviews_ibfk_2` FOREIGN KEY (`userID`) REFERENCES `user` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

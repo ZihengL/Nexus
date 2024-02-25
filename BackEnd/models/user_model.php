@@ -31,16 +31,28 @@ class UserModel extends BaseModel
     //     }
     // }
 
+    // public function create($data)
+    // {
+    //     // echo "<br> create user_model <br>";
+    //     // print_r($data);
+    //     if (!$this->validateData($data) || $this->userExists($data['email'])) {
+    //         return false;
+    //     }
+    //     // $new_data = $this->formDataProperly($data);
+    //     return parent::create($data);
+    // }
+
     public function create($data)
     {
-        // echo "<br> create user_model <br>";
-        // print_r($data);
-        if (!$this->validateData($data) || $this->userExists($data['email'])) {
-            return false;
+        if (!$this->userExists($data['email'])) {
+            $data = $this->validateData($data);
+
+            return $data && parent::create($data);
         }
-        $new_data = $this->formDataProperly($data);
-        return parent::create($new_data);
+
+        return false;
     }
+
 
     public function userExists($email)
     {
@@ -79,6 +91,7 @@ class UserModel extends BaseModel
         }
         return $formattedData;
     }
+
     // public function formatData($data)
     // {
     //     if (in_array('password', array_keys($data))) {
@@ -88,10 +101,13 @@ class UserModel extends BaseModel
     //     return parent::formatData($data);
     // }
 
-    public function validateData($data)
+    private function validateData($data)
     {
         if (isset($data['email']) && isset($data['password']) && !empty($data['email']) && !empty($data['password'])) {
-            return true;
+            $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+            $data['creationDate'] = date('Y-m-d');
+
+            return $data;
         } else {
             return false;
         }
