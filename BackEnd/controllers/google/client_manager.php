@@ -21,6 +21,9 @@ class GoogleClientManager
     private $client_id;
     private $client_secret;
 
+    private $refresh_token;
+    private $access_token;
+
     private $client;
     private $drive_service;
 
@@ -40,13 +43,11 @@ class GoogleClientManager
         $this->client->setAuthConfig($path . self::SERVICE_ACCOUNT_FILE);
         $this->client->addScope('https://www.googleapis.com/auth/drive');
 
+        $this->client->setRedirectUri('http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF']);
+
         $this->drive_service = new GoogleDrive($this->client);
 
-        // $this->client = new Google\Client();
-        // $this->client->setApplicationName('Nexus');
-        // $this->client->setScopes(Google\Service\Drive::DRIVE);
-        // $this->client->setAuthConfig($path . self::SERVICE_ACCOUNT_FILE);
-        // $this->client->setAccessType('offline');
+        $this->grantClientAccess();
 
         // $this->drive_controller = new DriveController($this);
     }
@@ -60,18 +61,29 @@ class GoogleClientManager
         return self::$instance;
     }
 
+    private function grantClientAccess()
+    {
+        $refresh_token = $this->client->getRefreshToken();
+
+        if ($refresh_token) {
+            $access_token_data = $this->client->fetchAccessTokenWithRefreshToken($refresh_token);
+
+            if (isset($access_token_data['access_token'])) {
+                $this->access_token = $access_token_data['access_token'];
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function getClient()
     {
         global $path;
-
-        // $client = new GoogleClient();
-        // $client->setAuthConfig($path . self::SERVICE_ACCOUNT_FILE);
-        // $client->addScope(GoogleDrive::DRIVE_FILE);
         $client = new GoogleClient();
         $client->setAuthConfig($path . self::SERVICE_ACCOUNT_FILE);
         $client->addScope('https://www.googleapis.com/auth/drive');
-
-        // $this->drive_service = new GoogleDrive($this->client);
 
         return $client;
     }
@@ -83,13 +95,17 @@ class GoogleClientManager
     {
         // $client = $this->getClient();
 
+        if ($this->client->isAccessTokenExpired()) {
+            $this->grantClientAccess();
+        }
+
         $fileMetadata = new GoogleDriveFile([
             'name' => 'testfile.jpg',
             'parents' => [self::GAMES_FOLDER_ID]
         ]);
 
         $httpClient = new GuzzleClient(['headers' => [
-            'Authorization' => 'Bearer ' . $this->client->getAccessToken()['access_token'],
+            'Authorization' => 'Bearer ' . $this->access_token,
             'Content-Type' => 'application/json',
             'X-Upload-Content-Type' => 'image/jpeg', // Set the correct MIME type
             'X-Upload-Content-Length' => filesize($filepath) // TODO: need filesize in param
@@ -128,9 +144,5 @@ class GoogleClientManager
     //     $auth_url = $client->createAuthUrl();
 
     //     header('Location: ' . filter_var($auth_url, FILTER_SANITIZE_URL));
-    // }
-
-    // public function getAccess($user_id, $tokens)
-    // {
     // }
 }

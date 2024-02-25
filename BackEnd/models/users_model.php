@@ -7,7 +7,7 @@ class UserModel extends BaseModel
 
     public function __construct($pdo)
     {
-        $tableName = "user";
+        $tableName = "users";
 
         parent::__construct($pdo, $tableName);
     }
@@ -42,6 +42,11 @@ class UserModel extends BaseModel
     //     return parent::create($data);
     // }
 
+    public function userExists($email)
+    {
+        return !empty($this->getOne('email', $email, ['email']));
+    }
+
     public function create($data)
     {
         if (!$this->userExists($data['email'])) {
@@ -53,12 +58,22 @@ class UserModel extends BaseModel
         return false;
     }
 
-
-    public function userExists($email)
+    public function update($id, $data)
     {
-        return !empty($this->getOne('email', $email, ['email']));
-    }
+        $user = $this->getOne('id', $id);
 
+        if ($user) {
+            $new_password = $data['password'];
+
+            if ($new_password && !password_verify($new_password, $user['password'])) {
+                $data['password'] = password_hash($new_password, PASSWORD_DEFAULT);
+            }
+
+            return parent::update($id, $data);
+        }
+
+        return false;
+    }
 
     public function formDataProperly($data)
     {
@@ -112,15 +127,4 @@ class UserModel extends BaseModel
             return false;
         }
     }
-
-    // public function validateData($data)
-    // {
-    //     foreach ($data as $key => $value) {
-    //         if (empty($value)) {
-    //             return false;
-    //         }
-    //     }
-
-    //     return true;
-    // }
 }

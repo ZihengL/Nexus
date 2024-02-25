@@ -1,5 +1,6 @@
 function upload(url) {
   const fileInput = document.querySelector("input[type=file]");
+  
   fileInput.addEventListener("change", async (event) => {
     const file = event.target.files[0];
     const uploadUrl = url; // The URL obtained from the backend
