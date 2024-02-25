@@ -20,8 +20,8 @@ export default {
     return {
       // Store tokens here
       loginTokens: {
-        accessToken: "",
-        refreshToken: "",
+        access_token: "",
+        refresh_token: "",
       },
     };
   },
@@ -59,7 +59,17 @@ export default {
       //   "GET"
       // );
     },
-   async login() {
+    logout() {
+      // const logout = {
+      //   id : ""
+      //   email: "e",
+      //   name: "Katty",
+      //   password: "e",
+      // };
+      // const body = { logout };
+      // fetchData('users', 'logout', null, null, null, null, body, 'POST')
+    },
+    async login() {
       const login = {
         email: "e",
         password: "e",
@@ -79,7 +89,8 @@ export default {
         // Assuming the API response structure
         if (loginResponse.data && loginResponse.data.tokens) {
           this.loginTokens.accessToken = loginResponse.data.tokens.access_token;
-          this.loginTokens.refreshToken = loginResponse.data.tokens.refresh_token;
+          this.loginTokens.refreshToken =
+            loginResponse.data.tokens.refresh_token;
           console.log("Login successful: ", this.loginTokens);
         }
       } catch (error) {
@@ -87,30 +98,40 @@ export default {
       }
     },
     register() {
-      // const create = {
-      //   email: "e",
-      //   name: "Katty",
-      //   password: "e",
-      // };
-      // const createBody = { create };
-      // fetchData('users', 'create', null, null, null, null, createBody, 'POST')
+      const create = {
+        email: "b",
+        name: "charles",
+        password: "b",
+      };
+      const createBody = { create };
+      fetchData('users', 'create', null, null, null, null, createBody, 'POST')
     },
     createData() {
+
+      //create review
       const createData = {
         userID: "1",
         gameID: "10",
         rating: "1",
         tokens: {
-         "access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MjM3MywiZXhwIjoxNzA4NjU1OTczLCJzdWIiOjM1fQ.mtB7BxFhkni0dhevIR7e57jz1xwNqQ7bZQsfC5vuRSo",
-        "refresh_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MjM3MywiZXhwIjoxNzA4NzM4NzczLCJzdWIiOjM1fQ.f0e2GNXi50jX5nuXYRD3DcukvNQiSEAvtHDVxrUO22E",
+          access_token: this.loginTokens.access_token,
+          refresh_token: this.loginTokens.refresh_token,
         },
         comment: "This is a review comment",
       };
-       const createBody = { createData };
-        fetchData("reviews", "create", null, null, null, null, createBody, "POST");
+      const createBody = { createData };
+      fetchData(
+        "reviews",
+        "create",
+        null,
+        null,
+        null,
+        null,
+        createBody,
+        "POST"
+      );
     },
     updateData() {
-
       // const updateData = {
       //   id: "17",
       //   gameID: "4",
@@ -127,7 +148,6 @@ export default {
       // };
       // const body = { updateData };
       // fetchData("reviews", "update", null, null, null, null, body, "POST");
-
     },
     deleteData() {
       //////////////////////////////////////////

@@ -144,6 +144,7 @@ class UsersController extends BaseController
     // Do this if user needs to do a fresh login
     public function login($email, $password)
     {
+        echo "login";
         $user = $this->model->getOne($this->email, $email);
         return $this->getTokensController()->generateTokensOnValidation($user, $email, $password);
     }

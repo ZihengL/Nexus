@@ -184,12 +184,13 @@ function handleLogin($centralController, $decodedData, $controllerName, $crud_ac
 function handleLogout($centralController, $decodedData, $controllerName, $crud_action)
 {
     $data = $decodedData['logout'];
+    $id =  $data['id'];
     $tokens = $data['tokens'];
 
     // echo "<br> logout data : <br>";
     // // return "logout test";
     // print_r($tokens);
-    return $centralController->$controllerName->$crud_action($tokens);
+    return $centralController->$controllerName->$crud_action($id, $tokens);
 }
 
 
