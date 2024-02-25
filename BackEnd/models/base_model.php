@@ -175,11 +175,13 @@ class BaseModel
     {
         $sql = "DELETE FROM $this->table WHERE id = ?";
         $stmt = $this->pdo->prepare($sql);
+    
+        $stmt->bindParam(1, $id, PDO::PARAM_INT);
 
-        // Execute returns true on success, false on failure
-        return $stmt->execute([$id]);
+        // echo "blah";
+   
+        return $stmt->execute();
     }
-
     // TOOLS
 
     function parseColumns($columns = [])
@@ -340,15 +342,4 @@ class BaseModel
         return $result; // This will be appended to the SQL query if not empty
     }
 
-
-    /*To update the relational tables 
-    $table_obj_ids = [] - is an array because for gameTags there's gameId and tagId 
-    but for Reviews there's Id gameId, userId and maybe a third
-    */
-    public function updateRelationTable($objectToUpdate, $table_obj_ids = [])
-    {
-    }
-
-    // public function updateRelationTable($objectToUpdate, $table_obj_ids = []){  
-    // }
 }

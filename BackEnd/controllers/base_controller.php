@@ -17,6 +17,10 @@ class BaseController
 
     protected function restrictAccess($included_columns = [])
     {
+        if (!is_array($included_columns)) {
+            $included_columns = []; 
+        }    
+
         return array_filter($included_columns, function ($key) {
             return !in_array($key, $this->restricted_columns);
         }, ARRAY_FILTER_USE_KEY);
@@ -98,7 +102,7 @@ class BaseController
         return $this->model->update($id, $data);
     }
 
-    protected function delete($id)
+    public function delete($id)
     {
         return $this->model->delete($id);
     }

@@ -2,7 +2,13 @@
   <div class="test_view">
     TEST
     <!-- Using Vuetify's v-button component -->
-    <v-btn class="bordered-btn" @click="fetchDataMethod">Fetch Data</v-btn>
+    <v-btn class="bordered-btn" @click="getData">get Data</v-btn>
+    <v-btn class="bordered-btn" @click="login">Login</v-btn>
+    <v-btn class="bordered-btn" @click="register">register</v-btn>
+    <v-btn class="bordered-btn" @click="filter">filter</v-btn>
+    <v-btn class="bordered-btn" @click="deleteData">delete</v-btn>
+    <v-btn class="bordered-btn" @click="updateData">update</v-btn>
+    <v-btn class="bordered-btn" @click="createData">create</v-btn>
   </div>
 </template>
 
@@ -10,12 +16,17 @@
 import { fetchData } from "../JS/fetch";
 
 export default {
-  components: {},
-  mounted() {
-   
+  data() {
+    return {
+      // Store tokens here
+      loginTokens: {
+        accessToken: "",
+        refreshToken: "",
+      },
+    };
   },
   methods: {
-    fetchDataMethod() {
+    getData() {
       //  fetchData("games", "getAll", null, null, ["id","files","title"],{id: true}, null, "GET")
       // fetchData(
       //   "games",
@@ -27,7 +38,6 @@ export default {
       //   null,
       //   "GET"
       // );
-
       // fetchData(
       //   "games",
       //   "getAll",
@@ -38,68 +48,68 @@ export default {
       //   null,
       //   "GET"
       // );
-
-
-      ///////////////////////////////////////////////
-      const filters = {
-        ratingAverage: "5",
+      // fetchData(
+      //   "games",
+      //   "getAll",
+      //   null,
+      //   null,
+      //   null,
+      //   null,
+      //   null,
+      //   "GET"
+      // );
+    },
+   async login() {
+      const login = {
+        email: "e",
+        password: "e",
       };
-      const sorting = {
-        ratingAverage: true,
-      };
-      const includedColumns = ["id", "developerID", "tags", "ratingAverage"];
-
-      const jsonBody = { filters, sorting, includedColumns };
-
-      fetchData("games", "getAllMatching", null, null, null, null, jsonBody, "POST")
-
-      //////////////////////////////////////////
-
+      const loginBody = { login };
+      try {
+        const loginResponse = await fetchData(
+          "users",
+          "login",
+          null,
+          null,
+          null,
+          null,
+          loginBody,
+          "POST"
+        );
+        // Assuming the API response structure
+        if (loginResponse.data && loginResponse.data.tokens) {
+          this.loginTokens.accessToken = loginResponse.data.tokens.access_token;
+          this.loginTokens.refreshToken = loginResponse.data.tokens.refresh_token;
+          console.log("Login successful: ", this.loginTokens);
+        }
+      } catch (error) {
+        console.error("Login failed: ", error);
+      }
+    },
+    register() {
       // const create = {
       //   email: "e",
       //   name: "Katty",
       //   password: "e",
       // };
-
       // const createBody = { create };
       // fetchData('users', 'create', null, null, null, null, createBody, 'POST')
-
-      ////////////////////////////////////////////////////////////////////////
-
-      // const login = {
-      //   email: "e",
-      //   password: "e",
-      // };
-      // const loginBody = { login };
-      // const login_tokens = fetchData(
-      //   "users",
-      //   "login",
-      //   null,
-      //   null,
-      //   null,
-      //   null,
-      //   loginBody,
-      //   "POST"
-      // );
-
-      // console.log("login tokens : ", login_tokens);
-
-      /////////////////////////////
-
-      //   const deleteData = {
-      //   id : 18,
-      //   userID: "4",
-      //   gameID: "4",
-      //   tokens: {
-      // "access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODcwMjQ2NCwiZXhwIjoxNzA4NzA2MDY0LCJzdWIiOjM1fQ.0IAJjZbSUlposeGDPaPnD0LYj1oOwMuWTR9jNwHaOkg",
-      //  "refresh_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODcwMjQ2NCwiZXhwIjoxNzA4Nzg4ODY0LCJzdWIiOjM1fQ.bOVJEpwyj98vjNTgZ8mITEVzqf2zxle16byzqbLP-rI",
-      // },
-      // }
-      //  const body = { deleteData };
-
-      //  fetchData("reviews", "delete", null, null, null, null, body, "POST");
-
-      ////////////////////////////////////////
+    },
+    createData() {
+      const createData = {
+        userID: "1",
+        gameID: "10",
+        rating: "1",
+        tokens: {
+         "access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MjM3MywiZXhwIjoxNzA4NjU1OTczLCJzdWIiOjM1fQ.mtB7BxFhkni0dhevIR7e57jz1xwNqQ7bZQsfC5vuRSo",
+        "refresh_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MjM3MywiZXhwIjoxNzA4NzM4NzczLCJzdWIiOjM1fQ.f0e2GNXi50jX5nuXYRD3DcukvNQiSEAvtHDVxrUO22E",
+        },
+        comment: "This is a review comment",
+      };
+       const createBody = { createData };
+        fetchData("reviews", "create", null, null, null, null, createBody, "POST");
+    },
+    updateData() {
 
       // const updateData = {
       //   id: "17",
@@ -116,23 +126,46 @@ export default {
       //   comment: "This is a review comment update",
       // };
       // const body = { updateData };
-
       // fetchData("reviews", "update", null, null, null, null, body, "POST");
 
-      //////////////////////////////////////////////
-      // const createData = {
-      //   userID: "4",
-      //   gameID: "4",
+    },
+    deleteData() {
+      //////////////////////////////////////////
+
+      //   const deleteData = {
+      //   id : "23",
+      //   userID: "1",
+      //   gameID: "10",
       //   rating: "1",
       //   tokens: {
-      //    "access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MjM3MywiZXhwIjoxNzA4NjU1OTczLCJzdWIiOjM1fQ.mtB7BxFhkni0dhevIR7e57jz1xwNqQ7bZQsfC5vuRSo",
-      //   "refresh_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MjM3MywiZXhwIjoxNzA4NzM4NzczLCJzdWIiOjM1fQ.f0e2GNXi50jX5nuXYRD3DcukvNQiSEAvtHDVxrUO22E",
-      //   },
-      //   comment: "This is a review comment",
-      // };
+      // "access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODcwMjQ2NCwiZXhwIjoxNzA4NzA2MDY0LCJzdWIiOjM1fQ.0IAJjZbSUlposeGDPaPnD0LYj1oOwMuWTR9jNwHaOkg",
+      //  "refresh_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODcwMjQ2NCwiZXhwIjoxNzA4Nzg4ODY0LCJzdWIiOjM1fQ.bOVJEpwyj98vjNTgZ8mITEVzqf2zxle16byzqbLP-rI",
+      // },
+      // }
+      //  const body = { deleteData };
+      //  fetchData("reviews", "delete", null, null, null, null, body, "POST");
 
-      //  const createBody = { createData };
-      //   fetchData("reviews", "create", null, null, null, null, createBody, "POST");
+      /////////////////////////////
+
+      // delete game
+
+      const deleteData = {
+        id: "9",
+      };
+      const body = { deleteData };
+      fetchData("games", "delete", null, null, null, null, body, "POST");
+    },
+    filter() {
+      ///////////////////////////////////////////////
+      // const filters = {
+      //   ratingAverage: "5",
+      // };
+      // const sorting = {
+      //   ratingAverage: true,
+      // };
+      // const includedColumns = ["id", "developerID", "tags", "ratingAverage"];
+      // const jsonBody = { filters, sorting, includedColumns };
+      // fetchData("games", "getAllMatching", null, null, null, null, jsonBody, "POST")
     },
   },
 };
@@ -157,68 +190,3 @@ export default {
   border-radius: 4px; /* Optional: Adjust border-radius for rounded corners */
 }
 </style>
-
-<!-- 
-<template>
-    <div class="test_view">
-      TEST
-    </div>
-  </template>
-  
-  <script>
-  import { fetchData } from "../JS/fetch";
-  
-  export default {
-    async mounted() {
-      const loginBody = {
-        login: {
-          email: "e",
-          password: "e",
-        }
-      };
-  
-      try {
-        // Perform the login operation and wait for its completion
-        // const loginResponse = await fetchData("users", "login", null, null, loginBody, "POST");
-        
-        // Assuming fetchData resolves with the response body directly
-        // if (loginResponse && loginResponse.access_token && loginResponse.refresh_token) {
-        //   console.log("login tokens : ", loginResponse);
-          
-          const logoutBody = {
-            logout: {
-              email: "e",
-              password: "e",
-              tokens: {
-                access_token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODQ4MTUzNywiZXhwIjoxNzA4NDg1MTM3LCJzdWIiOjM0fQ.irjaTzteo0DtpwcMgW2xlPyYKEFNedEWSqpY-B8D28g",
-                refresh_token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODQ4MTUzNywiZXhwIjoxNzA4NTY3OTM3LCJzdWIiOjM0fQ.DtzXxw5mjQGPRpO92rH2wP-MYhvp4A6KK92jzlrtxU8",
-              }
-            }
-          };
-  
-          // Perform the logout operation
-        //   const logoutResponse = 
-        //   await fetchData("users", "logout", null, null, logoutBody, "POST");
-        //   console.log("logout infos : ",  await fetchData("users", "logout", null, null, logoutBody, "POST"));
-        // } else {
-        //   console.error("Login failed or tokens missing");
-        // }
-      } catch (error) {
-        console.error("Error in login/logout process:", error);
-      }
-    },
-  };
-  </script>
-  
-  <style lang="scss" scoped>
-  .test_view {
-    text-align: center;
-    font-size: 40px;
-    color: aliceblue;
-  }
-  </style>
-
-
-
-
- -->

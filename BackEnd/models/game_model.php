@@ -11,7 +11,7 @@ class GameModel extends BaseModel
         parent::__construct($pdo, $this->tableName);
     }
 
- 
+
 
     //Other Cruds
 
@@ -38,14 +38,20 @@ class GameModel extends BaseModel
         }
     }
 
-    public function delete($id)
-    {
-        return parent::delete($id);
-        // $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE id = ?");
-        // $stmt->execute([$id]);
+    // public function delete($id)
+    // {
+    //     return $this->delete($id);
+    //     // $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE id = ?");
+    //     // $stmt->execute([$id]);
 
-        // return $stmt->fetch();
-    }
+    //     // return $stmt->fetch();
+    // }
+
+
+
+    
+
+
 
     // ZI
 
@@ -117,10 +123,9 @@ class GameModel extends BaseModel
 
 
 
-                                  //Tools
+    //Tools
     function appendTagsToGames($results)
     {
-
         // Organize games and their tags
         $games = [];
         foreach ($results as $row) {
@@ -230,7 +235,6 @@ class GameModel extends BaseModel
 
 
 
-
     public function joinTagsAndGetAllMatching($filters = [], $sorting = [], $included_columns = [])
     {
         // $sql = 'SELECT * FROM ' . $this->table . ' WHERE 1 = 1';
@@ -255,12 +259,14 @@ class GameModel extends BaseModel
 
         $sqlWithFiltersAndSorting = $sortingResults ? $sqlWithFilters . ' ORDER BY ' . $sortingResults : $sqlWithFilters;
         $sqlWithFiltersAndSorting = $sql . " WHERE " . $sqlWithFiltersAndSorting;
-       
+
         // echo "<br>Final SQL: " . $sqlWithFiltersAndSorting;
-        
+
         $results = $this->bindingQuery($sqlWithFiltersAndSorting, $params);
         return $this->appendTagsToGames($results);
     }
+
+
 
 
 

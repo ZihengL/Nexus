@@ -8,7 +8,7 @@ require_once "$path/controllers/reviews_controller.php";
 
 require_once "$path/controllers/google/client_manager.php";
 
-// require_once "$path/remote/routines.php";
+require_once "$path/remote/routines.php";
 
 use Dotenv\Dotenv as Dotenv;
 
@@ -17,7 +17,7 @@ class CentralController
     private static $instance = null;
 
     public $database_manager;
-    public $tokens_controller;
+    // public $tokens_controller;
     public $routines_controller;
     public $users_controller;
     public $games_controller;
@@ -37,7 +37,7 @@ class CentralController
         $this->database_manager = DatabaseManager::getInstance();
         $pdo = $this->database_manager->getPDO();
 
-        $this->tokens_controller = new TokensController($this, $pdo);
+        // $this->tokens_controller = new TokensController($this, $pdo);
         $this->users_controller = new UsersController($this, $pdo);
         $this->games_controller = new GamesController($this, $pdo);
         $this->reviews_controller = new ReviewsController($this, $pdo);
