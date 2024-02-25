@@ -17,29 +17,41 @@ export default {
   methods: {
     fetchDataMethod() {
       //  fetchData("games", "getAll", null, null, ["id","files","title"],{id: true}, null, "GET")
-      fetchData(
-        "games",
-        "getAll",
-        null,
-        null,
-        ["id", "ratingAverage", "title"],
-        null,
-        null,
-        "GET"
-      );
+      // fetchData(
+      //   "games",
+      //   "getAll",
+      //   null,
+      //   null,
+      //   ["id", "ratingAverage", "title", "tags"],
+      //   null,
+      //   null,
+      //   "GET"
+      // );
+
+      // fetchData(
+      //   "games",
+      //   "getAll",
+      //   null,
+      //   null,
+      //   ["id", "ratingAverage", "title"],
+      //   null,
+      //   null,
+      //   "GET"
+      // );
+
 
       ///////////////////////////////////////////////
-      // const filters = {
-      //   ratingAverage: { gt: 1, lte: 7 },
-      // };
-      // const sorting = {
-      //   ratingAverage: true,
-      // };
-      // const includedColumns = ["id", "developerID", "title"];
+      const filters = {
+        ratingAverage: "5",
+      };
+      const sorting = {
+        ratingAverage: true,
+      };
+      const includedColumns = ["id", "developerID", "tags", "ratingAverage"];
 
-      // const jsonBody = { filters, sorting, includedColumns };
+      const jsonBody = { filters, sorting, includedColumns };
 
-      // fetchData("games", "getAllMatching", null, null, null, null, jsonBody, "POST")
+      fetchData("games", "getAllMatching", null, null, null, null, jsonBody, "POST")
 
       //////////////////////////////////////////
 
