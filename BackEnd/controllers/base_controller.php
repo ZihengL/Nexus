@@ -97,9 +97,6 @@ class BaseController
     {
         $included_columns = $this->restrictAccess($included_columns);
 
-        return $this->model-> getAll($column, $value, $included_columns, $sorting);
-        $included_columns = $this->restrictAccess($included_columns);
-
         return $this->model->getAll($column, $value, $included_columns, $sorting);
     }
 

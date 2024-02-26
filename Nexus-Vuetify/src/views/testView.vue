@@ -205,7 +205,7 @@ export default {
       ////////////////////UPDATE TAG/////////////////////////
 
       const updateData = {
-        id: "9",
+        id: "10",
         gameId: "10",
         oldName: "princess",
         newName: "chocolate",
@@ -321,7 +321,7 @@ export default {
 
       const deleteData = {
         gameId: "10",
-        name: "princess",
+        name: "chocolate",
       };
       const body = { deleteData };
       let results = fetchData(
