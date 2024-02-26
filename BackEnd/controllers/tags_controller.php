@@ -2,6 +2,7 @@
 
 require_once "$path/controllers/base_controller.php";
 require_once "$path/models/game_model.php";
+require_once "$path/models/tag_model.php";
 
 class TagsController extends BaseController
 {
@@ -11,6 +12,7 @@ class TagsController extends BaseController
     protected $name = "name";
 
 
+    
     public function __construct($central_controller, $pdo)
     {
         $this->model = new TagsModel($pdo);
@@ -44,17 +46,18 @@ class TagsController extends BaseController
         $isValid = $this->validateData("create", $data);
         $name = $data["name"];
         $gameId = $data["gameId"];
+        $isValidArray = json_decode($isValid, true);
 
-        if ($isValid['isSuccessful']) {
+        if ($isValidArray['isSuccessful']) {
 
             $tagExists = $this->getOne("name", $name);
 
             if ($tagExists) {
-                $newData = ['gameId' => $gameId, 'tagId' => $tagExists["id"]];
+                $newData = ['gameId' => $gameId, 'tagId' => $tagExists["id"], 'name' => $name];
             } else {
                 if ($this->model->create(['name' => $name])) {
                     $createdTag = $this->getOne("name", $name);
-                    $newData = ['gameId' => $gameId, 'tagId' => $createdTag["id"]];
+                    $newData = ['gameId' => $gameId, 'tagId' => $createdTag["id"], 'name' => $name];
                 } else {
                     return $this->createResponse(false, 'Failed to create new tag');
                 }
@@ -70,8 +73,9 @@ class TagsController extends BaseController
         $isValid = $this->validateData("delete", $data);
         $name = $data["name"];
         $gameId = $data["gameId"];
+        $isValidArray = json_decode($isValid, true);
 
-        if ($isValid['isSuccessful']) {
+        if ($isValidArray['isSuccessful']) {
 
             $tagExists = $this->getOne("name", $name);
 
@@ -81,21 +85,24 @@ class TagsController extends BaseController
                     'gameId' => $gameId,
                     'tagId' => $tagId,
                 ];
-                $gameTagsRelation = $this->getGamesController()->getAllMatching($filters);
+                $gameTagsRelation = $this->getGameTagsController()->getAllMatching($filters);
 
-                if ($gameTagsRelation && $this->model->delete($tagId)) {
-                    if ($this->getGameTagsController()->delete($gameTagsRelation["id"])) {
+                if (!empty($gameTagsRelation) && $this->model->delete($tagId)) {
+                    // echo "gameTagsRelation ". print_r($gameTagsRelation, true). "<br>";
+                    if ($this->getGameTagsController()->delete($gameTagsRelation[0]["id"])) {
                         return $this->createResponse(true, 'tags successfully deleted in gameTags and tags table');
                     }
                 }
+                return $this->createResponse(false, 'tag deletion unsuccessful');
             }
+            return $this->createResponse(false, 'Cannot delete tag that doesnt exist');
         }
         return $isValid;
     }
 
 
 
-    public function update($id, $data, $jwts = null)
+    public function update($id, $data)
     {
         $isValid = $this->validateData("update", $data);
         $newName = $data["newName"];
@@ -110,6 +117,7 @@ class TagsController extends BaseController
             if ($this->model->update($id, $newData)) {
                 return $this->createResponse(false, 'tag has been updated');
             }
+
         }
         return $this->$isValid;
     }
@@ -118,6 +126,7 @@ class TagsController extends BaseController
 
     public function validateData($action, $data)
     {
+        $id = $data["id"] ?? null;
         $name = $data["name"] ?? null;
         $gameId = $data["gameId"] ?? null;
         $oldName = $data["oldName"] ?? null;
@@ -126,8 +135,7 @@ class TagsController extends BaseController
         $gameExists = $this->getGamesController()->getOne('id', $gameId);
 
         $isEmpty_forCreateDelete = empty($name) || empty($gameId);
-        $isEmpty_forUpdate = empty($oldName) || empty($newName) || empty($gameId);
-
+        $isEmpty_forUpdate =empty($id) || empty($oldName) || empty($newName) || empty($gameId);
 
         if (!$gameExists) {
             return $this->createResponse(false, 'Game does not exist');
@@ -141,7 +149,7 @@ class TagsController extends BaseController
                 return $this->createResponse(true, 'isValid');
 
             case "update":
-                if ($isEmpty_forUpdate || $this->getOne("name", $oldName)) {
+                if ($isEmpty_forUpdate || !$this->getOne("name", $oldName)) {
                     return $this->createResponse(false, 'Missing info to update tag or tag does not exist');
                 }
                 return $this->createResponse(true, 'isValid');

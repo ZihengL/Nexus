@@ -5,12 +5,10 @@ class GameModel extends BaseModel
 {
     protected $tableName = "games";
 
-
     public function __construct($pdo)
     {
         parent::__construct($pdo, $this->tableName);
     }
-
 
 
     //Other Cruds
@@ -46,12 +44,7 @@ class GameModel extends BaseModel
 
     //     // return $stmt->fetch();
     // }
-
-
-
     
-
-
 
     // ZI
 
@@ -90,6 +83,22 @@ class GameModel extends BaseModel
 
 
     //Getters 
+
+    
+    public function getOne($column = null, $value = null, $included_columns = [])
+    {
+        // echo "<br>  includedColumns : " . print_r($included_columns, true);
+        if (in_array('tags', $included_columns)) {
+            $key = array_search('tags', $included_columns);
+            if ($key !== false) {
+                unset($included_columns[$key]);
+            }
+            $results = $this->joinGamesAndTags($column, $value, $included_columns);
+            return $this->appendTagsToGames($results);
+        }
+        return parent::getOne($column, $value, $included_columns);
+    }
+
     public function getAll($column = null, $value = null, $included_columns = [], $sorting = [])
     {
         // echo "<br>  includedColumns : " . print_r($included_columns, true);

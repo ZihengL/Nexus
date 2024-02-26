@@ -53,13 +53,6 @@ class ReviewsController extends BaseController
     // }
 
 
-    public function deleteReview($id)
-    {
-        return $this->model->delete($id);
-    }
-
-
-
     public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
     {
         if (empty($sorting)) {

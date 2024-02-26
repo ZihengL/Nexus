@@ -64,7 +64,7 @@ class UsersController extends BaseController
             if ($user) {
                 // $drive_id = $this->getGoogleClientManager()->createUserFolder($user);
                 // $user[$this->drive_id] = $drive_id;
-
+                // echo "register";
                 // $this->model->update($user[$this->id], $user);
                 return true;
             }
@@ -73,8 +73,9 @@ class UsersController extends BaseController
         return false;
     }
 
-    public function update($id, $data, $jwts = null)
+    public function update($id, $data)
     {
+        $jwts = $data["tokens"];
         if ($jwts = $this->authenticate($id, $jwts)) {
             $this->model->update($id, $data);
 
@@ -84,8 +85,10 @@ class UsersController extends BaseController
         return false;
     }
 
-    public function delete($id, $jwts = null)
+    public function delete($data)
     {
+        $jwts = $data["tokens"];
+        $id = $data["id"];
         if ($jwts = $this->authenticate($id, $jwts)) {
             $this->model->delete($id);
             $this->getTokensController()->deleteAllFromUser($id, $jwts);
@@ -118,7 +121,7 @@ class UsersController extends BaseController
         $tokens_controller = $this->getTokensController();
 
         if ($tokens_controller->validateTokens($id, $jwts)) {
-            return $this->getTokensController()->delete($id);
+            return $this->getTokensController()->delete($jwts["refresh_token"]);
         }
 
         return false;
