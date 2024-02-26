@@ -1,7 +1,7 @@
 <template>
   <div class="profile-container">
     <div class="profile-info">
-      <img class="profile-picture" src="../../assets/Dev_Picture/Thomas P.JPG" alt="Photo de Thomas Prud'Homme" />
+      <img class="profile-picture" src="" alt="Photo de Thomas Prud'Homme" />
       <div class="profile-text">
         <h1 class="profile-name">Thomas Prud'homme</h1>
         <h2 class="profile-title">Développement front-end et back-end</h2>
