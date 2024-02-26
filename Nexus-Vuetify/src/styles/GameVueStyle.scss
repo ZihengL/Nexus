@@ -79,9 +79,15 @@
     .Avis{
         display: flex;
         gap :1%;
-        .recent {
-            flex: 4;
+        .Pagin{
+            display: flex;
+            flex-direction: column;
+            
+            .recent {
+                flex: 4;
+            }
         }
+        
         .rate{
 
             flex: 2;

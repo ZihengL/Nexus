@@ -7,20 +7,14 @@
           <img src="../assets/image/img1.png" alt="#" class="roundBorderSmall">
         </div>
         <div class="descript">
-           <p>{{ LeGame.title }}</p>
+          <p>{{ LeGame.title }}</p>
         </div>
         <div class="descript">
           <p>{{ LeGame.description }}</p>
         </div>
         <div class="ratings">
-          <v-rating 
-            hover
-            half-increments
-            :length="5" 
-            :size="32" 
-            :model-value="LeGame.ratingAverage" 
-            active-color="primary" 
-            class="rat" />
+          <v-rating hover half-increments :length="5" :size="32" :model-value="LeGame.ratingAverage"
+            active-color="primary" class="rat" />
         </div>
         <div class="devs">
           <p><b>Developeur : </b> {{ devName }}</p>
@@ -40,8 +34,11 @@
       </div>
     </div>
     <div class="Avis">
-      <AvisRecent class="recent"/>
-      <AvisRating class="rate"/>
+      <div class="Pagin">
+        <AvisRecent class="recent" />
+        <Pagination />
+      </div>
+      <AvisRating class="rate" />
 
     </div>
 
@@ -49,46 +46,47 @@
 </template>
 
 <script setup>
-  import game from '../components/GameCarrousel.vue'
-  import { fetchData } from '../JS/fetch';
-  import { defineProps, ref, onMounted } from 'vue';
-  import AvisRecent from '../components/AvisRecent.vue'
-  import AvisRating from '../components/AvisRating.vue'
+import { defineProps, onMounted, ref } from 'vue';
+import { fetchData } from '../JS/fetch';
+import AvisRating from '../components/AvisRating.vue';
+import AvisRecent from '../components/AvisRecent.vue';
+import game from '../components/GameCarrousel.vue';
+import Pagination from '../components/Pagination.vue';
 
-  const props = defineProps(['idGame']);
-  const LeGame = ref(null);
-  const devName = ref(null);
+const props = defineProps(['idGame']);
+const LeGame = ref(null);
+const devName = ref(null);
 
-  onMounted(async () => {
-    try {
-      const dataGame = await fetchData("games", "getOne", "id",  props.idGame, null, "GET");
-      LeGame.value = dataGame;
-      //console.log('LeGame : ' , LeGame._rawValue.developerID)
+onMounted(async () => {
+  try {
+    const dataGame = await fetchData("games", "getOne", "id", props.idGame, null, "GET");
+    LeGame.value = dataGame;
+    //console.log('LeGame : ' , LeGame._rawValue.developerID)
 
-      if(LeGame.value){
-        const devId =  LeGame._rawValue.developerID
-        console.log('devId : ' , devId)
-        
-        const filters = {
-          id: devId,
-        }
-        const sorting = {
-          id: false
-        }
+    if (LeGame.value) {
+      const devId = LeGame._rawValue.developerID
+      console.log('devId : ', devId)
 
-        const includedColumns = ['id', 'user']
-        const jsonBody = { filters, sorting, includedColumns }
-        
-        const dataDevs = await fetchData('users', 'getAllMatching', null, null, jsonBody, 'POST');
-        let devName2 = dataDevs;
-        devName.value = devName2[0].user
-        console.log('devs : ' , devName._value)
+      const filters = {
+        id: devId,
       }
-    
-    } catch (error) { 
-      console.error('Error fetching data:', error);
+      const sorting = {
+        id: false
+      }
+
+      const includedColumns = ['id', 'user']
+      const jsonBody = { filters, sorting, includedColumns }
+
+      const dataDevs = await fetchData('users', 'getAllMatching', null, null, jsonBody, 'POST');
+      let devName2 = dataDevs;
+      devName.value = devName2[0].user
+      console.log('devs : ', devName._value)
     }
-  });
+
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+});
 </script>
 
 <style src="../styles/GameVueStyle.scss" lang="scss"></style>
