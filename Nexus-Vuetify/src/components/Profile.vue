@@ -65,7 +65,9 @@
       <amis />
     </div>
 
-    <button class="floating-right-bottom-btn">Floating Me!</button>
+    <router-link class="floating-right-bottom-btn glass" to="/upload" title="upload">
+      <v-icon icon="mdi-upload" class="icon glow"/>
+    </router-link>
   </div>
 
 </template>
