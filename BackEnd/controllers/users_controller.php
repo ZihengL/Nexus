@@ -75,8 +75,10 @@ class UsersController extends BaseController
 
     public function update($id, $data, $jwts = null)
     {
-        if ($this->authenticate($id, $jwts)) {
-            return $this->model->update($id, $data);
+        if ($jwts = $this->authenticate($id, $jwts)) {
+            $this->model->update($id, $data);
+
+            return $jwts;
         }
 
         return false;
@@ -84,9 +86,11 @@ class UsersController extends BaseController
 
     public function delete($id, $jwts = null)
     {
-        if ($this->authenticate($id, $jwts)) {
-            return $this->model->delete($id) &&
-                $this->getTokensController()->deleteAllFromUser($id, $jwts);
+        if ($jwts = $this->authenticate($id, $jwts)) {
+            $this->model->delete($id);
+            $this->getTokensController()->deleteAllFromUser($id, $jwts);
+
+            return $jwts;
         }
 
         return false;
