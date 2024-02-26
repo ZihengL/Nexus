@@ -37,10 +37,6 @@ class TagsController extends BaseController
 
     //REBECCA
 
-
-
-
-
     public function create($data, $jwts = null)
     {
         $isValid = $this->validateData("create", $data);
