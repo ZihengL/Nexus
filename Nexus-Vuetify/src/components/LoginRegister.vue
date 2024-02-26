@@ -72,38 +72,35 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import loginScript from '../JS/LoginScript.js';
+import { ref, onMounted, defineEmits } from 'vue';
 
-export default {
-  data() {
-    return {
-      isLogin: true,
-    };
-  },
-  mounted() {
-    loginScript.init(this);
-  },
-  methods: {
-    toggleLogin() {
-      this.isLogin = true;
-      console.log("c est true");
-      var formInner =  document.querySelector(".form-inner");
-      //formInner.style.display = 'flex';
-      formInner.style.height = '45svh';
-    },
-    toggleSignup() {
-      this.isLogin = false;
-      console.log("c est false");
-      var formInner =  document.querySelector(".form-inner");
-      //formInner.style.display = 'block';
-      formInner.style.height = '80svh';
-    },
-    toggleProfile() {
-      this.$emit('showProfile');
-    },
-  },
+const isLogin = ref(true);
+const emit = defineEmits(['showProfile']);
+
+const toggleLogin = () => {
+  isLogin.value = true;
+  console.log("c'est true");
+  const formInner = document.querySelector(".form-inner");
+  formInner.style.height = '45svh';
 };
+
+const toggleSignup = () => {
+  isLogin.value = false;
+  console.log("c'est false");
+  const formInner = document.querySelector(".form-inner");
+  formInner.style.height = '80svh';
+};
+
+const toggleProfile = () => {
+  emit('showProfile');
+};
+
+onMounted(() => {
+  loginScript.init({ toggleLogin, toggleSignup });
+});
 </script>
+
 
 <style src="../styles/SignRegisterStyle.scss" scoped></style>
