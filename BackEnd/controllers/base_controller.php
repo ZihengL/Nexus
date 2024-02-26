@@ -15,23 +15,29 @@ class BaseController
 
     // ZI
 
-    protected function restrictAccess($included_columns = [])
-    {
-        if (!is_array($included_columns)) {
-            $included_columns = [];
-        }
-
-        return array_filter($included_columns, function ($key) {
-            return !in_array($key, $this->restricted_columns);
-        }, ARRAY_FILTER_USE_KEY);
-    }
-
     // protected function restrictAccess($included_columns = [])
     // {
     //     if (!is_array($included_columns)) {
     //         $included_columns = [];
     //     }
+
+    //     return array_filter($included_columns, function ($key) {
+    //         return !in_array($key, $this->restricted_columns);
+    //     }, ARRAY_FILTER_USE_KEY);
     // }
+
+    protected function restrictAccess($included_columns = [])
+    {
+        if (!is_array($included_columns) || count($included_columns) === 0) {
+            $included_columns = $this->model->columns;
+        }
+
+        return array_diff($this->model->columns, $this->restricted_columns);
+
+        // return array_filter($included_columns, function ($key) {
+        //     return !in_array($key, $this->restricted_columns);
+        // }, ARRAY_FILTER_USE_KEY);
+    }
 
     // ACCESS
 
@@ -103,10 +109,6 @@ class BaseController
     public function getAll($column = null, $value = null, $included_columns = [], $sorting = [])
     {
         $included_columns = $this->restrictAccess($included_columns);
-
-        echo '<pre>';
-        print_r($included_columns);
-        echo '</pre>';
 
         return $this->model->getAll($column, $value, $included_columns, $sorting);
     }
