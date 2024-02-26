@@ -157,7 +157,7 @@ class BaseModel
 
     function parseColumns($columns = [])
     {
-        return empty($columns) ? "*" : implode(', ', [...$columns, 'id']);
+        return empty($columns) ? "*" : implode(', ', ['id', ...$columns]);
     }
 
     public function getColumns($includeID = true)
