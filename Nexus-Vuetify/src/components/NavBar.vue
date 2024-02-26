@@ -54,6 +54,7 @@ import { watchEffect } from 'vue';
 watchEffect(() => {
   console.log('isConnected changed:', isConnected.value);
 });
+
 </script>
 
 
