@@ -16,35 +16,37 @@
           <span class="link-btn">A propos</span>
         </router-link>
         <v-spacer></v-spacer>
-        <router-link to="/Login" class="router glow"> <!-- v-if="!$isConnected"-->
-          <span class="link-btn" text>Connexion</span>
+        <router-link to="/Login" class="router glow">
+          <span v-if="connected" class="link-btn" text>Deconnexion</span>
+          <span v-else class="link-btn" text>Connexion</span>
         </router-link>
+
       </div>
     </div>
   </nav>
 </template>
 
 <script setup>
-import { ref, getCurrentInstance } from 'vue';
+import { defineProps, ref, watch } from 'vue';
 
 let hover = ref(false);
 let logoURL = '/src/assets/logos/Nexus_c5c3c0.svg';
 let logo2URL = '/src/assets/logos/Nexus_171d25.svg';
 
-const { proxy } = getCurrentInstance();
-console.log(' global : ', proxy.$blogName); // Utilisez $blogName pour accéder à la propriété globale
+const props = defineProps(['connected']);
 
 const changeUrl = () => {
-  console.log('changeUrl called');
   hover.value = true;
 };
 
 const rechangeUrl = () => {
-  console.log('rechangeUrl called');
   hover.value = false;
 };
+
+watch(() => props.connected, (newValue, oldValue) => {
+  console.log('var update : ', newValue);
+});
+
 </script>
-
-
 
 <style src="../styles/NavBarStyle.scss" scoped></style>
