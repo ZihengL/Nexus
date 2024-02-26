@@ -205,7 +205,7 @@ export default {
       ////////////////////UPDATE TAG/////////////////////////
 
       const updateData = {
-        id: "10",
+        id: "11",
         gameId: "10",
         oldName: "princess",
         newName: "chocolate",
