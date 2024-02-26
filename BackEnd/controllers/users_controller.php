@@ -21,7 +21,7 @@ class UsersController extends BaseController
 
     public function __construct($central_controller, $pdo)
     {
-        $this->model = new UserModel($pdo);
+        $this->model = new UsersModel($pdo);
         $this->restricted_columns = ['password', 'email', 'phoneNumber', 'isAdmin'];
         parent::__construct($central_controller);
     }
@@ -68,11 +68,6 @@ class UsersController extends BaseController
                 // $this->model->update($user[$this->id], $user);
                 return true;
             }
-        if (!$this->userExists($data) && $this->model->create($data)) {
-            $user = $this->model->getOne($this->email, $data[$this->email]);
-            // echo "users_controller: " .$user . "<br>";
-
-            // return $this->login($data[$this->email], $data[$this->password]);
         }
 
         return false;

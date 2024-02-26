@@ -2,7 +2,7 @@
 
 require_once "$path/models/base_model.php";
 
-class UserModel extends BaseModel
+class UsersModel extends BaseModel
 {
 
     public function __construct($pdo)
