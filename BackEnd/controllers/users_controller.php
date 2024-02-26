@@ -73,7 +73,7 @@ class UsersController extends BaseController
         return false;
     }
 
-    public function update($id, $data)
+    public function update($id, $data, $jwts = null)
     {
         $jwts = $data["tokens"];
         if ($jwts = $this->authenticate($id, $jwts)) {
@@ -85,7 +85,7 @@ class UsersController extends BaseController
         return false;
     }
 
-    public function delete($data)
+    public function delete($data, $jwts = null)
     {
         $jwts = $data["tokens"];
         $id = $data["id"];

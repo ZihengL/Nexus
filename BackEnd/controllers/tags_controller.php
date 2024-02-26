@@ -37,10 +37,6 @@ class TagsController extends BaseController
 
     //REBECCA
 
-
-
-
-
     public function create($data, $jwts = null)
     {
         $isValid = $this->validateData("create", $data);
@@ -102,25 +98,27 @@ class TagsController extends BaseController
 
 
 
-    public function update($id, $data)
-    {
-        $isValid = $this->validateData("update", $data);
+    public function update($id, $data, $jwts = null)
+{
+    $isValid = $this->validateData("update", $data);
+    $isValidArray = json_decode($isValid, true); 
+
+    if ($isValidArray['isSuccessful']) {
         $newName = $data["newName"];
-
-        if ($isValid['isSuccessful']) {
-
-            $similarTagExist = $this->getOne("name", $newName);
-            if ($similarTagExist) {
-                return $this->createResponse(false, 'there is already a tag with that same name');
-            }
-            $newData = ['id' => $id, 'name' => $newName];
-            if ($this->model->update($id, $newData)) {
-                return $this->createResponse(false, 'tag has been updated');
-            }
-
+        $similarTagExist = $this->getOne("name", $newName);
+        if ($similarTagExist) {
+            return $this->createResponse(false, 'There is already a tag with that same name');
         }
-        return $this->$isValid;
+        $newData = ['id' => $id, 'name' => $newName];
+        if ($this->model->update($id, $newData)) {
+            return $this->createResponse(true, 'Tag has been updated');
+        } else {
+            return $this->createResponse(false, 'Failed to update tag');
+        }
+    } else {
+        return $isValid;
     }
+}
 
 
 
@@ -157,5 +155,14 @@ class TagsController extends BaseController
             default:
                 return $this->createResponse(false, 'error in tags_controller');
         }
+
     }
+
+
+
+
 }
+
+
+
+
