@@ -7,7 +7,7 @@ require_once "$path/controllers/tokens_controller.php";
 require_once "$path/controllers/reviews_controller.php";
 require_once "$path/controllers/gameTags_controller.php";
 require_once "$path/controllers/tags_controller.php";
-require_once "$path/controllers/google/client_manager.php";
+// require_once "$path/controllers/google/client_manager.php";
 
 require_once "$path/remote/routines.php";
 

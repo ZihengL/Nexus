@@ -1,6 +1,15 @@
 <?php
 //index.php
 
+function printall($array)
+{
+    echo '<pre>';
+    print_r($array);
+    echo '</pre>';
+}
+
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     // Return only the headers and not the content
     // Only allow CORS if we're doing a GET - this is a preflight request
@@ -220,10 +229,3 @@ function handleUpdate($centralController, $decodedData, $controllerName, $crud_a
     // print_r($data);
     return $centralController->$controllerName->$crud_action($data["id"], $data);
 }
-
-
-
-
-
-
-

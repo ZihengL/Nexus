@@ -26,20 +26,20 @@ class UsersController extends BaseController
         parent::__construct($central_controller);
     }
 
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
-    {
-        $included_columns = $this->restrictAccess($included_columns);
+    // public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
+    // {
+    //     $included_columns = $this->restrictAccess($included_columns);
 
-        return $this->model->getAllMatching($filters, $sorting, $included_columns);
-    }
+    //     return $this->model->getAllMatching($filters, $sorting, $included_columns);
+    // }
 
-    public function getOne($column, $value, $included_columns = [])
-    {
+    // public function getOne($column, $value, $included_columns = [])
+    // {
 
-        $included_columns = $this->restrictAccess($included_columns);
+    //     $included_columns = $this->restrictAccess($included_columns);
 
-        return $this->model->getOne($column, $value, $included_columns);
-    }
+    //     return $this->model->getOne($column, $value, $included_columns);
+    // }
 
     public function userExists($data)
     {
