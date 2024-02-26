@@ -100,17 +100,17 @@ class BaseController
         return $this->model->getAll($column, $value, $included_columns, $sorting);
     }
 
-    public function create($data, $jwts = null)
+    public function create($data)
     {
         return $this->model->create($data);
     }
 
-    public function update($id, $data, $jwts = null)
+    public function update($id, $data)
     {
         return $this->model->update($id, $data);
     }
 
-    public function delete($id, $jwts = null)
+    public function delete($id)
     {
         return $this->model->delete($id);
     }
