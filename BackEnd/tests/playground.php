@@ -78,3 +78,13 @@ $response = $users_ctrl->getAll();
 //     echo print_r($user);
 //     echo '</pre><br>';
 // }
+
+
+// $arr1 = ['a', 'b', 'c'];
+// $arr2 = ['c'];
+
+// print_r($arr1);
+// echo '<br>';
+// print_r($arr2);
+// echo '<br>';
+// print_r(array_diff_key($arr1, $arr2));
