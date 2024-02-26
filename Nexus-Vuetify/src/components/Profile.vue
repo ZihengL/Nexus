@@ -30,68 +30,28 @@
 
           <div class="form-container">
 
-            <div class="slide-controls roundBorderSmall">
+            <div v-if="isHimself" class="slide-controls roundBorderSmall">
               <input type="radio" name="slide" id="login" v-model="isLogin" value="true" checked>
               <input type="radio" name="slide" id="signup" v-model="isLogin" value="false">
-              <label for="login" class="slide login">Connexion</label>
-              <label for="signup" class="slide signup">Inscription</label>
+              <label for="login" class="slide login" @click="toggleLogin()">Acheter</label>
+              <label for="signup" class="slide signup" @click="toggleSignup()">Developper</label>
               <div class="slider-tab"></div>
             </div>
 
-            <div class="form-inner">
+            <div v-if="isHimself" class="form-inner">
 
-              <form action="#" class="login">
-                <!-- ... Login form content ... -->
-                <div class="field">
-                  <input type="text" placeholder="Addresse email" required>
-                </div>
-                <div class="field">
-                  <input type="password" placeholder="Mot de passe" required>
-                </div>
-                <div class="pass-link glow">
-                  <a href="#">Mot de passe oublier ?</a>
-                </div>
-                <div class="fieldBtn">
-                  <div class="btn-layer"></div>
-                  <v-btn density="default" class="submit glow" @click="toggleProfile">
-                    Se connecter
-                  </v-btn>
-                </div>
-                <div class="signup-link">
-                  Pas encore inscris ? <a style=" cursor: pointer;" class=" glow">S'inscrire</a>
-                </div>
-              </form>
+              <div v-for="(item, index) in gameList" :key="index" class="login gamesss log">
+                <liste-de-jeu :idJeu="item.id" :buy="true" class="game gamess"/>
+              </div>
 
-              <form action="#" class="signup">
-                <!-- ... Signup form content ... -->
-                <div class="field field2">
-                  <input type="text" placeholder="Nom *"  required>
-                  <input type="text" placeholder="Prenom *"  required>
-                </div>
-                <div class="field">
-                  <input type="text" placeholder="Téléphone">
-                </div>
-                <div class="field">
-                  <input type="text" placeholder="Username *" required>
-                </div>
-                <div class="field">
-                  <input type="text" placeholder="Email *" required>
-                </div>
-                <div class="field">
-                  <input type="password" placeholder="Mot de passe *" required>
-                </div>
-                <div class="field">
-                  <input type="password" placeholder="Confirmer le mot de passe *" required>
-                </div>
-                <div class="fieldBtn">
-                  <div class="btn-layer"></div>
-                  <v-btn density="default" class="submit glow" @click="toggleProfile">
-                    S'inscrire
-                  </v-btn>
-                </div>
-              </form>
+              <div  v-for="(item, index) in gameList" :key="index"  class="signup sign">
+                <liste-de-jeu :idJeu="item.id" :buy="false" class="game"/>
+              </div>
 
             </div>
+              <div v-else  v-for="(item, index) in gameList" :key="index"  class="signup sign">
+                <liste-de-jeu :idJeu="item.id"  :buy="false" class="game"/>
+              </div>
 
           </div>
 
@@ -104,12 +64,26 @@
       <amis />
       <amis />
     </div>
+
+    <v-fab-transition>
+      <v-btn
+        v-show="!hidden"
+        color="pink"
+        dark
+        absolute
+        top
+        right
+        fab
+      >
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
+    </v-fab-transition>
   </div>
+
 </template>
 
 
 <script setup>
-import loginScript from '../JS/LoginScript.js';
 import ListeDeJeu from './ListeDeJeu.vue';
 import { fetchData } from '../JS/fetch';
 import { defineProps, ref, onMounted } from 'vue';
@@ -122,16 +96,27 @@ const isLogin = ref(true);
 
 const toggleLogin = () => {
   isLogin.value = true;
+  const gamessShow = document.querySelector(".gamess"); // Use class selector
+  const gamesContainer = document.querySelector(".gamesss"); // Use class selector
+  if (gamessShow && gamesContainer) {
+    gamessShow.style.marginLeft = "0%";
+    gamesContainer.style.marginLeft = "0%";
+  }
 };
 
 const toggleSignup = () => {
   isLogin.value = false;
+  const gamessShow = document.querySelector(".gamess"); // Use class selector
+  const gamesContainer = document.querySelector(".gamesss"); // Use class selector
+  if (gamessShow && gamesContainer) {
+    gamessShow.style.marginLeft = "-60%";
+    gamesContainer.style.marginLeft = "-60%";
+  }
 };
 
-onMounted(async () => {
 
+onMounted(async () => {
   try {
-    loginScript.init({ toggleLogin, toggleSignup });
     const dataGame = await fetchData("users", "getOne", "id", props.idDevl, null, "GET");
     leDevs.value = dataGame;
     console.log('leDevs : ', leDevs)

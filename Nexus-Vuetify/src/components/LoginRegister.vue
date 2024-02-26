@@ -14,7 +14,7 @@
 
       <div class="form-inner">
 
-        <form action="#" class="login">
+        <form action="#" class="login log">
           <!-- ... Login form content ... -->
           <div class="field">
             <input type="text" placeholder="Addresse email" required>
@@ -36,7 +36,7 @@
           </div>
         </form>
 
-        <form action="#" class="signup">
+        <form action="#" class="signup sign">
           <!-- ... Signup form content ... -->
           <div class="field field2">
             <input type="text" placeholder="Nom *"  required>
