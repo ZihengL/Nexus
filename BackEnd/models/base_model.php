@@ -34,8 +34,6 @@ class BaseModel
 
     protected function query($sql, $params = [])
     {
-        // echo "<br> query base_model <br>";
-        // print_r($params);
         try {
             $stmt = $this->pdo->prepare($sql);
 
@@ -47,7 +45,6 @@ class BaseModel
 
             return $stmt;
         } catch (PDOException $e) {
-            // return $exception;
             throw new Exception("Database query error: " . $e->getMessage());
         }
     }
@@ -58,7 +55,6 @@ class BaseModel
             $stmt = $this->pdo->prepare($sql);
 
             foreach ($params as $param => $value) {
-                // $stmt->bindValue(":$param", $value, getDataType($value));
                 $stmt->bindValue($param, $value);
             }
             $stmt->execute();
@@ -91,7 +87,6 @@ class BaseModel
 
     public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
     {
-        // $sql = 'SELECT * FROM ' . $this->table . ' WHERE 1 = 1';
         $sql = "SELECT " . $this->parseColumns($included_columns) . " FROM $this->table WHERE 1 = 1";
         $filterResults = $this->applyFilters($filters);
         $sortingResults = $this->applySorting($sorting);
@@ -101,20 +96,6 @@ class BaseModel
 
         $sqlWithFiltersAndSorting = $sortingResults ? $sqlWithFilters . ' ORDER BY ' . $sortingResults : $sqlWithFilters;
         $sqlWithFiltersAndSorting = $sql . $sqlWithFiltersAndSorting;
-
-        // echo "<br> getAllMatching - sqlWithFiltersAndSorting :  <br>\n";
-        // print_r($params);
-        // echo "<br>";
-
-        // $stmt = $this->pdo->prepare($sqlWithFiltersAndSorting);
-
-        // foreach ($params as $placeholder => $value) {
-        //     $stmt->bindValue($placeholder, $value);
-        // }
-        // $stmt->execute();
-
-        // $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        // return $results;
 
         return $this->bindingQuery($sqlWithFiltersAndSorting, $params);
     }
@@ -129,24 +110,22 @@ class BaseModel
 
     // OTHER CRUDS
 
-    // $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE devName = ?");
-    // $stmt->execute([$devName]);
-    // $sql = "INSERT INTO users (first_name, last_name, email) VALUES ('$firstName', '$lastName', '$email')";
     public function create($data)
     {
-        $columns = implode(', ', $this->columns);
-        $placeholders = substr(str_repeat(",?", count($this->columns)), 1);
+        $data = $this->formatData($data);
+        $columns = implode(', ', array_keys($data));
+        $placeholders = substr(str_repeat(",?", count($data)), 1);
 
         // echo "<br> create base_model <br>";
         // print_r($placeholders);
 
         $sql = "INSERT INTO $this->table ($columns) VALUES ($placeholders)";
 
-        if ($this->query($sql, $this->formatData($data))) {
+        if ($this->query($sql, $data)) {
             return true;
         } else {
 
-            // return false;
+            return false;
         }
     }
 
@@ -164,28 +143,19 @@ class BaseModel
         }
     }
 
-    // public function delete($id)
-    // {
-    //     $sql = "DELETE FROM $this->table WHERE id = ?";
-
-    //     return $this->query($sql, [$id]);
-    // }
-
     public function delete($id)
     {
         $sql = "DELETE FROM $this->table WHERE id = ?";
         $stmt = $this->pdo->prepare($sql);
 
-        // Execute returns true on success, false on failure
-        return $stmt->execute([$id]);
-    }
+        $stmt->bindParam(1, $id, PDO::PARAM_INT);
 
+        return $stmt->execute();
+    }
     // TOOLS
 
     function parseColumns($columns = [])
     {
-        // echo "<br> returned columns : <br>";
-        // print_r($columns);
         return empty($columns) ? "*" : implode(', ', $columns);
     }
 
@@ -339,16 +309,4 @@ class BaseModel
 
         return $result; // This will be appended to the SQL query if not empty
     }
-
-
-    /*To update the relational tables 
-    $table_obj_ids = [] - is an array because for gameTags there's gameId and tagId 
-    but for Reviews there's Id gameId, userId and maybe a third
-    */
-    public function updateRelationTable($objectToUpdate, $table_obj_ids = [])
-    {
-    }
-
-    // public function updateRelationTable($objectToUpdate, $table_obj_ids = []){  
-    // }
 }

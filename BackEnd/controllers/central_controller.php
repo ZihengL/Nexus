@@ -5,10 +5,11 @@ require_once "$path/controllers/games_controller.php";
 require_once "$path/controllers/users_controller.php";
 require_once "$path/controllers/tokens_controller.php";
 require_once "$path/controllers/reviews_controller.php";
+require_once "$path/controllers/gameTags_controller.php";
+require_once "$path/controllers/tags_controller.php";
+// require_once "$path/controllers/google/client_manager.php";
 
-require_once "$path/controllers/google/client_manager.php";
-
-// require_once "$path/remote/routines.php";
+require_once "$path/remote/routines.php";
 
 use Dotenv\Dotenv as Dotenv;
 
@@ -22,6 +23,8 @@ class CentralController
     public $users_controller;
     public $games_controller;
     public $reviews_controller;
+    public $gamestags_contoller;
+    public $tags_controller;
 
     public $google_client_manager;
 
@@ -41,8 +44,10 @@ class CentralController
         $this->users_controller = new UsersController($this, $pdo);
         $this->games_controller = new GamesController($this, $pdo);
         $this->reviews_controller = new ReviewsController($this, $pdo);
+        $this->gamestags_contoller = new GameTagsController($this, $pdo);
+        $this->tags_controller = new TagsController($this, $pdo);
 
-        $this->google_client_manager = GoogleClientManager::getInstance($this);
+        // $this->google_client_manager = GoogleClientManager::getInstance($this);
     }
 
     public static function getInstance()

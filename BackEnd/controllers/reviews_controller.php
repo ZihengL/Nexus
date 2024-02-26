@@ -53,13 +53,6 @@ class ReviewsController extends BaseController
     // }
 
 
-    public function deleteReview($id)
-    {
-        return $this->model->delete($id);
-    }
-
-
-
     public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
     {
         if (empty($sorting)) {
@@ -69,7 +62,7 @@ class ReviewsController extends BaseController
         return parent::getAllMatching($filters, $sorting, $included_columns);
     }
 
-    public function create($data)
+    public function create($data, $jwts = null)
     {
         // echo "<br> create reviews_controller <br>";
         // print_r($data);
@@ -93,17 +86,17 @@ class ReviewsController extends BaseController
 
 
 
-    public function delete($data)
+    public function delete($data, $jwts = null)
     {
         // echo "<br> delete reviews_controller <br>";
         // print_r($data);
-        if ($this->validateReview("delete",$data)) {
+        if ($this->validateReview("delete", $data)) {
             if ($this->getOne("id", $data["id"])) {
                 // echo "delete review: ";
-                // echo "proper review  : ",$data["id"], "<br>";
+                // echo "proper review  : ", $data["id"], "<br>";
                 if ($this->model->delete($data["id"])) {
+                    // echo "mlep: ";
                     return $this->updateGameRatingAverage($data["gameID"]);
-                    // return true; 
                 }
             }
         }
@@ -112,11 +105,11 @@ class ReviewsController extends BaseController
     }
 
 
-    public function update($id, $data)
+    public function update($id, $data, $jwts = null)
     {
         // echo "<br> update reviews_controller <br>";
         // print_r($data);
-        if ($this->validateReview("update",$data)) {
+        if ($this->validateReview("update", $data)) {
             if ($this->getOne("id", $id)) {
                 // echo "update review: ";
                 //update review, remove the tokens and send infos without tokens
@@ -154,30 +147,30 @@ class ReviewsController extends BaseController
     public function updateGameRatingAverage($gameID)
     {
         $reviews = $this->getAll("gameID", $gameID, null, null);
-        // echo "reviews list : ", print_r($reviews, true), "<br>";
-        //  echo "reviews list : ",, "<br>";
+        // echo "updateGameRatingAverage : <br>";
         if (!empty($reviews)) {
             $totalRating = 0;
             foreach ($reviews as $review) {
                 $totalRating += $review['rating'];
             }
             $newAverageRating = count($reviews) > 0 ? $totalRating / count($reviews) : 0;
-
-            $gameController = $this->getGamesController();
-            $game = $gameController->getOne("id", $gameID);
-            // echo "game before update : ", print_r($game, true), "<br>";
-            // echo "newAverageRating : ", $newAverageRating, "<br>";
-
-            if ($game) {
-                $game['ratingAverage'] = $newAverageRating;
-                // echo "game after update : ", print_r($game, true), "<br>";
-                return $gameController->update($gameID, $game);
-            }
+        } else {
+            $newAverageRating = 0;
         }
-        // echo "updateGameRatingAverage";
+
+        $gameController = $this->getGamesController();
+        $game = $gameController->getOne("id", $gameID);
+        // echo "game before update : ", print_r($game, true), "<br>";
+        // echo "newAverageRating : ", $newAverageRating, "<br>";
+
+        if ($game) {
+            $game['ratingAverage'] = $newAverageRating;
+            // echo "game after update : ", print_r($game, true), "<br>";
+            return $gameController->update($gameID, $game);
+        }
+
         return false;
     }
-
 
 
     public function validateReview($action, $data)
@@ -209,29 +202,26 @@ class ReviewsController extends BaseController
         switch ($action) {
             case 'create':
                 // echo ": hi <br>";
-                if ($isEmptyData_forCreate || !$gameExists || !$userExists ) {
+                if ($isEmptyData_forCreate || !$gameExists || !$userExists) {
                     return false;
-                }else{
+                } else {
                     // echo ": blue <br>";
                     return true;
                 }
             case 'update':
-                if ($isEmptyData_forUpdate || !$gameExists || !$userExists ) {  //|| !$areValidTokens
+                if ($isEmptyData_forUpdate || !$gameExists || !$userExists) {  //|| !$areValidTokens
                     return false;
-                }else{
+                } else {
                     return true;
                 }
             case 'delete':
-                if ($isEmptyData_forDelete || !$gameExists || !$userExists ) {  //|| !$areValidTokens
+                if ($isEmptyData_forDelete || !$gameExists || !$userExists) {  //|| !$areValidTokens
                     return false;
-                }else{
+                } else {
                     return true;
                 }
             default:
                 return false;
         }
-
     }
-
-
 }

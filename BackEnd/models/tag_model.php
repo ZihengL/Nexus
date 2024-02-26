@@ -1,7 +1,6 @@
 <?php
 
 require_once "$path/models/base_model.php";
-// require_once "$path/controllers/tagscontroller.php";
 
 class TagsModel extends BaseModel
 {
@@ -18,10 +17,6 @@ class TagsModel extends BaseModel
         return parent::getAll($columnName, $name);
     }
 
-    public function getAll_tags()
-    {
-        return parent::getAll();
-    }
 
     //Other Cruds
 }

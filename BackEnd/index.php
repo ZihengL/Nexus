@@ -1,6 +1,15 @@
 <?php
 //index.php
 
+function printall($array)
+{
+    echo '<pre>';
+    print_r($array);
+    echo '</pre>';
+}
+
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     // Return only the headers and not the content
     // Only allow CORS if we're doing a GET - this is a preflight request
@@ -34,21 +43,25 @@ $central_controller = CentralController::getInstance();
 // METHOD & URI
 $method = $_SERVER["REQUEST_METHOD"];
 $requestUri = $_SERVER['REQUEST_URI'];
-$scriptName = $_SERVER['SCRIPT_NAME'];
 
-// Optionally remove the base path or script name
+// Parse URL to separate the path from the query string
+$urlComponents = parse_url($requestUri);
+$path = $urlComponents['path'];
+$queryString = $urlComponents['query'] ?? '';
+
+// Optionally remove the base path or script name from the path
+$scriptName = $_SERVER['SCRIPT_NAME'];
 $basePath = str_replace('/index.php', '', $scriptName);
-$uriPath = str_replace($basePath, '', $requestUri);
+$uriPath = str_replace($basePath, '', $path);
 
 $explodedURI = explode('/', trim($uriPath, '/'));
 $table = $explodedURI[0] ?? null;
 $crud_action = $explodedURI[1] ?? null;
 $columName = $explodedURI[2] ?? null;
 $value = $explodedURI[3] ?? null;
-$columnToRecieve = $explodedURI[4] ?? null;
-$includedColumns = $columnToRecieve ? explode(',', $columnToRecieve) : null;
-$columnToSort = $explodedURI[4] ?? null;
-$sorting = $columnToSort ? explode(',', $columnToSort) : null;
+
+$includedColumns = isset($_GET['includedColumns']) ? explode(',', $_GET['includedColumns']) : null;
+$sorting = isset($_GET['sorting']) ? explode(',', $_GET['sorting']) : null;
 
 // Read the input data for POST, PUT, DELETE methods
 $rawData = file_get_contents('php://input');
@@ -60,7 +73,8 @@ $decodedData = json_decode($rawData, true);
 switch ($method) {
     case 'GET':
         // print_r($explodedURI);
-        echo "<br> The requested URI is: " . $method;
+        // echo "<br> crud_action: " . $crud_action;
+        // echo "<br>  includedColumns : " . print_r($includedColumns, true);
         // echo "<br>  columName : " . $columName;
         handleGet($table, $crud_action, $central_controller, $columName, $value, $includedColumns, $sorting);
         break;
@@ -86,6 +100,7 @@ function handleGet($table, $crud_action, $centralController, $columName, $value,
     switch ($crud_action) {
         case 'getAll':
             // echo "<br>  getAllFromTable : " . $includedColumns;
+            // echo "<br>  getAllFromTable : " . print_r($includedColumns, true);
             $result = $centralController->$controllerName->getAll($columName, $value, $includedColumns, $sorting);
             echo json_encode($result);
             break;
@@ -178,12 +193,13 @@ function handleLogin($centralController, $decodedData, $controllerName, $crud_ac
 function handleLogout($centralController, $decodedData, $controllerName, $crud_action)
 {
     $data = $decodedData['logout'];
+    $id =  $data['id'];
     $tokens = $data['tokens'];
 
     // echo "<br> logout data : <br>";
     // // return "logout test";
     // print_r($tokens);
-    return $centralController->$controllerName->$crud_action($tokens);
+    return $centralController->$controllerName->$crud_action($id, $tokens);
 }
 
 
@@ -213,10 +229,3 @@ function handleUpdate($centralController, $decodedData, $controllerName, $crud_a
     // print_r($data);
     return $centralController->$controllerName->$crud_action($data["id"], $data);
 }
-
-
-
-
-
-
-

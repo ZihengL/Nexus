@@ -61,10 +61,6 @@ class DriveController
         }
     }
 
-    private function deleteFolder($folder_id)
-    {
-    }
-
     // SPECIFIC REQUESTS
 
     public function createUserSubfolder($user_id)

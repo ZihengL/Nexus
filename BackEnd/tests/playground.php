@@ -67,3 +67,23 @@ require_once $path . 'tests/temp_globals.php';
 // echo '<pre>';
 // print_r($stored);
 // echo '</pre>';
+
+$users_ctrl = $central_controller->users_controller;
+
+$response = $users_ctrl->getAll();
+
+foreach ($response as $user) {
+    echo '<pre>';
+    echo print_r($user);
+    echo '</pre><br>';
+}
+
+
+// $arr1 = ['a', 'b', 'c'];
+// $arr2 = ['c'];
+
+// print_r($arr1);
+// echo '<br>';
+// print_r($arr2);
+// echo '<br>';
+// print_r(array_diff_key($arr1, $arr2));

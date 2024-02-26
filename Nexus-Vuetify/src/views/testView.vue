@@ -2,7 +2,15 @@
   <div class="test_view">
     TEST
     <!-- Using Vuetify's v-button component -->
-    <v-btn class="bordered-btn" @click="fetchDataMethod">Fetch Data</v-btn>
+    <v-btn class="bordered-btn" @click="getAll">Get All</v-btn>
+    <v-btn class="bordered-btn" @click="getOne">Get One</v-btn>
+    <v-btn class="bordered-btn" @click="login">Login</v-btn>
+    <v-btn class="bordered-btn" @click="logout">Logout</v-btn>
+    <v-btn class="bordered-btn" @click="register">register</v-btn>
+    <v-btn class="bordered-btn" @click="filter">filter</v-btn>
+    <v-btn class="bordered-btn" @click="deleteData">delete</v-btn>
+    <v-btn class="bordered-btn" @click="updateData">update</v-btn>
+    <v-btn class="bordered-btn" @click="createData">create</v-btn>
   </div>
 </template>
 
@@ -10,126 +18,239 @@
 import { fetchData } from "../JS/fetch";
 
 export default {
-  components: {},
-  mounted() {
-
-
-
-    //////////////////////////////////////////////////////////
-    // const filters = {
-    //   ratingAverage: { gt: 1, lte: 7 },
-    // };
-    // const sorting = {
-    //   ratingAverage: true,
-    // };
-    // const includedColumns = ["id", "developerID", "title"];
-    // const create = {
-    //   email: "e",
-    //   name: "Katty",
-    //   password: "e",
-    // };
-    // const login = {
-    //   email: "e",
-    //   password: "e",
-    // };
-    // const create = {
-    //   userID: "2",
-    //   gameID: "4",
-    //   rating: "3",
-    //   tokens: {
-    //     access_token:
-    //      "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MDMwMCwiZXhwIjoxNzA4NjUzOTAwLCJzdWIiOjM1fQ.FXa6aLKfyPKIDxDTVwpj-usbg2EARvahUAoMh6pf08Y",
-    //     refresh_token:
-    //       "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MDMwMCwiZXhwIjoxNzA4NzM2NzAwLCJzdWIiOjM1fQ.QFVpEGyOyAO87VZgGPGF8WvU2KHM5Ex-RmgMgctmc7s",
-    //   },
-    //   comment: "This is a review comment",
-    // };
-    // const jsonBody = { filters, sorting, includedColumns };
-    // const createBody = { create };
-    // const loginBody = { login };
-    // fetchData("reviews", "create", null, null, null, null, createBody, "POST");
-    //  fetchData("reviews", "getAll", "id", 1, null, null, null, "GET")
-    //  fetchData('users', 'getOne', "id", 1, ["id", "user"], null, null, 'GET')
-    // fetchData('users', 'create', null, null, null, null, createBody, 'POST')
-    // fetchData("games", "getAllMatching", null, null, null, null, jsonBody, "POST")
-    // const login_tokens = fetchData(
-    //   "users",
-    //   "login",
-    //   null,
-    //   null,
-    //   null,
-    //   null,
-    //   loginBody,
-    //   "POST"
-    // );
-    // console.log("login tokens : ", login_tokens);
-    //     if (login_tokens) {
-    //       const logout = {
-    //         email: "e",
-    //         password: "e",
-    //         access_token: login_tokens["access_token"],
-    //         refresh_token: login_tokens["refresh_token"],
-    //       };
-    //       const logoutBody = { logout };
-    //       console.log(
-    //         "logout infos : ",
-    //         fetchData("users", "logout", null, null, logoutBody, "POST")
-    //       );
-    //     }
+  data() {
+    return {
+      // Store tokens here
+      loginTokens: {
+        access_token: "",
+        refresh_token: "",
+      },
+    };
   },
   methods: {
-  
-    fetchDataMethod() {
-
-    // const create = {
-    //   email: "e",
-    //   name: "Katty",
-    //   password: "e",
-    // };
-
-    // const createBody = { create };
-    // fetchData('users', 'create', null, null, null, null, createBody, 'POST')
-
-
-      ////////////////////////////////////////////////////////////////////////
-
-      // const login = {
-      //   email: "e",
-      //   password: "e",
-      // };
-      // const loginBody = { login };
-      // const login_tokens = fetchData(
+    getAll() {
+      // let results = fetchData("games", "getAll", null, null, ["id","files","title"],{id: true}, null, "GET")
+      let results = fetchData(
+        "games",
+        "getAll",
+        null,
+        null,
+        ["id", "ratingAverage", "title", "tags"],
+        null,
+        null,
+        "GET"
+      );
+      // let results = fetchData(
+      //   "games",
+      //   "getAll",
+      //   null,
+      //   null,
+      //   ["id", "ratingAverage", "title"],
+      //   null,
+      //   null,
+      //   "GET"
+      // );
+      // let results = fetchData(
       //   "users",
-      //   "login",
+      //   "getAll",
       //   null,
       //   null,
       //   null,
       //   null,
-      //   loginBody,
+      //   null,
+      //   "GET"
+      // );
+      console.log(results);
+    },
+    getOne() {
+      // let results = fetchData("games", "getAll", null, null, ["id","files","title"],{id: true}, null, "GET")
+      let results = fetchData(
+        "games",
+        "getOne",
+        "id",
+        "4",
+        ["id", "ratingAverage", "title", "tags"],
+        null,
+        null,
+        "GET"
+      );
+      console.log(results);
+    },
+    
+    logout() {
+      const access_token = localStorage.getItem("accessToken");
+      const refresh_token = localStorage.getItem("refreshToken");
+
+      const logout = {
+        id: "7",
+        tokens: {
+          access_token: access_token,
+          refresh_token: refresh_token,
+        },
+      };
+
+      this.loginTokens.access_token = "";
+      this.loginTokens.refresh_token = "";
+
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+
+      const body = { logout };
+
+      let results = fetchData(
+        "users",
+        "logout",
+        null,
+        null,
+        null,
+        null,
+        body,
+        "POST"
+      );
+      console.log(results);
+    },
+    async login() {
+      const login = {
+        email: "b",
+        name: "charles",
+        password: "b",
+      };
+      const loginBody = { login };
+      try {
+        const loginResponse = await fetchData(
+          "users",
+          "login",
+          null,
+          null,
+          null,
+          null,
+          loginBody,
+          "POST"
+        );
+        // console.log("Login successful: ",loginResponse);
+        if (loginResponse) {
+          this.loginTokens.access_token = loginResponse.access_token;
+          this.loginTokens.refresh_token = loginResponse.refresh_token;
+          localStorage.setItem("accessToken", loginResponse.access_token);
+          localStorage.setItem("refreshToken", loginResponse.refresh_token);
+          console.log("Login successful: ", this.loginTokens);
+        }
+      } catch (error) {
+        console.error("Login failed: ", error);
+      }
+    },
+    register() {
+      const createData = {
+        email: "c",
+        username: "meki",
+        password: "c",
+      };
+      const createBody = { createData };
+      let results = fetchData(
+        "users",
+        "create",
+        null,
+        null,
+        null,
+        null,
+        createBody,
+        "POST"
+      );
+      console.log(results);
+    },
+    createData() {
+      ////////////CREATE REVIEWS///////////////
+      // const createData = {
+      //   userID: "1",
+      //   gameID: "10",
+      //   rating: "1",
+      //   tokens: {
+      //     access_token: this.loginTokens.access_token,
+      //     refresh_token: this.loginTokens.refresh_token,
+      //   },
+      //   comment: "This is a review comment",
+      // };
+      // const createBody = { createData };
+      // let results = fetchData(
+      //   "reviews",
+      //   "create",
+      //   null,
+      //   null,
+      //   null,
+      //   null,
+      //   createBody,
       //   "POST"
       // );
+      // console.log(results);
 
-      // console.log("login tokens : ", login_tokens);
+      ////////////////////CREATE TAG//////////////////////
+      const createData = {
+        gameId: "10",
+        name: "princess",
+      };
+      const createBody = { createData };
+      let results = fetchData(
+        "tags",
+        "create",
+        null,
+        null,
+        null,
+        null,
+        createBody,
+        "POST"
+      );
+      console.log(results);
+    },
+    updateData() {
+      ////////////////////UPDATE TAG/////////////////////////
 
-      /////////////////////////////
+      const updateData = {
+        id: "11",
+        gameId: "10",
+        oldName: "princess",
+        newName: "chocolate",
+      };
+      const body = { updateData };
+      let results = fetchData(
+        "tags",
+        "update",
+        null,
+        null,
+        null,
+        null,
+        body,
+        "POST"
+      );
+      console.log(results);
 
-      //   const deleteData = {
-      //   id : 18,
-      //   userID: "4",
-      //   gameID: "4",
+      ///////////////////UPDATE USERS////////////////////
+
+      // const access_token = localStorage.getItem("accessToken");
+      // const refresh_token = localStorage.getItem("refreshToken");
+      // // console.log("access_token:", this.loginTokens.access_token);
+      // // console.log("refresh_token:", this.loginTokens.refresh_token);
+      // const updateData = {
+      //   id: "7",
+      //   drive_id: "taxes",
       //   tokens: {
-      //     access_token:
-      //      "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MDMwMCwiZXhwIjoxNzA4NjUzOTAwLCJzdWIiOjM1fQ.FXa6aLKfyPKIDxDTVwpj-usbg2EARvahUAoMh6pf08Y",
-      //     refresh_token:
-      //       "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MDMwMCwiZXhwIjoxNzA4NzM2NzAwLCJzdWIiOjM1fQ.QFVpEGyOyAO87VZgGPGF8WvU2KHM5Ex-RmgMgctmc7s",
+      //     access_token: access_token,
+      //     refresh_token: refresh_token,
       //   },
-      // }
-      //  const body = { deleteData };
+      // };
+      // const body = { updateData };
+      // let results = fetchData(
+      //   "users",
+      //   "update",
+      //   null,
+      //   null,
+      //   null,
+      //   null,
+      //   body,
+      //   "POST"
+      // );
+      // console.log(results);
 
-      //  fetchData("reviews", "delete", null, null, null, null, body, "POST");
-
-      ////////////////////////////////////////
-
+      ///////////////////UPDATE REVIEWS////////////////////
       // const updateData = {
       //   id: "17",
       //   gameID: "4",
@@ -145,23 +266,98 @@ export default {
       //   comment: "This is a review comment update",
       // };
       // const body = { updateData };
-
       // fetchData("reviews", "update", null, null, null, null, body, "POST");
+    },
+    deleteData() {
+      ////////////////////DELETE REVIEW/////////////////////////
 
-      //////////////////////////////////////////////
-      // const createData = {
-      //   userID: "4",
-      //   gameID: "4",
+      //   const deleteData = {
+      //   id : "23",
+      //   userID: "1",
+      //   gameID: "10",
       //   rating: "1",
       //   tokens: {
-      //    "access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MjM3MywiZXhwIjoxNzA4NjU1OTczLCJzdWIiOjM1fQ.mtB7BxFhkni0dhevIR7e57jz1xwNqQ7bZQsfC5vuRSo",
-      //   "refresh_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODY1MjM3MywiZXhwIjoxNzA4NzM4NzczLCJzdWIiOjM1fQ.f0e2GNXi50jX5nuXYRD3DcukvNQiSEAvtHDVxrUO22E",
-      //   },
-      //   comment: "This is a review comment",
-      // };
+      // "access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODcwMjQ2NCwiZXhwIjoxNzA4NzA2MDY0LCJzdWIiOjM1fQ.0IAJjZbSUlposeGDPaPnD0LYj1oOwMuWTR9jNwHaOkg",
+      //  "refresh_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODcwMjQ2NCwiZXhwIjoxNzA4Nzg4ODY0LCJzdWIiOjM1fQ.bOVJEpwyj98vjNTgZ8mITEVzqf2zxle16byzqbLP-rI",
+      // },
+      // }
+      //  const body = { deleteData };
+      //  fetchData("reviews", "delete", null, null, null, null, body, "POST");
 
-      //  const createBody = { createData };
-      //   fetchData("reviews", "create", null, null, null, null, createBody, "POST");
+      ////////////////////DELETE GAME/////////////////////////
+
+      // const deleteData = {
+      //   id: "9",
+      // };
+      // const body = { deleteData };
+      // let results =  fetchData("games", "delete", null, null, null, null, body, "POST")
+      // console.log(results)
+
+      ////////////////////DELETE USER/////////////////////////
+      // const access_token = localStorage.getItem("accessToken");
+      // const refresh_token = localStorage.getItem("refreshToken");
+
+      // const deleteData = {
+      //   id: "8",
+      //   tokens: {
+      //     access_token: access_token,
+      //     refresh_token: refresh_token,
+      //   },
+      // };
+      // const body = { deleteData };
+      // let results = fetchData(
+      //   "users",
+      //   "delete",
+      //   null,
+      //   null,
+      //   null,
+      //   null,
+      //   body,
+      //   "POST"
+      // );
+      // console.log(results);
+
+      ////////////////////DELETE TAG/////////////////////////
+
+      const deleteData = {
+        gameId: "10",
+        name: "chocolate",
+      };
+      const body = { deleteData };
+      let results = fetchData(
+        "tags",
+        "delete",
+        null,
+        null,
+        null,
+        null,
+        body,
+        "POST"
+      );
+      console.log(results);
+    },
+    filter() {
+      ///////////////////FILTER GAMES//////////////////////////
+      const filters = {
+        ratingAverage: "5",
+      };
+      const sorting = {
+        ratingAverage: true,
+      };
+      const includedColumns = ["id", "developerID", "tags", "ratingAverage"];
+      const jsonBody = { filters, sorting, includedColumns };
+      console.log(
+        fetchData(
+          "games",
+          "getAllMatching",
+          null,
+          null,
+          null,
+          null,
+          jsonBody,
+          "POST"
+        )
+      );
     },
   },
 };
@@ -186,68 +382,3 @@ export default {
   border-radius: 4px; /* Optional: Adjust border-radius for rounded corners */
 }
 </style>
-
-<!-- 
-<template>
-    <div class="test_view">
-      TEST
-    </div>
-  </template>
-  
-  <script>
-  import { fetchData } from "../JS/fetch";
-  
-  export default {
-    async mounted() {
-      const loginBody = {
-        login: {
-          email: "e",
-          password: "e",
-        }
-      };
-  
-      try {
-        // Perform the login operation and wait for its completion
-        // const loginResponse = await fetchData("users", "login", null, null, loginBody, "POST");
-        
-        // Assuming fetchData resolves with the response body directly
-        // if (loginResponse && loginResponse.access_token && loginResponse.refresh_token) {
-        //   console.log("login tokens : ", loginResponse);
-          
-          const logoutBody = {
-            logout: {
-              email: "e",
-              password: "e",
-              tokens: {
-                access_token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODQ4MTUzNywiZXhwIjoxNzA4NDg1MTM3LCJzdWIiOjM0fQ.irjaTzteo0DtpwcMgW2xlPyYKEFNedEWSqpY-B8D28g",
-                refresh_token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZCIsImF1ZCI6InRlbXBvcmFyeS1hdWRpZW5jZSIsImlhdCI6MTcwODQ4MTUzNywiZXhwIjoxNzA4NTY3OTM3LCJzdWIiOjM0fQ.DtzXxw5mjQGPRpO92rH2wP-MYhvp4A6KK92jzlrtxU8",
-              }
-            }
-          };
-  
-          // Perform the logout operation
-        //   const logoutResponse = 
-        //   await fetchData("users", "logout", null, null, logoutBody, "POST");
-        //   console.log("logout infos : ",  await fetchData("users", "logout", null, null, logoutBody, "POST"));
-        // } else {
-        //   console.error("Login failed or tokens missing");
-        // }
-      } catch (error) {
-        console.error("Error in login/logout process:", error);
-      }
-    },
-  };
-  </script>
-  
-  <style lang="scss" scoped>
-  .test_view {
-    text-align: center;
-    font-size: 40px;
-    color: aliceblue;
-  }
-  </style>
-
-
-
-
- -->

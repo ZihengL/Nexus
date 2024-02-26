@@ -17,9 +17,15 @@ class BaseController
 
     protected function restrictAccess($included_columns = [])
     {
-        return array_filter($included_columns, function ($key) {
-            return !in_array($key, $this->restricted_columns);
-        }, ARRAY_FILTER_USE_KEY);
+        if (!is_array($included_columns) || count($included_columns) === 0) {
+            $included_columns = $this->model->columns;
+        }
+
+        return array_diff($this->model->columns, $this->restricted_columns);
+
+        // return array_filter($included_columns, function ($key) {
+        //     return !in_array($key, $this->restricted_columns);
+        // }, ARRAY_FILTER_USE_KEY);
     }
 
     // ACCESS
@@ -54,6 +60,12 @@ class BaseController
         return $this->central_controller->reviews_controller;
     }
 
+
+    protected function getGameTagsController()
+    {
+        return $this->central_controller->gamestags_contoller;
+    }
+
     // GOOGLE
 
     protected function getGoogleClientManager()
@@ -85,23 +97,35 @@ class BaseController
 
     public function getAll($column = null, $value = null, $included_columns = [], $sorting = [])
     {
-        return $this->model-> getAll($column, $value, $included_columns, $sorting);
+        $included_columns = $this->restrictAccess($included_columns);
+
+        return $this->model->getAll($column, $value, $included_columns, $sorting);
     }
 
-    protected function create($data)
+    public function create($data)
     {
         return $this->model->create($data);
     }
 
-    protected function update($id, $data)
+    public function update($id, $data)
     {
         return $this->model->update($id, $data);
     }
 
-    protected function delete($id)
+    public function delete($id)
     {
         return $this->model->delete($id);
     }
 
     // REBECCA
+
+    public function createResponse($isSuccess, $message)
+    {
+        $response = [
+            'isSuccessful' => (bool) $isSuccess,
+            'message' => $message,
+        ];
+
+        return json_encode($response);
+    }
 }
