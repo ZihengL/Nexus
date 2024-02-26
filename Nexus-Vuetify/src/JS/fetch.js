@@ -3,15 +3,29 @@ export function fetchData (
   crud_action,
   columnName = null,
   value = null,
+  includedColumns = null,
+  sorting = null,
   jsonBody = null,
   method
 ) {
   const baseURL = 'http://localhost:4208/Nexus/Backend/'
-  //console.log({table, crud_action, columnName, value});
-  // let uri = `${baseURL}${table}/${crud_action}/${columName}/${value}`;
+  console.log({ table, crud_action, columnName, value })
+
   let uri = `${baseURL}${table}/${crud_action}`
-  if (columnName || value) {
+  // Convert arrays to comma-separated strings if they are not empty
+  const includedColumnsString =
+    includedColumns ? includedColumns.join(',') : null
+  const sortingString = sorting ? sorting.join(',') : null
+
+  // Append to URI only if values are present
+  if (columnName && value !== null) {
     uri += `/${columnName}/${value}`
+  }
+  if (includedColumnsString ) {
+    uri += `/${includedColumnsString}`
+  }
+  if ( sortingString) {
+    uri += `/${sortingString}`
   }
   const fetchOptions = {
     method: method,
@@ -20,7 +34,7 @@ export function fetchData (
     }
   }
 
-  if ((method === 'POST' || method === 'PUT') && jsonBody) { 
+  if ((method === 'POST' || method === 'PUT' || method === 'DELETE') && jsonBody) {
     // console.log("hi");
     fetchOptions.body = JSON.stringify(jsonBody)
   }
@@ -29,14 +43,14 @@ export function fetchData (
   // Use the 'uri' variable directly instead of concatenating the baseURL and uri again
   return fetch(uri, fetchOptions)
     .then(response => {
-      if (!response.ok) {
+      if (!response.ok) { 
         return Promise.reject(response)
       }
-      // console.log(' response : ', response.text())
-      return response.json();
+      console.log(' response : ', response.text())
+      return response.json()
     })
     .then(data => {
-      return data;
+      return data
       //console.log(' data : ', data)
     })
     .catch(error => {
