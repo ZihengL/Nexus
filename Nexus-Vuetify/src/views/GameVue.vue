@@ -59,12 +59,12 @@ const devName = ref(null);
 
 onMounted(async () => {
   try {
-    const dataGame = await fetchData("games", "getOne", "id", props.idGame, null, "GET");
+    const dataGame = await fetchData("games", "getOne", "id", props.idGame, null, null, null, "GET");
     LeGame.value = dataGame;
-    //console.log('LeGame : ' , LeGame._rawValue.developerID)
+    console.log('LeGame.value : ' , LeGame.value)
 
     if (LeGame.value) {
-      const devId = LeGame._rawValue.developerID
+      const devId = LeGame.value.developerID
       console.log('devId : ', devId)
 
       const filters = {
@@ -74,13 +74,13 @@ onMounted(async () => {
         id: false
       }
 
-      const includedColumns = ['id', 'user']
+      const includedColumns = ['id', 'username']
       const jsonBody = { filters, sorting, includedColumns }
 
-      const dataDevs = await fetchData('users', 'getAllMatching', null, null, jsonBody, 'POST');
+      const dataDevs = await fetchData('users', 'getAllMatching', null, null, null, null, jsonBody, 'POST');
       let devName2 = dataDevs;
-      devName.value = devName2[0].user
-      console.log('devs : ', devName._value)
+      devName.value = devName2[0].username
+      console.log('devs : ', devName.value)
     }
 
   } catch (error) {

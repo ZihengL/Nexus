@@ -83,7 +83,7 @@ const  isBioValid = true;
 const user = ref(null);
 onMounted(async () => {
     try {
-      const dataUser = await fetchData("users", "getOne", "id",  props.IdDev, null, "GET");
+      const dataUser = await fetchData("users", "getOne", "id",  props.IdDev, null, null, null, "GET");
       user.value = dataUser;
       //console.log('LeGame : ' , LeGame._rawValue.developerID)    
     } catch (error) { 

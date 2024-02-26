@@ -35,7 +35,7 @@ const LeGame = ref(null);
 
 onMounted(async () => {
   try {
-    const dataGame = await fetchData("games", "getOne", "id", props.idJeu, null, "GET");
+    const dataGame = await fetchData("games", "getOne", "id", props.idJeu, null, null, "GET");
     LeGame.value = dataGame;
     //console.log('leDevs : ', leDevs)
 

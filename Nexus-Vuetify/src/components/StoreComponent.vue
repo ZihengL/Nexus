@@ -24,7 +24,7 @@
       const includedColumns = ['id'];
       const jsonBody = { filters, sorting, includedColumns };
   
-      fetchData('games', 'getAllMatching', null, null, jsonBody, 'POST')
+      fetchData('games', 'getAllMatching', null, null, null, null,jsonBody, 'POST')
         .then((data) => {
           listeJeux.value = data;
           //console.log('data : ', data)

@@ -32,8 +32,8 @@ export default {
     },
     fetchGameImages(games) {
       const imageFetchPromises = games.map((game) => {
-        const imageName = game.imageName || `defaultName.jpg`;
-        const imagePath = `GameTitle/${imageName}`;
+        const files = game.files || `defaultName.jpg`;
+        const imagePath = `GameTitle/${files}`;
         const imageRef = ref(storage, imagePath);
 
         return getDownloadURL(imageRef)
@@ -42,7 +42,7 @@ export default {
           })
           .catch((error) => {
             console.error(
-              `Error fetching image for ${game.title} with image ${imageName}:`,
+              `Error fetching image for ${game.title} with image ${files}:`,
               error
             );
             return { ...game, image: "path/to/default/image.jpg" }; // Fallback image
@@ -54,11 +54,11 @@ export default {
   mounted() {
     const filters = { ratingAverage: { gt: 1, lte: 7 } };
     const sorting = { ratingAverage: true };
-    const includedColumns = ["id", "developerID", "title", "imageName"];
+    const includedColumns = ["id", "developerID", "title", "files"];
 
     const jsonBody = { filters, sorting, includedColumns };
 
-    fetchData("games", "getAllMatching", null, null, jsonBody, "POST")
+    fetchData("games", "getAllMatching", null, null, null, null,jsonBody, "POST")
       .then((data) => {
         if (!Array.isArray(data)) {
           throw new Error("Fetched data is not an array");

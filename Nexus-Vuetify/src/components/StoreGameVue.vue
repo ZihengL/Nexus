@@ -33,15 +33,16 @@ import { fetchData } from '../JS/fetch'
 import { ref, onMounted } from 'vue';
 
 const props = defineProps(['idGame']);
-const LeGame = ref(null);
+let LeGame = ref(null);
 const devName = ref(null);
 
 onMounted(async () => {
     try {
-        const dataGame = await fetchData("games", "getOne", "id",  props.idGame, null, "GET");
+        const dataGame = await fetchData("games", "getOne", "id",  props.idGame, null, null, null, "GET");
             
-        //console.log('un jeu : ', dataGame)
+        console.log('dataGame : ', dataGame)
         LeGame.value = dataGame;
+        console.log('LeGame : ', LeGame)
 
         if(LeGame.value){
         const devId =  LeGame._rawValue.developerID
@@ -57,13 +58,13 @@ onMounted(async () => {
         const includedColumns = ['id', 'user']
         const jsonBody = { filters, sorting, includedColumns }
 
-        //fetchData("users", "getOne", "id", devId, null, "GET")
+        //fetchData("users", "getOne", "id", devId, null, null, null, "GET")
         
-        const dataDevs = await fetchData('users', 'getAllMatching', null, null, jsonBody, 'POST');
+        const dataDevs = await fetchData('users', 'getAllMatching', null, null, null, null,  jsonBody, 'POST');
         let devName2 = dataDevs;
         //console.log('devs : ' , devName2[0].user)
         devName.value = devName2[0].user
-        console.log('devs : ' , devName._value)
+        console.log('devs : ' , devName.value)
       }
     } catch (error) { 
       console.error('Error fetching data:', error);
