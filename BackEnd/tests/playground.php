@@ -72,11 +72,23 @@ $users_ctrl = $central_controller->users_controller;
 
 $response = $users_ctrl->getAll();
 
+echo '<hr>USERS<br>';
 foreach ($response as $user) {
     echo '<pre>';
     echo print_r($user);
     echo '</pre><br>';
 }
+
+// $games_ctrl = $central_controller->games_controller;
+
+// $response = $games_ctrl->getAllMatching(['title' => 'Fantastic Adventure'], null, ['title']);
+
+// echo '<hr>GAMES<br>';
+// foreach ($response as $game) {
+//     echo '<pre>';
+//     echo print_r($game);
+//     echo '</pre><br>';
+// }
 
 
 // $arr1 = ['a', 'b', 'c'];
