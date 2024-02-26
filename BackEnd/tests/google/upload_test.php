@@ -3,7 +3,7 @@
 global $path;
 $path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd/';
 
-require_once $path . 'controllers/central_controller.php';
+require_once $path . '/controllers/central_controller.php';
 $central_controller = CentralController::getInstance();
 
 
@@ -23,8 +23,8 @@ $central_controller = CentralController::getInstance();
  * limitations under the License.
  */
 
-include_once __DIR__ . '/../vendor/autoload.php';
-include_once "base.php";
+include_once $path . '/vendor/autoload.php';
+include_once $path . "/tests/google/base.php";
 
 echo pageHeader("File Upload - Uploading a simple file");
 
