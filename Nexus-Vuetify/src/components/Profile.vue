@@ -65,19 +65,7 @@
       <amis />
     </div>
 
-    <v-fab-transition>
-      <v-btn
-        v-show="!hidden"
-        color="pink"
-        dark
-        absolute
-        top
-        right
-        fab
-      >
-        <v-icon>mdi-plus</v-icon>
-      </v-btn>
-    </v-fab-transition>
+    <button class="floating-right-bottom-btn">Floating Me!</button>
   </div>
 
 </template>
