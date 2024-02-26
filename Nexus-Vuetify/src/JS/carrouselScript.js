@@ -48,7 +48,7 @@ export default {
     fetchData('games', 'getAllMatching', null, null, jsonBody, 'POST')
     .then(data => {
       // Take only the first 4 items
-      this.carouselItems = data.slice(0, 4).map((item, index) => ({ ...item, image: `/assets/image/img${index + 1}.png` }));
+      this.carouselItems = data.slice(0, 4).map((item, index) => ({ ...item, image: `https://firebasestorage.googleapis.com/v0/b/nexus-414517.appspot.com/o/Imagejeux%2FMario.png?alt=media&token=c94515c3-03a7-4bf6-8344-80b00012b051` }));
     
       console.log('data : ', this.carouselItems);
       // Now you can access carouselItems with the added 'image' property
