@@ -1,15 +1,15 @@
 // main.js
 
 // Import Vue and Vuetify plugins
-import { createApp, ref, provide } from 'vue';
-import { registerPlugins } from '@/plugins';
+import { registerPlugins } from "@/plugins";
+import { createApp } from "vue";
 
 // Import App component
-import App from './App.vue';
+import App from "./App.vue";
 
 // Import Firebase functionalities
-import { initializeApp } from 'firebase/app';
-import { getStorage } from 'firebase/storage';
+import { initializeApp } from "firebase/app";
+import { getStorage } from "firebase/storage";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -29,27 +29,27 @@ initializeApp(firebaseConfig);
 const storage = getStorage();
 
 // Create Vue app
-const app = createApp(App)
+const app = createApp(App);
 
 // Utilisez app.config.globalProperties pour définir une propriété globale
-app.config.globalProperties.$isConnected = ref(false);
+//app.config.globalProperties.$isConnected = ref(false);
 
 // Création de l'état global isConnected
-const isConnected = ref(false);
+//const isConnected = ref(false);
 // Méthode pour basculer l'état
-const toggleConnection = () => {
-  isConnected.value = !isConnected.value;
-};
+//const toggleConnection = () => {
+//  isConnected.value = !isConnected.value;
+//};
 
 // Provide the state and method to descendant components
-app.provide('isConnected', isConnected);
+/*app.provide('isConnected', isConnected);
 app.provide('toggleConnection', toggleConnection);*/
 
 // Register Vuetify and other plugins
-registerPlugins(app)
+registerPlugins(app);
 
 // Mount the Vue application
-app.mount('#app')
+app.mount("#app");
 
 // Optionally, export storage if you need to use it across components
 export { storage };
