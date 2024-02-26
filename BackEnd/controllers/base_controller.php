@@ -18,8 +18,8 @@ class BaseController
     protected function restrictAccess($included_columns = [])
     {
         if (!is_array($included_columns)) {
-            $included_columns = []; 
-        }    
+            $included_columns = [];
+        }
 
         return array_filter($included_columns, function ($key) {
             return !in_array($key, $this->restricted_columns);
@@ -95,34 +95,34 @@ class BaseController
 
     public function getAll($column = null, $value = null, $included_columns = [], $sorting = [])
     {
-        return $this->model-> getAll($column, $value, $included_columns, $sorting);
+        return $this->model->getAll($column, $value, $included_columns, $sorting);
     }
 
-    protected function create($data)
+    public function create($data, $jwts = null)
     {
         return $this->model->create($data);
     }
 
-    protected function update($id, $data)
+    public function update($id, $data, $jwts = null)
     {
         return $this->model->update($id, $data);
     }
 
-    public function delete($id)
+    public function delete($id, $jwts = null)
     {
         return $this->model->delete($id);
     }
 
     // REBECCA
 
-    
+
     public function createResponse($success, $message)
     {
         $response = [
             'isSuccessful' => $success,
             'message' => $message,
         ];
-    
+
         return json_encode($response);
     }
 }
