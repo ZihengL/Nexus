@@ -5,7 +5,7 @@
       <img src="../assets//img/apex.png" alt="image jeu" class=" roundBorderSmall">
     </div>
     <div class="jeu">
-      <span v-if="props.himself">Joué à {{ LeGame.title }} le 17/04/2022</span>
+      <span v-if="props.buy">Joué à {{ LeGame.title }} le 17/04/2022</span>
       <span v-else>{{ LeGame.title }}</span>
       <br />
       <div class="fieldBtn">
@@ -22,9 +22,9 @@
 <script setup>
 import { defineProps, onMounted, ref } from 'vue';
 import { fetchData } from '../JS/fetch';
+import { defineProps, ref, onMounted } from 'vue';
 
-
-const props = defineProps(['himself', 'idJeu']);
+const props = defineProps(['himself','idJeu']);
 const LeGame = ref(null);
 
 onMounted(async () => {
