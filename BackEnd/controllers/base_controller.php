@@ -15,17 +15,6 @@ class BaseController
 
     // ZI
 
-    // protected function restrictAccess($included_columns = [])
-    // {
-    //     if (!is_array($included_columns)) {
-    //         $included_columns = [];
-    //     }
-
-    //     return array_filter($included_columns, function ($key) {
-    //         return !in_array($key, $this->restricted_columns);
-    //     }, ARRAY_FILTER_USE_KEY);
-    // }
-
     protected function restrictAccess($included_columns = [])
     {
         if (!is_array($included_columns) || count($included_columns) === 0) {

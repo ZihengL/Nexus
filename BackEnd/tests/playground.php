@@ -72,12 +72,11 @@ $users_ctrl = $central_controller->users_controller;
 
 $response = $users_ctrl->getAll();
 
-
-// foreach ($response as $user) {
-//     echo '<pre>';
-//     echo print_r($user);
-//     echo '</pre><br>';
-// }
+foreach ($response as $user) {
+    echo '<pre>';
+    echo print_r($user);
+    echo '</pre><br>';
+}
 
 
 // $arr1 = ['a', 'b', 'c'];
