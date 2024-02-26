@@ -109,7 +109,7 @@ class TokensController extends BaseController
     public function generateTokensOnValidation($user, $email, $password)
     {
         if ($this->validateUser($user, $email, $password)) {
-            $user_id = $user[self::SUB];
+            $user_id = $user['id'];
 
             $refresh_jwt = $this->generateRefreshToken($user_id);
             $access_jwt = $this->generateAccessToken($user_id);
