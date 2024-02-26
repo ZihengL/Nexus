@@ -5,12 +5,10 @@ class GameModel extends BaseModel
 {
     protected $tableName = "games";
 
-
     public function __construct($pdo)
     {
         parent::__construct($pdo, $this->tableName);
     }
-
 
 
     //Other Cruds
