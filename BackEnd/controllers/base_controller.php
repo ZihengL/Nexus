@@ -21,7 +21,12 @@ class BaseController
             $included_columns = $this->model->columns;
         }
 
-        return array_diff($this->model->columns, $this->restricted_columns);
+        // $diff = array_diff($included_columns, $this->restricted_columns);
+        // echo '<br>' . print_r($this->model->columns);
+        // echo '<br>' . print_r($included_columns);
+        // echo '<br>' . print_r($diff);
+
+        return array_diff($included_columns, $this->restricted_columns);
 
         // return array_filter($included_columns, function ($key) {
         //     return !in_array($key, $this->restricted_columns);
