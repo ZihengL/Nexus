@@ -18,7 +18,7 @@ class BaseController
     protected function restrictAccess($included_columns = [])
     {
         if (!is_array($included_columns) || count($included_columns) === 0) {
-            $included_columns = $this->model->columns;
+            $included_columns = $this->model->getColumns(true);
         }
 
         // $diff = array_diff($included_columns, $this->restricted_columns);

@@ -44,7 +44,7 @@ class GameModel extends BaseModel
 
     //     // return $stmt->fetch();
     // }
-    
+
 
     // ZI
 
@@ -84,7 +84,7 @@ class GameModel extends BaseModel
 
     //Getters 
 
-    
+
     public function getOne($column = null, $value = null, $included_columns = [])
     {
         // echo "<br>  includedColumns : " . print_r($included_columns, true);
@@ -127,7 +127,6 @@ class GameModel extends BaseModel
             return $results;
         }
         return parent::getAllMatching($filters, $sorting, $included_columns);
-
     }
 
 
@@ -163,7 +162,6 @@ class GameModel extends BaseModel
 
         // Return array values to reset indices
         return array_values($games);
-
     }
 
 
@@ -239,7 +237,6 @@ class GameModel extends BaseModel
 
 
         return $results;
-
     }
 
 
@@ -274,10 +271,4 @@ class GameModel extends BaseModel
         $results = $this->bindingQuery($sqlWithFiltersAndSorting, $params);
         return $this->appendTagsToGames($results);
     }
-
-
-
-
-
-
 }

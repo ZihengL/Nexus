@@ -155,12 +155,14 @@ class BaseModel
 
     // TOOLS
 
-    function parseColumns($columns = [])
+    function parseColumns($included_columns = [])
     {
-        return empty($columns) ? "*" : implode(', ', ['id', ...$columns]);
+
+        // return empty($included_columns) ? "*" : implode(', ', ['id', ...$included_columns]);
+        return empty($included_columns) ? "*" : implode(', ', $included_columns);
     }
 
-    public function getColumns($includeID = true)
+    public function getColumns($includeID = false)
     {
         $result = $this->query("DESCRIBE $this->table")->fetchAll(PDO::FETCH_COLUMN);
 
