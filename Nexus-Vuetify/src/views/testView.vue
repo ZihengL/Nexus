@@ -64,12 +64,25 @@ export default {
     },
     getOne() {
       // let results = fetchData("games", "getAll", null, null, ["id","files","title"],{id: true}, null, "GET")
+      // let results = fetchData(
+      //   "games",
+      //   "getOne",
+      //   "id",
+      //   "4",
+      //   ["id", "ratingAverage", "title", "tags"],
+      //   null,
+      //   null,
+      //   "GET"
+      // );
+
+
+      /////////////////GET ONE USER///////////////////////////
       let results = fetchData(
-        "games",
+        "users",
         "getOne",
         "id",
         "4",
-        ["id", "ratingAverage", "title", "tags"],
+        ["id", "username"],
         null,
         null,
         "GET"

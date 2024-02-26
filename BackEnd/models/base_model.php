@@ -152,11 +152,14 @@ class BaseModel
 
         return $stmt->execute();
     }
+
     // TOOLS
 
-    function parseColumns($columns = [])
+    function parseColumns($included_columns = [])
     {
-        return empty($columns) ? "*" : implode(', ', $columns);
+
+        // return empty($included_columns) ? "*" : implode(', ', ['id', ...$included_columns]);
+        return empty($included_columns) ? "*" : implode(', ', $included_columns);
     }
 
     public function getColumns($includeID = false)
