@@ -27,8 +27,8 @@ export default {
   },
   methods: {
     getData() {
-      //  fetchData("games", "getAll", null, null, ["id","files","title"],{id: true}, null, "GET")
-      // fetchData(
+      // let results = fetchData("games", "getAll", null, null, ["id","files","title"],{id: true}, null, "GET")
+      // let results = fetchData(
       //   "games",
       //   "getAll",
       //   null,
@@ -38,7 +38,7 @@ export default {
       //   null,
       //   "GET"
       // );
-      // fetchData(
+      // let results = fetchData(
       //   "games",
       //   "getAll",
       //   null,
@@ -48,7 +48,7 @@ export default {
       //   null,
       //   "GET"
       // );
-      // fetchData(
+      // let results = fetchData(
       //   "games",
       //   "getAll",
       //   null,
@@ -58,6 +58,7 @@ export default {
       //   null,
       //   "GET"
       // );
+      // console.log(results)
     },
     logout() {
       // const logout = {
@@ -67,7 +68,7 @@ export default {
       //   password: "e",
       // };
       // const body = { logout };
-      // fetchData('users', 'logout', null, null, null, null, body, 'POST')
+      // console.log(fetchData('users', 'logout', null, null, null, null, body, 'POST'))
     },
     async login() {
       const login = {
@@ -87,11 +88,11 @@ export default {
           loginBody,
           "POST"
         );
-        // Assuming the API response structure
-        if (loginResponse.data && loginResponse.data.tokens) {
-          this.loginTokens.accessToken = loginResponse.data.tokens.access_token;
-          this.loginTokens.refreshToken =
-            loginResponse.data.tokens.refresh_token;
+        // console.log("Login successful: ",loginResponse);
+        if (loginResponse) {
+          this.loginTokens.access_token = loginResponse.access_token;
+          this.loginTokens.refresh_token =
+            loginResponse.refresh_token;
           console.log("Login successful: ", this.loginTokens);
         }
       } catch (error) {
@@ -121,7 +122,8 @@ export default {
         comment: "This is a review comment",
       };
       const createBody = { createData };
-      fetchData(
+
+      console.log(fetchData(
         "reviews",
         "create",
         null,
@@ -130,7 +132,7 @@ export default {
         null,
         createBody,
         "POST"
-      );
+      ))
     },
     updateData() {
       // const updateData = {
@@ -174,19 +176,19 @@ export default {
         id: "9",
       };
       const body = { deleteData };
-      fetchData("games", "delete", null, null, null, null, body, "POST");
+      console.log(fetchData("games", "delete", null, null, null, null, body, "POST"))
     },
     filter() {
-      ///////////////////////////////////////////////
-      // const filters = {
-      //   ratingAverage: "5",
-      // };
-      // const sorting = {
-      //   ratingAverage: true,
-      // };
-      // const includedColumns = ["id", "developerID", "tags", "ratingAverage"];
-      // const jsonBody = { filters, sorting, includedColumns };
-      // fetchData("games", "getAllMatching", null, null, null, null, jsonBody, "POST")
+      /////////////////////////////////////////////
+      const filters = {
+        ratingAverage: "5",
+      };
+      const sorting = {
+        ratingAverage: true,
+      };
+      const includedColumns = ["id", "developerID", "tags", "ratingAverage"];
+      const jsonBody = { filters, sorting, includedColumns };
+      console.log(fetchData("games", "getAllMatching", null, null, null, null, jsonBody, "POST"))
     },
   },
 };
