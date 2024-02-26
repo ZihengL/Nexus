@@ -48,7 +48,7 @@ export default {
           .slice(0, 4)
           .map((item, index) => ({
             ...item,
-            image: `./src/assets/image/img${index + 1}.png`,
+            image: `https://firebasestorage.googleapis.com/v0/b/nexus-414517.appspot.com/o/Imagejeux%2FMario.png?alt=media&token=c94515c3-03a7-4bf6-8344-80b00012b051`,
           }));
 
         console.log("data : ", this.carouselItems);
