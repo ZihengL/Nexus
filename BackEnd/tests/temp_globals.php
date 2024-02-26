@@ -34,10 +34,3 @@ $path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd/';
 
 require_once $path . 'controllers/central_controller.php';
 $central_controller = CentralController::getInstance();
-
-$users_controller = $central_controller->users_controller;
-$games_controller = $central_controller->games_controller;
-
-// MANAGERS
-$tokens_controller = $central_controller->tokens_controller;
-$database_manager = $central_controller->database_manager;

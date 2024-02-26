@@ -1,11 +1,12 @@
 <?php
 
 require_once "$path/controllers/base_controller.php";
-require_once "$path/models/user_model.php";
+require_once "$path/models/users_model.php";
 
 class UsersController extends BaseController
 {
     protected $id = "id";
+    protected $drive_id = "drive_id";
     protected $password = "password";
     protected $email = "email";
     protected $phoneNumber = "phoneNumber";
@@ -25,17 +26,6 @@ class UsersController extends BaseController
         parent::__construct($central_controller);
     }
 
-    protected function restrictAccess($included_columns = [])
-    {
-        if (!is_array($included_columns)) {
-            $included_columns = [];
-        }
-
-        return array_filter($included_columns, function ($key) {
-            return !in_array($key, $this->restricted_columns);
-        }, ARRAY_FILTER_USE_KEY);
-    }
-
     public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
     {
         $included_columns = $this->restrictAccess($included_columns);
@@ -51,52 +41,15 @@ class UsersController extends BaseController
         return $this->model->getOne($column, $value, $included_columns);
     }
 
-    // public function getAllUsers($included_columns = [])
-    // {
-    //     $included_columns = $this->restrictAccess($included_columns);
-
-    //     return $this->model->getAll($included_columns);
-    // }
-
-    // public function getById($id, $included_columns = [])
-    // {
-    //     $included_columns = $this->restrictAccess($included_columns);
-
-    //     return $this->model->getAll($this->id, $id, $included_columns);
-    // }
-
-    // public function getByEmail($email, $included_columns = [])
-    // {
-    //     $included_columns = $this->restrictAccess($included_columns);
-
-    //     return $this->model->getAll($this->email, $email);
-    // }
-
-    // public function getByName($name, $included_columns = [])
-    // {
-    //     $included_columns = $this->restrictAccess($included_columns);
-
-    //     return $this->model->getAll($this->name, $name);
-    // }
-
-    // public function getByLastName($lastname, $included_columns = [])
-    // {
-    //     $included_columns = $this->restrictAccess($included_columns);
-
-    //     return $this->model->getAll($this->lastname, $lastname);
-    // }
-
-    // public function getAll_users($included_columns = [])
-    // {
-    //     $included_columns = $this->restrictAccess($included_columns);
-
-    //     return $this->model->getAll($included_columns);
-    // }
-
     public function userExists($data)
     {
         return isset($data[$this->email]) &&
             !empty($this->model->getOne($this->email, $data[$this->email]));
+    }
+
+    private function getByEmail($email)
+    {
+        return $this->model->getOne($this->email, $email);
     }
 
     // OTHER CRUDS
@@ -105,6 +58,16 @@ class UsersController extends BaseController
     // TODO: CREATE USER FOLDER
     public function create($data)
     {
+        if ($this->model->create($data)) {
+            $user = $this->getOne($this->email, $data[$this->email]);
+
+            if ($user) {
+                // $drive_id = $this->getGoogleClientManager()->createUserFolder($user);
+                // $user[$this->drive_id] = $drive_id;
+
+                // $this->model->update($user[$this->id], $user);
+                return true;
+            }
         if (!$this->userExists($data) && $this->model->create($data)) {
             $user = $this->model->getOne($this->email, $data[$this->email]);
             // echo "users_controller: " .$user . "<br>";
@@ -112,7 +75,7 @@ class UsersController extends BaseController
             // return $this->login($data[$this->email], $data[$this->password]);
         }
 
-        return null;
+        return false;
     }
 
     public function update($id, $data, $jwts = null)
@@ -121,7 +84,7 @@ class UsersController extends BaseController
             return $this->model->update($id, $data);
         }
 
-        return null;
+        return false;
     }
 
     public function delete($id, $jwts = null)

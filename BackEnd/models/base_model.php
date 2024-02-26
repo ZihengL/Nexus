@@ -134,15 +134,18 @@ class BaseModel
     // $sql = "INSERT INTO users (first_name, last_name, email) VALUES ('$firstName', '$lastName', '$email')";
     public function create($data)
     {
-        $columns = implode(', ', $this->columns);
-        $placeholders = substr(str_repeat(",?", count($this->columns)), 1);
+        // $columns = implode(', ', $this->columns);
+        // $placeholders = substr(str_repeat(",?", count($this->columns)), 1);
+        $data = $this->formatData($data);
+        $columns = implode(', ', array_keys($data));
+        $placeholders = substr(str_repeat(",?", count($data)), 1);
 
         // echo "<br> create base_model <br>";
         // print_r($placeholders);
 
         $sql = "INSERT INTO $this->table ($columns) VALUES ($placeholders)";
 
-        if ($this->query($sql, $this->formatData($data))) {
+        if ($this->query($sql, $data)) {
             return true;
         } else {
 

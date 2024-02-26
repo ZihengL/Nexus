@@ -31,22 +31,49 @@ class UserModel extends BaseModel
     //     }
     // }
 
-    public function create($data)
-    {
-        // echo "<br> create user_model <br>";
-        // print_r($data);
-        if (!$this->validateData($data) || $this->userExists($data['email'])) {
-            return false;
-        }
-        $new_data = $this->formDataProperly($data);
-        return parent::create($new_data);
-    }
+    // public function create($data)
+    // {
+    //     // echo "<br> create user_model <br>";
+    //     // print_r($data);
+    //     if (!$this->validateData($data) || $this->userExists($data['email'])) {
+    //         return false;
+    //     }
+    //     // $new_data = $this->formDataProperly($data);
+    //     return parent::create($data);
+    // }
 
     public function userExists($email)
     {
         return !empty($this->getOne('email', $email, ['email']));
     }
 
+    public function create($data)
+    {
+        if (!$this->userExists($data['email'])) {
+            $data = $this->validateData($data);
+
+            return $data && parent::create($data);
+        }
+
+        return false;
+    }
+
+    public function update($id, $data)
+    {
+        $user = $this->getOne('id', $id);
+
+        if ($user) {
+            $new_password = $data['password'];
+
+            if ($new_password && !password_verify($new_password, $user['password'])) {
+                $data['password'] = password_hash($new_password, PASSWORD_DEFAULT);
+            }
+
+            return parent::update($id, $data);
+        }
+
+        return false;
+    }
 
     public function formDataProperly($data)
     {
@@ -79,6 +106,7 @@ class UserModel extends BaseModel
         }
         return $formattedData;
     }
+
     // public function formatData($data)
     // {
     //     if (in_array('password', array_keys($data))) {
@@ -88,23 +116,15 @@ class UserModel extends BaseModel
     //     return parent::formatData($data);
     // }
 
-    public function validateData($data)
+    private function validateData($data)
     {
         if (isset($data['email']) && isset($data['password']) && !empty($data['email']) && !empty($data['password'])) {
-            return true;
+            $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+            $data['creationDate'] = date('Y-m-d');
+
+            return $data;
         } else {
             return false;
         }
     }
-
-    // public function validateData($data)
-    // {
-    //     foreach ($data as $key => $value) {
-    //         if (empty($value)) {
-    //             return false;
-    //         }
-    //     }
-
-    //     return true;
-    // }
 }
