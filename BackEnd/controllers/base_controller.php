@@ -26,6 +26,13 @@ class BaseController
         }, ARRAY_FILTER_USE_KEY);
     }
 
+    // protected function restrictAccess($included_columns = [])
+    // {
+    //     if (!is_array($included_columns)) {
+    //         $included_columns = [];
+    //     }
+    // }
+
     // ACCESS
 
     protected function getDatabaseManager()
@@ -96,6 +103,10 @@ class BaseController
     public function getAll($column = null, $value = null, $included_columns = [], $sorting = [])
     {
         $included_columns = $this->restrictAccess($included_columns);
+
+        echo '<pre>';
+        print_r($included_columns);
+        echo '</pre>';
 
         return $this->model->getAll($column, $value, $included_columns, $sorting);
     }
