@@ -46,12 +46,7 @@ class GameModel extends BaseModel
 
     //     // return $stmt->fetch();
     // }
-
-
-
     
-
-
 
     // ZI
 

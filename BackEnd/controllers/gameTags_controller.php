@@ -1,7 +1,7 @@
 <?php
 
 require_once "$path/controllers/base_controller.php";
-require_once "$path/models/gameTags_model.php";
+require_once "$path/models/gameTag_model.php";
 
 class GameTagsController extends BaseController
 {

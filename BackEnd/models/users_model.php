@@ -63,49 +63,50 @@ class UsersModel extends BaseModel
         $user = $this->getOne('id', $id);
 
         if ($user) {
-            $new_password = $data['password'];
+            if (array_key_exists("password", $data)) {
+                $new_password = $data['password'];
 
-            if ($new_password && !password_verify($new_password, $user['password'])) {
-                $data['password'] = password_hash($new_password, PASSWORD_DEFAULT);
+                if ($new_password && !password_verify($new_password, $user['password'])) {
+                    $data['password'] = password_hash($new_password, PASSWORD_DEFAULT);
+                }
             }
-
             return parent::update($id, $data);
         }
 
         return false;
     }
 
-    public function formDataProperly($data)
-    {
-        error_log(print_r(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), true));
-        $formattedData = [];
-        foreach ($this->columns as $column) {
-            if ($column == 'id') {
-                continue;
-            }
+    // public function formDataProperly($data)
+    // {
+    //     error_log(print_r(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), true));
+    //     $formattedData = [];
+    //     foreach ($this->columns as $column) {
+    //         if ($column == 'id') {
+    //             continue;
+    //         }
 
-            if (in_array($column, ['email', 'password'])) {
-                // Process 'email' and 'password' if present in data
-                if (array_key_exists($column, $data)) {
-                    $formattedData[$column] = $data[$column];
-                }
-            } elseif ($column == 'creationDate') {
-                $formattedData[$column] = date('Y-m-d');
-            } else {
-                $formattedData[$column] = null;
-            }
-        }
+    //         if (in_array($column, ['email', 'password'])) {
+    //             // Process 'email' and 'password' if present in data
+    //             if (array_key_exists($column, $data)) {
+    //                 $formattedData[$column] = $data[$column];
+    //             }
+    //         } elseif ($column == 'creationDate') {
+    //             $formattedData[$column] = date('Y-m-d');
+    //         } else {
+    //             $formattedData[$column] = null;
+    //         }
+    //     }
 
-        // echo "Plaintext Password2 (for debugging only): " . $formattedData['password'] . "<br>";
+    //     // echo "Plaintext Password2 (for debugging only): " . $formattedData['password'] . "<br>";
 
-        if (array_key_exists('password', $formattedData)) {
+    //     if (array_key_exists('password', $formattedData)) {
 
-            // echo "Plaintext Password3 (for debugging only): " . $formattedData['password'] . "<br>";
+    //         // echo "Plaintext Password3 (for debugging only): " . $formattedData['password'] . "<br>";
 
-            $formattedData['password'] = password_hash($formattedData['password'], PASSWORD_DEFAULT);
-        }
-        return $formattedData;
-    }
+    //         $formattedData['password'] = password_hash($formattedData['password'], PASSWORD_DEFAULT);
+    //     }
+    //     return $formattedData;
+    // }
 
     // public function formatData($data)
     // {

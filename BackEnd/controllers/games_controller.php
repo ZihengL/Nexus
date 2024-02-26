@@ -101,10 +101,6 @@ class GamesController extends BaseController
         return $this->model->update($id, $data);
     }
 
-    public function delete($id)
-    {
-        return $this->model->delete($id);
-    }
 
     // public function getAllMatching($filters, $sorting, $includedColumns = null)
     // {

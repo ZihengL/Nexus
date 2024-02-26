@@ -5,7 +5,8 @@ require_once "$path/controllers/games_controller.php";
 require_once "$path/controllers/users_controller.php";
 require_once "$path/controllers/tokens_controller.php";
 require_once "$path/controllers/reviews_controller.php";
-// require_once "$path/models/gameTags_model.php";
+require_once "$path/controllers/gameTags_controller.php";
+require_once "$path/controllers/tags_controller.php";
 require_once "$path/controllers/google/client_manager.php";
 
 require_once "$path/remote/routines.php";
@@ -22,7 +23,8 @@ class CentralController
     public $users_controller;
     public $games_controller;
     public $reviews_controller;
-    // public $gameTags_contoller;
+    public $gamestags_contoller;
+    public $tags_controller;
 
     public $google_client_manager;
 
@@ -42,7 +44,8 @@ class CentralController
         $this->users_controller = new UsersController($this, $pdo);
         $this->games_controller = new GamesController($this, $pdo);
         $this->reviews_controller = new ReviewsController($this, $pdo);
-        // $this->gameTags_contoller = new GameTagsController($this, $pdo);
+        $this->gamestags_contoller = new GameTagsController($this, $pdo);
+        $this->tags_controller = new TagsController($this, $pdo);
 
         // $this->google_client_manager = GoogleClientManager::getInstance($this);
     }

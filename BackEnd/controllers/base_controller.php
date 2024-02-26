@@ -61,7 +61,7 @@ class BaseController
 
     protected function getGameTagsController()
     {
-        return $this->central_controller->gameTags_contoller;
+        return $this->central_controller->gamestags_contoller;
     }
 
     // GOOGLE
@@ -95,6 +95,8 @@ class BaseController
 
     public function getAll($column = null, $value = null, $included_columns = [], $sorting = [])
     {
+        $included_columns = $this->restrictAccess($included_columns);
+
         return $this->model-> getAll($column, $value, $included_columns, $sorting);
     }
 
@@ -119,7 +121,7 @@ class BaseController
     public function createResponse($success, $message)
     {
         $response = [
-            'isSuccessful' => $success,
+            'isSuccessful' => (bool) $success,
             'message' => $message,
         ];
     

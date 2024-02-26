@@ -4,6 +4,7 @@
     <!-- Using Vuetify's v-button component -->
     <v-btn class="bordered-btn" @click="getData">get Data</v-btn>
     <v-btn class="bordered-btn" @click="login">Login</v-btn>
+    <v-btn class="bordered-btn" @click="logout">Logout</v-btn>
     <v-btn class="bordered-btn" @click="register">register</v-btn>
     <v-btn class="bordered-btn" @click="filter">filter</v-btn>
     <v-btn class="bordered-btn" @click="deleteData">delete</v-btn>
@@ -28,16 +29,16 @@ export default {
   methods: {
     getData() {
       // let results = fetchData("games", "getAll", null, null, ["id","files","title"],{id: true}, null, "GET")
-      // let results = fetchData(
-      //   "games",
-      //   "getAll",
-      //   null,
-      //   null,
-      //   ["id", "ratingAverage", "title", "tags"],
-      //   null,
-      //   null,
-      //   "GET"
-      // );
+      let results = fetchData(
+        "games",
+        "getAll",
+        null,
+        null,
+        ["id", "ratingAverage", "title", "tags"],
+        null,
+        null,
+        "GET"
+      );
       // let results = fetchData(
       //   "games",
       //   "getAll",
@@ -49,7 +50,7 @@ export default {
       //   "GET"
       // );
       // let results = fetchData(
-      //   "games",
+      //   "users",
       //   "getAll",
       //   null,
       //   null,
@@ -58,17 +59,39 @@ export default {
       //   null,
       //   "GET"
       // );
-      // console.log(results)
+      console.log(results);
     },
     logout() {
-      // const logout = {
-      //   id : ""
-      //   email: "e",
-      //   name: "Katty",
-      //   password: "e",
-      // };
-      // const body = { logout };
-      // console.log(fetchData('users', 'logout', null, null, null, null, body, 'POST'))
+      const access_token = localStorage.getItem("accessToken");
+      const refresh_token = localStorage.getItem("refreshToken");
+
+      const logout = {
+        id: "7",
+        tokens: {
+          access_token: access_token,
+          refresh_token: refresh_token,
+        },
+      };
+
+      this.loginTokens.access_token = "";
+      this.loginTokens.refresh_token = "";
+
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+
+      const body = { logout };
+
+      let results = fetchData(
+        "users",
+        "logout",
+        null,
+        null,
+        null,
+        null,
+        body,
+        "POST"
+      );
+      console.log(results);
     },
     async login() {
       const login = {
@@ -91,8 +114,9 @@ export default {
         // console.log("Login successful: ",loginResponse);
         if (loginResponse) {
           this.loginTokens.access_token = loginResponse.access_token;
-          this.loginTokens.refresh_token =
-            loginResponse.refresh_token;
+          this.loginTokens.refresh_token = loginResponse.refresh_token;
+          localStorage.setItem("accessToken", loginResponse.access_token);
+          localStorage.setItem("refreshToken", loginResponse.refresh_token);
           console.log("Login successful: ", this.loginTokens);
         }
       } catch (error) {
@@ -101,30 +125,13 @@ export default {
     },
     register() {
       const createData = {
-        email: "b",
-        name: "charles",
-        password: "b",
+        email: "c",
+        username: "meki",
+        password: "c",
       };
       const createBody = { createData };
-      fetchData('users', 'create', null, null, null, null, createBody, 'POST')
-    },
-    createData() {
-
-      //create review
-      const createData = {
-        userID: "1",
-        gameID: "10",
-        rating: "1",
-        tokens: {
-          access_token: this.loginTokens.access_token,
-          refresh_token: this.loginTokens.refresh_token,
-        },
-        comment: "This is a review comment",
-      };
-      const createBody = { createData };
-
-      console.log(fetchData(
-        "reviews",
+      let results = fetchData(
+        "users",
         "create",
         null,
         null,
@@ -132,9 +139,102 @@ export default {
         null,
         createBody,
         "POST"
-      ))
+      );
+      console.log(results);
+    },
+    createData() {
+      ////////////CREATE REVIEWS///////////////
+      // const createData = {
+      //   userID: "1",
+      //   gameID: "10",
+      //   rating: "1",
+      //   tokens: {
+      //     access_token: this.loginTokens.access_token,
+      //     refresh_token: this.loginTokens.refresh_token,
+      //   },
+      //   comment: "This is a review comment",
+      // };
+      // const createBody = { createData };
+      // let results = fetchData(
+      //   "reviews",
+      //   "create",
+      //   null,
+      //   null,
+      //   null,
+      //   null,
+      //   createBody,
+      //   "POST"
+      // );
+      // console.log(results);
+
+      ////////////////////CREATE TAG//////////////////////
+      const createData = {
+        gameId: "10",
+        name: "princess",
+      };
+      const createBody = { createData };
+      let results = fetchData(
+        "tags",
+        "create",
+        null,
+        null,
+        null,
+        null,
+        createBody,
+        "POST"
+      );
+      console.log(results);
     },
     updateData() {
+      ////////////////////UPDATE TAG/////////////////////////
+
+      const updateData = {
+        id: "9",
+        gameId: "10",
+        oldName: "princess",
+        newName: "chocolate",
+      };
+      const body = { updateData };
+      let results = fetchData(
+        "tags",
+        "update",
+        null,
+        null,
+        null,
+        null,
+        body,
+        "POST"
+      );
+      console.log(results);
+
+      ///////////////////UPDATE USERS////////////////////
+
+      // const access_token = localStorage.getItem("accessToken");
+      // const refresh_token = localStorage.getItem("refreshToken");
+      // // console.log("access_token:", this.loginTokens.access_token);
+      // // console.log("refresh_token:", this.loginTokens.refresh_token);
+      // const updateData = {
+      //   id: "7",
+      //   drive_id: "taxes",
+      //   tokens: {
+      //     access_token: access_token,
+      //     refresh_token: refresh_token,
+      //   },
+      // };
+      // const body = { updateData };
+      // let results = fetchData(
+      //   "users",
+      //   "update",
+      //   null,
+      //   null,
+      //   null,
+      //   null,
+      //   body,
+      //   "POST"
+      // );
+      // console.log(results);
+
+      ///////////////////UPDATE REVIEWS////////////////////
       // const updateData = {
       //   id: "17",
       //   gameID: "4",
@@ -153,7 +253,7 @@ export default {
       // fetchData("reviews", "update", null, null, null, null, body, "POST");
     },
     deleteData() {
-      //////////////////////////////////////////
+      ////////////////////DELETE REVIEW/////////////////////////
 
       //   const deleteData = {
       //   id : "23",
@@ -168,18 +268,60 @@ export default {
       //  const body = { deleteData };
       //  fetchData("reviews", "delete", null, null, null, null, body, "POST");
 
-      /////////////////////////////
+      ////////////////////DELETE GAME/////////////////////////
 
-      // delete game
+      // const deleteData = {
+      //   id: "9",
+      // };
+      // const body = { deleteData };
+      // let results =  fetchData("games", "delete", null, null, null, null, body, "POST")
+      // console.log(results)
+
+      ////////////////////DELETE USER/////////////////////////
+      // const access_token = localStorage.getItem("accessToken");
+      // const refresh_token = localStorage.getItem("refreshToken");
+
+      // const deleteData = {
+      //   id: "8",
+      //   tokens: {
+      //     access_token: access_token,
+      //     refresh_token: refresh_token,
+      //   },
+      // };
+      // const body = { deleteData };
+      // let results = fetchData(
+      //   "users",
+      //   "delete",
+      //   null,
+      //   null,
+      //   null,
+      //   null,
+      //   body,
+      //   "POST"
+      // );
+      // console.log(results);
+
+      ////////////////////DELETE TAG/////////////////////////
 
       const deleteData = {
-        id: "9",
+        gameId: "10",
+        name: "princess",
       };
       const body = { deleteData };
-      console.log(fetchData("games", "delete", null, null, null, null, body, "POST"))
+      let results = fetchData(
+        "tags",
+        "delete",
+        null,
+        null,
+        null,
+        null,
+        body,
+        "POST"
+      );
+      console.log(results);
     },
     filter() {
-      /////////////////////////////////////////////
+      ///////////////////FILTER GAMES//////////////////////////
       const filters = {
         ratingAverage: "5",
       };
@@ -188,7 +330,18 @@ export default {
       };
       const includedColumns = ["id", "developerID", "tags", "ratingAverage"];
       const jsonBody = { filters, sorting, includedColumns };
-      console.log(fetchData("games", "getAllMatching", null, null, null, null, jsonBody, "POST"))
+      console.log(
+        fetchData(
+          "games",
+          "getAllMatching",
+          null,
+          null,
+          null,
+          null,
+          jsonBody,
+          "POST"
+        )
+      );
     },
   },
 };
