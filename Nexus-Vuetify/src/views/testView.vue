@@ -2,7 +2,8 @@
   <div class="test_view">
     TEST
     <!-- Using Vuetify's v-button component -->
-    <v-btn class="bordered-btn" @click="getData">get Data</v-btn>
+    <v-btn class="bordered-btn" @click="getAll">Get All</v-btn>
+    <v-btn class="bordered-btn" @click="getOne">Get One</v-btn>
     <v-btn class="bordered-btn" @click="login">Login</v-btn>
     <v-btn class="bordered-btn" @click="logout">Logout</v-btn>
     <v-btn class="bordered-btn" @click="register">register</v-btn>
@@ -27,7 +28,7 @@ export default {
     };
   },
   methods: {
-    getData() {
+    getAll() {
       // let results = fetchData("games", "getAll", null, null, ["id","files","title"],{id: true}, null, "GET")
       let results = fetchData(
         "games",
@@ -61,6 +62,21 @@ export default {
       // );
       console.log(results);
     },
+    getOne() {
+      // let results = fetchData("games", "getAll", null, null, ["id","files","title"],{id: true}, null, "GET")
+      let results = fetchData(
+        "games",
+        "getOne",
+        "id",
+        "4",
+        ["id", "ratingAverage", "title", "tags"],
+        null,
+        null,
+        "GET"
+      );
+      console.log(results);
+    },
+    
     logout() {
       const access_token = localStorage.getItem("accessToken");
       const refresh_token = localStorage.getItem("refreshToken");
