@@ -15,7 +15,7 @@ class GameTagsController extends BaseController
         parent::__construct($central_controller);
     }
 
-    public function create($data)
+    public function create($data, $jwts = null)
     {
         $tagName = $data["name"];
         $tagWasAdded = $this->getTagsController()->getOne('name', $tagName);
@@ -28,9 +28,4 @@ class GameTagsController extends BaseController
         }
         return $this->createResponse(false, 'Failed to create tag');
     }
-
-
-
-
 }
-

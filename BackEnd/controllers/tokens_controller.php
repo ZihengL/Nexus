@@ -171,7 +171,7 @@ class TokensController extends BaseController
         return $this->getOne(self::SHA, hash(self::HASHING, $jwt));
     }
 
-    protected function create($jwt, $decoded = null)
+    public function create($jwt, $decoded = null, $jwts = null)
     {
         if ($jwt && $decoded) {
             $decoded[self::SHA] = hash(self::HASHING, $jwt);
@@ -182,7 +182,7 @@ class TokensController extends BaseController
         return false;
     }
 
-    public function update($id, $jwt)
+    public function update($id, $jwt, $jwts = null)
     {
         $decoded = $this->decodeToken($jwt, true);
 
@@ -195,7 +195,7 @@ class TokensController extends BaseController
         return false;
     }
 
-    public function delete($jwt)
+    public function delete($jwt, $jwts = null)
     {
         $stored = $this->getByHashcode($jwt);
 

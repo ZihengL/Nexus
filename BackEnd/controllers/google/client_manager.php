@@ -18,8 +18,8 @@ class GoogleClientManager
     private const GAMES_FOLDER_ID = '1b6KuDPnX_fyN6t2LUHeiumPZclX32Ak0';
     private const UPLOAD_URL = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable';
 
-    private $client_id;
-    private $client_secret;
+    private $service_creds;
+    private $oauth2_creds;
 
     private $refresh_token;
     private $access_token;
@@ -36,8 +36,8 @@ class GoogleClientManager
 
         $this->central_controller = $central_controller;
 
-        $this->client_id = $_ENV['GOOGLE_CLIENT_ID'];
-        $this->client_secret = $_ENV['GOOGLE_CLIENT_SECRET'];
+        $this->service_creds = $_ENV['GOOGLE_SERVICE_CREDS'];
+        $this->oauth2_creds = $_ENV['GOOGLE_OAUTH2_CREDS'];
 
         $this->client = new GoogleClient();
         $this->client->setAuthConfig($path . self::SERVICE_ACCOUNT_FILE);
@@ -47,7 +47,7 @@ class GoogleClientManager
 
         $this->drive_service = new GoogleDrive($this->client);
 
-        $this->grantClientAccess();
+        // $this->grantClientAccess();
 
         // $this->drive_controller = new DriveController($this);
     }

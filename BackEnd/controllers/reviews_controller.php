@@ -69,7 +69,7 @@ class ReviewsController extends BaseController
         return parent::getAllMatching($filters, $sorting, $included_columns);
     }
 
-    public function create($data)
+    public function create($data, $jwts = null)
     {
         // echo "<br> create reviews_controller <br>";
         // print_r($data);
@@ -93,7 +93,7 @@ class ReviewsController extends BaseController
 
 
 
-    public function delete($data)
+    public function delete($data, $jwts = null)
     {
         // echo "<br> delete reviews_controller <br>";
         // print_r($data);
@@ -103,7 +103,7 @@ class ReviewsController extends BaseController
                 // echo "proper review  : ", $data["id"], "<br>";
                 if ($this->model->delete($data["id"])) {
                     // echo "mlep: ";
-                    return $this->updateGameRatingAverage($data["gameID"]); 
+                    return $this->updateGameRatingAverage($data["gameID"]);
                 }
             }
         }
@@ -112,7 +112,7 @@ class ReviewsController extends BaseController
     }
 
 
-    public function update($id, $data)
+    public function update($id, $data, $jwts = null)
     {
         // echo "<br> update reviews_controller <br>";
         // print_r($data);
@@ -230,8 +230,5 @@ class ReviewsController extends BaseController
             default:
                 return false;
         }
-
     }
-
-
 }

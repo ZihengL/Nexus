@@ -39,7 +39,7 @@ class TagsController extends BaseController
 
 
 
-    public function create($data)
+    public function create($data, $jwts = null)
     {
         $isValid = $this->validateData("create", $data);
         $name = $data["name"];
@@ -65,7 +65,7 @@ class TagsController extends BaseController
     }
 
 
-    public function delete($data)
+    public function delete($data, $jwts = null)
     {
         $isValid = $this->validateData("delete", $data);
         $name = $data["name"];
@@ -88,7 +88,6 @@ class TagsController extends BaseController
                         return $this->createResponse(true, 'tags successfully deleted in gameTags and tags table');
                     }
                 }
-
             }
         }
         return $isValid;
@@ -96,7 +95,7 @@ class TagsController extends BaseController
 
 
 
-    public function update($id, $data)
+    public function update($id, $data, $jwts = null)
     {
         $isValid = $this->validateData("update", $data);
         $newName = $data["newName"];
@@ -111,7 +110,6 @@ class TagsController extends BaseController
             if ($this->model->update($id, $newData)) {
                 return $this->createResponse(false, 'tag has been updated');
             }
-
         }
         return $this->$isValid;
     }
@@ -151,14 +149,5 @@ class TagsController extends BaseController
             default:
                 return $this->createResponse(false, 'error in tags_controller');
         }
-
     }
-
-
-
-
 }
-
-
-
-

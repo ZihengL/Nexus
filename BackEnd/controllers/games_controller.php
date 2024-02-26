@@ -44,7 +44,7 @@ class GamesController extends BaseController
         if (empty($sorting)) {
             $sorting = [$this->ratingAverage => true];
         }
-        return $this->model-> getAll($column, $value, $included_columns, $sorting);
+        return $this->model->getAll($column, $value, $included_columns, $sorting);
     }
 
 
@@ -91,17 +91,17 @@ class GamesController extends BaseController
     // Other CRUDs 
 
     // TODO: LINK BACK TO USER AUTH
-    public function create($data, $tokens = null)
+    public function create($data, $jwts = null)
     {
         return $this->model->create($data);
     }
 
-    public function update($id, $data, $tokens = null)
+    public function update($id, $data, $jwts = null)
     {
         return $this->model->update($id, $data);
     }
 
-    public function delete($id)
+    public function delete($id, $jwts = null)
     {
         return $this->model->delete($id);
     }

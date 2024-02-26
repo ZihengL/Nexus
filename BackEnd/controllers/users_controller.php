@@ -56,7 +56,7 @@ class UsersController extends BaseController
 
     // Returns tokens to log the user in
     // TODO: CREATE USER FOLDER
-    public function create($data)
+    public function create($data, $jwts = null)
     {
         if ($this->model->create($data)) {
             $user = $this->getOne($this->email, $data[$this->email]);
