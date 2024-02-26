@@ -10,34 +10,47 @@
       <br />
       <div class="fieldBtn">
         <div class="btn-layer"></div>
-        <v-btn  :to="{ name: 'Game', params: { idGame: props.idJeu } }" density="default" class="submit glow">
+        <v-btn :to="{ name: 'Game', params: { idGame: props.idJeu } }" density="default" class="submit glow">
           Voir plus
         </v-btn>
       </div>
     </div>
   </div>
+  <div class="pagination">
+    <a href="#" class="prev">&laquo; Previous</a>
+    <a href="#" class="active">1</a>
+    <a href="#">2</a>
+    <a href="#">3</a>
+    <a href="#">4</a>
+    <a href="#">5</a>
+    <a href="#" class="next">Next &raquo;</a>
+  </div>
 </template>
 
 <script setup>
+import { defineProps, onMounted, ref } from 'vue';
 import { fetchData } from '../JS/fetch';
-import { defineProps, ref, onMounted } from 'vue';
-
-const props = defineProps(['himself','idJeu']);
+const props = defineProps(['himself', 'idJeu']);
 const LeGame = ref(null);
 
 onMounted(async () => {
-    try {
-      const dataGame = await fetchData("games", "getOne", "id", props.idJeu, null, "GET");
-      LeGame.value = dataGame;
-      //console.log('leDevs : ', leDevs)
+  try {
+    const dataGame = await fetchData("games", "getOne", "id", props.idJeu, null, "GET");
+    LeGame.value = dataGame;
+    //console.log('leDevs : ', leDevs)
 
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
 });
 </script>
 
 <style lang="scss">
+.pagin {
+  margin-top: 20%;
+  border: 1px solid red;
+}
+
 .container {
   display: flex;
   justify-content: space-between;
@@ -45,12 +58,14 @@ onMounted(async () => {
   padding: 20px;
   margin-top: 1.5%;
   gap: 40%;
+
 }
 
 .img {
   flex: 3;
   align-self: flex-start;
   width: 10%;
+
   img {
     width: 100%;
     //display: none;
