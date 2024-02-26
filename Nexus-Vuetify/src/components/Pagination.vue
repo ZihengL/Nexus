@@ -1,18 +1,65 @@
 <template>
-  <div class="pagination">
-    <a href="#" class="prev">&laquo; Previous</a>
-    <a href="#" class="active">1</a>
-    <a href="#">2</a>
-    <a href="#">3</a>
-    <a href="#">4</a>
-    <a href="#">5</a>
-    <a href="#" class="next">Next &raquo;</a>
+  <div class="pagination glass">
+
+    <div class="fieldBtn prev">
+      <div class="btn-layer"></div>
+      <v-btn density="default" class="submit glow" @click="prevPage"> &laquo; Précédent
+      </v-btn>
+    </div>
+
+    <a v-for="pageNumber in totalPages" :key="pageNumber" :class="{ active: currentPage === pageNumber }"
+      @click="changePage(pageNumber)">{{ pageNumber }}</a>
+    <div class="fieldBtn next">
+      <div class="btn-layer"></div>
+      <v-btn density="default" class="submit glow" @click="nextPage">Suivant &raquo;
+      </v-btn>
+    </div>
   </div>
 </template>
-<style>
+
+<script>
+export default {
+  data() {
+    return {
+      games: [], // Vos jeux à paginer
+      currentPage: 1,
+      pageSize: 6 // Nombre de jeux par page
+    };
+  },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.games.length / this.pageSize);
+    },
+    displayedGames() {
+      const start = (this.currentPage - 1) * this.pageSize;
+      const end = start + this.pageSize;
+      return this.games.slice(start, end);
+    }
+  },
+  methods: {
+    changePage(pageNumber) {
+      this.currentPage = pageNumber;
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+      }
+    },
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+    }
+  }
+};
+</script>
+
+<style lang="scss">
 .pagination {
-  display: inline-block;
-  margin: 20px;
+  display: flex;
+  margin-top: 20px;
+  padding: 5%;
+
 }
 
 .pagination a {
@@ -38,6 +85,11 @@
 .pagination .next {
   background-color: #f1f1f1;
   color: black;
+
+}
+
+.pagination .next {
+  margin: 10px;
 }
 
 @media screen and (max-width: 600px) {
@@ -49,4 +101,5 @@
   .pagination .next {
     display: block;
   }
-}</style>
+}
+</style>

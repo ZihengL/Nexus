@@ -1,8 +1,8 @@
 <template>
   <!-- Created By CodingNepal -->
-  <div v-if="leDevs && gameList" class="allP">
+  <div v-if="leDevs && gameList && toggleLogin && toggleSignup" class="allP">
     <div class="containerProfile" :class="isHimself ? 'container1' : 'container2'">
-      <div class="wrapper">
+      <div class="wrapper2">
         <div class="description  glass roundBorderSmall" >
           <div :class="isHimself ? 'imgContainerFull' : 'imgContainer'">
             <img src="../assets/Rich_Ricasso.png" alt="John" class="imgProfil" />
@@ -26,14 +26,36 @@
             </div>
           </div>
         </div>
-        <div style="display: flex; margin-top: 1.5%;" class=" glass roundBorderSmall">
-          <div class="laListeJeu" >
-            <div v-for="(item, index) in gameList" :key="index">
-              <liste-de-jeu :idJeu="item.id" :himself="props.isHimself" class="game"/>
+        <div class="wrapper glass roundBorderSmall">
+
+          <div class="form-container">
+
+            <div v-if="isHimself" class="slide-controls roundBorderSmall">
+              <input type="radio" name="slide" id="login" v-model="isLogin" value="true" checked>
+              <input type="radio" name="slide" id="signup" v-model="isLogin" value="false">
+              <label for="login" class="slide login" @click="toggleLogin()">Acheter</label>
+              <label for="signup" class="slide signup" @click="toggleSignup()">Developper</label>
+              <div class="slider-tab"></div>
             </div>
 
+            <div v-if="isHimself" class="form-inner">
+
+              <div v-for="(item, index) in gameList" :key="index" class="login gamesss log">
+                <liste-de-jeu :idJeu="item.id" :buy="true" class="game gamess"/>
+              </div>
+
+              <div  v-for="(item, index) in gameList" :key="index"  class="signup sign">
+                <liste-de-jeu :idJeu="item.id" :buy="false" class="game"/>
+              </div>
+
+            </div>
+              <div v-else  v-for="(item, index) in gameList" :key="index"  class="signup sign">
+                <liste-de-jeu :idJeu="item.id"  :buy="false" class="game"/>
+              </div>
+
           </div>
-        </div>
+
+          </div>
       </div>
     </div>
     <div v-if="isHimself" class="listeFriends glass roundBorderSmall">
@@ -42,50 +64,74 @@
       <amis />
       <amis />
     </div>
+
+    <router-link class="floating-right-bottom-btn glass" to="/upload" title="upload">
+      <v-icon icon="mdi-upload" class="icon glow"/>
+    </router-link>
   </div>
+
 </template>
 
 
 <script setup>
 import ListeDeJeu from './ListeDeJeu.vue';
+import { fetchData } from '../JS/fetch';
 import { defineProps, ref, onMounted } from 'vue';
 import Amis from './amis.vue';
-import { fetchData } from '../JS/fetch';
 
 const props = defineProps(['isHimself', 'idDevl']);
-
-console.log(props);
 const leDevs = ref(null);
 const gameList = ref(null);
+const isLogin = ref(true);
+
+const toggleLogin = () => {
+  isLogin.value = true;
+  const gamessShow = document.querySelector(".gamess"); // Use class selector
+  const gamesContainer = document.querySelector(".gamesss"); // Use class selector
+  if (gamessShow && gamesContainer) {
+    gamessShow.style.marginLeft = "0%";
+    gamesContainer.style.marginLeft = "0%";
+  }
+};
+
+const toggleSignup = () => {
+  isLogin.value = false;
+  const gamessShow = document.querySelector(".gamess"); // Use class selector
+  const gamesContainer = document.querySelector(".gamesss"); // Use class selector
+  if (gamessShow && gamesContainer) {
+    gamessShow.style.marginLeft = "-60%";
+    gamesContainer.style.marginLeft = "-60%";
+  }
+};
+
 
 onMounted(async () => {
-    try {
-      const dataGame = await fetchData("users", "getOne", "id", props.idDevl, null, "GET");
-      leDevs.value = dataGame;
-      console.log('leDevs : ', leDevs)
+  try {
+    const dataGame = await fetchData("users", "getOne", "id", props.idDevl, null, "GET");
+    leDevs.value = dataGame;
+    console.log('leDevs : ', leDevs)
 
-      if(leDevs.value){
-        
-        const filters = {
-          developerID: props.idDevl,
-        }
-        const sorting = {
-          id: false
-        }
-
-        const includedColumns = ['id', 'title']
-        const jsonBody = { filters, sorting, includedColumns }
-        
-        const dataDevs = await fetchData('games', 'getAllMatching', null, null, jsonBody, 'POST');
-        gameList.value = dataDevs;
-        console.log('game ', gameList)
+    if(leDevs.value) {
+      const filters = {
+        developerID: props.idDevl,
       }
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
-});
+      const sorting = {
+        id: false
+      }
 
+      const includedColumns = ['id', 'title']
+      const jsonBody = { filters, sorting, includedColumns }
+
+      const dataDevs = await fetchData('games', 'getAllMatching', null, null, jsonBody, 'POST');
+      gameList.value = dataDevs;
+      console.log('game ', gameList)
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+});
 </script>
 
 
 <style src="../styles/ProfileStyle.scss"></style>
+<style src="../styles/SignRegisterStyle.scss" scoped></style>
