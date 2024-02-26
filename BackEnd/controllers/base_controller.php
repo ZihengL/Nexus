@@ -95,6 +95,8 @@ class BaseController
 
     public function getAll($column = null, $value = null, $included_columns = [], $sorting = [])
     {
+        $included_columns = $this->restrictAccess($included_columns);
+
         return $this->model->getAll($column, $value, $included_columns, $sorting);
     }
 
@@ -115,11 +117,10 @@ class BaseController
 
     // REBECCA
 
-
-    public function createResponse($success, $message)
+    public function createResponse($isSuccess, $message)
     {
         $response = [
-            'isSuccessful' => $success,
+            'isSuccessful' => $isSuccess,
             'message' => $message,
         ];
 
