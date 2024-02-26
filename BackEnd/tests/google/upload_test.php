@@ -60,6 +60,8 @@ if (isset($_REQUEST['logout'])) {
  * function. We store the resultant access token
  * bundle in the session, and redirect to ourself.
  ************************************************/
+
+//    public function exchangeCodeForToken($code, $code_verifier)
 if (isset($_GET['code'])) {
   $token = $client->fetchAccessTokenWithAuthCode($_GET['code'], $_SESSION['code_verifier']);
   $client->setAccessToken($token);
