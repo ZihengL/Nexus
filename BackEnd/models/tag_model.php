@@ -17,10 +17,6 @@ class TagsModel extends BaseModel
         return parent::getAll($columnName, $name);
     }
 
-    public function getAll_tags()
-    {
-        return parent::getAll();
-    }
 
     //Other Cruds
 }
