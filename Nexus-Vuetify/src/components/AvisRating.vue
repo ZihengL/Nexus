@@ -2,7 +2,6 @@
   <div class="glass ratingLast roundBorderSmall">
     <div class="absolute">
       <h2>Avis par les meilleurs notes</h2>
-
       <ul>
         <li v-for="avis in avisRecents" :key="avis.id" class="glass roundBorderSmall padding">
           <div class="containerStar">
@@ -19,24 +18,18 @@
           </div>
         </li>
       </ul>
-
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      avisRecents: [
-        // Supposez que vous avez des données d'avis récents
-        { id: 1, text: "Super produit!" },
-        { id: 2, text: "Excellent service client!" },
-        { id: 3, text: "Livraison rapide et efficace!" },
-      ],
-    };
-  },
-};
+<script setup>
+import { ref } from 'vue';
+
+const avisRecents = ref([
+  { id: 1, text: "Super produit!" },
+  { id: 2, text: "Excellent service client!" },
+  { id: 3, text: "Livraison rapide et efficace!" },
+]);
 </script>
 
 <style lang="scss">

@@ -37,16 +37,19 @@ let LeGame = ref(null);
 const devName = ref(null);
 
 onMounted(async () => {
-    try {
-        const dataGame = await fetchData("games", "getOne", "id",  props.idGame, null, null, null, "GET");
+    // try {
+        // const dataGame = await fetchData("games", "getOne", "id",  props.idGame, null, null, null, "GET");
+        
+        const dataGame = await fetchData("games", "getOne", "id",  "4", null, null, null, "GET");
             
-        console.log('dataGame : ', dataGame)
+        // console.log(' props.idGame : ',  props.idGame)
         LeGame.value = dataGame;
-        console.log('LeGame : ', LeGame)
+        // console.log('LeGame : ', LeGame)
 
         if(LeGame.value){
         const devId =  LeGame._rawValue.developerID
         console.log('devId : ' , devId)
+        console.log('LeGame : ', LeGame.value)
         
         const filters = {
           id: devId,
@@ -66,9 +69,9 @@ onMounted(async () => {
         devName.value = devName2[0].user
         console.log('devs : ' , devName.value)
       }
-    } catch (error) { 
-      console.error('Error fetching data:', error);
-    }
+    // } catch (error) { 
+    //   console.error('Error fetching data:', error);
+    // }
   });
 </script>
 
