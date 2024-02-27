@@ -1,7 +1,7 @@
 <template>
   <div :id="props.id" class="review">
     <div class="review_header">
-      <img :src="props.img" :alt="props.username" class="review_avatar" />
+      <img :src="props.img || 'https://www.alleycat.org/wp-content/uploads/2019/03/FELV-cat.jpg'" :alt="props.username" class="review_avatar" />
       <div class="review_user_details">
         <h3 class="review_username">{{ props.username }}</h3>
       </div>
@@ -11,12 +11,14 @@
     </div>
     <div class="review_footer">
       <v-rating
-        :value="props.rating"
+        :model-value="props.rating"
+        :length="5"
+        active-color="yellow"
+        half-increments
         readonly
         size="14"
-        color="amber"
+        color="white"
         empty-icon="mdi-star-outline"
-        background-color="grey lighten-1"
       ></v-rating>
     </div>
   </div>
@@ -34,14 +36,7 @@ const props = defineProps({
   userID: Number,
 });
 
-
-const reviewInfo = reactive({
-  count: 0,
-  necessaryProps: ["id", "rating", "username", "comment", "timestamp"],
-  reviews: [],
-  users: [],
-  infosToDisplay: [],
-});
+console.log("rating : ", props.rating);
 </script>
 
 <style scoped>
