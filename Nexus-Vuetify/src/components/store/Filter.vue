@@ -10,7 +10,7 @@
         <div class="search-container">
             <input type="text" id="gameSearch" name="gameSearch" placeholder="Chercher par filtre">
         </div>
-    </div>
+    </div>    
 </template>
 <script>
 export default {
@@ -28,6 +28,7 @@ export default {
   }
 };
 </script>
+
 <style scoped>
 .filter-container {
     background: rgba(0, 0, 0, 0.8);
