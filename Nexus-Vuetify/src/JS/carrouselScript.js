@@ -1,5 +1,4 @@
-
-import { fetchData } from "../JS/fetch";
+import { fetchData } from "./fetch.js";
 import { getStorage, ref, listAll, getDownloadURL } from "firebase/storage";
 
 const storage = getStorage();
@@ -70,8 +69,8 @@ export default {
     async fetchGameImages(games) {
       try {
         const imageFetchPromises = games.map(async (game) => {
-          const files = game.files || `defaultName.jpg`;
-          const imagePath = `GameTitle/${files}`;
+          const files = game.title || `defaultName.jpg`;
+          const imagePath = `GameTitle/${files}.png`;
           const imageRef = ref(storage, imagePath);
 
           try {
@@ -103,6 +102,7 @@ export default {
         if (!Array.isArray(data)) {
           throw new Error("Fetched data is not an array");
         }
+        console.log('data : ' , data)
         return this.fetchGameImages(data.slice(0, 4));
       })
       .then((carouselItemsWithImages) => {
@@ -114,5 +114,10 @@ export default {
       .catch((error) => {
         console.error("Error:", error);
       });
-  },
-};
+    } catch (error) {
+      console.error("Error fetching game images:", error);
+      //return []; // Return an empty array in case of error
+    }
+  
+  }
+}
