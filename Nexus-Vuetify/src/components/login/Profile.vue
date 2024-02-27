@@ -5,7 +5,7 @@
       <div class="wrapper2">
         <div class="description  glass roundBorderSmall" >
           <div :class="isHimself ? 'imgContainerFull' : 'imgContainer'">
-            <img src="../assets/Rich_Ricasso.png" alt="John" class="imgProfil" />
+            <img src="../../assets/Rich_Ricasso.png" alt="John" class="imgProfil" />
           </div>
           <div class="champUtilisateur">
             <h3>{{ leDevs.user }}</h3>
@@ -58,12 +58,6 @@
           </div>
       </div>
     </div>
-    <div v-if="isHimself" class="listeFriends glass roundBorderSmall">
-      <h2> liste amis</h2>
-      <amis />
-      <amis />
-      <amis />
-    </div>
 
     <router-link class="floating-right-bottom-btn glass" to="/upload" title="upload">
       <v-icon icon="mdi-upload" class="icon glow"/>
@@ -75,9 +69,8 @@
 
 <script setup>
 import ListeDeJeu from './ListeDeJeu.vue';
-import { fetchData } from '../JS/fetch';
+import { fetchData } from '../../JS/fetch';
 import { defineProps, ref, onMounted } from 'vue';
-import Amis from './amis.vue';
 
 const props = defineProps(['isHimself', 'idDevl']);
 const leDevs = ref(null);
@@ -133,5 +126,5 @@ onMounted(async () => {
 </script>
 
 
-<style src="../styles/ProfileStyle.scss"></style>
-<style src="../styles/SignRegisterStyle.scss" scoped></style>
+<style src="../../styles/ProfileStyle.scss"></style>
+<style src="../../styles/SignRegisterStyle.scss" scoped></style>

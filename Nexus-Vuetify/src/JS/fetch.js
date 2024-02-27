@@ -9,7 +9,7 @@ export function fetchData (
   method
 ) {
   const baseURL = 'http://localhost:4208/Nexus/Backend/'
-  console.log({ table, crud_action, columnName, value })
+  //console.log({ table, crud_action, columnName, value })
 
   let uri = `${baseURL}${table}/${crud_action}`
   // Convert arrays to comma-separated strings if they are not empty
@@ -47,6 +47,7 @@ export function fetchData (
       }
       // console.log(' response : ', response.text())
       return response.json()
+      //return response.text()
     })
     .then(data => {
       // console.log(data)

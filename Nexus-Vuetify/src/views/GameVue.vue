@@ -48,9 +48,9 @@
 <script setup>
 import { defineProps, onMounted, ref } from 'vue';
 import { fetchData } from '../JS/fetch';
-import AvisRating from '../components/AvisRating.vue';
-import AvisRecent from '../components/AvisRecent.vue';
-import game from '../components/GameCarrousel.vue';
+import AvisRating from '../components/game/AvisRating.vue';
+import AvisRecent from '../components/game/AvisRecent.vue';
+import game from '../components/game/GameCarrousel.vue';
 import Pagination from '../components/Pagination.vue';
 
 const props = defineProps(['idGame']);
