@@ -107,7 +107,7 @@ const toggleSignup = () => {
 
 onMounted(async () => {
   try {
-    const dataGame = await fetchData("users", "getOne", "id", props.idDevl, null, "GET");
+    const dataGame = await fetchData("users", "getOne", "id", props.idDevl, null,null,null,"GET");
     leDevs.value = dataGame;
     console.log('leDevs : ', leDevs)
 
@@ -122,7 +122,7 @@ onMounted(async () => {
       const includedColumns = ['id', 'title']
       const jsonBody = { filters, sorting, includedColumns }
 
-      const dataDevs = await fetchData('games', 'getAllMatching', null, null, jsonBody, 'POST');
+      const dataDevs = await fetchData('games', 'getAllMatching', null, null, null, null, jsonBody, 'POST');
       gameList.value = dataDevs;
       console.log('game ', gameList)
     }

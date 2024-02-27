@@ -12,7 +12,7 @@
   let listeJeux = ref(null);
   
   onMounted(async () => {
-    try {
+    // try {
       const filters = {
         id: { gt: 0, lte: 20 },
       };
@@ -24,21 +24,21 @@
       const includedColumns = ['id'];
       const jsonBody = { filters, sorting, includedColumns };
   
-      fetchData('games', 'getAllMatching', null, null, jsonBody, 'POST')
-        .then((data) => {
-          listeJeux.value = data;
-          //console.log('data : ', data)
-          //console.log('liste : ', listeJeux)
-        })
-        .catch((error) => {
-          // Handle errors if any
-          console.error('Error fetching data:', error);
-        });
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
+      listeJeux.value = await fetchData('games', 'getAllMatching', null, null, null, null, jsonBody, 'POST')
+  //       .then((data) => {
+  //         listeJeux.value = data;
+  //         // console.log('data : ', data)
+  //         // console.log('listeJeux : ', listeJeux.value)
+  //       })
+  //       .catch((error) => {
+  //         // Handle errors if any
+  //         console.error('Error fetching data:', error);
+  //       });
+  //   } catch (error) {
+  //     console.error('Error fetching data:', error);
+  //   }
+  // });
   });
-  
   console.log('liste : ', listeJeux);
   </script>
   

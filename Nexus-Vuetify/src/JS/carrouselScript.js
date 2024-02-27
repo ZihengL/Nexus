@@ -1,11 +1,10 @@
-
 // Firebase and fetchData imports
-import { storage } from '../JS/firebaseconfig';
-import { ref, getDownloadURL } from 'firebase/storage';
-import { fetchData } from '../JS/fetch';
+import { getDownloadURL, ref } from "firebase/storage";
+import { fetchData } from "../JS/fetch";
+import { storage } from "../JS/firebaseconfig";
 
 export default {
-  name: 'GameCarousel',
+  name: "GameCarousel",
   data() {
     return {
       carouselItems: [],
@@ -17,24 +16,24 @@ export default {
   },
   methods: {
     showSlider(type) {
-      if (type === 'next') {
+      if (type === "next") {
         this.carouselItems.push(this.carouselItems.shift());
       } else {
         this.carouselItems.unshift(this.carouselItems.pop());
       }
       clearTimeout(this.runTimeOut);
       this.runTimeOut = setTimeout(() => {
-        this.$el.classList.remove('next', 'prev');
+        this.$el.classList.remove("next", "prev");
       }, this.timeRunning);
       clearTimeout(this.runNextAuto);
       this.runNextAuto = setTimeout(() => {
-        this.showSlider('next');
+        this.showSlider("next");
       }, this.timeAutoNext);
     },
     fetchGameImages(games) {
       const imageFetchPromises = games.map((game) => {
-        const imageName = game.imageName || `defaultName.jpg`;
-        const imagePath = `GameTitle/${imageName}`;
+        const files = game.files || `defaultName.jpg`;
+        const imagePath = `GameTitle/${files}`;
         const imageRef = ref(storage, imagePath);
 
         return getDownloadURL(imageRef)
@@ -42,8 +41,11 @@ export default {
             return { ...game, image: url };
           })
           .catch((error) => {
-            console.error(`Error fetching image for ${game.title} with image ${imageName}:`, error);
-            return { ...game, image: 'path/to/default/image.jpg' }; // Fallback image
+            console.error(
+              `Error fetching image for ${game.title} with image ${files}:`,
+              error
+            );
+            return { ...game, image: "path/to/default/image.jpg" }; // Fallback image
           });
       });
       return Promise.all(imageFetchPromises);
@@ -52,25 +54,25 @@ export default {
   mounted() {
     const filters = { ratingAverage: { gt: 1, lte: 7 } };
     const sorting = { ratingAverage: true };
-    const includedColumns = ['id', 'developerID', 'title', 'imageName'];
+    const includedColumns = ["id", "developerID", "title", "files"];
 
     const jsonBody = { filters, sorting, includedColumns };
 
-    fetchData('games', 'getAllMatching', null, null, jsonBody, 'POST')
+    fetchData("games", "getAllMatching", null, null, null, null,jsonBody, "POST")
       .then((data) => {
         if (!Array.isArray(data)) {
-          throw new Error('Fetched data is not an array');
+          throw new Error("Fetched data is not an array");
         }
         return this.fetchGameImages(data.slice(0, 4));
       })
       .then((carouselItemsWithImages) => {
         this.carouselItems = carouselItemsWithImages;
         this.runNextAuto = setTimeout(() => {
-          this.showSlider('next');
+          this.showSlider("next");
         }, this.timeAutoNext);
       })
       .catch((error) => {
-        console.error('Error:', error);
+        console.error("Error:", error);
       });
   },
 };
