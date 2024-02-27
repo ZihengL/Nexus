@@ -60,6 +60,7 @@ export default {
 
     fetchData("games", "getAllMatching", null, null, null, null,jsonBody, "POST")
       .then((data) => {
+        //console.log('data : ', data);
         if (!Array.isArray(data)) {
           throw new Error("Fetched data is not an array");
         }

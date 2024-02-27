@@ -73,7 +73,7 @@
 </template>
 
 <script setup>
-import loginScript from '../JS/LoginScript.js';
+import loginScript from '../../JS/LoginScript.js';
 import { ref, onMounted, defineEmits } from 'vue';
 
 const isLogin = ref(true);
@@ -103,4 +103,4 @@ onMounted(() => {
 </script>
 
 
-<style src="../styles/SignRegisterStyle.scss" scoped></style>
+<style src="../../styles/SignRegisterStyle.scss" scoped></style>

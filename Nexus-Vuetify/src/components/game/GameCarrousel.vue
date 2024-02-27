@@ -84,4 +84,4 @@ const reloadSlider = () => {
   </script>
 
   
-<style src="../styles/GameCarrouselStyle.scss"></style>
+<style src="../../styles/GameCarrouselStyle.scss"></style>

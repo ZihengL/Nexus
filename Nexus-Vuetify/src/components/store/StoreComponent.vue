@@ -5,8 +5,8 @@
   </template>
   
   <script setup>
-  import GameVue from '../components/StoreGameVue.vue';
-  import { fetchData } from '../JS/fetch';
+  import GameVue from './StoreGameVue.vue';
+  import { fetchData } from '../../JS/fetch';
   import { ref, onMounted } from 'vue';
   
   let listeJeux = ref(null);

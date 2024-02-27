@@ -22,10 +22,10 @@
 </template>
 
 <script scoped>
-import Filter from '../components/Filter.vue';
+import Filter from '../components/store/Filter.vue';
 import Pagination from '../components/Pagination.vue';
-import Search from '../components/Search.vue';
-import ListeJeux from '../components/StoreComponent.vue';
+import Search from '../components/game/Search.vue';
+import ListeJeux from '../components/store/StoreComponent.vue';
 
 export default {
   components: {

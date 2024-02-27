@@ -1,7 +1,7 @@
 <template>
     <router-link v-if="LeGame && devName" :to="{ name: 'Game', params: { idGame: LeGame.id } }" class="glass2  roundBorderSmall">
         <div class="img roundBorderSmall">
-            <img src="../assets/img/dontstarve.png" alt="#" class=" roundBorderSmall">
+            <img src="../../assets/img/dontstarve.png" alt="#" class=" roundBorderSmall">
             <p  class=" roundBorderSmall">
                 {{ LeGame.description }}
             </p>
@@ -29,7 +29,7 @@
 
 <script setup>
 
-import { fetchData } from '../JS/fetch'
+import { fetchData } from '../../JS/fetch'
 import { ref, onMounted } from 'vue';
 
 const props = defineProps(['idGame']);

@@ -7,7 +7,7 @@
           <div class="containerStar">
             <div class="containerAvis">
               <div class="containerIMG">
-                <img src="../assets/Dev_Picture/amazigh.png" alt="user" class="img" />
+                <img src="../../assets/Dev_Picture/amazigh.png" alt="user" class="img" />
                 <p>UserTOTO</p>
               </div>
               {{ avis.text }}
@@ -33,7 +33,7 @@ const avisRecents = ref([
 </script>
 
 <style lang="scss">
-@import "../styles/settings.scss";
+@import "../../styles/settings.scss";
 
 .ratingLast {
   height: 100%;

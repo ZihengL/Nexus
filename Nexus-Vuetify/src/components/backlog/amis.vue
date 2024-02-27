@@ -1,7 +1,7 @@
 <template>
   <div class="amis glass3 glow roundBorderSmall">
     <div class="img">
-      <img src="../assets//img/apex.png" alt="image jeu" class=" roundBorderSmall">
+      <img src="../../assets//img/apex.png" alt="image jeu" class=" roundBorderSmall">
     </div>
     <p>alloooomvjofvbihwabaocvnboj</p>
   </div>
