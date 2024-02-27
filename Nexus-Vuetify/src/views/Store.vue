@@ -1,17 +1,13 @@
 <template>
-  <div id="store"> <!--flex colomn-->
-    <div class="search"> <!--flex 1-->
+  <div id="store">
+    <div class="search">
       <Search class="barreR" />
-      <!--barre de recheche-->
     </div>
     <div class="contenue">
-      <!--flex 5--> <!--flex row-->
-      <!--Boutique--> <!--flex 4-->
       <ListeJeux class="listeJeux roundBorderSmall" />
-      <!--filtre--> <!--flex 2-->
 
       <div class="filtre glass roundBorderSmall">
-        <Filter />
+        <Filterr />
       </div>
 
     </div>
@@ -22,7 +18,7 @@
 </template>
 
 <script scoped>
-import Filter from '../components/store/Filter.vue';
+import Filterr from '../components/store/Filter.vue';
 import Pagination from '../components/Pagination.vue';
 import Search from '../components/game/Search.vue';
 import ListeJeux from '../components/store/StoreComponent.vue';
@@ -31,7 +27,7 @@ export default {
   components: {
     ListeJeux,
     Search,
-    Filter,
+    Filterr,
     Pagination
   },
   data() {

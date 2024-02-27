@@ -28,7 +28,7 @@
        .then((data) => {
          listeJeux.value = data;
         //console.log('data : ', data)
-        console.log('listeJeux : ', listeJeux.value)
+        //console.log('listeJeux : ', listeJeux.value)
        })
        .catch((error) => {
           //Handle errors if any
@@ -38,7 +38,6 @@
      console.error('Error fetching data:', error);
    }
  });
-  console.log('liste : ', listeJeux);
   </script>
   
 

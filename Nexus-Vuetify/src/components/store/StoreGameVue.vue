@@ -34,44 +34,36 @@ import { ref, onMounted } from 'vue';
 
 const props = defineProps(['idGame']);
 let LeGame = ref(null);
-const devName = ref(null);
+let devName = ref(null);
 
 onMounted(async () => {
-    // try {
-        // const dataGame = await fetchData("games", "getOne", "id",  props.idGame, null, null, null, "GET");
-        
-        const dataGame = await fetchData("games", "getOne", "id",  "4", null, null, null, "GET");
-            
-        // console.log(' props.idGame : ',  props.idGame)
+    try {
+         const dataGame = await fetchData("games", "getOne", "id",  props.idGame, null, null, null, "GET");
+
         LeGame.value = dataGame;
-        // console.log('LeGame : ', LeGame)
+        //console.log('LeGame : ', LeGame.value)
 
         if(LeGame.value){
-        const devId =  LeGame._rawValue.developerID
-        console.log('devId : ' , devId)
-        console.log('LeGame : ', LeGame.value)
-        
-        const filters = {
-          id: devId,
-        }
-        const sorting = {
-          id: false
-        }
+            const devId =  LeGame.value.developerID
+            //console.log('devId : ' , devId)
+            
+            const filters = {
+            id: devId,
+            }
+            const sorting = {
+            id: false
+            }
 
-        const includedColumns = ['id', 'user']
-        const jsonBody = { filters, sorting, includedColumns }
-
-        //fetchData("users", "getOne", "id", devId, null, null, null, "GET")
-        
-        const dataDevs = await fetchData('users', 'getAllMatching', null, null, null, null,  jsonBody, 'POST');
-        let devName2 = dataDevs;
-        //console.log('devs : ' , devName2[0].user)
-        devName.value = devName2[0].user
-        console.log('devs : ' , devName.value)
-      }
-    // } catch (error) { 
-    //   console.error('Error fetching data:', error);
-    // }
+            const includedColumns = ['id', 'username']
+            const jsonBody = { filters, sorting, includedColumns }
+            
+            const dataDevs = await fetchData("users", "getAllMatching", null, null, null, null,  jsonBody, "POST");
+            devName.value = dataDevs;
+            //console.log('devs : ' , devName)
+        }
+     } catch (error) { 
+       console.error('Error fetching data:', error);
+     }
   });
 </script>
 
