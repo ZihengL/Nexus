@@ -1,4 +1,4 @@
-export default {
+
 // Firebase and fetchData imports
 import { storage } from '../JS/firebaseconfig';
 import { ref, getDownloadURL } from 'firebase/storage';
