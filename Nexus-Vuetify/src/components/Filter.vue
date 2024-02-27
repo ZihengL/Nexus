@@ -2,23 +2,8 @@
     <div class="filter-container roundBorderSmall glass">
         <h3>Game Filters</h3>
         <div class="checkbox-group">
-            <label class="filter-label glow">
-                <input type="checkbox" name="action" value="action"> <span>Action</span>
-            </label>
-            <label class="filter-label glow">
-                <input type="checkbox" name="adventure" value="adventure"> <span>Adventure</span>
-            </label>
-            <label class="filter-label glow">
-                <input type="checkbox" name="rpg" value="rpg"> <span>RPG</span>
-            </label>
-            <label class="filter-label glow">
-                <input type="checkbox" name="simulation" value="simulation"> <span>Simulation</span>
-            </label>
-            <label class="filter-label glow">
-                <input type="checkbox" name="strategy" value="strategy"> <span>Strategy</span>
-            </label>
-            <label class="filter-label glow">
-                <input type="checkbox" name="sports" value="sports"> <span>Sports</span>
+            <label class="filter-label glow" v-for="(genre, index) in genres" :key="index">
+                <input type="checkbox" :name="genre.name" :value="genre.value"> <span>{{ genre.label }}</span>
             </label>
         </div>
         <!-- Search Bar moved here, under the filters -->
@@ -27,6 +12,23 @@
         </div>
     </div>    
 </template>
+<script>
+export default {
+  data() {
+    return {
+      genres: [
+        { name: 'action', value: 'action', label: 'Action' },
+        { name: 'adventure', value: 'adventure', label: 'Adventure' },
+        { name: 'rpg', value: 'rpg', label: 'RPG' },
+        { name: 'simulation', value: 'simulation', label: 'Simulation' },
+        { name: 'strategy', value: 'strategy', label: 'Strategy' },
+        { name: 'sports', value: 'sports', label: 'Sports' }
+      ]
+    };
+  }
+};
+</script>
+
 <style scoped>
 .filter-container {
     background: rgba(0, 0, 0, 0.8);
