@@ -19,6 +19,10 @@ import { onMounted, reactive } from "vue";
 import review from "./reviewComponent.vue";
 import { fetchData } from "../JS/fetch";
 
+const props = defineProps({
+  sorting: Array,
+});
+
 const reviewInfo = reactive({
   count: 0,
   necessaryProps: ["id", "rating", "username", "comment", "timestamp"],
@@ -27,14 +31,14 @@ const reviewInfo = reactive({
   infosToDisplay: [],
 });
 
-const getReviews = async () => {
+const getReviews = async (sorting) => {
   const data = await fetchData(
     "reviews",
     "getAll",
     "gameID",
     "4",
     null,
-    null,
+    sorting,
     null,
     "GET"
   );
@@ -80,7 +84,8 @@ const formInfoToDisplay = () => {
 
 onMounted(async () => {
   try {
-    await getReviews();
+    let sort = props.sorting ?? null
+    await getReviews(sort);
     if (reviewInfo.count > 0) {
       await getUsers();
       if (reviewInfo.users.length > 0) {

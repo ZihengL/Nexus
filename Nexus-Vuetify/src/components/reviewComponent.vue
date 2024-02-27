@@ -14,11 +14,10 @@
       <v-rating
         :model-value="props.rating"
         :length="5"
-        active-color="yellow"
+        active-color="primary"
         half-increments
         readonly
         size="14"
-        color="white"
         empty-icon="mdi-star-outline"
       ></v-rating>
     </div>
