@@ -6,9 +6,10 @@
       :id="review.id"
       :img="review.img"
       :username="review.username"
-      :text="review.comment"
+      :comment="review.comment"
       :rating="review.rating"
       :userID="review.userID"
+      :timestamp= "review.timestamp"
     ></review>
   </div>
 </template>
@@ -98,6 +99,6 @@ onMounted(async () => {
 .reviews_list {
   display: flex;
   flex-direction: column;
-  gap: 16px; /* Adjust spacing between reviews as needed */
+  gap: 16px; 
 }
 </style>

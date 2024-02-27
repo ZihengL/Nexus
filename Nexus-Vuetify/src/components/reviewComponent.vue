@@ -8,6 +8,7 @@
     </div>
     <div class="review_body">
       <p class="review_text">{{ props.comment }}</p>
+      <p class="review_timestamp">{{ props.timestamp }}</p>
     </div>
     <div class="review_footer">
       <v-rating
@@ -34,33 +35,37 @@ const props = defineProps({
   rating: Number,
   username: String,
   userID: Number,
+  timestamp: String,
 });
 
 console.log("rating : ", props.rating);
+console.log("comment : ", props.comment);
 </script>
 
 <style scoped>
 .review {
-  border: 1px solid #eee;
+  background-color: #2c3e50; /* Replace with the color from the image */
+  color: white;
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* if shadow is needed */
   display: flex;
   flex-direction: column;
-  color: rgb(255, 255, 255);
 }
 
 .review_header {
   display: flex;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
 }
 
 .review_avatar {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  margin-right: 8px;
+  border: 2px solid white; /* if border is needed */
+  margin-right: 16px;
 }
 
 .review_user_details {
@@ -68,16 +73,30 @@ console.log("rating : ", props.rating);
   flex-direction: column;
 }
 
-.review_username,
-.review_userId {
-  margin: 0;
+.review_username {
+  font-size: 1.2em;
+  font-weight: bold;
 }
 
 .review_text {
-  margin: 0 0 8px 0;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.review_timestamp {
+  font-size: 0.8em;
+  opacity: 0.7;
 }
 
 .review_footer {
   text-align: right;
+}
+
+.v-rating .v-icon {
+  color: #f1c40f; /* active star color */
+}
+
+.v-rating .v-icon--empty {
+  color: #7f8c8d; /* empty star color */
 }
 </style>
