@@ -12,12 +12,19 @@
     <v-btn class="bordered-btn" @click="updateData">update</v-btn>
     <v-btn class="bordered-btn" @click="createData">create</v-btn>
   </div>
+  <div>
+    <ReviewsListComponent></ReviewsListComponent>
+  </div>
 </template>
 
-<script scoped>
+<script>
 import { fetchData } from "../JS/fetch";
+import ReviewsListComponent from "../components/reviewsListComponent.vue";
 
 export default {
+  components: {
+    ReviewsListComponent,
+  },
   data() {
     return {
       // Store tokens here

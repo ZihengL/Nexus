@@ -33,13 +33,14 @@
         </div>
       </div>
     </div>
+  
     <div class="Avis">
       <div class="Pagin">
         <AvisRecent class="recent" />
         <Pagination />
       </div>
       <AvisRating class="rate" />
-
+     
     </div>
 
   </div>

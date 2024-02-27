@@ -1,70 +1,79 @@
 <template>
-    <div class="review">
-      <div class="review-header">
-        <img :src="img" :alt="username" class="review-avatar" />
-        <div class="review-user-details">
-          <h3 class="review-username">{{ username }}</h3>
-          <p class="review-userId">User ID: {{ userId }}</p>
-        </div>
-      </div>
-      <div class="review-body">
-        <p class="review-text">{{ text }}</p>
-      </div>
-      <div class="review-footer">
-        <v-rating :value="rating" readonly size="14"></v-rating>
+  <div :id="props.id" class="review">
+    <div class="review_header">
+      <img :src="props.img" :alt="props.username" class="review_avatar" />
+      <div class="review_user_details">
+        <h3 class="review_username">{{ props.username }}</h3>
       </div>
     </div>
-  </template>
-  
-  <script setup>
-  import { defineProps } from 'vue';
-  
-  const props = defineProps({
-    id: Number,
-    text: String,
-    img: String,
-    rating: Number,
-    username: String,
-    userId: Number,
-  });
-  </script>
-  <style scoped>
-  .review {
-    border: 1px solid #eee;
-    border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 16px;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .review-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
-  }
-  
-  .review-avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin-right: 8px;
-  }
-  
-  .review-user-details {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .review-username, .review-userId {
-    margin: 0;
-  }
-  
-  .review-text {
-    margin: 0 0 8px 0;
-  }
-  
-  .review-footer {
-    text-align: right;
-  }
-  </style>
+    <div class="review_body">
+      <p class="review_text">{{ props.comment }}</p>
+    </div>
+    <div class="review_footer">
+      <v-rating
+        :value="props.rating"
+        readonly
+        size="14"
+        color="amber"
+        empty-icon="mdi-star-outline"
+        background-color="grey lighten-1"
+      ></v-rating>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { defineProps } from "vue";
+
+const props = defineProps({
+  id: Number,
+  comment: String,
+  img: String,
+  rating: Number,
+  username: String,
+  userID: Number,
+});
+</script>
+
+<style scoped>
+.review {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  color: rgb(255, 255, 255);
+}
+
+.review_header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.review_avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.review_user_details {
+  display: flex;
+  flex-direction: column;
+}
+
+.review_username,
+.review_userId {
+  margin: 0;
+}
+
+.review_text {
+  margin: 0 0 8px 0;
+}
+
+.review_footer {
+  text-align: right;
+}
+</style>
