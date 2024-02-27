@@ -33,6 +33,15 @@ const props = defineProps({
   username: String,
   userID: Number,
 });
+
+
+const reviewInfo = reactive({
+  count: 0,
+  necessaryProps: ["id", "rating", "username", "comment", "timestamp"],
+  reviews: [],
+  users: [],
+  infosToDisplay: [],
+});
 </script>
 
 <style scoped>
