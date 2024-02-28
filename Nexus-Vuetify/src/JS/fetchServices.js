@@ -14,8 +14,8 @@ export const getReviews = async (gameID) => {
 
 
 export const getReviewsAndUsernames = async (gameID, sorting = null) => {
-  console.log(" getReviewsAndUsernames sorting : ", sorting)
-  console.log(" getReviewsAndUsernames gameID : ", gameID)
+  // console.log(" getReviewsAndUsernames sorting : ", sorting)
+  // console.log(" getReviewsAndUsernames gameID : ", gameID)
   const reviews = await fetchData("reviews", "getAll", "gameID", gameID, null,  sorting, null, "GET");
 
   if (reviews && reviews.length) {
@@ -38,36 +38,51 @@ export const getReviewsAndUsernames = async (gameID, sorting = null) => {
 
 export const getGameDetailsWithDeveloperName = async (idGame) => {
   try {
-    const gameDetails = await getGameDetails(idGame);
+    const gameDetailsArray = await getGameDetails(idGame);
+    console.log("getGameDetailsWithDeveloperName gameDetails : ", gameDetailsArray);
 
-    if (gameDetails && gameDetails.developerID) {
+    
+    if (gameDetailsArray && gameDetailsArray.length > 0) {
+      const gameDetails = gameDetailsArray[0]; 
+      // console.log("gameDetails.developerID : ", gameDetails.developerID);
+
       const developerDetails = await getUsername(gameDetails.developerID);
-
       if (developerDetails && developerDetails.username) {
-        gameDetails.developerName = developerDetails.username;
+   
+        gameDetails.devName = developerDetails.username;
+        // console.log("gameDetails.devName : ", gameDetails.devName);
       }
-    }
 
-    return gameDetails;
+      return gameDetails;
+    }
   } catch (error) {
     console.error("Error fetching game details and developer name:", error);
-    return null; 
+    return null;
   }
 };
 
 
 export const getGameReviewsUsernames = async (gameID, sorting = null) => {
+  try {
+    const gameDetailsArray = await getGameDetails(gameID);
+    let results = {};
+
   
-  const gameDetails = await getGameDetails(gameID);
-  let results = {}
-  if (gameDetails && gameDetails.developerID) {
-    results.game = gameDetails
-    let fullReviews = await getReviewsAndUsernames(gameDetails.id, sorting)
-    results.reviews = fullReviews
+    if (gameDetailsArray && gameDetailsArray.length > 0) {
+      const gameDetails = gameDetailsArray[0];
+
+      if (gameDetails && gameDetails.developerID) {
+        results.game = gameDetails; 
+    
+        let fullReviews = await getReviewsAndUsernames(gameDetails.id, sorting);
+        results.reviews = fullReviews;
+      }
+    }
+
+    return results;
+  } catch (error) {
+    console.error("Error in getGameReviewsUsernames:", error);
+    return { game: {}, reviews: [] }; 
   }
-
-  return results;
 };
-
-
 

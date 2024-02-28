@@ -45,9 +45,9 @@ const reviews_infos = reactive({
 
 onMounted(async () => {
   try {
-    console.log(" reviews_list props.sorting  : ", props.sorting);
+    // console.log(" reviews_list props.sorting  : ", props.sorting);
     reviews_infos.reviews = await getReviewsAndUsernames(props.gameID, props.sorting)
-    console.log("reviews_list reviews : ", reviews_infos.reviews)
+    // console.log("reviews_list reviews : ", reviews_infos.reviews)
   } catch (error) {
     console.error("Error during component mounting:", error);
   }
