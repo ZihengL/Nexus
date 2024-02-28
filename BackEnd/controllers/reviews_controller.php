@@ -146,22 +146,12 @@ class ReviewsController extends BaseController
 
     public function updateGameRatingAverage($gameID)
     {
-        $reviews = $this->getAll("gameID", $gameID, null, null);
-        // echo "updateGameRatingAverage : <br>";
-        if (!empty($reviews)) {
-            $totalRating = 0;
-            foreach ($reviews as $review) {
-                $totalRating += $review['rating'];
-            }
-            $newAverageRating = count($reviews) > 0 ? $totalRating / count($reviews) : 0;
-        } else {
-            $newAverageRating = 0;
-        }
-
         $gameController = $this->getGamesController();
         $game = $gameController->getOne("id", $gameID);
         // echo "game before update : ", print_r($game, true), "<br>";
         // echo "newAverageRating : ", $newAverageRating, "<br>";
+        $reviews = $this->getAll("gameID", $gameID, null, null);
+        $newAverageRating = $this->calculateAverageRating($reviews);
 
         if ($game) {
             $game['ratingAverage'] = $newAverageRating;
@@ -170,6 +160,28 @@ class ReviewsController extends BaseController
         }
 
         return false;
+    }
+
+    public function calculateAverageRating($reviews){
+       
+        // echo "calculateAverageRating : <br>";
+        if (!empty($reviews)) {
+            $totalRating = 0;
+            foreach ($reviews as $review) {
+                $totalRating += $review['rating'];
+            }
+            if (count($reviews) > 0) {
+                $average = $totalRating / count($reviews);
+                $newAverageRating = round($average * 2) / 2;
+            } else {
+                $newAverageRating = 0;
+            }
+        } else {
+            $newAverageRating = 0;
+        }
+
+        // echo "newAverageRating : ", $newAverageRating, "<br>";
+        return $newAverageRating;
     }
 
 

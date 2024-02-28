@@ -6,9 +6,10 @@
       :id="review.id"
       :img="review.img"
       :username="review.username"
-      :text="review.comment"
+      :comment="review.comment"
       :rating="review.rating"
       :userID="review.userID"
+      :timestamp= "review.timestamp"
     ></review>
   </div>
 </template>
@@ -18,37 +19,40 @@ import { onMounted, reactive } from "vue";
 import review from "./reviewComponent.vue";
 import { fetchData } from "../JS/fetch";
 
+const props = defineProps({
+  sorting: {},
+});
+
 const reviewInfo = reactive({
-  count: 0,
-  necessaryProps: ["id", "rating", "username", "comment", "timestamp"],
   reviews: [],
   users: [],
   infosToDisplay: [],
 });
 
-const getReviews = async () => {
+const getReviews = async (sorting) => {
+  // console.log("sorting : ", sorting);
   const data = await fetchData(
     "reviews",
     "getAll",
     "gameID",
     "4",
     null,
-    null,
+    sorting,
     null,
     "GET"
   );
 
  
   if (data.length > 0) {
-    reviewInfo.count = data.length;
-    console.log("reviewInfo.count : ", reviewInfo.count);
+    // reviewInfo.count = data.length;
+    // console.log("reviewInfo.count : ", reviewInfo.count);
     reviewInfo.reviews = [...data];
   }
   console.log("reviewInfo.reviews : ", reviewInfo.reviews);
 };
 
 const getUsers = async () => {
-  if (reviewInfo.count > 0) {
+  if (reviewInfo.reviews.length > 0) {
     for (let review of reviewInfo.reviews) {
       const user = await fetchData(
         "users",
@@ -79,8 +83,10 @@ const formInfoToDisplay = () => {
 
 onMounted(async () => {
   try {
-    await getReviews();
-    if (reviewInfo.count > 0) {
+    // let sort = props.sorting ?? null
+    console.log("props.sorting  : ", props.sorting )
+    await getReviews(props.sorting);
+    if (reviewInfo.reviews.length > 0) {
       await getUsers();
       if (reviewInfo.users.length > 0) {
         formInfoToDisplay();
@@ -98,6 +104,6 @@ onMounted(async () => {
 .reviews_list {
   display: flex;
   flex-direction: column;
-  gap: 16px; /* Adjust spacing between reviews as needed */
+  gap: 16px; 
 }
 </style>

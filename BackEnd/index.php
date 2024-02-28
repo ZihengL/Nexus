@@ -61,7 +61,23 @@ $columName = $explodedURI[2] ?? null;
 $value = $explodedURI[3] ?? null;
 
 $includedColumns = isset($_GET['includedColumns']) ? explode(',', $_GET['includedColumns']) : null;
-$sorting = isset($_GET['sorting']) ? explode(',', $_GET['sorting']) : null;
+// $sorting = isset($_GET['sorting']) ? explode(',', $_GET['sorting']) : null;
+if (isset($_GET['sorting'])) {
+    $sortingParams = explode(',', $_GET['sorting']);
+    $sorting = [];
+
+    foreach ($sortingParams as $param) {
+        list($key, $v) = explode(':', $param);
+        $sorting[$key] = $v === 'true' ? true : false;
+    }
+
+    // Now $sorting is an associative array
+    // echo "<br>Sorting Array: <pre>" . print_r($sorting, true) . "</pre><br>";
+} else {
+    $sorting = null; // Or any default value you wish
+}
+
+
 
 // Read the input data for POST, PUT, DELETE methods
 $rawData = file_get_contents('php://input');
@@ -69,13 +85,17 @@ $decodedData = json_decode($rawData, true);
 // print_r($rawData);
 
 // console.log(" response : ", response.text());
+      // console.log(' response : ', response.text())
 // Routing
 switch ($method) {
     case 'GET':
         // print_r($explodedURI);
         // echo "<br> crud_action: " . $crud_action;
+        //   echo "<br>  sorting : " . print_r($sorting, true) . "<br>";
+        //   echo "<br>  sorting : " . $sorting["timestamp"] . "<br>";
         // echo "<br>  includedColumns : " . print_r($includedColumns, true);
-        // echo "<br>  columName : " . $columName;
+        // echo "<br>  value : " . $value ."<br> " ;
+       
         handleGet($table, $crud_action, $central_controller, $columName, $value, $includedColumns, $sorting);
         break;
     case 'POST':
@@ -99,7 +119,8 @@ function handleGet($table, $crud_action, $centralController, $columName, $value,
 
     switch ($crud_action) {
         case 'getAll':
-            // echo "<br>  getAllFromTable : " . $includedColumns;
+            // echo "<br>  includedColumns : " . $includedColumns;
+            // echo "<br>  sorting : " . print_r($sorting, true) . "<br>";
             // echo "<br>  getAllFromTable : " . print_r($includedColumns, true);
             $result = $centralController->$controllerName->getAll($columName, $value, $includedColumns, $sorting);
             echo json_encode($result);
