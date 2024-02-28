@@ -12,7 +12,7 @@
         <div class="slider-tab"></div>
       </div>
 
-      <div class="form-inner">
+      <div class="form-inner ">
 
         <form action="#" class="login log">
           <!-- ... Login form content ... -->
