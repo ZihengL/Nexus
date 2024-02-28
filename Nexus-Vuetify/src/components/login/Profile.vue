@@ -36,19 +36,21 @@
               <div class="slider-tab"></div>
             </div>
 
-            <div class="form-inner">
-              <div v-if="isHimself" class="login gamesss log">
+            
+            <div v-if="isHimself" class="form-inner">
+              <div  class="login gamesss log">
                 <liste-de-jeu v-for="(item, index) in gameList" :key="index" :idJeu="item.id" :buy="true" class="game gamess" />
               </div>
 
-              <div v-if="isHimself" class="signup sign">
-                <liste-de-jeu v-for="(item, index) in gameList" :key="index" :idJeu="item.id" :buy="false" class="game" />
-              </div>
-
-              <div v-else class="signup sign">
+              <div class="signup sign">
                 <liste-de-jeu v-for="(item, index) in gameList" :key="index" :idJeu="item.id" :buy="false" class="game" />
               </div>
             </div>
+            
+            <div v-else class="signup sign">
+              <liste-de-jeu v-for="(item, index) in gameList" :key="index" :idJeu="item.id" :buy="false" class="game" />
+            </div>
+
           </div>
         </div>
 
@@ -74,9 +76,10 @@ const isLogin = ref(true);
 
 const toggleLogin = () => {
   isLogin.value = true;
-  const gamessShow = document.querySelector(".gamess"); // Use class selector
-  const gamesContainer = document.querySelector(".gamesss"); // Use class selector
+  const gamessShow = document.querySelector("gamess"); // Use class selector
+  const gamesContainer = document.querySelector("gamesss"); // Use class selector
   if (gamessShow && gamesContainer) {
+  console.log('login : ');
     gamessShow.style.marginLeft = "0%";
     gamesContainer.style.marginLeft = "0%";
   }
@@ -84,9 +87,10 @@ const toggleLogin = () => {
 
 const toggleSignup = () => {
   isLogin.value = false;
-  const gamessShow = document.querySelector(".gamess"); // Use class selector
-  const gamesContainer = document.querySelector(".gamesss"); // Use class selector
+  const gamessShow = document.querySelector("gamess"); // Use class selector
+  const gamesContainer = document.querySelector("gamesss"); // Use class selector
   if (gamessShow && gamesContainer) {
+  console.log('sign : ');
     gamessShow.style.marginLeft = "-60%";
     gamesContainer.style.marginLeft = "-60%";
   }
