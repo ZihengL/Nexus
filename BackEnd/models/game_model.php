@@ -96,7 +96,8 @@ class GameModel extends BaseModel
             $results = $this->joinGamesAndTags($column, $value, $included_columns);
             return $this->appendTagsToGames($results);
         }
-        return parent::getOne($column, $value, $included_columns);
+        $results = $this->joinGamesAndTags($column, $value, $included_columns);
+        return $this->appendTagsToGames($results);
     }
 
     public function getAll($column = null, $value = null, $included_columns = [], $sorting = [])
@@ -111,7 +112,8 @@ class GameModel extends BaseModel
             $results = $this->joinGamesAndTags($column, $value, $included_columns, $sorting);
             return $this->appendTagsToGames($results);
         }
-        return parent::getAll($column, $value, $included_columns, $sorting);
+        $results = $this->joinGamesAndTags($column, $value, $included_columns, $sorting);
+        return $this->appendTagsToGames($results);
     }
 
     public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
@@ -126,7 +128,8 @@ class GameModel extends BaseModel
             $results = $this->joinTagsAndGetAllMatching($filters, $sorting, $included_columns);
             return $results;
         }
-        return parent::getAllMatching($filters, $sorting, $included_columns);
+        $results = $this->joinTagsAndGetAllMatching($filters, $sorting, $included_columns);
+        return $results;
     }
 
 
@@ -234,7 +237,6 @@ class GameModel extends BaseModel
         // Execute the query and fetch results
         $stmt = $this->query($sql, $params);
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 
         return $results;
     }

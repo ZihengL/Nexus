@@ -28,17 +28,20 @@
           />
         </div>
         <div class="devs">
-          <p><b>Developeur : </b> {{ gameInfos.devName }}</p>
+          <p><b>Developeur : </b> {{ gameInfos.devName || gameInfos.devName.default }}</p>
         </div>
         <div class="tags">
-          <a href="#" class="glow">Fps</a>
-          <a href="#" class="glow">Aventure</a>
-          <a href="#" class="glow">Drame</a>
-          <a href="#" class="glow">Algerient</a>
+          <a href="#" class="glow" v-for="tag in gameInfos.tags" :key="tag.id">{{ tag.name }}</a>
         </div>
+
         <div class="fieldBtn">
           <div class="btn-layer"></div>
-          <v-btn density="default" class="submit glow" @click="toggleProfile">
+          <v-btn
+            :id="gameInfos.leGame.id"
+            density="default"
+            class="submit glow"
+            @click="toggleProfile"
+          >
             Telecharger
           </v-btn>
         </div>
@@ -47,10 +50,12 @@
 
     <div class="Avis">
       <div class="Pagin">
-        <AvisRecent class="recent" />
+        <!-- <AvisRecent class="recent" /> -->
+        <ReviewsListComponent :sorting="gameInfos.sortByDate"></ReviewsListComponent>
         <Pagination />
       </div>
-      <AvisRating class="rate" />
+      <!-- <AvisRating class="rate" /> -->
+      <ReviewsListComponent :sorting="gameInfos.sortByRating"></ReviewsListComponent>
     </div>
   </div>
 </template>
@@ -62,15 +67,15 @@ import AvisRating from "../components/AvisRating.vue";
 import AvisRecent from "../components/AvisRecent.vue";
 import game from "../components/GameCarrousel.vue";
 import Pagination from "../components/Pagination.vue";
+import ReviewsListComponent from "../components/reviewsListComponent.vue";
 
 const gameInfos = reactive({
-  leGame: [],
-  devName: {
-    type: String,
-    default: "error",
-  },
+  leGame: {}, 
+  devName: "error", 
+  tags: ["NO TAGS"], 
+  sortByDate: {timestamp: true},
+  sortByRating: {rating: true},
 });
-
 const props = defineProps({
   idGame: {
     type: Number,
@@ -92,8 +97,14 @@ const getLeGame = async function () {
       null,
       "GET"
     );
-    gameInfos.leGame = dataGame;
+    // console.log("dataGame: ", dataGame[0]);
+    gameInfos.leGame = dataGame[0];
+    if (gameInfos.leGame) {
+      gameInfos.tags = gameInfos.leGame.tags;
+      console.log("gameInfos.tags: ", gameInfos.tags);
+    }
     console.log("LeGame: ", gameInfos.leGame);
+    
   } catch (error) {
     console.error("Error fetching data:", error);
   }
@@ -101,7 +112,8 @@ const getLeGame = async function () {
 
 const getDevName = async function () {
   try {
-    if (gameInfos.leGame.length > 0) {
+    if (gameInfos.leGame) {
+      console.log("developerID : ", gameInfos.leGame.developerID);
       const dataUsername = await fetchData(
         "users",
         "getOne",
@@ -121,9 +133,12 @@ const getDevName = async function () {
 };
 
 onMounted(async () => {
+  console.log("sortByRating : ", gameInfos.sortByRating)
   try {
     await getLeGame();
-    await getDevName();
+    if (gameInfos.leGame) {
+      await getDevName();
+    }
   } catch (error) {
     console.error("Error during component mounting:", error);
   }

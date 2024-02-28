@@ -13,7 +13,7 @@
     <v-btn class="bordered-btn" @click="createData">create</v-btn>
   </div>
   <div>
-    <ReviewsListComponent></ReviewsListComponent>
+    <ReviewsListComponent :sorting="{timestamp: false}"></ReviewsListComponent>
   </div>
 </template>
 
@@ -71,29 +71,29 @@ export default {
     },
     getOne() {
       // let results = fetchData("games", "getAll", null, null, ["id","files","title"],{id: true}, null, "GET")
-      // let results = fetchData(
-      //   "games",
-      //   "getOne",
-      //   "id",
-      //   "4",
-      //   ["id", "ratingAverage", "title", "tags"],
-      //   null,
-      //   null,
-      //   "GET"
-      // );
-
-
-      /////////////////GET ONE USER///////////////////////////
       let results = fetchData(
-        "users",
+        "games",
         "getOne",
         "id",
-        "4",
-        ["id", "username"],
+        "",
+        null,
         null,
         null,
         "GET"
       );
+
+
+      /////////////////GET ONE USER///////////////////////////
+      // let results = fetchData(
+      //   "users",
+      //   "getOne",
+      //   "id",
+      //   "4",
+      //   ["id", "username"],
+      //   null,
+      //   null,
+      //   "GET"
+      // );
       console.log(results);
     },
     
