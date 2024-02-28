@@ -5,9 +5,9 @@
       <img src="../../assets//img/apex.png" alt="image jeu" class=" roundBorderSmall">
     </div>
     <div class="jeu">
-      <span v-if="props.himself && !props.buy">Joué à {{ LeGame }} le 17/04/2022</span>
-      <span v-else-if="props.himself && props.buy">{{ LeGame }} : televerser le 17/04/2022</span>
-      <span v-else >{{ LeGame}}</span>
+      <span v-if="props.himself && !props.buy">Joué à {{ LeGame}} le 17/04/2022</span>
+      <span v-if="props.himself && props.buy">{{ LeGame}} : televerser le 17/04/2022</span>
+      <span v-else>{{ LeGame }}</span>
       <br />
       <div class="fieldBtn">
         <div class="btn-layer"></div>

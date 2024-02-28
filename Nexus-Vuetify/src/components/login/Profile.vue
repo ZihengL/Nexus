@@ -41,7 +41,7 @@
             <div v-if="isHimself" class="form-inner">
 
               <div v-for="(item, index) in gameList" :key="index" class="login gamesss log">
-                <liste-de-jeu :himself="props.isHimself" :idJeu="item.id" :buy="true" class="game gamess"/>
+                <liste-de-jeu  :himself="props.isHimself" :idJeu="item.id" :buy="true" class="game gamess"/>
               </div>
 
               <div  v-for="(item, index) in gameList" :key="index"  class="signup sign">
@@ -50,7 +50,7 @@
 
             </div>
             <div v-else  v-for="(item, index) in gameList" :key="index"  class="signup sign">
-              <liste-de-jeu :himself="props.isHimself" :idJeu="item.id"  :buy="false" class="game"/>
+              <liste-de-jeu  :himself="props.isHimself" :idJeu="item.id"  :buy="false" class="game"/>
             </div>
 
           </div>
