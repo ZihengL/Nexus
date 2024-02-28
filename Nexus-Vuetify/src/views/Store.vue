@@ -19,7 +19,7 @@
 
 <script scoped>
 import Filterr from '../components/store/Filter.vue';
-import Pagination from '../components/Pagination.vue';
+// import Pagination from '../components/Pagination.vue';
 import Search from '../components/game/Search.vue';
 import ListeJeux from '../components/store/StoreComponent.vue';
 
@@ -28,7 +28,7 @@ export default {
     ListeJeux,
     Search,
     Filterr,
-    Pagination
+    // Pagination
   },
   data() {
     return {
