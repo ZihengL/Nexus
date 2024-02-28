@@ -9,8 +9,9 @@
       :comment="review.comment"
       :rating="review.rating"
       :userID="review.userID"
-      :timestamp= "review.timestamp"
+      :timestamp="review.timestamp"
     ></review>
+  
   </div>
 </template>
 
@@ -18,9 +19,12 @@
 import { onMounted, reactive } from "vue";
 import review from "./game/reviewComponent.vue";
 import { fetchData } from "../JS/fetch";
+// import PaginationComponent from "../components/PaginationComponent.vue";
 
 const props = defineProps({
   sorting: {},
+  gameID: Number,
+  reviews : []
 });
 
 const reviewInfo = reactive({
@@ -35,14 +39,13 @@ const getReviews = async (sorting) => {
     "reviews",
     "getAll",
     "gameID",
-    "4",
+    props.gameID,
     null,
     sorting,
     null,
     "GET"
   );
 
- 
   if (data.length > 0) {
     // reviewInfo.count = data.length;
     // console.log("reviewInfo.count : ", reviewInfo.count);
@@ -84,7 +87,7 @@ const formInfoToDisplay = () => {
 onMounted(async () => {
   try {
     // let sort = props.sorting ?? null
-    console.log("props.sorting  : ", props.sorting )
+    console.log("props.sorting  : ", props.sorting);
     await getReviews(props.sorting);
     if (reviewInfo.reviews.length > 0) {
       await getUsers();
@@ -104,6 +107,6 @@ onMounted(async () => {
 .reviews_list {
   display: flex;
   flex-direction: column;
-  gap: 16px; 
+  gap: 16px;
 }
 </style>
