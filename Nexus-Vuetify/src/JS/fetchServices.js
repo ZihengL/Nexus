@@ -14,7 +14,9 @@ export const getReviews = async (gameID) => {
 
 
 export const getReviewsAndUsernames = async (gameID, sorting = null) => {
-  const reviews = await fetchData("reviews", "getAll", "gameID", gameID, null, null, sorting, "GET");
+  console.log(" getReviewsAndUsernames sorting : ", sorting)
+  console.log(" getReviewsAndUsernames gameID : ", gameID)
+  const reviews = await fetchData("reviews", "getAll", "gameID", gameID, null,  sorting, null, "GET");
 
   if (reviews && reviews.length) {
     const reviewsWithUsernames = await Promise.all(reviews.map(async (review) => {
@@ -55,6 +57,7 @@ export const getGameDetailsWithDeveloperName = async (idGame) => {
 
 
 export const getGameReviewsUsernames = async (gameID, sorting = null) => {
+  
   const gameDetails = await getGameDetails(gameID);
   let results = {}
   if (gameDetails && gameDetails.developerID) {

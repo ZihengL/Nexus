@@ -1,102 +1,53 @@
 <template>
   <div class="reviews_list">
-    <review
-      v-for="review in reviewInfo.infosToDisplay"
-      :key="review.id"
-      :id="review.id"
-      :img="review.img"
-      :username="review.username"
-      :comment="review.comment"
-      :rating="review.rating"
-      :userID="review.userID"
-      :timestamp="review.timestamp"
-    ></review>
+    <h3>{{ title }}</h3>
+    <template v-if="reviews_infos.reviews && reviews_infos.reviews.length > 0">
+    
+      <review
+        v-for="review in reviews_infos.reviews"
+        :key="review.id"
+        :id="review.id"
+        :img="review.img"
+        :username="review.username"
+        :comment="review.comment"
+        :rating="review.rating"
+        :userID="review.userID"
+        :timestamp="review.timestamp"
+      ></review>
+    </template>
   
+    <div v-else class="no_reviews">
+      {{ reviews_infos.reviews_unavailable }}
+    </div>
   </div>
 </template>
+
 
 <script setup>
 import { onMounted, reactive } from "vue";
 import review from "./game/reviewComponent.vue";
-import { fetchData } from "../JS/fetch";
+import {getReviewsAndUsernames } from '../JS/fetchServices';
 // import PaginationComponent from "../components/PaginationComponent.vue";
 
 const props = defineProps({
-  sorting: {},
+  sorting: {
+    type: Object,
+    default: null,
+  },
   gameID: Number,
-  reviews : []
+  title: String,
 });
 
-const reviewInfo = reactive({
-  reviews: [],
-  users: [],
-  infosToDisplay: [],
+const reviews_infos = reactive({
+  reviews: Array,
+  reviews_unavailable : "Aucun avis pour le moment.",
 });
-
-const getReviews = async (sorting) => {
-  // console.log("sorting : ", sorting);
-  const data = await fetchData(
-    "reviews",
-    "getAll",
-    "gameID",
-    props.gameID,
-    null,
-    sorting,
-    null,
-    "GET"
-  );
-
-  if (data.length > 0) {
-    // reviewInfo.count = data.length;
-    // console.log("reviewInfo.count : ", reviewInfo.count);
-    reviewInfo.reviews = [...data];
-  }
-  console.log("reviewInfo.reviews : ", reviewInfo.reviews);
-};
-
-const getUsers = async () => {
-  if (reviewInfo.reviews.length > 0) {
-    for (let review of reviewInfo.reviews) {
-      const user = await fetchData(
-        "users",
-        "getOne",
-        "id",
-        review.userID,
-        null,
-        null,
-        null,
-        "GET"
-      );
-      reviewInfo.users.push(user);
-    }
-    console.log("reviewInfo.users : ", reviewInfo.users);
-  }
-};
-
-const formInfoToDisplay = () => {
-  reviewInfo.infosToDisplay = reviewInfo.reviews.map((review) => {
-    const user = reviewInfo.users.find((user) => user.id === review.userID);
-    return {
-      ...review,
-      username: user ? user.username : "Unknown",
-    };
-  });
-  console.log("reviewInfo.infosToDisplay : ", reviewInfo.infosToDisplay);
-};
 
 onMounted(async () => {
   try {
-    // let sort = props.sorting ?? null
-    console.log("props.sorting  : ", props.sorting);
-    await getReviews(props.sorting);
-    if (reviewInfo.reviews.length > 0) {
-      await getUsers();
-      if (reviewInfo.users.length > 0) {
-        formInfoToDisplay();
-      }
-    } else {
-      console.log("No reviews found, skipping user fetching.");
-    }
+    console.log(" reviews_list props.sorting  : ", props.sorting);
+    reviews_infos.reviews = await getReviewsAndUsernames(props.gameID, props.sorting)
+    console.log("reviews_list reviews : ", reviews_infos.reviews)
   } catch (error) {
     console.error("Error during component mounting:", error);
   }
@@ -108,5 +59,18 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   gap: 16px;
+
 }
+.no_reviews {
+  text-align: center;
+  padding: 5%;
+  font-size: 200%;
+  font-weight: bolder;
+  color: white;
+}
+h3{
+  color: white;
+  text-decoration: underline;
+}
+
 </style>

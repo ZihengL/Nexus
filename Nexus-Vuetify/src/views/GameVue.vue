@@ -51,10 +51,10 @@
     <div class="Avis">
       <div class="Pagin">
         <!-- <AvisRecent class="recent" /> -->
-        <ReviewsListComponent :gameID="idGame" :sorting="gameInfos.reviews"  :reviews="gameInfos.reviews"></ReviewsListComponent>
+        <ReviewsListComponent :title="gameInfos.reviewDate_titre"  :gameID=Number(idGame)  :sorting="gameInfos.sortByDate"></ReviewsListComponent>
       </div>
       <!-- <AvisRating class="rate" /> -->
-      <ReviewsListComponent :gameID="idGame"  :sorting="gameInfos.sortByRating" :reviews="gameInfos.reviews"></ReviewsListComponent>
+      <ReviewsListComponent :title="gameInfos.reviewRating_titre" :gameID=Number(idGame) :sorting="gameInfos.sortByRating"></ReviewsListComponent>
       <!-- <PaginationComponent></PaginationComponent> -->
     
     </div>
@@ -68,20 +68,21 @@ import { defineProps, onMounted, reactive } from "vue";
 import game from "../components/game/GameCarrousel.vue";
 // import PaginationComponent from "../components/PaginationComponent.vue";
 import ReviewsListComponent from "../components/reviewsListComponent.vue";
-import {getGameDetails, getReviewsAndUsernames } from '../JS/fetchServices';
+import {getGameDetails } from '../JS/fetchServices';
 
 const gameInfos = reactive({
   leGame: {}, 
-  reviews :[],
+  reviewDate_titre : "Avis les plus récents",
+  reviewRating_titre : "Avis par rating",
   devName: "error", 
   tags: ["NO TAGS"], 
-  sortByDate: {timestamp: true},
-  sortByRating: {rating: true},
+  sortByDate: {timestamp: false},
+  sortByRating: {rating: false},
 });
 
 const props = defineProps({
   idGame: {
-    type: Number,
+    type : Number,
     default: 4,
   },
 });
@@ -89,10 +90,10 @@ const props = defineProps({
 onMounted(async () => {
   // console.log("sortByRating : ", gameInfos.sortByRating)
   try {
-    let data = await getGameDetails(props.idGame)
-    gameInfos.leGame = data[0]
+    let dataGame = await getGameDetails(props.idGame)
+    gameInfos.leGame = dataGame[0]
     console.log("leGame : ", gameInfos.leGame)
-    gameInfos.reviews =  await getReviewsAndUsernames(props.idGame, props.sortByDate)
+    
   } catch (error) {
     console.error("Error during component mounting:", error);
   }
