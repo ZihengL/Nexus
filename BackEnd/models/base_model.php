@@ -42,7 +42,7 @@ class BaseModel
             } else {
                 $stmt->execute(array_values($params));
             }
-
+            // echo "<br>  query : " . print_r($stmt, true) . "<br>";
             return $stmt;
         } catch (PDOException $e) {
             throw new Exception("Database query error: " . $e->getMessage());
@@ -60,6 +60,7 @@ class BaseModel
             $stmt->execute();
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
         } catch (PDOException $e) {
             throw new Exception("Database query error: " . $e->getMessage());
         }
@@ -70,7 +71,7 @@ class BaseModel
     public function getAll($column = null, $value = null, $included_columns = [], $sorting = [])
     {
         $sql = "SELECT " . $this->parseColumns($included_columns) . " FROM $this->table";
-
+        // echo "<br>  sorting  getAll : " . print_r($sorting, true) . "<br>";
         $params = [];
         if ($column && $value) {
             $sql .= " WHERE $column = ?";
@@ -81,7 +82,7 @@ class BaseModel
         if (!empty($sortingSql)) {
             $sql .= " ORDER BY " . $sortingSql;
         }
-
+        // echo "<br> getAll sql : " . $sql ;
         return $this->query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -285,6 +286,7 @@ class BaseModel
                 return intval($id);
             }, $ids)); // Ensuring IDs are integers
             return " {$this->table}.id IN ($inList)";
+
         }
 
         return '';
@@ -297,10 +299,11 @@ class BaseModel
             return ''; // Return an empty string or handle this scenario as appropriate
         }
 
-        $validEntries = array_intersect(array_keys($sorting), $this->columns);
-
+        $validEntries = array_intersect(array_keys($sorting), $this->getColumns(true));
+        // echo "<br> applySorting  validEntries : " . print_r($validEntries, true) . "<br>";
+        // echo "<br> applySorting  this->getColumns(true) : " . print_r($this->getColumns(true), true) . "<br>";
         if (empty($validEntries)) {
-            return ''; // Return an empty string if no valid sorting columns are provided
+            return '';
         }
 
         $result = '';
@@ -309,7 +312,8 @@ class BaseModel
             $result .= $column . ' ' . $direction . ', ';
         }
         $result = rtrim($result, ', ');
+        //  echo "<br> applySorting  result : " . print_r($result, true) . "<br>";
 
-        return $result; // This will be appended to the SQL query if not empty
+        return $result;
     }
 }

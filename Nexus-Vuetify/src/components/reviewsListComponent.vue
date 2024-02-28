@@ -20,7 +20,7 @@ import review from "./reviewComponent.vue";
 import { fetchData } from "../JS/fetch";
 
 const props = defineProps({
-  sorting: Array,
+  sorting: {},
 });
 
 const reviewInfo = reactive({
@@ -32,6 +32,7 @@ const reviewInfo = reactive({
 });
 
 const getReviews = async (sorting) => {
+  // console.log("sorting : ", sorting);
   const data = await fetchData(
     "reviews",
     "getAll",
@@ -84,8 +85,9 @@ const formInfoToDisplay = () => {
 
 onMounted(async () => {
   try {
-    let sort = props.sorting ?? null
-    await getReviews(sort);
+    // let sort = props.sorting ?? null
+    console.log("props.sorting  : ", props.sorting )
+    await getReviews(props.sorting);
     if (reviewInfo.count > 0) {
       await getUsers();
       if (reviewInfo.users.length > 0) {

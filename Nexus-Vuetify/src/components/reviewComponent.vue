@@ -1,7 +1,14 @@
 <template>
   <div :id="props.id" class="review">
     <div class="review_header">
-      <img :src="props.img || 'https://www.alleycat.org/wp-content/uploads/2019/03/FELV-cat.jpg'" :alt="props.username" class="review_avatar" />
+      <img
+        :src="
+          props.img ||
+          'https://www.alleycat.org/wp-content/uploads/2019/03/FELV-cat.jpg'
+        "
+        :alt="props.username"
+        class="review_avatar"
+      />
       <div class="review_user_details">
         <h3 class="review_username">{{ props.username }}</h3>
       </div>
@@ -12,13 +19,14 @@
     </div>
     <div class="review_footer">
       <v-rating
+        class="ratings"
         :model-value="props.rating"
         :length="5"
         active-color="primary"
+        color="black"
         half-increments
         readonly
-        size="14"
-        empty-icon="mdi-star-outline"
+        size="32"
       ></v-rating>
     </div>
   </div>
@@ -91,11 +99,17 @@ console.log("comment : ", props.comment);
   text-align: right;
 }
 
-.v-rating .v-icon {
-  color: #f1c40f; /* active star color */
+.ratings {
+  display: inline-block;
+  width: 100%;
+  margin-top: 5%;
+}
+
+/* .v-rating .v-icon {
+  color: #f1c40f;
 }
 
 .v-rating .v-icon--empty {
-  color: #7f8c8d; /* empty star color */
-}
+  color: #7f8c8d; 
+} */
 </style>
