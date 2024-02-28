@@ -61,6 +61,35 @@ class CentralController
 
     // GETTERS
 
+    private function getControllersAsArray()
+    {
+        return [
+            $this->tokens_controller,
+            $this->users_controller,
+            $this->games_controller,
+            $this->reviews_controller,
+            $this->gamestags_contoller,
+            $this->tags_controller
+        ];
+    }
+
+    public function restrictAccessOnJoinedTables($joined_tables = [])
+    {
+        if (!is_array($joined_tables) || count($joined_tables) === 0) return;
+
+        foreach ($joined_tables as $tablename => $included_columns) {
+            foreach ($this->getControllersAsArray() as $controller) {
+                $controller_table = $controller->getTableName();
+
+                if ($tablename === $controller_table) {
+                    $included_columns = $controller->restrictAccess($included_columns);
+                }
+            }
+        }
+
+        return $joined_tables;
+    }
+
     public function getAllMatching($controller, $filters = [], $sorting = [], $included_columns = [])
     {
         return $controller->getAllMatching($filters, $sorting, $included_columns);

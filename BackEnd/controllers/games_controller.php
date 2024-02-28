@@ -47,13 +47,13 @@ class GamesController extends BaseController
         return $this->model->getAll($column, $value, $included_columns, $sorting);
     }
 
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
+    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
     {
         if (empty($sorting)) {
             $sorting = [$this->ratingAverage => true];
         }
 
-        return parent::getAllMatching($filters, $sorting, $included_columns);
+        return parent::getAllMatching($filters, $sorting, $included_columns, $joined_tables);
     }
 
     public function getById($id)

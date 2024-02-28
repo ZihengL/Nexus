@@ -1,8 +1,8 @@
 <?php
 
-global $path;
-$path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd/';
-require_once $path . 'tests/temp_globals.php';
+// global $path;
+// $path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd/';
+// require_once $path . 'tests/temp_globals.php';
 
 // $users = $users_controller->getAll_users();
 
@@ -68,16 +68,16 @@ require_once $path . 'tests/temp_globals.php';
 // print_r($stored);
 // echo '</pre>';
 
-$users_ctrl = $central_controller->users_controller;
+// $users_ctrl = $central_controller->users_controller;
 
-$response = $users_ctrl->getAll();
+// $response = $users_ctrl->getAll();
 
-echo '<hr>USERS<br>';
-foreach ($response as $user) {
-    echo '<pre>';
-    echo print_r($user);
-    echo '</pre><br>';
-}
+// echo '<hr>USERS<br>';
+// foreach ($response as $user) {
+//     echo '<pre>';
+//     echo print_r($user);
+//     echo '</pre><br>';
+// }
 
 // $games_ctrl = $central_controller->games_controller;
 
@@ -91,10 +91,15 @@ foreach ($response as $user) {
 // }
 
 
-// $arr1 = ['a', 'b', 'c'];
-// $arr2 = ['c'];
+$arr1 = ['a' => 'tqifh', 'b' => 'kjahsdkjla', 'c' => 4231432];
+$arr2 = ['c' => 213125];
+$arr3 = array_intersect_key($arr1, $arr2);
 
-// print_r($arr1);
+// print_r($arr3);
+echo implode(", table.", array_keys($arr1));
+
+
+
 // echo '<br>';
 // print_r($arr2);
 // echo '<br>';

@@ -4,6 +4,10 @@ export const getGameDetails = async (idGame) => {
   return await fetchData("games", "getOne", "id", idGame, null, null, null, "GET");
 };
 
+export const getUser = async (developerID) => {
+  return await fetchData("users", "getOne", "id", developerID, null, null, null, "GET");
+};
+
 export const getUsername = async (userID) => {
   return await fetchData("users", "getOne", "id", userID, null, null, null, "GET");
 };
@@ -54,7 +58,6 @@ export const getGameDetailsWithDeveloperName = async (idGame) => {
     return null; 
   }
 };
-
 
 export const getGameReviewsUsernames = async (gameID, sorting = null) => {
   

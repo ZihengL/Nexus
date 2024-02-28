@@ -15,23 +15,18 @@ class BaseController
 
     // ZI
 
-    protected function restrictAccess($included_columns = [])
+    public function getTableName()
+    {
+        return $this->model->table;
+    }
+
+    public function restrictAccess($included_columns = [])
     {
         if (!is_array($included_columns) || count($included_columns) === 0) {
             $included_columns = $this->model->getColumns(true);
         }
 
-        // $diff = array_diff($included_columns, $this->restricted_columns);
-        // echo '<br>' . print_r($this->model->columns);
-        // echo '<br>' . print_r($included_columns);
-        // echo '<br>' . print_r($diff);
-
         return array_diff($included_columns, $this->restricted_columns);
-
-        // return array_diff($this->model->columns, $this->restricted_columns);
-        // return array_filter($included_columns, function ($key) {
-        //     return !in_array($key, $this->restricted_columns);
-        // }, ARRAY_FILTER_USE_KEY);
     }
 
     // ACCESS
@@ -86,9 +81,10 @@ class BaseController
 
     // CRUDS
 
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
+    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
     {
         $included_columns = $this->restrictAccess($included_columns);
+
 
         return $this->model->getAllMatching($filters, $sorting, $included_columns);
     }

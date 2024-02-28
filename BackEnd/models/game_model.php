@@ -116,7 +116,7 @@ class GameModel extends BaseModel
         return $this->appendTagsToGames($results);
     }
 
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
+    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
     {
         // echo "<br>  includedColumns : " . print_r($included_columns, true);
 

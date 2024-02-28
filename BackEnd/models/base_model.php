@@ -1,35 +1,18 @@
 <?php
 
-function parseColumns($columns = [])
-{
-    return empty($columns) ? "*" : implode(', ', $columns);
-}
-
-function getDataType($column)
-{
-    switch ($column) {
-        case is_null($column):
-            return PDO::PARAM_NULL;
-        case is_int($column):
-            return PDO::PARAM_INT;
-        case is_bool($column):
-            return PDO::PARAM_BOOL;
-        default:
-            return PDO::PARAM_STR;
-    }
-}
-
 class BaseModel
 {
     protected $pdo;
     public $table;
     public $columns = [];
+    public $foreign_keys_details = [];
 
     protected function __construct($pdo, $table, $require_id = false)
     {
         $this->pdo = $pdo;
         $this->table = $table;
         $this->columns = $this->getColumns($require_id);
+        $this->foreign_keys_details = $this->getForeignKeyDetails();
     }
 
     protected function query($sql, $params = [])
@@ -60,7 +43,6 @@ class BaseModel
             $stmt->execute();
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         } catch (PDOException $e) {
             throw new Exception("Database query error: " . $e->getMessage());
         }
@@ -86,8 +68,11 @@ class BaseModel
         return $this->query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
+    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
     {
+        $parsed_columns = $this->parseColumns($included_columns);
+        $parsed_joins = $this->parseJoinedTables($joined_tables);
+
         $sql = "SELECT " . $this->parseColumns($included_columns) . " FROM $this->table WHERE 1 = 1";
         $filterResults = $this->applyFilters($filters);
         $sortingResults = $this->applySorting($sorting);
@@ -156,13 +141,6 @@ class BaseModel
 
     // TOOLS
 
-    function parseColumns($included_columns = [])
-    {
-
-        // return empty($included_columns) ? "*" : implode(', ', ['id', ...$included_columns]);
-        return empty($included_columns) ? "*" : implode(', ', $included_columns);
-    }
-
     public function getColumns($includeID = false)
     {
         $result = $this->query("DESCRIBE $this->table")->fetchAll(PDO::FETCH_COLUMN);
@@ -170,6 +148,60 @@ class BaseModel
         return $includeID ? $result : array_filter($result, function ($column) {
             return $column !== 'id';
         });
+    }
+
+    public function getForeignKeyDetails()
+    {
+        $sql = "SELECT TABLE_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME 
+                FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
+                WHERE TABLE_SCHEMA = :databaseName 
+                AND TABLE_NAME = :tableName 
+                AND COLUMN_NAME = :columnName 
+                AND REFERENCED_TABLE_NAME IS NOT NULL";
+
+        $foreign_keys = [];
+        foreach ($this->columns as $column) {
+            $params = [
+                ':databaseName' => $_ENV['DB_NAME'],
+                ':tableName' => $this->table,
+                ':columnName' => $column
+            ];
+
+            if ($result = $this->query($sql, $params)->fetch(PDO::FETCH_ASSOC)) {
+                $foreign_keys[$column] = $result['REFERENCED_TABLE_NAME'];
+            }
+        }
+
+        return $foreign_keys;
+    }
+
+    public function parseSelectionsToQuery($included_columns = [], $joined_tables = [])
+    {
+        $local_columns = $this->parseColumns($included_columns);
+        $foreign_tables = $this->parseJoinedTables($joined_tables);
+    }
+
+    public function parseColumns($included_columns = [])
+    {
+        return "$this->table." . empty($included_columns) ? '*' : implode(", $this->table.", $included_columns);
+    }
+
+    public function parseJoinedTables($joined_tables = [])
+    {
+        $result = '';
+
+        foreach ($joined_tables as $key => $included_columns) {
+            if ($foreign_table = $this->foreign_keys_details[$key]) {
+                $subresult = '';
+                foreach ($included_columns as $table_column) {
+                    $subresult .= ", $foreign_table.$table_column AS $foreign_table" . ucfirst($table_column);
+                }
+
+                $result .= "$subresult, FROM $this->table JOIN $foreign_table ON $this->table.$key = $foreign_table.id";
+            }
+        }
+
+        return $result;
     }
 
     public function formatData($data)
@@ -286,7 +318,6 @@ class BaseModel
                 return intval($id);
             }, $ids)); // Ensuring IDs are integers
             return " {$this->table}.id IN ($inList)";
-
         }
 
         return '';

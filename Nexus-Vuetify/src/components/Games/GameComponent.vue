@@ -7,7 +7,8 @@
 
 
 <script setup>
-import { defineProps } from "vue";
+import { defineProps, ref, watchEffect } from "vue";
+import fetchServices from '../../JS/fetchServices';
 
 const game = defineProps({
     id: Number,
@@ -21,8 +22,12 @@ const game = defineProps({
     ratingAverage: Number
 });
 
-const getDeveloper = async () => {
-    const data = null;
-};
+const developer = ref(null)
+
+watchEffect(() => {
+    if (game.developerID) {
+        developer = fetchServices.getUser(game.developerID)
+    }
+})
 
 </script>

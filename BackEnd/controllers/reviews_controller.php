@@ -53,7 +53,7 @@ class ReviewsController extends BaseController
     // }
 
 
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
+    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
     {
         if (empty($sorting)) {
             $sorting = [$this->rating => true];
@@ -162,8 +162,9 @@ class ReviewsController extends BaseController
         return false;
     }
 
-    public function calculateAverageRating($reviews){
-       
+    public function calculateAverageRating($reviews)
+    {
+
         // echo "calculateAverageRating : <br>";
         if (!empty($reviews)) {
             $totalRating = 0;
