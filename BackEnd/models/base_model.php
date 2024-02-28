@@ -25,7 +25,7 @@ class BaseModel
             } else {
                 $stmt->execute(array_values($params));
             }
-            // echo "<br>  query : " . print_r($stmt, true) . "<br>";
+
             return $stmt;
         } catch (PDOException $e) {
             throw new Exception("Database query error: " . $e->getMessage());
@@ -102,9 +102,6 @@ class BaseModel
         $columns = implode(', ', array_keys($data));
         $placeholders = substr(str_repeat(",?", count($data)), 1);
 
-        // echo "<br> create base_model <br>";
-        // print_r($placeholders);
-
         $sql = "INSERT INTO $this->table ($columns) VALUES ($placeholders)";
 
         if ($this->query($sql, $data)) {
@@ -179,6 +176,12 @@ class BaseModel
     {
         $local_columns = $this->parseColumns($included_columns);
         $foreign_tables = $this->parseJoinedTables($joined_tables);
+
+        if (!empty($foreign_tables['columns'])) {
+            $foreign_columns = 'ASDFDFKJLHADSLFKHSALFKJADSHFKAS'; // TODO
+        }
+
+        return "SELECT $local_columns, $foreign_tables FROM $this->table ";
     }
 
     public function parseColumns($included_columns = [])
@@ -188,20 +191,23 @@ class BaseModel
 
     public function parseJoinedTables($joined_tables = [])
     {
-        $result = '';
+        $foreign_columns = '';
+        $foreign_joins = '';
 
         foreach ($joined_tables as $key => $included_columns) {
             if ($foreign_table = $this->foreign_keys_details[$key]) {
-                $subresult = '';
+                $foreign_columns = '';
+
                 foreach ($included_columns as $table_column) {
-                    $subresult .= ", $foreign_table.$table_column AS $foreign_table" . ucfirst($table_column);
+                    $foreign_columns .= ", $foreign_table.$table_column AS $foreign_table" . ucfirst($table_column);
                 }
 
-                $result .= "$subresult, FROM $this->table JOIN $foreign_table ON $this->table.$key = $foreign_table.id";
+                // $foreign_columns .= "$subresult, FROM $this->table JOIN $foreign_table ON $this->table.$key = $foreign_table.id";
+                $foreign_joins .= " JOIN $foreign_table ON $this->table.$key = $foreign_table.id";
             }
         }
 
-        return $result;
+        return ['columns' => $foreign_columns, 'joins' => $foreign_joins];
     }
 
     public function formatData($data)
