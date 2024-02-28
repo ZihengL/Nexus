@@ -16,6 +16,7 @@
       </div>
     </div>
   </div>
+  <!--
   <div class="pagination">
     <a href="#" class="prev">&laquo; Previous</a>
     <a href="#" class="active">1</a>
@@ -25,6 +26,8 @@
     <a href="#">5</a>
     <a href="#" class="next">Next &raquo;</a>
   </div>
+  -->
+
 </template>
 
 <script setup>
