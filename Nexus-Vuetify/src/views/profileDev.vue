@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-    import Profile from '/src/components/Profile.vue';
+    import Profile from '../components/login/Profile.vue';
     import { defineProps } from 'vue';
 
     const props = defineProps(['idDevl']);

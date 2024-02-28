@@ -1,21 +1,17 @@
 <template>
   <div class="pagination glass">
-
     <div class="fieldBtn prev">
       <div class="btn-layer"></div>
-      <v-btn density="default" class="submit glow" @click="prevPage"> &laquo; Précédent
-      </v-btn>
+      <v-btn density="default" class="submit glow" @click="prevPage"> &laquo; Précédent </v-btn>
     </div>
-
-    <a v-for="pageNumber in totalPages" :key="pageNumber" :class="{ active: currentPage === pageNumber }"
-      @click="changePage(pageNumber)">{{ pageNumber }}</a>
+    <a v-for="pageNumber in totalPages" :key="pageNumber" :class="{ active: currentPage === pageNumber }" @click="changePage(pageNumber)">{{ pageNumber }}</a>
     <div class="fieldBtn next">
       <div class="btn-layer"></div>
-      <v-btn density="default" class="submit glow" @click="nextPage">Suivant &raquo;
-      </v-btn>
+      <v-btn density="default" class="submit glow" @click="nextPage">Suivant &raquo;</v-btn>
     </div>
   </div>
 </template>
+
 
 <script>
 export default {

@@ -8,7 +8,7 @@
           <div class="containerStar">
             <div class="containerAvis">
               <div class="containerIMG">
-                <img src="../assets/Dev_Picture/amazigh.png" alt="user" class="img" />
+                <img src="../../assets/Dev_Picture/amazigh.png" alt="user" class="img" />
                 <p>UserTOTO</p>
               </div>
               {{ avis.text }}
@@ -56,7 +56,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../styles/settings.scss";
+@import "../../styles/settings.scss";
 
 .Recent {
   //flex-basis: 200%;

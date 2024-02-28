@@ -28,7 +28,7 @@
           />
         </div>
         <div class="devs">
-          <p><b>Developeur : </b> {{ gameInfos.devName || gameInfos.devName.default }}</p>
+          <p><b>Developeur : </b> {{ gameInfos.devName }}</p>
         </div>
         <div class="tags">
           <a href="#" class="glow" v-for="tag in gameInfos.tags" :key="tag.id">{{ tag.name }}</a>
@@ -51,94 +51,49 @@
     <div class="Avis">
       <div class="Pagin">
         <!-- <AvisRecent class="recent" /> -->
-        <ReviewsListComponent :sorting="gameInfos.sortByDate"></ReviewsListComponent>
-        <Pagination />
+        <ReviewsListComponent :title="gameInfos.reviewDate_titre"  :gameID=Number(idGame)  :sorting="gameInfos.sortByDate"></ReviewsListComponent>
       </div>
       <!-- <AvisRating class="rate" /> -->
-      <ReviewsListComponent :sorting="gameInfos.sortByRating"></ReviewsListComponent>
+      <ReviewsListComponent :title="gameInfos.reviewRating_titre" :gameID=Number(idGame) :sorting="gameInfos.sortByRating"></ReviewsListComponent>
+      <!-- <PaginationComponent></PaginationComponent> -->
+    
     </div>
   </div>
 </template>
 
 <script setup>
 import { defineProps, onMounted, reactive } from "vue";
-import { fetchData } from "../JS/fetch";
-import AvisRating from "../components/AvisRating.vue";
-import AvisRecent from "../components/AvisRecent.vue";
-import game from "../components/GameCarrousel.vue";
-import Pagination from "../components/Pagination.vue";
+// import AvisRating from "../components/AvisRating.vue";
+// import AvisRecent from "../components/AvisRecent.vue";
+import game from "../components/game/GameCarrousel.vue";
+// import PaginationComponent from "../components/PaginationComponent.vue";
 import ReviewsListComponent from "../components/reviewsListComponent.vue";
+import {getGameDetails } from '../JS/fetchServices';
 
 const gameInfos = reactive({
   leGame: {}, 
+  reviewDate_titre : "Avis les plus récents",
+  reviewRating_titre : "Avis par rating",
   devName: "error", 
   tags: ["NO TAGS"], 
-  sortByDate: {timestamp: true},
-  sortByRating: {rating: true},
+  sortByDate: {timestamp: false},
+  sortByRating: {rating: false},
 });
+
 const props = defineProps({
   idGame: {
-    type: Number,
+    type : Number,
     default: 4,
   },
 });
-// const LeGame = ref(null);
-// const devName = ref(null);
-
-const getLeGame = async function () {
-  try {
-    const dataGame = await fetchData(
-      "games",
-      "getOne",
-      "id",
-      props.idGame,
-      null,
-      null,
-      null,
-      "GET"
-    );
-    // console.log("dataGame: ", dataGame[0]);
-    gameInfos.leGame = dataGame[0];
-    if (gameInfos.leGame) {
-      gameInfos.tags = gameInfos.leGame.tags;
-      console.log("gameInfos.tags: ", gameInfos.tags);
-    }
-    console.log("LeGame: ", gameInfos.leGame);
-    
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-};
-
-const getDevName = async function () {
-  try {
-    if (gameInfos.leGame) {
-      console.log("developerID : ", gameInfos.leGame.developerID);
-      const dataUsername = await fetchData(
-        "users",
-        "getOne",
-        "id",
-        gameInfos.leGame.developerID,
-        null,
-        null,
-        null,
-        "GET"
-      );
-      gameInfos.devName = dataUsername.username;
-    }
-    console.log(" gameInfos.devName : ", gameInfos.devName);
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-};
 
 onMounted(async () => {
-  console.log("sortByRating : ", gameInfos.sortByRating)
+  // console.log("sortByRating : ", gameInfos.sortByRating)
   try {
-    await getLeGame();
-    if (gameInfos.leGame) {
-      await getDevName();
-    }
+    let dataGame = await getGameDetails(props.idGame)
+    gameInfos.leGame = dataGame[0]
+    console.log("leGame : ", gameInfos.leGame)
+    
   } catch (error) {
     console.error("Error during component mounting:", error);
   }
@@ -146,3 +101,4 @@ onMounted(async () => {
 </script>
 
 <style src="../styles/GameVueStyle.scss" lang="scss"></style>
+../JS/fetchServices

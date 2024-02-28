@@ -3,16 +3,16 @@
   <div v-if="leDevs && gameList && toggleLogin && toggleSignup" class="allP">
     <div class="containerProfile" :class="isHimself ? 'container1' : 'container2'">
       <div class="wrapper2">
-        <div class="description  glass roundBorderSmall" >
+        <div class="description glass roundBorderSmall">
           <div :class="isHimself ? 'imgContainerFull' : 'imgContainer'">
-            <img src="../assets/Rich_Ricasso.png" alt="John" class="imgProfil" />
+            <img src="../../assets/Rich_Ricasso.png" alt="John" class="imgProfil" />
           </div>
           <div class="champUtilisateur">
             <h3>{{ leDevs.user }}</h3>
-            <br>
+            <br />
             <p>description</p>
           </div>
-          <div class="button"  v-show="isHimself">
+          <div class="button" v-show="isHimself">
             <router-link :to="{ name: 'Profile', params: { IdDev: props.idDevl } }" class="router glow">
               <v-icon icon="mdi-account-circle" />
               <span class="link-btn">Gerer son profil</span>
@@ -27,57 +27,45 @@
           </div>
         </div>
         <div class="wrapper glass roundBorderSmall">
-
           <div class="form-container">
-
             <div v-if="isHimself" class="slide-controls roundBorderSmall">
-              <input type="radio" name="slide" id="login" v-model="isLogin" value="true" checked>
-              <input type="radio" name="slide" id="signup" v-model="isLogin" value="false">
+              <input type="radio" name="slide" id="login" v-model="isLogin" value="true" :checked="isLogin" />
+              <input type="radio" name="slide" id="signup" v-model="isLogin" value="false" :checked="!isLogin" />
               <label for="login" class="slide login" @click="toggleLogin()">Acheter</label>
               <label for="signup" class="slide signup" @click="toggleSignup()">Developper</label>
               <div class="slider-tab"></div>
             </div>
 
-            <div v-if="isHimself" class="form-inner">
-
-              <div v-for="(item, index) in gameList" :key="index" class="login gamesss log">
-                <liste-de-jeu :idJeu="item.id" :buy="true" class="game gamess"/>
+            <div class="form-inner">
+              <div v-if="isHimself" class="login gamesss log">
+                <liste-de-jeu v-for="(item, index) in gameList" :key="index" :idJeu="item.id" :buy="true" class="game gamess" />
               </div>
 
-              <div  v-for="(item, index) in gameList" :key="index"  class="signup sign">
-                <liste-de-jeu :idJeu="item.id" :buy="false" class="game"/>
+              <div v-if="isHimself" class="signup sign">
+                <liste-de-jeu v-for="(item, index) in gameList" :key="index" :idJeu="item.id" :buy="false" class="game" />
               </div>
 
+              <div v-else class="signup sign">
+                <liste-de-jeu v-for="(item, index) in gameList" :key="index" :idJeu="item.id" :buy="false" class="game" />
+              </div>
             </div>
-              <div v-else  v-for="(item, index) in gameList" :key="index"  class="signup sign">
-                <liste-de-jeu :idJeu="item.id"  :buy="false" class="game"/>
-              </div>
-
           </div>
+        </div>
 
-          </div>
+        <router-link class="floating-right-bottom-btn glass" to="/upload" title="upload">
+          <v-icon icon="mdi-upload" class="icon glow" />
+        </router-link>
       </div>
     </div>
-    <div v-if="isHimself" class="listeFriends glass roundBorderSmall">
-      <h2> liste amis</h2>
-      <amis />
-      <amis />
-      <amis />
-    </div>
-
-    <router-link class="floating-right-bottom-btn glass" to="/upload" title="upload">
-      <v-icon icon="mdi-upload" class="icon glow"/>
-    </router-link>
   </div>
-
 </template>
+
 
 
 <script setup>
 import ListeDeJeu from './ListeDeJeu.vue';
-import { fetchData } from '../JS/fetch';
+import { fetchData } from '../../JS/fetch';
 import { defineProps, ref, onMounted } from 'vue';
-import Amis from './amis.vue';
 
 const props = defineProps(['isHimself', 'idDevl']);
 const leDevs = ref(null);
@@ -104,12 +92,10 @@ const toggleSignup = () => {
   }
 };
 
-
 onMounted(async () => {
   try {
     const dataGame = await fetchData("users", "getOne", "id", props.idDevl, null,null,null,"GET");
     leDevs.value = dataGame;
-    console.log('leDevs : ', leDevs)
 
     if(leDevs.value) {
       const filters = {
@@ -124,7 +110,6 @@ onMounted(async () => {
 
       const dataDevs = await fetchData('games', 'getAllMatching', null, null, null, null, jsonBody, 'POST');
       gameList.value = dataDevs;
-      console.log('game ', gameList)
     }
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -132,6 +117,5 @@ onMounted(async () => {
 });
 </script>
 
-
-<style src="../styles/ProfileStyle.scss"></style>
-<style src="../styles/SignRegisterStyle.scss" scoped></style>
+<style src="../../styles/ProfileStyle.scss"></style>
+<style src="../../styles/SignRegisterStyle.scss" scoped></style>

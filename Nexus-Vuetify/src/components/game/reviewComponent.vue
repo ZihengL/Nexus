@@ -45,8 +45,8 @@ const props = defineProps({
   timestamp: String,
 });
 
-console.log("rating : ", props.rating);
-console.log("comment : ", props.comment);
+// console.log("rating : ", props.rating);
+// console.log("comment : ", props.comment);
 </script>
 
 <style scoped>

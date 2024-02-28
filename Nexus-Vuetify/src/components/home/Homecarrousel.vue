@@ -37,7 +37,7 @@
     </div>
   </div>
 </template>
-<script src="../JS/carrouselScript.js">
+<script src="../../JS/carrouselScript.js">
 
 </script>
-<style src="../styles/HomeCarousselStyle.scss" scoped></style>
+<style src="../../styles/HomeCarousselStyle.scss" scoped></style>

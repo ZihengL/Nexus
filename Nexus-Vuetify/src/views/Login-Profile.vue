@@ -6,8 +6,8 @@
 </template>
 
 <script setup>
-  import LoginRegister from '/src/components/LoginRegister.vue';
-  import Profile from '/src/components/Profile.vue';
+  import LoginRegister from '../components/login/LoginRegister.vue';
+  import Profile from '../components/login/Profile.vue';
   import { defineProps, ref, watch } from 'vue';
 
   const props = defineProps(['connectedView']);

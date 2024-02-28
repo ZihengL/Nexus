@@ -2,7 +2,7 @@
   <!-- <div v-for="activity in activities" :key="activity.id" class="activities">-->
   <div v-if="LeGame" class="container glass3 glow  roundBorderSmall">
     <div class="img">
-      <img src="../assets//img/apex.png" alt="image jeu" class=" roundBorderSmall">
+      <img src="../../assets//img/apex.png" alt="image jeu" class=" roundBorderSmall">
     </div>
     <div class="jeu">
       <span v-if="props.himself">Joué à {{ LeGame.title }} le 17/04/2022</span>
@@ -29,7 +29,7 @@
 
 <script setup>
 import { defineProps, onMounted, ref } from 'vue';
-import { fetchData } from '../JS/fetch';
+import { fetchData } from '../../JS/fetch';
 const props = defineProps(['himself', 'idJeu']);
 const LeGame = ref(null);
 
