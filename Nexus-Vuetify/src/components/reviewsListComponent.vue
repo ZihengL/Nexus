@@ -24,8 +24,6 @@ const props = defineProps({
 });
 
 const reviewInfo = reactive({
-  count: 0,
-  necessaryProps: ["id", "rating", "username", "comment", "timestamp"],
   reviews: [],
   users: [],
   infosToDisplay: [],
@@ -46,15 +44,15 @@ const getReviews = async (sorting) => {
 
  
   if (data.length > 0) {
-    reviewInfo.count = data.length;
-    console.log("reviewInfo.count : ", reviewInfo.count);
+    // reviewInfo.count = data.length;
+    // console.log("reviewInfo.count : ", reviewInfo.count);
     reviewInfo.reviews = [...data];
   }
   console.log("reviewInfo.reviews : ", reviewInfo.reviews);
 };
 
 const getUsers = async () => {
-  if (reviewInfo.count > 0) {
+  if (reviewInfo.reviews.length > 0) {
     for (let review of reviewInfo.reviews) {
       const user = await fetchData(
         "users",
@@ -88,7 +86,7 @@ onMounted(async () => {
     // let sort = props.sorting ?? null
     console.log("props.sorting  : ", props.sorting )
     await getReviews(props.sorting);
-    if (reviewInfo.count > 0) {
+    if (reviewInfo.reviews.length > 0) {
       await getUsers();
       if (reviewInfo.users.length > 0) {
         formInfoToDisplay();

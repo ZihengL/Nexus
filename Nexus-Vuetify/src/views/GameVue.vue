@@ -76,6 +76,7 @@ const gameInfos = reactive({
   sortByDate: {timestamp: true},
   sortByRating: {rating: true},
 });
+
 const props = defineProps({
   idGame: {
     type: Number,
