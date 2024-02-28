@@ -8,8 +8,8 @@ export function fetchData (
   jsonBody = null,
   method
 ) {
-  const baseURL = 'http://localhost:4208/Nexus/Backend/'
-  //console.log({ table, crud_action, columnName, value })
+  const baseURL = 'http://localhost:4208/Nexus/Backend/';
+  let uri = `${baseURL}${table}/${crud_action}`;
 
   const queryParams = [];
   
@@ -52,9 +52,10 @@ export function fetchData (
       if (!response.ok) { 
         return Promise.reject(response);
       }
-      // console.log(' response : ', response.text())
-      return response.json()
-      //return response.text()
+      // console.log(" response : ", response.text());
+
+      
+      return response.json();
     })
     .then(data => {
       return data;

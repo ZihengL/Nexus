@@ -16,7 +16,7 @@
 
 <script setup>
 import { onMounted, reactive } from "vue";
-import review from "./reviewComponent.vue";
+import review from "./game/reviewComponent.vue";
 import { fetchData } from "../JS/fetch";
 
 const props = defineProps({
