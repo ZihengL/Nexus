@@ -5,7 +5,7 @@ require_once "$path/controllers/base_controller.php";
 class BaseController
 {
     protected $central_controller;
-    protected $model;
+    public $model;
     protected $restricted_columns = [];
 
     public function __construct($central_controller)
@@ -85,8 +85,7 @@ class BaseController
     {
         $included_columns = $this->restrictAccess($included_columns);
 
-
-        return $this->model->getAllMatching($filters, $sorting, $included_columns);
+        return $this->model->getAllMatching($filters, $sorting, $included_columns, $joined_tables);
     }
 
     public function getOne($column, $value, $included_columns = [])

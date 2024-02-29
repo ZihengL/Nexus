@@ -5,6 +5,7 @@ $path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd/';
 require_once $path . 'tests/temp_globals.php';
 
 $users_ctrl = $central_controller->users_controller;
+$games_ctrl = $central_controller->games_controller;
 
 // echo 'OLD<pre>';
 // print_r($users);
@@ -15,7 +16,6 @@ $users_ctrl = $central_controller->users_controller;
 //     $users_controller->update($user['id'], $user);
 // }
 
-// $new = $users_controller->getAll_users();
 // echo '<pre>';
 // print_r($new);
 // echo '</pre>';
@@ -96,7 +96,11 @@ $arr2 = ['c' => 213125];
 $arr3 = array_intersect_key($arr1, $arr2);
 
 // print_r($arr3);
-printall(implode(", table.", array_keys($arr1)));
+// printall(implode(", table.", array_keys($arr1)));
+
+$result = $games_ctrl->getAllMatching([], [], [], ['developerID' => ['id', 'username']]);
+
+$keys = $games_ctrl->model->keys;
 
 // printall($users_ctrl->);
 

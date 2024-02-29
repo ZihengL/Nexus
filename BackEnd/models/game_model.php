@@ -45,15 +45,6 @@ class GameModel extends BaseModel
     //     // return $stmt->fetch();
     // }
 
-
-    // ZI
-
-
-
-    // REBECCA
-
-
-
     //Updates
     function updateGameTags($pdo, $gameId, array $newTagIds)
     {
@@ -81,13 +72,10 @@ class GameModel extends BaseModel
         }
     }
 
-
-    //Getters 
-
+    //Getters
 
     public function getOne($column = null, $value = null, $included_columns = [])
     {
-        // echo "<br>  includedColumns : " . print_r($included_columns, true);
         if (in_array('tags', $included_columns)) {
             $key = array_search('tags', $included_columns);
             if ($key !== false) {
@@ -102,8 +90,6 @@ class GameModel extends BaseModel
 
     public function getAll($column = null, $value = null, $included_columns = [], $sorting = [])
     {
-        // echo "<br>  includedColumns : " . print_r($included_columns, true);
-
         if (in_array('tags', $included_columns)) {
             $key = array_search('tags', $included_columns);
             if ($key !== false) {
@@ -115,24 +101,6 @@ class GameModel extends BaseModel
         $results = $this->joinGamesAndTags($column, $value, $included_columns, $sorting);
         return $this->appendTagsToGames($results);
     }
-
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
-    {
-        // echo "<br>  includedColumns : " . print_r($included_columns, true);
-
-        if (in_array('tags', $included_columns)) {
-            $key = array_search('tags', $included_columns);
-            if ($key !== false) {
-                unset($included_columns[$key]);
-            }
-            $results = $this->joinTagsAndGetAllMatching($filters, $sorting, $included_columns);
-            return $results;
-        }
-        $results = $this->joinTagsAndGetAllMatching($filters, $sorting, $included_columns);
-        return $results;
-    }
-
-
 
     //Tools
     function appendTagsToGames($results)
@@ -166,8 +134,6 @@ class GameModel extends BaseModel
         // Return array values to reset indices
         return array_values($games);
     }
-
-
 
     public function formatIncludedColumns($included_columns = [])
     {
@@ -273,33 +239,4 @@ class GameModel extends BaseModel
         $results = $this->bindingQuery($sqlWithFiltersAndSorting, $params);
         return $this->appendTagsToGames($results);
     }
-
-    // public function getForeignKeysDetails()
-    // {
-    //     $sql = "SELECT 
-    //                 TABLE_NAME, 
-    //                 COLUMN_NAME, 
-    //                 REFERENCED_TABLE_NAME, 
-    //                 REFERENCED_COLUMN_NAME  
-    //             FROM 
-    //                 INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
-    //             WHERE 
-    //                 TABLE_SCHEMA = :databaseName
-    //             AND TABLE_NAME = :tableName
-    //             AND COLUMN_NAME = :columnName 
-    //             AND REFERENCED_TABLE_NAME IS NOT NULL";
-
-    //     $params = [
-    //         ':databaseName' => $_ENV['DB_NAME'],
-    //         ':tableName' => $this->table,
-    //         ':columnName' => 'developerID'
-    //     ];
-
-    //     $foreign_keys = $this->bindingQuery($sql, $params);
-
-    //     echo print_r($params) . ' - FK<br>';
-    //     echo '<pre>' . print_r($foreign_keys) . '</pre>';
-
-    //     return $foreign_keys;
-    // }
 }

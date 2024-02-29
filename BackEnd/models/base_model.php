@@ -5,15 +5,25 @@ class BaseModel
     protected $pdo;
     public $table;
     public $columns = [];
-    public $foreign_keys = [];
+    public $keys = [];
 
     protected function __construct($pdo, $table, $require_id = false)
     {
         $this->pdo = $pdo;
         $this->table = $table;
         $this->columns = $this->getColumns($require_id);
-        $this->foreign_keys = $this->getForeignKeysDetails();
+
+        $this->keys['INT'] = $this->getInternalKeysDetails();
+        $this->keys['EXT'] = $this->getExternalKeysDetails();
+
+        echo $this->table . '<br>';
+        echo '<pre>' . print_r($this->keys['internal']) . '</pre>';
+        echo '<pre>' . print_r($this->keys['external']) . '</pre>';
     }
+
+    /*******************************************************************/
+    /****************************** QUERY ******************************/
+    /*******************************************************************/
 
     protected function query($sql, $params = [])
     {
@@ -28,6 +38,8 @@ class BaseModel
 
             return $stmt;
         } catch (PDOException $e) {
+            echo '<br>err<br>' . $sql . '<br>err<br>';
+
             throw new Exception("Database query error: " . $e->getMessage());
         }
     }
@@ -44,11 +56,28 @@ class BaseModel
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
+            echo '<br>err<br>' . $sql . '<br>err<br>';
+
             throw new Exception("Database query error: " . $e->getMessage());
         }
     }
 
-    // GETTERS/READ
+    public function bindParams($data)
+    {
+        $params = [];
+
+        foreach ($data as $column => $value) {
+            if (in_array($column, $this->columns)) {
+                $params[":$column"] = $value;
+            }
+        }
+
+        return $params;
+    }
+
+    /*******************************************************************/
+    /***************************** GETTERS *****************************/
+    /*******************************************************************/
 
     public function getAll($column = null, $value = null, $included_columns = [], $sorting = [])
     {
@@ -68,11 +97,11 @@ class BaseModel
         return $this->query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
-    {
-        $selection_layer = $this->buildSelectionLayer($included_columns, $joined_tables);
 
-        // $sql = "SELECT " . $this->parseColumns($included_columns) . " FROM $this->table WHERE 1 = 1";
+    // TODO: ASKJDHSAKJFHASKLFHADSLFHALFHSAKLDHASLHLFHASKL ADAPT IT TO HANDLE INTERNAL AND EXTERNAL KEYS
+    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $join_keys = [])
+    {
+        $selection_layer = $this->buildSelectionLayer($included_columns, $join_keys);
         $sql = $selection_layer . ' WHERE 1 = 1';
 
         $filterResults = $this->applyFilters($filters);
@@ -95,13 +124,15 @@ class BaseModel
         return $this->query($sql, [$value])->fetch(PDO::FETCH_ASSOC);
     }
 
-    // OTHER CRUDS
+    /*******************************************************************/
+    /*************************** OTHER CRUDS ***************************/
+    /*******************************************************************/
 
     public function create($data)
     {
         $data = $this->formatData($data);
         $columns = implode(', ', array_keys($data));
-        $placeholders = substr(str_repeat(",?", count($data)), 1);
+        $placeholders = substr(str_repeat(", ?", count($data)), 1);
 
         $sql = "INSERT INTO $this->table ($columns) VALUES ($placeholders)";
 
@@ -137,7 +168,9 @@ class BaseModel
         return $stmt->execute();
     }
 
-    // TOOLS
+    /*******************************************************************/
+    /************************* SELECTION LAYER *************************/
+    /*******************************************************************/
 
     public function getColumns($includeID = false)
     {
@@ -148,26 +181,12 @@ class BaseModel
         });
     }
 
-    // foreach ($this->columns as $column) {
-    //     $params = [
-    //         ':database' => $_ENV['DB_NAME'],
-    //         ':table' => $this->table,
-    //         ':column' => $column
-    //     ];
-
-    //     if ($result = $this->query($sql, $params)->fetch(PDO::FETCH_ASSOC)) {
-    //         $foreign_keys[$column] = $result['REFERENCED_TABLE_NAME'];
-
-    //         echo '<pre>' . print_r($foreign_keys) . '</pre>';
-    //     }
-    // }
-
-    public function getForeignKeysDetails()
+    public function getInternalKeysDetails()
     {
         $sql = "SELECT 
-                    COLUMN_NAME, 
-                    REFERENCED_TABLE_NAME, 
-                    REFERENCED_COLUMN_NAME 
+                    COLUMN_NAME AS 'INT_COL', 
+                    REFERENCED_TABLE_NAME AS 'EXT_TABLE', 
+                    REFERENCED_COLUMN_NAME AS 'EXT_COL' 
                 FROM 
                     INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
                 WHERE 
@@ -180,25 +199,35 @@ class BaseModel
             ':tableName' => $this->table
         ];
 
-        $foreign_keys = $this->bindingQuery($sql, $params);
+        return $this->bindingQuery($sql, $params);
+    }
 
-        // if (count($foreign_keys) > 0) {
-        //     print_r($foreign_keys[0]) . '<br>';
-        // }
+    public function getExternalKeysDetails()
+    {
+        $sql = "SELECT 
+                    REFERENCED_COLUMN_NAME AS INT_COL,
+                    TABLE_NAME AS EXT_TABLE,
+                    COLUMN_NAME AS EXT_COL
+                FROM
+                    INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+                WHERE
+                    REFERENCED_TABLE_SCHEMA = '{$_ENV['DB_NAME']}' 
+                AND
+                    REFERENCED_TABLE_NAME = '$this->table'";
 
-        return $foreign_keys;
+        return $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
     // Note: Assumes that only one datapoint/row is linked per foreign joined table
-    public function buildSelectionLayer($included_columns = [], $joined_tables = [])
+    public function buildSelectionLayer($included_columns = [], $join_keys = [])
     {
         $result = 'SELECT ' . $this->parseColumns($included_columns);
 
-        if ($foreign_selects = $this->parseJoinedTables($joined_tables)) {
+        if ($foreign_selects = $this->parseJoinedTables($join_keys)) {
             $selects = $foreign_selects['selects'];
             $joins = $foreign_selects['joins'];
 
-            $result .= ", $selects FROM $this->table $joins";
+            $result .= " $selects FROM $this->table $joins";
         }
 
         return $result;
@@ -207,61 +236,25 @@ class BaseModel
     public function parseColumns($included_columns = [])
     {
         return "$this->table." . empty($included_columns) ? '*' : implode(", $this->table.", $included_columns);
-        // if ($included_columns && count($included_columns) > 0) {
-        //     $result = '';
-
-        //     foreach ($included_columns as $column) {
-        //         $result .= ", $this->table.$column AS '{$this->table}_{$column}'";
-        //     }
-
-        //     return substr($result, 1);
-        // }
-
-        // return "$this->table.*";
     }
 
-    // public function parseJoinedTables($joined_tables = [])
-    // {
-    //     if ($valid_entries = array_intersect_key($joined_tables, $this->foreign_keys['COLUMN_NAME'])) {
-    //         $selects = '';
-    //         $joins = '';
-
-
-
-    //         foreach ($joined_tables as $table => $included_columns) {
-    //             $referenced_table = $this->foreign_keys['REFERENCED_TABLE_NAME'];
-    //             $referenced_column = $this->foreign_keys['REFERENCED_COLUMN_NAME'];
-
-    //             foreach ($included_columns as $column) {
-    //                 $selects .= ", $table.$column AS '{$table}_{$column}'";
-    //             }
-
-    //             $joins .= " JOIN $joined_tables ON $this->table.$table = $joined_tables.id";
-    //         }
-
-    //         return ['selects' => substr($selects, 1), 'joins' => $joins];
-    //     }
-
-    //     return null;
-    // }
-
-    public function parseJoinedTables($joined_tables = [])
+    public function parseJoinedTables($join_keys = [])
     {
         $selects = '';
         $joins = '';
 
-        foreach ($this->foreign_keys as [
-            'COLUMN_NAME' => $local_column,
-            'REFERENCED_TABLE_NAME' => $ref_table,
-            'REFERENCED_COLUMN_NAME' => $ref_column
+        foreach ($this->keys as [
+            'INT_COL' => $int_col,
+            'EXT_TABLE' => $ext_table,
+            'EXT_COL' => $ext_col
         ]) {
-            if ($included_columns = $joined_tables[$local_column]) {
+            if ($included_columns = $join_keys[$int_col]) {
 
                 foreach ($included_columns as $included_column) {
-                    $selects .= ", $ref_table.$included_column AS {$ref_table}_{$included_column}";
+                    $selects .= ", $ext_table.$included_column AS {$ext_table}_{$included_column}";
                 }
 
-                $joins .= " JOIN $ref_table ON $this->table.$local_column = $ref_table.$ref_column";
+                $joins .= " JOIN $ext_table ON $this->table.$int_col = $ext_table.$ext_col";
             }
 
             return ['selects' => $selects, 'joins' => $joins];
@@ -283,20 +276,9 @@ class BaseModel
         return $formattedData;
     }
 
-    public function bindParams($data)
-    {
-        $params = [];
-
-        foreach ($data as $column => $value) {
-            if (in_array($column, $this->columns)) {
-                $params[":$column"] = $value;
-            }
-        }
-
-        return $params;
-    }
-
-    //  FILTERS AND SORTING
+    /*******************************************************************/
+    /********************* FILTERS & SORTING LAYER *********************/
+    /*******************************************************************/
 
     public function applyFilters($filters, $included_columns = [])
     {
@@ -308,20 +290,13 @@ class BaseModel
                 if (isset($filterValue['relatedTable'], $filterValue['values'], $filterValue['wantedColumn'])) {
 
                     $result = $this->executeRelatedTableFilterAndGetIds($filterKey, $filterValue); // Adjusted to pass current filter info
-                    // echo "<br> applyFilters result : $result  <br>\n";
-                    // print_r($result);
-                    // echo "<br><br>";
                     $sql_filters .= ' AND ' . $result;
                 } else {
                     $result = $this->handleRangeCondition($filterKey, $filterValue); // Assuming range conditions are structured as arrays
                     $sql_filters .= ' AND ' . $result['sql'];
                     $params = array_merge($params, $result['params']);
                 }
-                // echo "<br> applyFilters - sql_filters :  $sql_filters <br>\n";
-                // print_r($$result['sql_filters']);
-                // echo "<br>";
             } else {
-                // Handling for non-array values, assuming direct equality check
                 $sql_filters .= " AND $filterKey = :$filterKey";
                 $params[":$filterKey"] = $filterValue;
             }
@@ -397,8 +372,6 @@ class BaseModel
         }
 
         $validEntries = array_intersect(array_keys($sorting), $this->getColumns(true));
-        // echo "<br> applySorting  validEntries : " . print_r($validEntries, true) . "<br>";
-        // echo "<br> applySorting  this->getColumns(true) : " . print_r($this->getColumns(true), true) . "<br>";
         if (empty($validEntries)) {
             return '';
         }
@@ -409,7 +382,6 @@ class BaseModel
             $result .= $column . ' ' . $direction . ', ';
         }
         $result = rtrim($result, ', ');
-        //  echo "<br> applySorting  result : " . print_r($result, true) . "<br>";
 
         return $result;
     }
