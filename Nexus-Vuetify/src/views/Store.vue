@@ -21,7 +21,7 @@
 import Filterr from '../components/store/Filter.vue';
 // import Pagination from '../components/Pagination.vue';
 import Search from '../components/game/Search.vue';
-import ListeJeux from '../components/store/StoreComponent.vue';
+import ListeJeux from '../components/store/GameListComponent.vue';
 
 export default {
   components: {

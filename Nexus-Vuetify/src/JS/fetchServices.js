@@ -1,5 +1,7 @@
 import { fetchData } from "./fetch";
 
+
+
 export const getGameDetails = async (idGame) => {
   return await fetchData("games", "getOne", "id", idGame, null, null, null, "GET");
 };
