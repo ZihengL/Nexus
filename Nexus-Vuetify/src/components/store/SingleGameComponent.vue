@@ -28,11 +28,9 @@
         class="rat"
       />
     </div>
-    <ul>
-      <li class="glow">Tag</li>
-      <li class="glow">Tag</li>
-      <li class="glow">Tag</li>
-    </ul>
+    <div class="tags">
+          <ul class="glow" v-for="tag in singleGame_data.tags" :key="tag.id">{{ tag.name }}</ul>
+    </div>
   </router-link>
 </template>
 
@@ -46,6 +44,7 @@ const props = defineProps({
 
 const singleGame_data = reactive({
   leGame: {},
+  tags :[],
   image: String,
 });
 
@@ -67,6 +66,7 @@ async function getGameInfos() {
       singleGame_data.image = singleGame_data.leGame.image
         ? singleGame_data.leGame.image
         : "/src/assets/img/dontstarve.png";
+        singleGame_data.tags =singleGame_data.leGame.tags
     }
     // singleGame_data.leGame = singleGame_data.leGame.image;
     // console.log("singleGame data :", data);
