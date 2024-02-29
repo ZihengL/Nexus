@@ -1,6 +1,5 @@
 import { fetchData } from "./fetch";
 
-
 export const getOne = async (table, column, value, includedColumns = null, sorting = null) => {
   let data = await fetchData(table, "getOne", column, value, includedColumns, sorting, null, "GET");
   return data;
@@ -13,6 +12,31 @@ export const getAll = async (table, column = null, value = null, includedColumns
 };
 
 
+export const login = async (jsonObject) => {
+  let body = {
+    jsonObject
+  }
+  let data = await fetchData("users", "login", null, null, null, null, body, "POST");
+  return data
+};
+
+
+export const register = async (jsonObject) => {
+  let body = {
+    jsonObject
+  }
+  let data = await fetchData("users", "register", null, null, null, null, body, "POST");
+  return data
+};
+
+
+export const logout = async (jsonObject) => {
+  let body = {
+    jsonObject
+  }
+  let data = await fetchData("users", "logout", null, null, null, null, body, "POST");
+  return data
+};
 
 export const getAllGamesWithDeveloperName = async(column = null, value = null, includedColumns = null, sorting = null) => {
   try {
