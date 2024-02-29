@@ -1,28 +1,29 @@
 <template>
   <router-link
-    v-if="leGame && devName"
-    :to="{ name: 'Game', params: { idGame: leGame.id } }"
+    v-if="singleGame_data.leGame"
+    :to="{ name: 'Game', params: { idGame: props.idGame } }"
     class="glass2 roundBorderSmall"
   >
     <div class="img roundBorderSmall">
       <img
-        :src="leGame.value.image || '../../assets/img/dontstarve.png'"
-        :alt="nothingBro"
-        :class="roundBorderSmall"
+        :src="singleGame_data.image"
+        alt="nothingBro"
+        class="roundBorderSmall"
       />
       <p class="roundBorderSmall">
-        {{ leGame.description }}
+        {{ singleGame_data.leGame.description }}
       </p>
     </div>
-    <h3>{{ leGame.title }}</h3>
-    <h4>{{ devName }}</h4>
+    <h3>{{ singleGame_data.leGame.title }}</h3>
+    <h4>{{ singleGame_data.leGame.devName }}</h4>
     <div class="ratings">
       <v-rating
         hover
+        readonly
         half-increments
         :length="5"
         :size="32"
-        :model-value="leGame.ratingAverage"
+        :model-value="singleGame_data.leGame.ratingAverage"
         active-color="rgba(3,33,76,1)"
         class="rat"
       />
@@ -36,54 +37,44 @@
 </template>
 
 <script setup>
-import { fetchData } from "../../JS/fetch";
-import { ref, onMounted } from "vue";
+// import { fetchData } from "../../JS/fetch";
+import { reactive, onMounted } from "vue";
 
-const props = defineProps(["idGame"]);
-let leGame = ref(null);
-let devName = ref(null);
+const props = defineProps({
+  idGame: Number,
+});
+
+const singleGame_data = reactive({
+  leGame: {},
+  image: String,
+});
+
+// let leGame = ref(null);
+// let devName = ref(null);
+import { getGameDetailsWithDeveloperName } from "../../JS/fetchServices";
 
 async function getGameInfos() {
-  const dataGame = await fetchData(
-    "games",
-    "getOne",
-    "id",
-    props.idGame,
-    null,
-    null,
-    null,
-    "GET"
-  );
-
-  leGame.value = dataGame;
-  console.log("leGame : ", leGame.value);
-
-  if (leGame.value) {
-    const devId = leGame.value.developerID;
-    console.log("devId : ", devId);
-
-    const filters = {
-      id: devId,
-    };
-    const sorting = {
-      id: false,
-    };
-
-    const includedColumns = ["id", "username"];
-    const jsonBody = { filters, sorting, includedColumns };
-
-    const dataDevs = await fetchData(
-      "users",
-      "getAllMatching",
-      null,
-      null,
-      null,
-      null,
-      jsonBody,
-      "POST"
+  try {
+    // console.log("props.idGame : ", props.idGame);
+    console.log("singleGame props.idGame :", props.idGame);
+    singleGame_data.leGame = await getGameDetailsWithDeveloperName(
+      props.idGame
     );
-    devName.value = dataDevs;
-    console.log("devs : ", devName);
+    console.log(
+      "typeOf singleGame_data.leGame:",
+      typeof singleGame_data.leGame
+    );
+    if (singleGame_data.leGame) {
+      singleGame_data.image = singleGame_data.leGame.image
+        ? singleGame_data.leGame.image
+        : "/src/assets/img/dontstarve.png";
+    }
+    // singleGame_data.leGame = singleGame_data.leGame.image;
+    // console.log("singleGame data :", data);
+    // singleGame_data.leGame = await data;
+    // console.log("singleGame leGame :", singleGame_data.leGame);
+  } catch (error) {
+    console.error("Error fetching game details:", error);
   }
 }
 
@@ -104,8 +95,8 @@ onMounted(async () => {
     img {
       width: 100%;
       display: inline-block;
-      transition: opacity 0.3s ease; /* Ajout de la transition d'opacité */
-      opacity: 1; /* L'image est initialement complètement opaque */
+      transition: opacity 0.3s ease;
+      opacity: 1;
     }
 
     p {
@@ -115,7 +106,7 @@ onMounted(async () => {
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      z-index: 2; /* Assure que le texte apparaît au-dessus de l'image */
+      z-index: 2;
     }
   }
 
@@ -128,7 +119,7 @@ onMounted(async () => {
 }
 .glass2:hover {
   .img img {
-    opacity: 0.3; /* Réduit l'opacité de l'image lorsqu'elle est survolée */
+    opacity: 0.3;
   }
 
   .img p {

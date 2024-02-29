@@ -1,9 +1,50 @@
 import { fetchData } from "./fetch";
 
 
+export const getOne = async (table, column, value, includedColumns = null, sorting = null) => {
+  let data = await fetchData(table, "getOne", column, value, includedColumns, sorting, null, "GET");
+  return data;
+};
+
+
+export const getAll = async (table, column = null, value = null, includedColumns = null, sorting = null) => {
+  let data = await fetchData(table, "getAll", column, value, includedColumns, sorting, null, "GET");
+  return data
+};
+
+
+
+export const getAllGamesWithDeveloperName = async(column = null, value = null, includedColumns = null, sorting = null) => {
+  try {
+    const gamesArray = await getAll("games", column, value, includedColumns, sorting);
+
+    if (gamesArray && gamesArray.length) {
+      
+      const gamesWithDevNames = await Promise.all(gamesArray.map(async (game) => {
+        if (game.developerID) {
+          const developerDetails = await getUsername(game.developerID);
+          if (developerDetails && developerDetails.username) {
+           
+            game.devName = developerDetails.username;
+          }
+        }
+        return game;
+      }));
+
+      return gamesWithDevNames;
+    }
+
+    return gamesArray;
+  } catch (error) {
+    console.error("Error fetching all games with developer names:", error);
+    return [];
+  }
+};
+
 
 export const getGameDetails = async (idGame) => {
-  return await fetchData("games", "getOne", "id", idGame, null, null, null, "GET");
+  let data = await fetchData("games", "getOne", "id", idGame, null, null, null, "GET");
+  return data
 };
 
 export const getUsername = async (userID) => {
@@ -41,7 +82,7 @@ export const getReviewsAndUsernames = async (gameID, sorting = null) => {
 export const getGameDetailsWithDeveloperName = async (idGame) => {
   try {
     const gameDetailsArray = await getGameDetails(idGame);
-    console.log("getGameDetailsWithDeveloperName gameDetails : ", gameDetailsArray);
+    // console.log("getGameDetailsWithDeveloperName gameDetails : ", gameDetailsArray);
 
     
     if (gameDetailsArray && gameDetailsArray.length > 0) {

@@ -1,60 +1,46 @@
 <template>
-  <div v-if="listeJeux" id="storeComp" class="glass">
-    <GameComponent
-      v-for="game in listeJeux"
+  <div v-if="gameList_data.listeJeux.length" id="storeComp" class="glass">
+    <SingleGameComponent
+      v-for="game in gameList_data.listeJeux"
       :key="game.id"
       :idGame="game.id"
       class="vuee"
-    />
+    >
+    </SingleGameComponent>
+  </div>
+  <div v-else>
+    {{ gameList_data.errorMsg }}
   </div>
 </template>
 
 <script setup>
-import GameComponent from "./SingleGameComponent.vue";
-import { fetchData } from "../../JS/fetch";
-import { ref, onMounted } from "vue";
+import SingleGameComponent from "./SingleGameComponent.vue";
+import { getAll } from "../../JS/fetchServices";
+// import { fetchData } from "../../JS/fetch";
+// let listeJeux = ref(null);
+import { reactive, onMounted } from "vue";
 
-let listeJeux = ref(null);
+const gameList_data = reactive({
+  listeJeux: [],
+  errorMsg: "Error no game in List",
+});
 
 async function getGameList() {
-  try {
-    const filters = {
-      id: { gt: 0, lte: 20 },
-    };
-
-    const sorting = {
-      id: false,
-    };
-
-    const includedColumns = ["id"];
-    const jsonBody = { filters, sorting, includedColumns };
-
-    listeJeux.value = await fetchData(
-      "games",
-      "getAllMatching",
-      null,
-      null,
-      null,
-      null,
-      jsonBody,
-      "POST"
-    )
-      .then((data) => {
-        listeJeux.value = data;
-        //console.log('data : ', data)
-        console.log("listeJeux : ", listeJeux.value);
-      })
-      .catch((error) => {
-        //Handle errors if any
-        console.error("Error fetching data:", error);
-      });
-  } catch (error) {
-    console.error("Error fetching data:", error);
+  let data = await getAll("games");
+  // console.log("Expected an array but got:", typeof data);
+  // console.log("gamelist data : ", data);
+  if (data) {
+    gameList_data.listeJeux = data;
+    // console.log("gamelist listeJeux : ", gameList_data.listeJeux);
+    // for (let game of gameList_data.listeJeux) {
+    //   console.log("game in listeJeux : ", game);
+    // }
   }
 }
 
+
 onMounted(async () => {
-  await getGameList()
+  await getGameList();
 });
 </script>
 
