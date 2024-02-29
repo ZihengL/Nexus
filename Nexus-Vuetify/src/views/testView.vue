@@ -132,7 +132,6 @@ export default {
     async login() {
       const login = {
         email: "b",
-        name: "charles",
         password: "b",
       };
       const loginBody = { login };

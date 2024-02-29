@@ -4,7 +4,7 @@
       <NavBar class="leNav glass" :connected="connect"/>
       <div class="contentPage">
         <default-view  class="vue" @changeVal="updateConnect" :connected="connect"/>
-        <Footer :connected="connect"></Footer>/>
+        <Footer :connected="connect"></Footer>
       </div>
     </div>
   </v-app>

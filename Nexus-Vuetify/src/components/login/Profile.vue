@@ -8,7 +8,7 @@
             <img src="../../assets/Rich_Ricasso.png" alt="John" class="imgProfil" />
           </div>
           <div class="champUtilisateur">
-            <h3>{{ leDevs.user }}</h3>
+            <h3>{{ leDevs.value.username }}</h3>
             <br>
             <p>description</p>
           </div>
@@ -20,7 +20,7 @@
 
             <div class="fieldBtn">
               <div class="btn-layer"></div>
-              <v-btn density="default" class="submit glow" @click="$emit('showLogin')">
+              <v-btn density="default" class="submit glow" @click="toggleLogout()">
                 Se deconnecter
               </v-btn>
             </div>
@@ -70,13 +70,25 @@
 <script setup>
 import ListeDeJeu from './ListeDeJeu.vue';
 import { fetchData } from '../../JS/fetch';
-import { defineProps, ref, onMounted } from 'vue';
+import { defineProps, ref, onMounted, defineEmits } from 'vue';
 //import Amis from './amis.vue';
 
 const props = defineProps(['isHimself', 'idDevl']);
+const emit = defineEmits(['showProfile']);
+let devId = null;
+if(props.idDevl == null){
+  devId = localStorage.getItem("idDev");
+}
+else {
+  devId = props.idDevl
+}
+
 const leDevs = ref(null);
 const gameList = ref(null);
 const isLogin = ref(true);
+
+let loginTokens_access_token;
+let loginTokens_refresh_token;
 
 const toggleLogin = () => {
   isLogin.value = true;
@@ -98,22 +110,55 @@ const toggleSignup = () => {
   }
 };
 
+const toggleLogout = () => {
+  loginTokens_access_token = localStorage.getItem("accessToken");
+  loginTokens_refresh_token = localStorage.getItem("refreshToken");
 
+  const logout = {
+    id: devId,
+    tokens: {
+      access_token: loginTokens_access_token,
+      refresh_token: loginTokens_refresh_token,
+    },
+  };
+
+  loginTokens_access_token = "";
+  loginTokens_refresh_token = "";
+
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("idDev");
+
+  const body = { logout };
+
+  let results = fetchData(
+    "users",
+    "logout",
+    null,
+    null,
+    null,
+    null,
+    body,
+    "POST"
+  );
+  console.log(results);
+  emit('showLogin')
+}
 onMounted(async () => {
   try {
-    const dataGame = await fetchData("users", "getOne", "id", props.idDevl, null, null, null, "GET");
+    const dataGame = await fetchData("users", "getOne", "id", devId, null, null, null, "GET");
     leDevs.value = dataGame;
-    console.log('leDevs : ', leDevs)
+    console.log('leDevs : ', leDevs.value.username)
 
     if(leDevs.value) {
       const filters = {
-        developerID: props.idDevl,
+        developerID: devId,
       }
       const sorting = {
         id: false
       }
 
-      const includedColumns = ['id', 'title']
+      const includedColumns = ['id', 'title', 'username']
       const jsonBody = { filters, sorting, includedColumns }
 
       const dataDevs = await fetchData('games', 'getAllMatching', null, null, null, null, jsonBody, 'POST');

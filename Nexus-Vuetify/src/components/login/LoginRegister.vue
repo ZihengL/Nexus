@@ -17,17 +17,17 @@
         <form action="#" class="login log">
           <!-- ... Login form content ... -->
           <div class="field">
-            <input type="text" placeholder="Addresse email" required>
+            <input type="text" v-model="email" placeholder="Addresse email" required>
           </div>
           <div class="field">
-            <input type="password" placeholder="Mot de passe" required>
+            <input type="password" v-model="password" placeholder="Mot de passe" required>
           </div>
           <div class="pass-link glow">
             <a href="#">Mot de passe oublier ?</a>
           </div>
           <div class="fieldBtn">
             <div class="btn-layer"></div>
-            <v-btn density="default" class="submit glow" @click="toggleProfile">
+            <v-btn density="default" class="submit glow" @click="toggleProfileLog">
               Se connecter
             </v-btn>
           </div>
@@ -59,7 +59,7 @@
           </div>
           <div class="fieldBtn">
             <div class="btn-layer"></div>
-            <v-btn density="default" class="submit glow" @click="toggleProfile">
+            <v-btn density="default" class="submit glow" @click="toggleProfileSign">
               S'inscrire
             </v-btn>
           </div>
@@ -75,9 +75,15 @@
 <script setup>
 import loginScript from '../../JS/LoginScript.js';
 import { ref, onMounted, defineEmits } from 'vue';
+import { fetchData } from '../../JS/fetch';
 
 const isLogin = ref(true);
 const emit = defineEmits(['showProfile']);
+let loginTokens_access_token;
+let loginTokens_refresh_token;
+let idDev = null;
+let email= ref(null);
+let password = ref(null);
 
 const toggleLogin = () => {
   isLogin.value = true;
@@ -93,8 +99,73 @@ const toggleSignup = () => {
   formInner.style.height = '80svh';
 };
 
-const toggleProfile = () => {
-  emit('showProfile');
+const toggleProfileLog = async () => {
+  const login = {
+    email: email.value,
+    password: password.value,
+  };
+  console.log("var : ", email, " var : ", password);
+  const loginBody = { login };
+  try {
+    const loginResponse = await fetchData(
+      "users",
+      "login",
+      null,
+      null,
+      null,
+      null,
+      loginBody,
+      "POST"
+    );
+    //console.log("Login successful : ", loginResponse);
+    if (loginResponse) {
+      loginTokens_access_token = loginResponse.access_token;
+      loginTokens_refresh_token = loginResponse.refresh_token;
+      localStorage.setItem("accessToken", loginResponse.access_token);
+      localStorage.setItem("refreshToken", loginResponse.refresh_token);
+
+      const filters = {
+        email: email.value,
+      }
+      const sorting = {
+        id: false
+      }
+      const includedColumns = ['id']
+      const jsonBody = { filters, sorting, includedColumns }
+
+      const devId = await fetchData('users', 'getAllMatching', null, null, null, null, jsonBody, 'POST');
+      console.log('devs : ', devId[0].id)
+      idDev = devId[0].id;
+      localStorage.setItem("idDev", devId[0].id);
+
+      console.log("id : ", idDev);
+      emit('showProfile');
+    }
+
+  }
+  catch (error) {
+    console.error("Login failed: ", error);
+  }
+};
+const toggleProfileSign = () => {
+  const createData = {
+    email: "c",
+    username: "meki",
+    password: "c",
+  };
+  const createBody = { createData };
+  let results = fetchData(
+    "users",
+    "create",
+    null,
+    null,
+    null,
+    null,
+    createBody,
+    "POST"
+  );
+  console.log(results);
+  //emit('showProfile');
 };
 
 onMounted(() => {
