@@ -68,7 +68,7 @@ import { defineProps, onMounted, reactive } from "vue";
 import game from "../components/game/GameCarrousel.vue";
 // import PaginationComponent from "../components/PaginationComponent.vue";
 import ReviewsListComponent from "../components/reviewsListComponent.vue";
-import {getGameDetailsWithDeveloperName, getGameReviewsUsernames } from '../JS/fetchServices';
+import {getGameDetailsWithDeveloperName } from '../JS/fetchServices';
 
 const gameInfos = reactive({
   leGame: {}, 
@@ -95,9 +95,6 @@ onMounted(async () => {
     gameInfos.tags = gameInfos.leGame.tags
     gameInfos.devName = gameInfos.leGame.devName
     console.log("leGame : ", gameInfos.leGame)
-
-    // let test = getGameReviewsUsernames(props.idGame, gameInfos.sortByDate)
-    // console.log("test : ", test)
 
   } catch (error) {
     console.error("Error during component mounting:", error);
