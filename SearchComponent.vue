@@ -6,20 +6,54 @@
         rel="stylesheet"
       />
     </head>
-    <div class="search-container roundBorderSmall glass">
+    <div :class="props.inputClass">
       <input
+        @input="updateValue($event.target.value)"
         type="text"
-        class="search-input"
-        placeholder="Trouver un jeux..."
+        :value="props.modelValue"
+        :placeholder="props.placeholder"
       />
-      <button class="search-button">
+      <button :class="props.loopClass">
         <i class="fa-solid fa-magnifying-glass"></i>
       </button>
     </div>
   </div>
 </template>
 
-<style lang="scss" scoped>
+<script setup>
+import { onMounted, reactive, defineEmits } from "vue";
+
+const props = defineProps({
+  placeholder: String,
+  modelValue: String,
+  inputClass: {
+    type: String,
+    default: "search-container roundBorderSmall glass",
+  },
+  loopClass: {
+    type: String,
+    default: "search-button",
+  },
+});
+
+const emit = defineEmits({
+  "update:modelValue": null,
+  // "update:": (payload) => typeof payload === "string",
+  // 'itemSelected': payload => typeof payload === 'object', // Assuming payload is an object
+  // 'selectionCleared': null // No payload expected
+});
+
+function updateValue(value) {
+  emit("update:modelValue", value);
+  console.log("search text  : ", value);
+}
+
+const search_data = reactive({});
+
+onMounted(async () => {});
+</script>
+
+<style lang="scss" scoped >
 #search {
   .search-container {
     margin-top: 5%;

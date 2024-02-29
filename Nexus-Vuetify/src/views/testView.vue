@@ -205,8 +205,8 @@ export default {
 
       ////////////////////CREATE TAG//////////////////////
       const createData = {
-        gameId: "10",
-        name: "princess",
+        gameId: "1",
+        name: "relax",
       };
       const createBody = { createData };
       let results = fetchData(
