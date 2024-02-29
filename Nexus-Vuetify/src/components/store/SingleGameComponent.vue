@@ -49,8 +49,7 @@ const singleGame_data = reactive({
   image: String,
 });
 
-// let leGame = ref(null);
-// let devName = ref(null);
+
 import { getGameDetailsWithDeveloperName } from "../../JS/fetchServices";
 
 async function getGameInfos() {
