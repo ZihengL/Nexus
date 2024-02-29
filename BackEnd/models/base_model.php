@@ -13,12 +13,12 @@ class BaseModel
         $this->table = $table;
         $this->columns = $this->getColumns($require_id);
 
-        $this->keys['INT'] = $this->getInternalKeysDetails();
-        $this->keys['EXT'] = $this->getExternalKeysDetails();
+        $internal_keys = $this->getInternalKeysDetails();
+        $external_keys = $this->getExternalKeysDetails();
+        $this->keys = [...$internal_keys, $external_keys];
 
         echo $this->table . '<br>';
-        echo '<pre>' . print_r($this->keys['internal']) . '</pre>';
-        echo '<pre>' . print_r($this->keys['external']) . '</pre>';
+        echo '<pre>' . print_r($this->keys) . '</pre>';
     }
 
     /*******************************************************************/
@@ -79,30 +79,26 @@ class BaseModel
     /***************************** GETTERS *****************************/
     /*******************************************************************/
 
-    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [])
+    public function getOne($column, $value, $included_columns = [], $join_keys = [])
     {
-        $sql = "SELECT " . $this->parseColumns($included_columns) . " FROM $this->table";
+        $sql = $this->buildSelectionLayer($included_columns, $join_keys) . "WHERE $column = ?";
 
-        $params = [];
-        if ($column && $value) {
-            $sql .= " WHERE $column = ?";
-            $params[] = $value;
-        }
-
-        $sortingSql = $this->applySorting($sorting);
-        if (!empty($sortingSql)) {
-            $sql .= " ORDER BY " . $sortingSql;
-        }
-
-        return $this->query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
+        return $this->query($sql, [$value])->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $join_keys = [])
+    {
+        $sql = $this->buildSelectionLayer($included_columns, $join_keys) . $column ?? " WHERE $column = ?";
 
-    // TODO: ASKJDHSAKJFHASKLFHADSLFHALFHSAKLDHASLHLFHASKL ADAPT IT TO HANDLE INTERNAL AND EXTERNAL KEYS
+        $sort_layer = $this->applySorting($sorting);
+        $sql .= !empty($sort_layer) ? " ORDER BY " . $sort_layer : '';
+
+        return $this->query($sql, $value ?? [$value])->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $join_keys = [])
     {
-        $selection_layer = $this->buildSelectionLayer($included_columns, $join_keys);
-        $sql = $selection_layer . ' WHERE 1 = 1';
+        $sql = $this->buildSelectionLayer($included_columns, $join_keys) . ' WHERE 1 = 1';
 
         $filterResults = $this->applyFilters($filters);
         $sortingResults = $this->applySorting($sorting);
@@ -110,22 +106,14 @@ class BaseModel
         $sqlWithFilters = $filterResults['sql'];
         $params = $filterResults['params'];
 
-        $sqlWithFiltersAndSorting = $sortingResults ? $sqlWithFilters . ' ORDER BY ' . $sortingResults : $sqlWithFilters;
-        $sqlWithFiltersAndSorting = $sql . $sqlWithFiltersAndSorting;
+        $sqlWithFiltersAndSorting = $sql . $sortingResults ? "$sqlWithFilters ORDER BY $sortingResults" : $sqlWithFilters;
+        // $sqlWithFiltersAndSorting = $sql . $sqlWithFiltersAndSorting;
 
         return $this->bindingQuery($sqlWithFiltersAndSorting, $params);
     }
 
-    //  Explicitement retour d'une seule valeur.
-    public function getOne($column, $value, $included_columns = [])
-    {
-        $sql = "SELECT " . $this->parseColumns($included_columns) . " FROM $this->table WHERE $column = ?";
-
-        return $this->query($sql, [$value])->fetch(PDO::FETCH_ASSOC);
-    }
-
     /*******************************************************************/
-    /*************************** OTHER CRUDS ***************************/
+    /****************************** CRUDS ******************************/
     /*******************************************************************/
 
     public function create($data)
@@ -149,23 +137,33 @@ class BaseModel
         $formattedData = $this->formatData($data);
         $pairs = implode(' = ?, ', array_keys($formattedData)) . ' = ?';
         $formattedData['id'] = $id;
+
         $sql = "UPDATE $this->table SET $pairs WHERE id = ?";
 
-        if ($this->query($sql, $formattedData)) {
-            return true;
-        } else {
-            return false;
-        }
+        return $this->query($sql, $formattedData)->fetch(); // Bugs?
     }
 
+    // was running query directly here
     public function delete($id)
     {
-        $sql = "DELETE FROM $this->table WHERE id = ?";
-        $stmt = $this->pdo->prepare($sql);
+        return $this->query("DELETE FROM $this->table WHERE id = $id")->fetch();
+        // $stmt = $this->pdo->prepare($sql);
 
-        $stmt->bindParam(1, $id, PDO::PARAM_INT);
+        // $stmt->bindParam(1, $id, PDO::PARAM_INT);
 
-        return $stmt->execute();
+        // return $stmt->execute();
+
+    }
+
+    public function formatData($data)
+    {
+        $formattedData = [];
+
+        foreach ($this->columns as $column)
+            if (in_array($column, array_keys($data)))
+                $formattedData[$column] = $data[$column];
+
+        return $formattedData;
     }
 
     /*******************************************************************/
@@ -183,52 +181,57 @@ class BaseModel
 
     public function getInternalKeysDetails()
     {
+        // $sql = "SELECT 
+        //             COLUMN_NAME AS 'INT_COL', 
+        //             REFERENCED_TABLE_NAME AS 'EXT_TAB', 
+        //             REFERENCED_COLUMN_NAME AS 'EXT_COL' 
+        //         FROM 
+        //             INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
+        //         WHERE 
+        //             TABLE_SCHEMA = :databaseName
+        //         AND TABLE_NAME = :tableName
+        //         AND REFERENCED_TABLE_NAME IS NOT NULL";
+
+        // $params = [
+        //     ':databaseName' => $_ENV['DB_NAME'],
+        //     ':tableName' => $this->table
+        // ];
         $sql = "SELECT 
                     COLUMN_NAME AS 'INT_COL', 
-                    REFERENCED_TABLE_NAME AS 'EXT_TABLE', 
+                    REFERENCED_TABLE_NAME AS 'EXT_TAB', 
                     REFERENCED_COLUMN_NAME AS 'EXT_COL' 
                 FROM 
                     INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
                 WHERE 
-                    TABLE_SCHEMA = :databaseName
-                AND TABLE_NAME = :tableName
+                    TABLE_SCHEMA = '{$_ENV['DB_NAME']}'
+                AND TABLE_NAME = '{$this->table}'
                 AND REFERENCED_TABLE_NAME IS NOT NULL";
 
-        $params = [
-            ':databaseName' => $_ENV['DB_NAME'],
-            ':tableName' => $this->table
-        ];
-
-        return $this->bindingQuery($sql, $params);
+        return $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getExternalKeysDetails()
     {
         $sql = "SELECT 
-                    REFERENCED_COLUMN_NAME AS INT_COL,
-                    TABLE_NAME AS EXT_TABLE,
-                    COLUMN_NAME AS EXT_COL
+                    REFERENCED_COLUMN_NAME AS 'INT_COL',
+                    TABLE_NAME AS 'EXT_TAB',
+                    COLUMN_NAME AS 'EXT_COL'
                 FROM
                     INFORMATION_SCHEMA.KEY_COLUMN_USAGE
                 WHERE
                     REFERENCED_TABLE_SCHEMA = '{$_ENV['DB_NAME']}' 
-                AND
-                    REFERENCED_TABLE_NAME = '$this->table'";
+                AND REFERENCED_TABLE_NAME = '$this->table'";
 
         return $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Note: Assumes that only one datapoint/row is linked per foreign joined table
     public function buildSelectionLayer($included_columns = [], $join_keys = [])
     {
-        $result = 'SELECT ' . $this->parseColumns($included_columns);
+        $result = "SELECT {$this->parseColumns($included_columns)}";
 
-        if ($foreign_selects = $this->parseJoinedTables($join_keys)) {
-            $selects = $foreign_selects['selects'];
-            $joins = $foreign_selects['joins'];
-
-            $result .= " $selects FROM $this->table $joins";
-        }
+        $join_layer = $this->parseJoinedTables($join_keys);
+        if (!empty($join_layer))
+            $result .= " {$join_layer['selects']} FROM $this->table {$join_layer['joins']}";
 
         return $result;
     }
@@ -240,40 +243,25 @@ class BaseModel
 
     public function parseJoinedTables($join_keys = [])
     {
-        $selects = '';
-        $joins = '';
+        $join_layer = [];
 
         foreach ($this->keys as [
             'INT_COL' => $int_col,
-            'EXT_TABLE' => $ext_table,
+            'EXT_TAB' => $ext_tab,
             'EXT_COL' => $ext_col
         ]) {
             if ($included_columns = $join_keys[$int_col]) {
+                $join_layer['selects'] = '';
+                $join_layer['joins'] = '';
 
-                foreach ($included_columns as $included_column) {
-                    $selects .= ", $ext_table.$included_column AS {$ext_table}_{$included_column}";
-                }
+                foreach ($included_columns as $included_column)
+                    $join_layer['selects'] .= ", {$ext_tab}.{$included_column} AS {$ext_tab}_{$included_column}";
 
-                $joins .= " JOIN $ext_table ON $this->table.$int_col = $ext_table.$ext_col";
-            }
-
-            return ['selects' => $selects, 'joins' => $joins];
-        }
-
-        return null;
-    }
-
-    public function formatData($data)
-    {
-        $formattedData = [];
-
-        foreach ($this->columns as $column) {
-            if (in_array($column, array_keys($data))) {
-                $formattedData[$column] = $data[$column];
+                $join_layer['joins'] .= " JOIN $ext_tab ON {$this->table}.{$int_col} = {$ext_tab}.{$ext_col}";
             }
         }
 
-        return $formattedData;
+        return $join_layer;
     }
 
     /*******************************************************************/
