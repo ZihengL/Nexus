@@ -5,7 +5,7 @@ require_once "$path/controllers/base_controller.php";
 class BaseController
 {
     protected $central_controller;
-    public $model;
+    protected $model;
     protected $restricted_columns = [];
 
     public function __construct($central_controller)
@@ -29,7 +29,9 @@ class BaseController
         return array_diff($included_columns, $this->restricted_columns);
     }
 
-    // ACCESS
+    /*******************************************************************/
+    /****************************** ACCESS *****************************/
+    /*******************************************************************/
 
     protected function getDatabaseManager()
     {
@@ -79,28 +81,29 @@ class BaseController
         return $this->getGoogleClientManager()->drive_controller;
     }
 
-    // CRUDS
+    /*******************************************************************/
+    /****************************** CRUDS ******************************/
+    /*******************************************************************/
+
+    public function getOne($column, $value, $included_columns = [], $joined_tables = [])
+    {
+        $included_columns = $this->restrictAccess($included_columns);
+
+        return $this->model->getOne($column, $value, $included_columns, $joined_tables);
+    }
+
+    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [])
+    {
+        $included_columns = $this->restrictAccess($included_columns);
+
+        return $this->model->getAll($column, $value, $included_columns, $sorting, $joined_tables);
+    }
 
     public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
     {
         $included_columns = $this->restrictAccess($included_columns);
 
-        return $this->model->getAllMatching($filters, $sorting, $included_columns, $joined_tables);
-    }
-
-    public function getOne($column, $value, $included_columns = [])
-    {
-        $included_columns = $this->restrictAccess($included_columns);
-
-        return $this->model->getOne($column, $value, $included_columns);
-    }
-
-
-    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [])
-    {
-        $included_columns = $this->restrictAccess($included_columns);
-
-        return $this->model->getAll($column, $value, $included_columns, $sorting);
+        return $this->model->getAllMatching($filters, $sorting, $included_columns, $joined_tables, $joined_tables);
     }
 
     public function create($data)

@@ -143,7 +143,6 @@ class BaseModel
         return $this->query($sql, $formattedData)->fetch(); // Bugs?
     }
 
-    // was running query directly here
     public function delete($id)
     {
         return $this->query("DELETE FROM $this->table WHERE id = $id")->fetch();
@@ -152,18 +151,17 @@ class BaseModel
         // $stmt->bindParam(1, $id, PDO::PARAM_INT);
 
         // return $stmt->execute();
-
     }
 
     public function formatData($data)
     {
-        $formattedData = [];
+        $formatted = [];
 
         foreach ($this->columns as $column)
             if (in_array($column, array_keys($data)))
-                $formattedData[$column] = $data[$column];
+                $formatted[$column] = $data[$column];
 
-        return $formattedData;
+        return $formatted;
     }
 
     /*******************************************************************/
@@ -220,7 +218,7 @@ class BaseModel
                     INFORMATION_SCHEMA.KEY_COLUMN_USAGE
                 WHERE
                     REFERENCED_TABLE_SCHEMA = '{$_ENV['DB_NAME']}' 
-                AND REFERENCED_TABLE_NAME = '$this->table'";
+                AND REFERENCED_TABLE_NAME = '{$this->table}'";
 
         return $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }

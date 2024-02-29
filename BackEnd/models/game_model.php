@@ -36,15 +36,6 @@ class GameModel extends BaseModel
         }
     }
 
-    // public function delete($id)
-    // {
-    //     return $this->delete($id);
-    //     // $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE id = ?");
-    //     // $stmt->execute([$id]);
-
-    //     // return $stmt->fetch();
-    // }
-
     //Updates
     function updateGameTags($pdo, $gameId, array $newTagIds)
     {

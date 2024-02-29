@@ -124,8 +124,8 @@ class UsersModel extends BaseModel
             $data['creationDate'] = date('Y-m-d');
 
             return $data;
-        } else {
-            return false;
         }
+
+        return false;
     }
 }

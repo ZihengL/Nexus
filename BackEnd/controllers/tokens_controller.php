@@ -35,8 +35,6 @@ class TokensController extends BaseController
     private $issuer;
     private $audience;
 
-    // CONSTRUCTOR
-
     public function __construct($central_controller, $pdo)
     {
         $this->access_key = $_ENV['JWT_ACCESS_KEY'];
@@ -49,7 +47,9 @@ class TokensController extends BaseController
         parent::__construct($central_controller);
     }
 
-    // ENCODE & DECODE
+    /*******************************************************************/
+    /************************* ENCODE & DECODE *************************/
+    /*******************************************************************/
 
     private function decodeToken($jwt, $is_refresh = false)
     {
@@ -120,7 +120,9 @@ class TokensController extends BaseController
         return null;
     }
 
-    // VALIDATION
+    /*******************************************************************/
+    /*************************** VALIDATION ****************************/
+    /*******************************************************************/
 
     private function validateUser($user, $email, $password)
     {
@@ -159,7 +161,9 @@ class TokensController extends BaseController
         }
     }
 
-    // DATABASE
+    /*******************************************************************/
+    /**************************** DATABASE *****************************/
+    /*******************************************************************/
 
     protected function getByUserId($user_id)
     {
