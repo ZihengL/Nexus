@@ -5,14 +5,14 @@ class BaseModel
     protected $pdo;
     public $table;
     public $columns = [];
-    public $foreign_keys_details = [];
+    public $foreign_keys = [];
 
     protected function __construct($pdo, $table, $require_id = false)
     {
         $this->pdo = $pdo;
         $this->table = $table;
         $this->columns = $this->getColumns($require_id);
-        $this->foreign_keys_details = $this->getForeignKeyDetails();
+        $this->foreign_keys = $this->getForeignKeysDetails();
     }
 
     protected function query($sql, $params = [])
@@ -53,7 +53,7 @@ class BaseModel
     public function getAll($column = null, $value = null, $included_columns = [], $sorting = [])
     {
         $sql = "SELECT " . $this->parseColumns($included_columns) . " FROM $this->table";
-        // echo "<br>  sorting  getAll : " . print_r($sorting, true) . "<br>";
+
         $params = [];
         if ($column && $value) {
             $sql .= " WHERE $column = ?";
@@ -64,16 +64,17 @@ class BaseModel
         if (!empty($sortingSql)) {
             $sql .= " ORDER BY " . $sortingSql;
         }
-        // echo "<br> getAll sql : " . $sql ;
+
         return $this->query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
     {
-        $parsed_columns = $this->parseColumns($included_columns);
-        $parsed_joins = $this->parseJoinedTables($joined_tables);
+        $selection_layer = $this->buildSelectionLayer($included_columns, $joined_tables);
 
-        $sql = "SELECT " . $this->parseColumns($included_columns) . " FROM $this->table WHERE 1 = 1";
+        // $sql = "SELECT " . $this->parseColumns($included_columns) . " FROM $this->table WHERE 1 = 1";
+        $sql = $selection_layer . ' WHERE 1 = 1';
+
         $filterResults = $this->applyFilters($filters);
         $sortingResults = $this->applySorting($sorting);
 
@@ -147,67 +148,126 @@ class BaseModel
         });
     }
 
-    public function getForeignKeyDetails()
+    // foreach ($this->columns as $column) {
+    //     $params = [
+    //         ':database' => $_ENV['DB_NAME'],
+    //         ':table' => $this->table,
+    //         ':column' => $column
+    //     ];
+
+    //     if ($result = $this->query($sql, $params)->fetch(PDO::FETCH_ASSOC)) {
+    //         $foreign_keys[$column] = $result['REFERENCED_TABLE_NAME'];
+
+    //         echo '<pre>' . print_r($foreign_keys) . '</pre>';
+    //     }
+    // }
+
+    public function getForeignKeysDetails()
     {
-        $sql = "SELECT TABLE_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME 
-                FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
-                WHERE TABLE_SCHEMA = :databaseName 
-                AND TABLE_NAME = :tableName 
-                AND COLUMN_NAME = :columnName 
+        $sql = "SELECT 
+                    COLUMN_NAME, 
+                    REFERENCED_TABLE_NAME, 
+                    REFERENCED_COLUMN_NAME 
+                FROM 
+                    INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
+                WHERE 
+                    TABLE_SCHEMA = :databaseName
+                AND TABLE_NAME = :tableName
                 AND REFERENCED_TABLE_NAME IS NOT NULL";
 
-        $foreign_keys = [];
-        foreach ($this->columns as $column) {
-            $params = [
-                ':databaseName' => $_ENV['DB_NAME'],
-                ':tableName' => $this->table,
-                ':columnName' => $column
-            ];
+        $params = [
+            ':databaseName' => $_ENV['DB_NAME'],
+            ':tableName' => $this->table
+        ];
 
-            if ($result = $this->query($sql, $params)->fetch(PDO::FETCH_ASSOC)) {
-                $foreign_keys[$column] = $result['REFERENCED_TABLE_NAME'];
-            }
-        }
+        $foreign_keys = $this->bindingQuery($sql, $params);
+
+        // if (count($foreign_keys) > 0) {
+        //     print_r($foreign_keys[0]) . '<br>';
+        // }
 
         return $foreign_keys;
     }
 
-    public function parseSelectionsToQuery($included_columns = [], $joined_tables = [])
+    // Note: Assumes that only one datapoint/row is linked per foreign joined table
+    public function buildSelectionLayer($included_columns = [], $joined_tables = [])
     {
-        $local_columns = $this->parseColumns($included_columns);
-        $foreign_tables = $this->parseJoinedTables($joined_tables);
+        $result = 'SELECT ' . $this->parseColumns($included_columns);
 
-        if (!empty($foreign_tables['columns'])) {
-            $foreign_columns = 'ASDFDFKJLHADSLFKHSALFKJADSHFKAS'; // TODO
+        if ($foreign_selects = $this->parseJoinedTables($joined_tables)) {
+            $selects = $foreign_selects['selects'];
+            $joins = $foreign_selects['joins'];
+
+            $result .= ", $selects FROM $this->table $joins";
         }
 
-        return "SELECT $local_columns, $foreign_tables FROM $this->table ";
+        return $result;
     }
 
     public function parseColumns($included_columns = [])
     {
         return "$this->table." . empty($included_columns) ? '*' : implode(", $this->table.", $included_columns);
+        // if ($included_columns && count($included_columns) > 0) {
+        //     $result = '';
+
+        //     foreach ($included_columns as $column) {
+        //         $result .= ", $this->table.$column AS '{$this->table}_{$column}'";
+        //     }
+
+        //     return substr($result, 1);
+        // }
+
+        // return "$this->table.*";
     }
+
+    // public function parseJoinedTables($joined_tables = [])
+    // {
+    //     if ($valid_entries = array_intersect_key($joined_tables, $this->foreign_keys['COLUMN_NAME'])) {
+    //         $selects = '';
+    //         $joins = '';
+
+
+
+    //         foreach ($joined_tables as $table => $included_columns) {
+    //             $referenced_table = $this->foreign_keys['REFERENCED_TABLE_NAME'];
+    //             $referenced_column = $this->foreign_keys['REFERENCED_COLUMN_NAME'];
+
+    //             foreach ($included_columns as $column) {
+    //                 $selects .= ", $table.$column AS '{$table}_{$column}'";
+    //             }
+
+    //             $joins .= " JOIN $joined_tables ON $this->table.$table = $joined_tables.id";
+    //         }
+
+    //         return ['selects' => substr($selects, 1), 'joins' => $joins];
+    //     }
+
+    //     return null;
+    // }
 
     public function parseJoinedTables($joined_tables = [])
     {
-        $foreign_columns = '';
-        $foreign_joins = '';
+        $selects = '';
+        $joins = '';
 
-        foreach ($joined_tables as $key => $included_columns) {
-            if ($foreign_table = $this->foreign_keys_details[$key]) {
-                $foreign_columns = '';
+        foreach ($this->foreign_keys as [
+            'COLUMN_NAME' => $local_column,
+            'REFERENCED_TABLE_NAME' => $ref_table,
+            'REFERENCED_COLUMN_NAME' => $ref_column
+        ]) {
+            if ($included_columns = $joined_tables[$local_column]) {
 
-                foreach ($included_columns as $table_column) {
-                    $foreign_columns .= ", $foreign_table.$table_column AS $foreign_table" . ucfirst($table_column);
+                foreach ($included_columns as $included_column) {
+                    $selects .= ", $ref_table.$included_column AS {$ref_table}_{$included_column}";
                 }
 
-                // $foreign_columns .= "$subresult, FROM $this->table JOIN $foreign_table ON $this->table.$key = $foreign_table.id";
-                $foreign_joins .= " JOIN $foreign_table ON $this->table.$key = $foreign_table.id";
+                $joins .= " JOIN $ref_table ON $this->table.$local_column = $ref_table.$ref_column";
             }
+
+            return ['selects' => $selects, 'joins' => $joins];
         }
 
-        return ['columns' => $foreign_columns, 'joins' => $foreign_joins];
+        return null;
     }
 
     public function formatData($data)

@@ -1,10 +1,10 @@
 <?php
 
-// global $path;
-// $path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd/';
-// require_once $path . 'tests/temp_globals.php';
+global $path;
+$path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd/';
+require_once $path . 'tests/temp_globals.php';
 
-// $users = $users_controller->getAll_users();
+$users_ctrl = $central_controller->users_controller;
 
 // echo 'OLD<pre>';
 // print_r($users);
@@ -68,7 +68,7 @@
 // print_r($stored);
 // echo '</pre>';
 
-// $users_ctrl = $central_controller->users_controller;
+
 
 // $response = $users_ctrl->getAll();
 
@@ -96,10 +96,21 @@ $arr2 = ['c' => 213125];
 $arr3 = array_intersect_key($arr1, $arr2);
 
 // print_r($arr3);
-echo implode(", table.", array_keys($arr1));
+printall(implode(", table.", array_keys($arr1)));
 
+// printall($users_ctrl->);
 
+// $refs = [
+//     ['COLUMN_NAME'] => 'developerID', ['REFERENCED_TABLE_NAME'] => 'users', ['REFERENCED_COLUMN_NAME'] => 'id',
+//     ['COLUMN_NAME'] => 'caca', ['REFERENCED_TABLE_NAME'] => 'ba', ['REFERENCED_COLUMN_NAME'] => 'lol'
+// ];
 
+// $joined = ['developerID' => '2'];
+
+// foreach ($refs as $ref) {
+//     printall($ref);
+//     // $intersect = array_intersect_key($ref['COLUMN_NAME'], $joined);
+// }
 // echo '<br>';
 // print_r($arr2);
 // echo '<br>';

@@ -273,4 +273,33 @@ class GameModel extends BaseModel
         $results = $this->bindingQuery($sqlWithFiltersAndSorting, $params);
         return $this->appendTagsToGames($results);
     }
+
+    // public function getForeignKeysDetails()
+    // {
+    //     $sql = "SELECT 
+    //                 TABLE_NAME, 
+    //                 COLUMN_NAME, 
+    //                 REFERENCED_TABLE_NAME, 
+    //                 REFERENCED_COLUMN_NAME  
+    //             FROM 
+    //                 INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
+    //             WHERE 
+    //                 TABLE_SCHEMA = :databaseName
+    //             AND TABLE_NAME = :tableName
+    //             AND COLUMN_NAME = :columnName 
+    //             AND REFERENCED_TABLE_NAME IS NOT NULL";
+
+    //     $params = [
+    //         ':databaseName' => $_ENV['DB_NAME'],
+    //         ':tableName' => $this->table,
+    //         ':columnName' => 'developerID'
+    //     ];
+
+    //     $foreign_keys = $this->bindingQuery($sql, $params);
+
+    //     echo print_r($params) . ' - FK<br>';
+    //     echo '<pre>' . print_r($foreign_keys) . '</pre>';
+
+    //     return $foreign_keys;
+    // }
 }
