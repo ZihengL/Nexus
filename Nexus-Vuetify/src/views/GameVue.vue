@@ -39,8 +39,8 @@
           <v-btn
             :id="gameInfos.leGame.id"
             density="default"
-            class="submit glow"
-            @click="toggleProfile"
+            class="submit glow"  
+            @click="uploadZipFile"
           >
             Telecharger
           </v-btn>
@@ -65,6 +65,7 @@
 import { defineProps, onMounted, reactive } from "vue";
 // import AvisRating from "../components/AvisRating.vue";
 // import AvisRecent from "../components/AvisRecent.vue";
+import { getStorage, ref as storageRef, uploadBytes } from "firebase/storage";
 import game from "../components/game/GameCarrousel.vue";
 // import PaginationComponent from "../components/PaginationComponent.vue";
 import ReviewsListComponent from "../components/reviewsListComponent.vue";
@@ -100,6 +101,23 @@ onMounted(async () => {
     console.error("Error during component mounting:", error);
   }
 });
+// Assume Firebase is initialized elsewhere, directly reference the storage
+const storage = getStorage();
+
+// Method to upload a file
+const uploadZipFile = async () => {
+  // Example file to upload, you might want to replace this with actual file selection logic
+  const file = new Blob(["This is a test ZIP file content"], { type: 'application/zip' });
+  const fileName = `snake.zip`; // Example file name, replace as needed
+  const fileRef = storageRef(storage, `Games/${fileName}`);
+  
+  try {
+    await uploadBytes(fileRef, file);
+    console.log(`${fileName} uploaded successfully`);
+  } catch (error) {
+    console.error("Failed to upload file:", error);
+  }
+};
 </script>
 
 <style src="../styles/GameVueStyle.scss" lang="scss"></style>
