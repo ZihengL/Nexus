@@ -12,10 +12,7 @@ class BaseModel
         $this->pdo = $pdo;
         $this->table = $table;
         $this->columns = $this->getColumns($require_id);
-
-        $internal_keys = $this->getInternalKeysDetails();
-        $external_keys = $this->getExternalKeysDetails();
-        $this->keys = [...$internal_keys, $external_keys];
+        $this->keys = [...$this->getKeysDetails(true), $this->getKeysDetails(false)];
 
         echo $this->table . '<br>';
         echo '<pre>' . print_r($this->keys) . '</pre>';
@@ -79,16 +76,16 @@ class BaseModel
     /***************************** GETTERS *****************************/
     /*******************************************************************/
 
-    public function getOne($column, $value, $included_columns = [], $join_keys = [])
+    public function getOne($column, $value, $included_columns = [], $joined_tables = [])
     {
-        $sql = $this->buildSelectionLayer($included_columns, $join_keys) . "WHERE $column = ?";
+        $sql = $this->buildSelectionLayer($included_columns, $joined_tables) . "WHERE $column = ?";
 
         return $this->query($sql, [$value])->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $join_keys = [])
+    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [])
     {
-        $sql = $this->buildSelectionLayer($included_columns, $join_keys) . $column ?? " WHERE $column = ?";
+        $sql = $this->buildSelectionLayer($included_columns, $joined_tables) . $column ?? " WHERE $column = ?";
 
         $sort_layer = $this->applySorting($sorting);
         $sql .= !empty($sort_layer) ? " ORDER BY " . $sort_layer : '';
@@ -96,9 +93,9 @@ class BaseModel
         return $this->query($sql, $value ?? [$value])->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $join_keys = [])
+    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
     {
-        $sql = $this->buildSelectionLayer($included_columns, $join_keys) . ' WHERE 1 = 1';
+        $sql = $this->buildSelectionLayer($included_columns, $joined_tables) . ' WHERE 1 = 1';
 
         $filterResults = $this->applyFilters($filters);
         $sortingResults = $this->applySorting($sorting);
@@ -170,68 +167,49 @@ class BaseModel
 
     public function getColumns($includeID = false)
     {
-        $result = $this->query("DESCRIBE $this->table")->fetchAll(PDO::FETCH_COLUMN);
+        $result = $this->query("DESCRIBE {$this->table}")->fetchAll(PDO::FETCH_COLUMN);
 
         return $includeID ? $result : array_filter($result, function ($column) {
             return $column !== 'id';
         });
     }
 
-    public function getInternalKeysDetails()
+    public function getKeysDetails($is_internal_keys = true)
     {
-        // $sql = "SELECT 
-        //             COLUMN_NAME AS 'INT_COL', 
-        //             REFERENCED_TABLE_NAME AS 'EXT_TAB', 
-        //             REFERENCED_COLUMN_NAME AS 'EXT_COL' 
-        //         FROM 
-        //             INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
-        //         WHERE 
-        //             TABLE_SCHEMA = :databaseName
-        //         AND TABLE_NAME = :tableName
-        //         AND REFERENCED_TABLE_NAME IS NOT NULL";
+        $first_member = "COLUMN_NAME AS 'INT_COL'";
+        $second_member = "TABLE_NAME AS 'EXT_TAB'";
+        $third_member = "COLUMN_NAME AS 'EXT_COL'";
 
-        // $params = [
-        //     ':databaseName' => $_ENV['DB_NAME'],
-        //     ':tableName' => $this->table
-        // ];
-        $sql = "SELECT 
-                    COLUMN_NAME AS 'INT_COL', 
-                    REFERENCED_TABLE_NAME AS 'EXT_TAB', 
-                    REFERENCED_COLUMN_NAME AS 'EXT_COL' 
-                FROM 
-                    INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
-                WHERE 
-                    TABLE_SCHEMA = '{$_ENV['DB_NAME']}'
-                AND TABLE_NAME = '{$this->table}'
-                AND REFERENCED_TABLE_NAME IS NOT NULL";
+        $table_condition = "TABLE_NAME = '{$this->table}'";
 
-        return $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-    }
+        if ($is_internal_keys) {
+            $second_member = "REFERENCED_$second_member";
+            $third_member = "REFERENCED_$third_member";
 
-    public function getExternalKeysDetails()
-    {
-        $sql = "SELECT 
-                    REFERENCED_COLUMN_NAME AS 'INT_COL',
-                    TABLE_NAME AS 'EXT_TAB',
-                    COLUMN_NAME AS 'EXT_COL'
-                FROM
-                    INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-                WHERE
-                    REFERENCED_TABLE_SCHEMA = '{$_ENV['DB_NAME']}' 
-                AND REFERENCED_TABLE_NAME = '{$this->table}'";
+            $table_condition = "$table_condition AND REFERENCED_TABLE_NAME IS NOT NULL";
+        } else {
+            $first_member = "REFERENCED_$first_member";
+
+            $table_condition = "REFERENCED_$table_condition";
+        }
+
+        $sql = "SELECT $first_member, $second_member, $third_member 
+                FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
+                WHERE TABLE_SCHEMA = '{$_ENV['DB_NAME']}' 
+                AND $table_condition";
 
         return $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function buildSelectionLayer($included_columns = [], $join_keys = [])
     {
-        $result = "SELECT {$this->parseColumns($included_columns)}";
-
+        $selections = "SELECT {$this->parseColumns($included_columns)}";
         $join_layer = $this->parseJoinedTables($join_keys);
-        if (!empty($join_layer))
-            $result .= " {$join_layer['selects']} FROM $this->table {$join_layer['joins']}";
 
-        return $result;
+        if (!empty($join_layer['selects'] && !empty($join_layer['joins'])))
+            $selections .= " {$join_layer['selects']} FROM $this->table {$join_layer['joins']}";
+
+        return $selections;
     }
 
     public function parseColumns($included_columns = [])
@@ -242,28 +220,22 @@ class BaseModel
     public function parseJoinedTables($join_keys = [])
     {
         $join_layer = [];
+        $join_layer['selects'] = '';
+        $join_layer['joins'] = '';
 
-        foreach ($this->keys as [
-            'INT_COL' => $int_col,
-            'EXT_TAB' => $ext_tab,
-            'EXT_COL' => $ext_col
-        ]) {
-            if ($included_columns = $join_keys[$int_col]) {
-                $join_layer['selects'] = '';
-                $join_layer['joins'] = '';
-
+        foreach ($this->keys as ['INT_COL' => $int_col, 'EXT_TAB' => $ext_tab, 'EXT_COL' => $ext_col])
+            if ($included_columns = $join_keys[$ext_tab]) {
                 foreach ($included_columns as $included_column)
                     $join_layer['selects'] .= ", {$ext_tab}.{$included_column} AS {$ext_tab}_{$included_column}";
 
                 $join_layer['joins'] .= " JOIN $ext_tab ON {$this->table}.{$int_col} = {$ext_tab}.{$ext_col}";
             }
-        }
 
         return $join_layer;
     }
 
     /*******************************************************************/
-    /********************* FILTERS & SORTING LAYER *********************/
+    /************************** SIEVING LAYER **************************/
     /*******************************************************************/
 
     public function applyFilters($filters, $included_columns = [])
@@ -272,13 +244,14 @@ class BaseModel
         $params = [];
 
         foreach ($filters as $filterKey => $filterValue) {
-            if (is_array($filterValue)) { // Corrected check to use $filterValue
+            if (is_array($filterValue)) {
                 if (isset($filterValue['relatedTable'], $filterValue['values'], $filterValue['wantedColumn'])) {
-
-                    $result = $this->executeRelatedTableFilterAndGetIds($filterKey, $filterValue); // Adjusted to pass current filter info
+                    // Adjusted to pass current filter info
+                    $result = $this->executeRelatedTableFilterAndGetIds($filterKey, $filterValue);
                     $sql_filters .= ' AND ' . $result;
                 } else {
-                    $result = $this->handleRangeCondition($filterKey, $filterValue); // Assuming range conditions are structured as arrays
+                    // Assuming range conditions are structured as arrays
+                    $result = $this->handleRangeCondition($filterKey, $filterValue);
                     $sql_filters .= ' AND ' . $result['sql'];
                     $params = array_merge($params, $result['params']);
                 }

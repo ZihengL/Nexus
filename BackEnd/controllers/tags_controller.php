@@ -1,8 +1,8 @@
 <?php
 
 require_once "$path/controllers/base_controller.php";
-require_once "$path/models/game_model.php";
-require_once "$path/models/tag_model.php";
+require_once "$path/models/games_model.php";
+require_once "$path/models/tags_model.php";
 
 class TagsController extends BaseController
 {
@@ -12,7 +12,7 @@ class TagsController extends BaseController
     protected $name = "name";
 
 
-    
+
     public function __construct($central_controller, $pdo)
     {
         $this->model = new TagsModel($pdo);
@@ -99,26 +99,26 @@ class TagsController extends BaseController
 
 
     public function update($id, $data, $jwts = null)
-{
-    $isValid = $this->validateData("update", $data);
-    $isValidArray = json_decode($isValid, true); 
+    {
+        $isValid = $this->validateData("update", $data);
+        $isValidArray = json_decode($isValid, true);
 
-    if ($isValidArray['isSuccessful']) {
-        $newName = $data["newName"];
-        $similarTagExist = $this->getOne("name", $newName);
-        if ($similarTagExist) {
-            return $this->createResponse(false, 'There is already a tag with that same name');
-        }
-        $newData = ['id' => $id, 'name' => $newName];
-        if ($this->model->update($id, $newData)) {
-            return $this->createResponse(true, 'Tag has been updated');
+        if ($isValidArray['isSuccessful']) {
+            $newName = $data["newName"];
+            $similarTagExist = $this->getOne("name", $newName);
+            if ($similarTagExist) {
+                return $this->createResponse(false, 'There is already a tag with that same name');
+            }
+            $newData = ['id' => $id, 'name' => $newName];
+            if ($this->model->update($id, $newData)) {
+                return $this->createResponse(true, 'Tag has been updated');
+            } else {
+                return $this->createResponse(false, 'Failed to update tag');
+            }
         } else {
-            return $this->createResponse(false, 'Failed to update tag');
+            return $isValid;
         }
-    } else {
-        return $isValid;
     }
-}
 
 
 
@@ -133,7 +133,7 @@ class TagsController extends BaseController
         $gameExists = $this->getGamesController()->getOne('id', $gameId);
 
         $isEmpty_forCreateDelete = empty($name) || empty($gameId);
-        $isEmpty_forUpdate =empty($id) || empty($oldName) || empty($newName) || empty($gameId);
+        $isEmpty_forUpdate = empty($id) || empty($oldName) || empty($newName) || empty($gameId);
 
         if (!$gameExists) {
             return $this->createResponse(false, 'Game does not exist');
@@ -155,14 +155,5 @@ class TagsController extends BaseController
             default:
                 return $this->createResponse(false, 'error in tags_controller');
         }
-
     }
-
-
-
-
 }
-
-
-
-

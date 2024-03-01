@@ -30,6 +30,7 @@ export const getReviewsAndUsernames = async (gameID, sorting = null) => {
           review.username = userDetails.username;
         }
       }
+      
       return review;
     }));
 

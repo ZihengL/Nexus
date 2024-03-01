@@ -4,13 +4,9 @@ require_once "$path/models/base_model.php";
 
 class ReviewModel extends BaseModel
 {
-
-    protected $tableName = "reviews";
-
-
     public function __construct($pdo)
     {
-        parent::__construct($pdo, $this->tableName);
+        parent::__construct($pdo, "reviews");
     }
 
 
@@ -27,7 +23,7 @@ class ReviewModel extends BaseModel
     // }
 
 
- 
+
 
 
 

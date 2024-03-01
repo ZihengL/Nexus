@@ -9,7 +9,7 @@ class UsersModel extends BaseModel
     {
         $tableName = "users";
 
-        parent::__construct($pdo, $tableName);
+        parent::__construct($pdo, "users");
     }
 
     //Gets

@@ -9,29 +9,28 @@ use Firebase\JWT\Key;
 
 class TokensController extends BaseController
 {
-    // TOKENS TYPES
+    // TOKEN TYPES
     private const REFRESH = 'refresh_token';
     private const REFRESH_TIME = 604800;
     private const ACCESS = 'access_token';
     private const ACCESS_TIME = 3600;
-    private const ALGORITHM = 'HS256';
-    private const HASHING = 'sha256';
 
-    // COLUMNS
+    // IN DB
     protected const ID = 'id';
     protected const SUB = 'sub';
     protected const EXP = 'exp';
-    protected const SHA = 'sha';    // hashed
+    protected const SHA = 'sha';
 
-    // EXCLUDED IN DB
+    // NOT IN DB
     protected const ISS = 'iss';
     protected const IAT = 'iat';
     protected const AUD = 'aud';
 
     // ENV
-    private $access_key;        // Permission for secure API calls
-    private $refresh_key;      // Authentified for access keys issuing
-    private $algorithm;
+    private $access_key;
+    private $refresh_key;
+    private $encoding_alg;
+    private $hashing_alg;
     private $issuer;
     private $audience;
 
@@ -39,7 +38,8 @@ class TokensController extends BaseController
     {
         $this->access_key = $_ENV['JWT_ACCESS_KEY'];
         $this->refresh_key = $_ENV['JWT_REFRESH_KEY'];
-        $this->algorithm = $_ENV['JWT_ALGORITHM'];
+        $this->encoding_alg = $_ENV['JWT_ENCODING_ALGORITHM'];
+        $this->hashing_alg = $_ENV['JWT_HASHING_ALGORITHM'];
         $this->issuer = $_ENV['JWT_ISSUER'];
         $this->audience = $_ENV['JWT_AUDIENCE'];
 
@@ -56,63 +56,53 @@ class TokensController extends BaseController
         try {
             $key = $is_refresh ? $this->refresh_key : $this->access_key;
 
-            return (array) JWT::decode($jwt, new Key($key, self::ALGORITHM));
+            return (array) JWT::decode($jwt, new Key($key, $this->encoding_alg));
         } catch (Exception $e) {
             return false;
         }
     }
 
-    private function generateRefreshToken($user_id)
+    private function createPayload($user_id, $expiration)
     {
         $issued_at = time();
-        $payload = [
+
+        return [
             self::SUB => $user_id,
             self::IAT => $issued_at,
-            self::EXP => $issued_at + self::REFRESH_TIME,
+            self::EXP => $issued_at + $expiration,
             self::ISS => $this->issuer,
             self::AUD => $this->audience
         ];
+    }
 
-        $jwt = JWT::encode($payload, $this->refresh_key, self::ALGORITHM);
-        if ($this->create($jwt, $payload)) {
-            return $jwt;
-        }
+    private function generateRefreshToken($user_id)
+    {
+        $payload = $this->createPayload($user_id, self::REFRESH_TIME);
+        $jwt = JWT::encode($payload, $this->refresh_key, $this->encoding_alg);
+
+        return $this->create($jwt, $payload) ? $jwt : null;
+    }
+
+    public function refreshAccessToken($refresh_jwt)
+    {
+        if ($decoded = $this->decodeToken($refresh_jwt, true))
+            return $this->generateAccessToken($decoded[self::SUB]);
 
         return null;
     }
 
     private function generateAccessToken($user_id)
     {
-        $issued_at = time();
-        $payload = [
-            self::SUB => $user_id,
-            self::IAT => $issued_at,
-            self::EXP => $issued_at + self::ACCESS_TIME,
-            self::ISS => $this->issuer,
-            self::AUD => $this->audience
-        ];
+        $payload = $this->createPayload($user_id, self::ACCESS_TIME);
 
-        return JWT::encode($payload, $this->access_key, self::ALGORITHM);
-    }
-
-    public function refreshAccessToken($refresh_jwt)
-    {
-        $decoded = $this->decodeToken($refresh_jwt, true);
-
-        $issued_at = time();
-        $decoded[self::IAT] = $issued_at;
-        $decoded[self::EXP] = $issued_at + self::ACCESS_TIME;
-
-        return JWT::encode($decoded, $this->access_key, self::ALGORITHM);
+        return JWT::encode($payload, $this->access_key, $this->encoding_alg);
     }
 
     public function generateTokensOnValidation($user, $email, $password)
     {
         if ($this->validateUser($user, $email, $password)) {
-            $user_id = $user['id'];
-
-            $refresh_jwt = $this->generateRefreshToken($user_id);
-            $access_jwt = $this->generateAccessToken($user_id);
+            $refresh_jwt = $this->generateRefreshToken($user['id']);
+            $access_jwt = $this->generateAccessToken($user['id']);
 
             return [self::ACCESS => $access_jwt, self::REFRESH => $refresh_jwt];
         }
@@ -132,17 +122,18 @@ class TokensController extends BaseController
 
     public function validateRefreshToken($user_id, $jwt)
     {
-        $stored = $this->getByHashcode($jwt);
+        if ($stored = $this->getByHashcode($jwt))
+            return $stored[self::EXP] > time() && $stored[self::SUB] === $user_id;
 
-        return $stored && $stored[self::EXP] > time() &&
-            $stored[self::SUB] === $user_id;
+        return false;
     }
 
     public function validateAccessToken($jwt)
     {
-        $decoded = $this->decodeToken($jwt);
+        if ($decoded = $this->decodeToken($jwt))
+            return $decoded[self::EXP] > time();
 
-        return $decoded && $decoded[self::EXP] > time();
+        return false;
     }
 
     public function validateTokens($user_id, $jwts)
@@ -150,15 +141,15 @@ class TokensController extends BaseController
         $access_jwt = $jwts[self::ACCESS];
         $refresh_jwt = $jwts[self::REFRESH];
 
-        if ($this->validateAccessToken($access_jwt)) {
+        if ($this->validateAccessToken($access_jwt))
             return $jwts;
-        } elseif ($this->validateRefreshToken($user_id, $refresh_jwt)) {
-            $jwts[self::ACCESS] = $this->refreshAccessToken($refresh_jwt);
 
-            return $jwts;
-        } else {
-            return null;
-        }
+        if ($this->validateRefreshToken($user_id, $refresh_jwt))
+            $jwts[self::ACCESS] = $this->refreshAccessToken($refresh_jwt);
+        else
+            $jwts = null;
+
+        return $jwts;
     }
 
     /*******************************************************************/
@@ -172,13 +163,13 @@ class TokensController extends BaseController
 
     protected function getByHashcode($jwt)
     {
-        return $this->getOne(self::SHA, hash(self::HASHING, $jwt));
+        return $this->getOne(self::SHA, hash($this->hashing_alg, $jwt));
     }
 
     public function create($jwt, $decoded = null, $jwts = null)
     {
         if ($jwt && $decoded) {
-            $decoded[self::SHA] = hash(self::HASHING, $jwt);
+            $decoded[self::SHA] = hash($this->hashing_alg, $jwt);
 
             return parent::create($decoded);
         }
@@ -188,10 +179,8 @@ class TokensController extends BaseController
 
     public function update($id, $jwt, $jwts = null)
     {
-        $decoded = $this->decodeToken($jwt, true);
-
-        if ($decoded) {
-            $decoded[self::SHA] = hash(self::HASHING, $jwt);
+        if ($decoded = $this->decodeToken($jwt, true)) {
+            $decoded[self::SHA] = hash($this->hashing_alg, $jwt);
 
             return parent::update($id, $decoded);
         }
@@ -201,9 +190,7 @@ class TokensController extends BaseController
 
     public function delete($jwt, $jwts = null)
     {
-        $stored = $this->getByHashcode($jwt);
-
-        if ($stored) {
+        if ($stored = $this->getByHashcode($jwt)) {
             return parent::delete($stored[self::ID]);
         }
 

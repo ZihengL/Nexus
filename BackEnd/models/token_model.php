@@ -8,7 +8,7 @@ class TokenModel extends BaseModel
     {
         $table = "tokens";
 
-        parent::__construct($pdo, $table);
+        parent::__construct($pdo, "tokens");
     }
 
     public function isExpired($id)

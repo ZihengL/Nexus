@@ -1,7 +1,7 @@
 <?php
 
 require_once "$path/controllers/base_controller.php";
-require_once "$path/models/game_model.php";
+require_once "$path/models/games_model.php";
 
 class GamesController extends BaseController
 {
@@ -17,76 +17,34 @@ class GamesController extends BaseController
 
     public function __construct($central_controller, $pdo)
     {
-        $this->model = new GameModel($pdo);
+        $this->model = new GamesModel($pdo);
         parent::__construct($central_controller);
     }
 
-    // GETTERS
+    /*******************************************************************/
+    /***************************** GETTERS *****************************/
+    /*******************************************************************/
 
-    // public function getAll($included_columns = [], $sorting = [])
-    // {
-    //     if (empty($sorting)) {
-    //         $sorting = [$this->ratingAverage => true];
-    //     }
-
-    //     return $this->model->getAll_games($sorting);
-    // }
-
+    // $filters = ['tagId' => ['relatedTable' => 'gamesTags', 'values' => ['1', '3'], 'wantedColumn' => 'gameId']];
+    // $results_1 = $this->centralController->games_controller->getAllMatching($filters, null, null);
     public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [])
     {
-        // $filters = ['tagId' => ['relatedTable' => 'gamesTags', 'values' => ['1', '3'], 'wantedColumn' => 'gameId']];
-        // $results_1 = $this->centralController->games_controller->getAllMatching($filters, null, null);
-        if (empty($included_columns)) {
-            $included_columns = [];
-        }
-
-        if (empty($sorting)) {
-            $sorting = [$this->ratingAverage => true];
-        }
+        $included_columns = empty($included_columns) ? [] : $included_columns;
+        $sorting = empty($sorting) ?  [$this->ratingAverage => true] : $sorting;
 
         return $this->model->getAll($column, $value, $included_columns, $sorting, $joined_tables = []);
     }
 
     public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
     {
-        if (empty($sorting)) {
-            $sorting = [$this->ratingAverage => true];
-        }
+        $sorting = empty($sorting) ?  [$this->ratingAverage => true] : $sorting;
 
         return parent::getAllMatching($filters, $sorting, $included_columns, $joined_tables);
     }
 
-    public function getById($id)
-    {
-        return $this->model->getOne($this->id, $id);
-    }
-
-    public function getByDeveloperID($developerID)
-    {
-        return $this->model->getOne($this->developerID, $developerID);
-    }
-
-    public function getByStripeID($stripeID)
-    {
-        return $this->model->getOne($this->stripeID, $stripeID);
-    }
-
-    public function getByTitle($title)
-    {
-        return $this->model->getOne($this->title, $title);
-    }
-
-    public function getByDescription($description)
-    {
-        return $this->model->getOne($this->description, $description);
-    }
-
-    public function getByMedia($media)
-    {
-        return $this->model->getOne($this->media, $media);
-    }
-
-    // Other CRUDs 
+    /*******************************************************************/
+    /****************************** CRUDS ******************************/
+    /*******************************************************************/
 
     // TODO: LINK BACK TO USER AUTH
     public function create($data, $jwts = null)

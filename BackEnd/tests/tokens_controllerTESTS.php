@@ -25,7 +25,7 @@ class TokensController extends BaseController
     // ENV
     private $access_key;
     private $refresh_key;
-    private $algorithm;
+    private $encoding_alg;
     private $issuer;
     private $audience;
 
@@ -64,7 +64,7 @@ class TokensController extends BaseController
             self::SUB => $user_id
         ];
 
-        return JWT::encode($payload, $key, $this->algorithm);
+        return JWT::encode($payload, $key, $this->encoding_alg);
     }
 
     private function decodeToken($jwt, $is_refresh = false)
@@ -72,7 +72,7 @@ class TokensController extends BaseController
         $key = $is_refresh ? $this->refresh_key : $this->access_key;
 
         try {
-            return (array) JWT::decode($jwt, new Key($key, $this->algorithm));
+            return (array) JWT::decode($jwt, new Key($key, $this->encoding_alg));
         } catch (Exception $e) {
             return false;
         }
