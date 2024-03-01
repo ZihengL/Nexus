@@ -13,17 +13,17 @@
     <v-btn class="bordered-btn" @click="createData">create</v-btn>
   </div>
   <div>
-    <ReviewsListComponent :sorting="{timestamp: false}"></ReviewsListComponent>
+   <!-- <ReviewsListComponent :sorting="{timestamp: false}"></ReviewsListComponent>-->
   </div>
 </template>
 
 <script>
 import { fetchData } from "../JS/fetch";
-import ReviewsListComponent from "../components/reviewsListComponent.vue";
+//import ReviewsListComponent from "../components/reviewsListComponent.vue";
 
 export default {
   components: {
-    ReviewsListComponent,
+    //ReviewsListComponent,
   },
   data() {
     return {
