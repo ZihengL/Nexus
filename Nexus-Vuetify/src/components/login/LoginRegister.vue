@@ -75,6 +75,7 @@
 <script setup>
 import loginScript from '../../JS/LoginScript.js';
 import { ref, onMounted, defineEmits } from 'vue';
+import { login } from '../../JS/fetchServices';
 import { fetchData } from '../../JS/fetch';
 
 const isLogin = ref(true);
@@ -104,19 +105,10 @@ const toggleProfileLog = async () => {
     email: email.value,
     password: password.value,
   };
-  console.log("var : ", email, " var : ", password);
+  //console.log("var : ", email, " var : ", password);
   const loginBody = { login };
   try {
-    const loginResponse = await fetchData(
-      "users",
-      "login",
-      null,
-      null,
-      null,
-      null,
-      loginBody,
-      "POST"
-    );
+    const loginResponse = login(loginBody)
     //console.log("Login successful : ", loginResponse);
     if (loginResponse) {
       loginTokens_access_token = loginResponse.access_token;
@@ -139,7 +131,7 @@ const toggleProfileLog = async () => {
       localStorage.setItem("idDev", devId[0].id);
 
       console.log("id : ", idDev);
-      emit('showProfile');
+      //emit('showProfile');
     }
 
   }
