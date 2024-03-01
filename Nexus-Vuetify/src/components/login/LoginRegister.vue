@@ -75,7 +75,7 @@
 <script setup>
 import loginScript from '../../JS/LoginScript.js';
 import { ref, onMounted, defineEmits } from 'vue';
-import { login } from '../../JS/fetchServices';
+import { loginService } from '../../JS/fetchServices';
 import { fetchData } from '../../JS/fetch';
 
 const isLogin = ref(true);
@@ -106,10 +106,10 @@ const toggleProfileLog = async () => {
     password: password.value,
   };
   //console.log("var : ", email, " var : ", password);
-  const loginBody = { login };
+  //const login = { login };
   try {
-    const loginResponse = login(loginBody)
-    //console.log("Login successful : ", loginResponse);
+    const loginResponse =  await loginService(login)
+    console.log("Login successful : ", loginResponse);
     if (loginResponse) {
       loginTokens_access_token = loginResponse.access_token;
       loginTokens_refresh_token = loginResponse.refresh_token;

@@ -12,16 +12,18 @@ export const getAll = async (table, column = null, value = null, includedColumns
 };
 
 
-export const login = async (jsonObject) => {
+export const loginService = async (login) => {
+  //console.log(jsonObject)
   let body = {
-    jsonObject
+    login
   }
+  //console.log(body)
   let data = await fetchData("users", "login", null, null, null, null, body, "POST");
   return data
 };
 
 
-export const register = async (jsonObject) => {
+export const registerService = async (jsonObject) => {
   let body = {
     jsonObject
   }
@@ -30,7 +32,7 @@ export const register = async (jsonObject) => {
 };
 
 
-export const logout = async (jsonObject) => {
+export const logoutService = async (jsonObject) => {
   let body = {
     jsonObject
   }
