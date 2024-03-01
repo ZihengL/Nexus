@@ -70,6 +70,7 @@
 <script setup>
 import ListeDeJeu from './ListeDeJeu.vue';
 import { fetchData } from '../../JS/fetch';
+import { logoutService } from '../../JS/fetchServices';
 import { defineProps, ref, onMounted, defineEmits } from 'vue';
 //import Amis from './amis.vue';
 
@@ -110,7 +111,7 @@ const toggleSignup = () => {
   }
 };
 
-const toggleLogout = () => {
+const toggleLogout = async () => {
   loginTokens_access_token = localStorage.getItem("accessToken");
   loginTokens_refresh_token = localStorage.getItem("refreshToken");
 
@@ -131,16 +132,7 @@ const toggleLogout = () => {
 
   const body = { logout };
 
-  let results = fetchData(
-    "users",
-    "logout",
-    null,
-    null,
-    null,
-    null,
-    body,
-    "POST"
-  );
+  let results = await logoutService(body)
   console.log(results);
   emit('showLogin')
 }
