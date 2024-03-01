@@ -205,7 +205,7 @@ function handleLogin($centralController, $decodedData, $controllerName, $crud_ac
     $data = $decodedData['login'];
     $email = $data["email"];
     $pwd = $data["password"];
-    // echo "<br>  getByColumnName : " . $crud_action;
+    // echo "<br>  crud_action : " . $crud_action ."<br>";
     // echo "Email Address: ", print_r($email, true), "<br>";
     // echo "Password: ", print_r($pwd, true), "<br>";
     return $centralController->$controllerName->$crud_action($email, $pwd);

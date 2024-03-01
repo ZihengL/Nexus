@@ -23,18 +23,18 @@ export const loginService = async (login) => {
 };
 
 
-export const registerService = async (jsonObject) => {
+export const registerService = async (register) => {
   let body = {
-    jsonObject
+    register
   }
   let data = await fetchData("users", "register", null, null, null, null, body, "POST");
   return data
 };
 
 
-export const logoutService = async (jsonObject) => {
+export const logoutService = async (logout) => {
   let body = {
-    jsonObject
+    logout
   }
   let data = await fetchData("users", "logout", null, null, null, null, body, "POST");
   return data

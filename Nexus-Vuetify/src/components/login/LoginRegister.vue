@@ -116,21 +116,21 @@ const toggleProfileLog = async () => {
       localStorage.setItem("accessToken", loginResponse.access_token);
       localStorage.setItem("refreshToken", loginResponse.refresh_token);
 
-      const filters = {
-        email: email.value,
-      }
-      const sorting = {
-        id: false
-      }
-      const includedColumns = ['id']
-      const jsonBody = { filters, sorting, includedColumns }
+      // const filters = {
+      //   email: email.value,
+      // }
+      // const sorting = {
+      //   id: false
+      // }
+      // const includedColumns = ['id']
+      // const jsonBody = { filters, sorting, includedColumns }
 
-      const devId = await fetchData('users', 'getAllMatching', null, null, null, null, jsonBody, 'POST');
-      console.log('devs : ', devId[0].id)
-      idDev = devId[0].id;
-      localStorage.setItem("idDev", devId[0].id);
+      // const devId = await fetchData('users', 'getAllMatching', null, null, null, null, jsonBody, 'POST');
+      // console.log('devs : ', devId[0].id)
+      // idDev = devId[0].id;
+      // localStorage.setItem("idDev", devId[0].id);
 
-      console.log("id : ", idDev);
+      // console.log("id : ", idDev);
       //emit('showProfile');
     }
 
