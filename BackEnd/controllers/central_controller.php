@@ -1,11 +1,11 @@
 <?php
 
 require_once "$path/controllers/database_manager.php";
-require_once "$path/controllers/games_controller.php";
-require_once "$path/controllers/users_controller.php";
 require_once "$path/controllers/tokens_controller.php";
+require_once "$path/controllers/users_controller.php";
+require_once "$path/controllers/games_controller.php";
 require_once "$path/controllers/reviews_controller.php";
-require_once "$path/controllers/gameTags_controller.php";
+require_once "$path/controllers/gamestags_controller.php";
 require_once "$path/controllers/tags_controller.php";
 // require_once "$path/controllers/google/client_manager.php";
 
@@ -25,7 +25,7 @@ class CentralController
     public $users_controller;
     public $games_controller;
     public $reviews_controller;
-    public $gamestags_contoller;
+    public $gametags_controller;
     public $tags_controller;
 
     public $controllers_array = [];
@@ -45,10 +45,13 @@ class CentralController
         $this->users_controller = new UsersController($this, $pdo);
         $this->games_controller = new GamesController($this, $pdo);
         $this->reviews_controller = new ReviewsController($this, $pdo);
-        $this->gamestags_contoller = new GameTagsController($this, $pdo);
+        $this->gametags_controller = new GamestagsController($this, $pdo);
         $this->tags_controller = new TagsController($this, $pdo);
 
         $this->controllers_array = $this->getControllersAsArray();
+
+        include_once "$path/tests/queries.php";
+        $TestQueries = new TestQueries($pdo);
     }
 
     public static function getInstance()
@@ -70,7 +73,7 @@ class CentralController
             $this->users_controller,
             $this->games_controller,
             $this->reviews_controller,
-            $this->gamestags_contoller,
+            $this->gametags_controller,
             $this->tags_controller
         ];
     }

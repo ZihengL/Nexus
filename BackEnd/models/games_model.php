@@ -91,7 +91,7 @@ class GamesModel extends BaseModel
     // }
 
     //Tools
-    function appendTagsToGames($results)
+    public function appendTagsToGames($results)
     {
         // Organize games and their tags
         $games = [];

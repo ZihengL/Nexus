@@ -1,11 +1,14 @@
 <?php
 //index.php
 
-function printall($array)
+function printall($item)
 {
     echo '<pre>';
-    print_r($array);
-    echo '</pre>';
+    if (is_array($item))
+        print_r($item);
+    else
+        echo $item;
+    echo '</pre><hr>';
 }
 
 
@@ -85,7 +88,7 @@ $decodedData = json_decode($rawData, true);
 // print_r($rawData);
 
 // console.log(" response : ", response.text());
-      // console.log(' response : ', response.text())
+// console.log(' response : ', response.text())
 // Routing
 switch ($method) {
     case 'GET':
@@ -95,7 +98,7 @@ switch ($method) {
         //   echo "<br>  sorting : " . $sorting["timestamp"] . "<br>";
         // echo "<br>  includedColumns : " . print_r($includedColumns, true);
         // echo "<br>  value : " . $value ."<br> " ;
-       
+
         handleGet($table, $crud_action, $central_controller, $columName, $value, $includedColumns, $sorting);
         break;
     case 'POST':

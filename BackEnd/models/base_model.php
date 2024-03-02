@@ -2,6 +2,8 @@
 
 class BaseModel
 {
+    public static $print_queries = true;
+
     protected $pdo;
     public $table;
     public $columns = [];
@@ -39,6 +41,11 @@ class BaseModel
                 $stmt->execute(array_values($params));
             }
 
+            if (self::$print_queries) {
+                echo "<h5>{$this->table}</h5><br>";
+                printall($stmt);
+            }
+
             return $stmt;
         } catch (PDOException $e) {
             throw new Exception("Database query error: " . $e->getMessage());
@@ -54,6 +61,11 @@ class BaseModel
                 $stmt->bindValue($param, $value);
             }
             $stmt->execute();
+
+            if (self::$print_queries) {
+                echo "<h5>{$this->table}</h5><br>";
+                printall($stmt);
+            }
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -82,7 +94,6 @@ class BaseModel
     {
         $sql = $this->buildSelectionLayer($included_columns, $joined_tables) . " WHERE $this->table.$column = ?";
 
-
         return $this->query($sql, [$value])->fetch(PDO::FETCH_ASSOC);
     }
 
@@ -105,7 +116,6 @@ class BaseModel
     public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
     {
         $sql = $this->buildSelectionLayer($included_columns, $joined_tables) . ' WHERE 1 = 1';
-        printall($sql);
 
         $filterResults = $this->applyFilters($filters);
         $sortingResults = $this->applySorting($sorting);
@@ -207,7 +217,19 @@ class BaseModel
                 WHERE TABLE_SCHEMA = '{$_ENV['DB_NAME']}' 
                 AND $table_condition";
 
-        return $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        $keys_details = $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($keys_details as $key => $values) {
+            // TODO: CHECK IF RELATIONSHIP MULTIPLICITY CAN BE COMPUTED IN THIS QUERY - SEE PARSEJOINEDTABLES
+        }
+
+        return $keys_details;
+    }
+
+    public function getAdjacentKeysDetails($table)
+    {
+        $sql = "SELECT
+                
+        ";
     }
 
     public function buildSelectionLayer($included_columns = [], $join_keys = [])
@@ -237,7 +259,8 @@ class BaseModel
                 foreach ($included_columns as $join_column)
                     $join_layer['selects'] .= ", {$ref_tab}.{$join_column} AS {$ref_tab}_{$join_column}";
 
-                $join_layer['joins'] .= " JOIN $ref_tab ON {$this->table}.{$int_col} = {$ref_tab}.{$ext_col}";
+                // TODO: IF MULTIPLICITY CAN BE COMPUTED, CHANGE THE JOIN TYPE HERE
+                $join_layer['joins'] .= " FULL JOIN $ref_tab ON {$this->table}.{$int_col} = {$ref_tab}.{$ext_col}";
             }
 
         return $join_layer;

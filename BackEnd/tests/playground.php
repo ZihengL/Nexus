@@ -3,9 +3,38 @@
 global $path;
 $path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd/';
 require_once $path . 'tests/temp_globals.php';
+require_once $path . 'models/base_model.php';
+
+BaseModel::$print_queries = true;
 
 $users_ctrl = $central_controller->users_controller;
 $games_ctrl = $central_controller->games_controller;
+$gametags_ctrl = $central_controller->gametags_controller;
+
+
+
+
+$arr1 = ['a' => 'tqifh', 'b' => 'kjahsdkjla', 'c' => 4231432];
+$arr2 = ['c' => 213125];
+$arr3 = array_intersect_key($arr1, $arr2);
+
+// print_r($arr3);
+// printall(implode(", table.", array_keys($arr1)));
+
+$joined_tables = [
+    'users' => ['id', 'username'],
+    'gamestags' => ['gameId']
+];
+
+$joined_tables = [
+    'gamestags' => ['gameId']
+];
+// print_r($joined_tables['users']);
+
+$result = $games_ctrl->getOne('title', 'Space Odyssey', [], $joined_tables);
+
+printall($result);
+
 
 // echo 'OLD<pre>';
 // print_r($users);
@@ -89,24 +118,6 @@ $games_ctrl = $central_controller->games_controller;
 //     echo print_r($game);
 //     echo '</pre><br>';
 // }
-
-
-$arr1 = ['a' => 'tqifh', 'b' => 'kjahsdkjla', 'c' => 4231432];
-$arr2 = ['c' => 213125];
-$arr3 = array_intersect_key($arr1, $arr2);
-
-// print_r($arr3);
-// printall(implode(", table.", array_keys($arr1)));
-
-$joined_tables = [
-    'users' => ['id', 'username'],
-    'gamestags' => ['gameId']
-];
-// print_r($joined_tables['users']);
-
-$result = $games_ctrl->getOne('title', 'Space Odyssey', [], $joined_tables);
-
-printall($result);
 
 // $keys = $games_ctrl->model->keys;
 

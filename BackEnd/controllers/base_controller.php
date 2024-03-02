@@ -63,7 +63,7 @@ class BaseController
 
     protected function getGameTagsController()
     {
-        return $this->central_controller->gamestags_contoller;
+        return $this->central_controller->gametags_controller;
     }
 
     /*******************************************************************/
