@@ -25,7 +25,7 @@ class GamesModel extends BaseModel
         $formattedData['id'] = $id;
 
         $sql = "UPDATE $this->table SET $pairs WHERE id = ?";
-        // print_r($sql);
+
         if ($this->query($sql, $formattedData)) {
             return true;
         } else {

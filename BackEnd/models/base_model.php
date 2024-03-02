@@ -5,7 +5,7 @@ class BaseModel
     protected $pdo;
     public $table;
     public $columns = [];
-    private $keys = [];
+    protected $keys = [];
 
     protected function __construct($pdo, $table, $require_id = false)
     {
@@ -41,8 +41,6 @@ class BaseModel
 
             return $stmt;
         } catch (PDOException $e) {
-            // echo '<br>err<br>' . $sql . '<br>err<br>';
-
             throw new Exception("Database query error: " . $e->getMessage());
         }
     }
@@ -59,8 +57,6 @@ class BaseModel
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            echo '<br>err<br>' . $sql . '<br>err<br>';
-
             throw new Exception("Database query error: " . $e->getMessage());
         }
     }
@@ -84,24 +80,32 @@ class BaseModel
 
     public function getOne($column, $value, $included_columns = [], $joined_tables = [])
     {
-        $sql = $this->buildSelectionLayer($included_columns, $joined_tables) . "WHERE $column = ?";
+        $sql = $this->buildSelectionLayer($included_columns, $joined_tables) . " WHERE $this->table.$column = ?";
+
 
         return $this->query($sql, [$value])->fetch(PDO::FETCH_ASSOC);
     }
 
     public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [])
     {
-        $sql = $this->buildSelectionLayer($included_columns, $joined_tables) . $column ?? " WHERE $column = ?";
+        $sql = $this->buildSelectionLayer($included_columns, $joined_tables);
+        $params = [];
+
+        if ($column && $value) {
+            $sql .= " WHERE $this->table.$column = ?";
+            $params = [$value];
+        }
 
         $sort_layer = $this->applySorting($sorting);
-        $sql .= !empty($sort_layer) ? " ORDER BY " . $sort_layer : '';
+        $sql .= !empty($sort_layer) ? " ORDER BY $sort_layer" : '';
 
-        return $this->query($sql, [$value] ?? [])->fetchAll(PDO::FETCH_ASSOC);
+        return $this->query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
     {
         $sql = $this->buildSelectionLayer($included_columns, $joined_tables) . ' WHERE 1 = 1';
+        printall($sql);
 
         $filterResults = $this->applyFilters($filters);
         $sortingResults = $this->applySorting($sorting);
@@ -110,7 +114,6 @@ class BaseModel
         $params = $filterResults['params'];
 
         $sqlWithFiltersAndSorting = $sql . $sortingResults ? "$sqlWithFilters ORDER BY $sortingResults" : $sqlWithFilters;
-        // $sqlWithFiltersAndSorting = $sql . $sqlWithFiltersAndSorting;
 
         return $this->bindingQuery($sqlWithFiltersAndSorting, $params);
     }
@@ -209,18 +212,16 @@ class BaseModel
 
     public function buildSelectionLayer($included_columns = [], $join_keys = [])
     {
-        $selections = "SELECT {$this->parseColumns($included_columns)}";
-        $join_layer = $this->parseJoinedTables($join_keys);
+        $columns = $this->parseColumns($included_columns);
+        $joins = $this->parseJoinedTables($join_keys);
 
-        if (!empty($join_layer['selects'] && !empty($join_layer['joins'])))
-            $selections .= " {$join_layer['selects']} FROM $this->table {$join_layer['joins']}";
-
-        return $selections;
+        return "SELECT $columns {$joins['selects']} FROM {$this->table} {$joins['joins']}";
     }
 
     public function parseColumns($included_columns = [])
     {
-        return "{$this->table}." . empty($included_columns) ? '*' : implode(", {$this->table}.", $included_columns);
+        // return "{$this->table}." . empty($included_columns) ? '*' : implode(", {$this->table}.", $included_columns);
+        return $this->table . '.' . implode(", {$this->table}.", $included_columns);
     }
 
     public function parseJoinedTables($joined_tables = [])
@@ -233,22 +234,11 @@ class BaseModel
             if ($keyset = $this->keys[$ref_tab]) {
                 ['INT_COL' => $int_col, 'EXT_COL' => $ext_col] = $keyset;
 
-                foreach ($included_columns as $included_column)
-                    $join_layer['selects'] .= ", {$ref_tab}.{$included_column} AS {$ref_tab}_{$included_column}";
+                foreach ($included_columns as $join_column)
+                    $join_layer['selects'] .= ", {$ref_tab}.{$join_column} AS {$ref_tab}_{$join_column}";
 
                 $join_layer['joins'] .= " JOIN $ref_tab ON {$this->table}.{$int_col} = {$ref_tab}.{$ext_col}";
             }
-
-
-        // foreach ($this->keys as ['INT_COL' => $int_col, 'EXT_TAB' => $ext_tab, 'EXT_COL' => $ext_col]) {
-
-        //     if ($included_columns = $joined_tables[$ext_tab]) {
-        //         foreach ($included_columns as $included_column)
-        //             $join_layer['selects'] .= ", {$ext_tab}.{$included_column} AS {$ext_tab}_{$included_column}";
-
-        //         $join_layer['joins'] .= " JOIN $ext_tab ON {$this->table}.{$int_col} = {$ext_tab}.{$ext_col}";
-        //     }
-        // }
 
         return $join_layer;
     }
@@ -262,21 +252,21 @@ class BaseModel
         $sql_filters = "";
         $params = [];
 
-        foreach ($filters as $filterKey => $filterValue) {
-            if (is_array($filterValue)) {
-                if (isset($filterValue['relatedTable'], $filterValue['values'], $filterValue['wantedColumn'])) {
+        foreach ($filters as $key => $value) {
+            if (is_array($value)) {
+                if (isset($value['relatedTable'], $value['values'], $value['wantedColumn'])) {
                     // Adjusted to pass current filter info
-                    $result = $this->executeRelatedTableFilterAndGetIds($filterKey, $filterValue);
+                    $result = $this->executeRelatedTableFilterAndGetIds($key, $value);
                     $sql_filters .= ' AND ' . $result;
                 } else {
                     // Assuming range conditions are structured as arrays
-                    $result = $this->handleRangeCondition($filterKey, $filterValue);
+                    $result = $this->handleRangeCondition($key, $value);
                     $sql_filters .= ' AND ' . $result['sql'];
                     $params = array_merge($params, $result['params']);
                 }
             } else {
-                $sql_filters .= " AND $filterKey = :$filterKey";
-                $params[":$filterKey"] = $filterValue;
+                $sql_filters .= " AND $key = :$key";
+                $params[":$key"] = $value;
             }
         }
 
@@ -323,7 +313,10 @@ class BaseModel
 
         // Your existing SQL construction
         $placeholders = implode(', ', array_fill(0, count($filterValues), '?'));
-        $sql = "SELECT {$wantedColumn} FROM {$relatedTable}  WHERE {$filterKey} IN ($placeholders)";
+        $sql = "SELECT {$wantedColumn} 
+                FROM {$relatedTable}  
+                WHERE {$filterKey} 
+                IN ($placeholders)";
 
         // Prepare and execute the query
         $stmt = $this->pdo->prepare($sql);

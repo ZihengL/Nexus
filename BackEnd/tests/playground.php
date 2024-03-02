@@ -98,10 +98,15 @@ $arr3 = array_intersect_key($arr1, $arr2);
 // print_r($arr3);
 // printall(implode(", table.", array_keys($arr1)));
 
-$joined_tables = ['users' => ['id', 'username']];
+$joined_tables = [
+    'users' => ['id', 'username'],
+    'gamestags' => ['gameId']
+];
 // print_r($joined_tables['users']);
 
-$result = $games_ctrl->getAllMatching([], [], [], $joined_tables);
+$result = $games_ctrl->getOne('title', 'Space Odyssey', [], $joined_tables);
+
+printall($result);
 
 // $keys = $games_ctrl->model->keys;
 
