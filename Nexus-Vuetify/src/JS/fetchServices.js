@@ -1,7 +1,7 @@
 import { fetchData } from "./fetch";
 
 export const getOne = async (table, column, value, includedColumns = null, sorting = null) => {
-  let data = await fetchData(table, "getOne", column, value, includedColumns, sorting, null, "GET");
+  let data = await fetchData(table, "getOne", column, value, null, null, null, "GET");
   return data;
 };
 
@@ -23,11 +23,11 @@ export const loginService = async (login) => {
 };
 
 
-export const registerService = async (register) => {
+export const registerService = async (createData) => {
   let body = {
-    register
+    createData
   }
-  let data = await fetchData("users", "register", null, null, null, null, body, "POST");
+  let data = await fetchData("users", "create", null, null, null, null, body, "POST");
   return data
 };
 

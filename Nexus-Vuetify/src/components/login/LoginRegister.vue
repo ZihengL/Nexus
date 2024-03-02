@@ -95,14 +95,14 @@ let passwordConfSign = ref(null);
 
 const toggleLogin = () => {
   isLogin.value = true;
-  console.log("c'est true");
+  //console.log("c'est true");
   const formInner = document.querySelector(".form-inner");
   formInner.style.height = '45svh';
 };
 
 const toggleSignup = () => {
   isLogin.value = false;
-  console.log("c'est false");
+  //console.log("c'est false");
   const formInner = document.querySelector(".form-inner");
   formInner.style.height = '80svh';
 };
@@ -116,7 +116,7 @@ const toggleProfileLog = async () => {
   //const login = { login };
   try {
     const loginResponse =  await loginService(login)
-    console.log("Login successful : ", loginResponse);
+    //console.log("Login successful : ", loginResponse);
     if (loginResponse) {
       loginTokens_access_token = loginResponse.access_token;
       loginTokens_refresh_token = loginResponse.refresh_token;
@@ -133,11 +133,11 @@ const toggleProfileLog = async () => {
       const jsonBody = { filters, sorting, includedColumns }
 
       const devId = await fetchData('users', 'getAllMatching', null, null, null, null, jsonBody, 'POST');
-      console.log('devs : ', devId[0].id)
+      //console.log('devs : ', devId[0].id)
       idDev = devId[0].id;
       localStorage.setItem("idDev", devId[0].id);
 
-      console.log("id : ", idDev);
+      //console.log("id : ", idDev);
       emit('showProfile');
     }
 
@@ -151,18 +151,21 @@ const toggleProfileSign = async () =>{
     email: email.value,
     username: usernameSign.value,
     password: password.value,
-    passwordConf: passwordConfSign.value,
 
     lastname: !lastnameSign.value ? lastnameSign.value : null,
     firstname: !firstnameSign.value ? firstnameSign.value : null,
     tel: !telSign.value ? telSign.value : null,
   };
-  if( createData.password.value === createData.email ){
+  console.log('createData : ' ,createData);
+  console.log('createData.password : ' ,createData.password);
+  console.log('reateData.email  : ' ,createData.email );
+  if( createData.password == passwordConfSign.value ){
     //const createBody = { createData };
+    console.log("check");
     let results = await registerService(createData);
-    console.log(results);
+    console.log('retour sign : ' , results);
     toggleProfileLog()
-    }
+  }
 
 };
 
