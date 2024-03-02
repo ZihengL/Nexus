@@ -11,28 +11,40 @@ export const getAll = async (table, column = null, value = null, includedColumns
   return data
 };
 
-
-export const login = async (jsonObject) => {
+export const getAllMatching = async (table,filters, sorting = null, includedColumns = null) => {
   let body = {
-    jsonObject
+    filters,
+    sorting,
+    includedColumns
   }
+  let data = await fetchData(table, "getAllMatching", null, null, null, null, body, "POST");
+  return data
+};
+
+
+export const loginService = async (login) => {
+  //console.log(jsonObject)
+  let body = {
+    login
+  }
+  //console.log(body)
   let data = await fetchData("users", "login", null, null, null, null, body, "POST");
   return data
 };
 
 
-export const register = async (jsonObject) => {
+export const registerService = async (createData) => {
   let body = {
-    jsonObject
+    createData
   }
-  let data = await fetchData("users", "register", null, null, null, null, body, "POST");
+  let data = await fetchData("users", "create", null, null, null, null, body, "POST");
   return data
 };
 
 
-export const logout = async (jsonObject) => {
+export const logoutService = async (logout) => {
   let body = {
-    jsonObject
+    logout
   }
   let data = await fetchData("users", "logout", null, null, null, null, body, "POST");
   return data

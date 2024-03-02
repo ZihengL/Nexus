@@ -45,16 +45,15 @@ export function fetchData (
   if ((method === 'POST' || method === 'PUT' || method === 'DELETE') && jsonBody) {
     fetchOptions.body = JSON.stringify(jsonBody);
   }
-  // console.log(`Fetching: ${uri} with options:`, fetchOptions, "query params ", queryParams);
+   console.log(`Fetching: ${uri} with options:`, fetchOptions, "query params ", queryParams);
 
   return fetch(uri, fetchOptions)
     .then(response => {
       if (!response.ok) { 
         return Promise.reject(response);
       }
-      // console.log(" response : ", response.text());
+      //  console.log(" response : ", response.text());
 
-      
       return response.json();
     })
     .then(data => {
