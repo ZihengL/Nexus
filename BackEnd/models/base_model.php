@@ -5,17 +5,23 @@ class BaseModel
     protected $pdo;
     public $table;
     public $columns = [];
-    public $keys = [];
+    private $keys = [];
 
     protected function __construct($pdo, $table, $require_id = false)
     {
         $this->pdo = $pdo;
         $this->table = $table;
         $this->columns = $this->getColumns($require_id);
-        $this->keys = [...$this->getKeysDetails(true), $this->getKeysDetails(false)];
+        $this->addDeconstructedKeys([...$this->getKeysDetails(false), $this->getKeysDetails(true)]);
+    }
 
-        echo $this->table . '<br>';
-        echo '<pre>' . print_r($this->keys) . '</pre>';
+    private function addDeconstructedKeys($keys)
+    {
+        if (!empty($keys) && isset($keys['EXT_TAB']))
+            $this->keys[array_pop($keys)] = $keys;
+        else
+            foreach ($keys as $subkeys)
+                $this->addDeconstructedKeys($subkeys);
     }
 
     /*******************************************************************/
@@ -35,7 +41,7 @@ class BaseModel
 
             return $stmt;
         } catch (PDOException $e) {
-            echo '<br>err<br>' . $sql . '<br>err<br>';
+            // echo '<br>err<br>' . $sql . '<br>err<br>';
 
             throw new Exception("Database query error: " . $e->getMessage());
         }
@@ -90,7 +96,7 @@ class BaseModel
         $sort_layer = $this->applySorting($sorting);
         $sql .= !empty($sort_layer) ? " ORDER BY " . $sort_layer : '';
 
-        return $this->query($sql, $value ?? [$value])->fetchAll(PDO::FETCH_ASSOC);
+        return $this->query($sql, [$value] ?? [])->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
@@ -176,24 +182,24 @@ class BaseModel
 
     public function getKeysDetails($is_internal_keys = true)
     {
-        $first_member = "COLUMN_NAME AS 'INT_COL'";
-        $second_member = "TABLE_NAME AS 'EXT_TAB'";
-        $third_member = "COLUMN_NAME AS 'EXT_COL'";
+        $int_col = "COLUMN_NAME AS 'INT_COL'";
+        $ext_col = "COLUMN_NAME AS 'EXT_COL'";
+        $ext_tab = "TABLE_NAME AS 'EXT_TAB'";
 
         $table_condition = "TABLE_NAME = '{$this->table}'";
 
         if ($is_internal_keys) {
-            $second_member = "REFERENCED_$second_member";
-            $third_member = "REFERENCED_$third_member";
+            $ext_col = "REFERENCED_$ext_col";
+            $ext_tab = "REFERENCED_$ext_tab";
 
             $table_condition = "$table_condition AND REFERENCED_TABLE_NAME IS NOT NULL";
         } else {
-            $first_member = "REFERENCED_$first_member";
+            $int_col = "REFERENCED_$int_col";
 
             $table_condition = "REFERENCED_$table_condition";
         }
 
-        $sql = "SELECT $first_member, $second_member, $third_member 
+        $sql = "SELECT $int_col, $ext_col, $ext_tab 
                 FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
                 WHERE TABLE_SCHEMA = '{$_ENV['DB_NAME']}' 
                 AND $table_condition";
@@ -214,22 +220,35 @@ class BaseModel
 
     public function parseColumns($included_columns = [])
     {
-        return "$this->table." . empty($included_columns) ? '*' : implode(", $this->table.", $included_columns);
+        return "{$this->table}." . empty($included_columns) ? '*' : implode(", {$this->table}.", $included_columns);
     }
 
-    public function parseJoinedTables($join_keys = [])
+    public function parseJoinedTables($joined_tables = [])
     {
         $join_layer = [];
         $join_layer['selects'] = '';
         $join_layer['joins'] = '';
 
-        foreach ($this->keys as ['INT_COL' => $int_col, 'EXT_TAB' => $ext_tab, 'EXT_COL' => $ext_col])
-            if ($included_columns = $join_keys[$ext_tab]) {
-                foreach ($included_columns as $included_column)
-                    $join_layer['selects'] .= ", {$ext_tab}.{$included_column} AS {$ext_tab}_{$included_column}";
+        foreach ($joined_tables as $ref_tab => $included_columns)
+            if ($keyset = $this->keys[$ref_tab]) {
+                ['INT_COL' => $int_col, 'EXT_COL' => $ext_col] = $keyset;
 
-                $join_layer['joins'] .= " JOIN $ext_tab ON {$this->table}.{$int_col} = {$ext_tab}.{$ext_col}";
+                foreach ($included_columns as $included_column)
+                    $join_layer['selects'] .= ", {$ref_tab}.{$included_column} AS {$ref_tab}_{$included_column}";
+
+                $join_layer['joins'] .= " JOIN $ref_tab ON {$this->table}.{$int_col} = {$ref_tab}.{$ext_col}";
             }
+
+
+        // foreach ($this->keys as ['INT_COL' => $int_col, 'EXT_TAB' => $ext_tab, 'EXT_COL' => $ext_col]) {
+
+        //     if ($included_columns = $joined_tables[$ext_tab]) {
+        //         foreach ($included_columns as $included_column)
+        //             $join_layer['selects'] .= ", {$ext_tab}.{$included_column} AS {$ext_tab}_{$included_column}";
+
+        //         $join_layer['joins'] .= " JOIN $ext_tab ON {$this->table}.{$int_col} = {$ext_tab}.{$ext_col}";
+        //     }
+        // }
 
         return $join_layer;
     }

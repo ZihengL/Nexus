@@ -98,9 +98,12 @@ $arr3 = array_intersect_key($arr1, $arr2);
 // print_r($arr3);
 // printall(implode(", table.", array_keys($arr1)));
 
-$result = $games_ctrl->getAllMatching([], [], [], ['developerID' => ['id', 'username']]);
+$joined_tables = ['users' => ['id', 'username']];
+// print_r($joined_tables['users']);
 
-$keys = $games_ctrl->model->keys;
+$result = $games_ctrl->getAllMatching([], [], [], $joined_tables);
+
+// $keys = $games_ctrl->model->keys;
 
 // printall($users_ctrl->);
 
