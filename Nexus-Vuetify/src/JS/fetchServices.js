@@ -1,13 +1,23 @@
 import { fetchData } from "./fetch";
 
 export const getOne = async (table, column, value, includedColumns = null, sorting = null) => {
-  let data = await fetchData(table, "getOne", column, value, null, null, null, "GET");
+  let data = await fetchData(table, "getOne", column, value, includedColumns, sorting, null, "GET");
   return data;
 };
 
 
 export const getAll = async (table, column = null, value = null, includedColumns = null, sorting = null) => {
   let data = await fetchData(table, "getAll", column, value, includedColumns, sorting, null, "GET");
+  return data
+};
+
+export const getAllMatching = async (table,filters, sorting = null, includedColumns = null) => {
+  let body = {
+    filters,
+    sorting,
+    includedColumns
+  }
+  let data = await fetchData(table, "getAllMatching", null, null, null, null, body, "POST");
   return data
 };
 

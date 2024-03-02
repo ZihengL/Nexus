@@ -126,7 +126,7 @@
 <script setup>
 import ListeDeJeu from "./ListeDeJeu.vue";
 import { fetchData } from "../../JS/fetch";
-import { logoutService, getOne } from "../../JS/fetchServices";
+import { logoutService, getOne, getAllMatching } from "../../JS/fetchServices";
 import { defineProps, ref, onMounted, defineEmits } from "vue";
 //import Amis from './amis.vue';
 
@@ -202,11 +202,13 @@ onMounted(async () => {
       const sorting = {
         id: false
       }
-      const includedColumns = ['id', 'title', 'username']
-      const jsonBody = { filters, sorting, includedColumns }
-      const dataDevs = await fetchData('games', 'getAllMatching', null, null, null, null, jsonBody, 'POST');
+      const includedColumns = ['id', 'title']
+      const dataDevs = await getAllMatching('games', filters, sorting, includedColumns);
+      console.log('dataDevs ', dataDevs)
+      // const jsonBody = { filters, sorting, includedColumns }
+      // const dataDevs = await fetchData('games', 'getAllMatching', null, null, null, null, jsonBody, 'POST');
       gameList.value = dataDevs;
-      console.log('game ', gameList)
+      console.log('gameList ', gameList)
     }
   } catch (error) {
     console.error("Error fetching data:", error);
