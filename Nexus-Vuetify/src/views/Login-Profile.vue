@@ -37,6 +37,13 @@ let isConnected = ref(false);
 
 isConnected.value = props.connectedView;
 
+const emit = defineEmits(["changeCon"]);
+const changeConnexion = () => {
+  emit("changeCon");
+};
+
+//const devsId = 3;
+
 watch(
   () => props.connectedView,
   (newValue, oldValue) => {
@@ -54,12 +61,7 @@ onMounted(async () => {
   }
 
 });
-const emit = defineEmits(["changeCon"]);
-const changeConnexion = () => {
-  emit("changeCon");
-};
 
-//const devsId = 3;
 
 const toggleProfileForm = () => {
   changeConnexion();

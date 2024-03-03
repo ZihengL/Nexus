@@ -9,15 +9,38 @@
     <div class="search-container roundBorderSmall glass">
       <input
         type="text"
+        :value="props.modelValue"
+        @input="onInput"
+        @keyup.enter="props.onSearch(props.modelValue)"
         class="search-input"
-        placeholder="Trouver un jeux..."
+        :placeholder="props.placeholder_title"
       />
       <button class="search-button">
-        <i class="fa-solid fa-magnifying-glass"></i>
+        <i @click="() => props.onSearch(props.modelValue)" class="fa-solid fa-magnifying-glass"></i>
       </button>
     </div>
   </div>
 </template>
+<script setup>
+import { reactive, defineProps } from "vue";
+const emits = defineEmits(["update:modelValue"]);
+
+const props = defineProps({
+  placeholder_title: {
+    type: String,
+    default: "Trouver un jeu...",
+  },
+  modelValue: String,
+  onSearch: Function,
+});
+
+const onInput = (event) => {
+  emits("update:modelValue", event.target.value);
+  // console.log(event.target.value);
+};
+
+
+</script>
 
 <style lang="scss" scoped>
 #search {

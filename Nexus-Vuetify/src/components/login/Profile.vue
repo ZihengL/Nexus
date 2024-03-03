@@ -125,7 +125,6 @@
 
 <script setup>
 import ListeDeJeu from "./ListeDeJeu.vue";
-import { fetchData } from "../../JS/fetch";
 import { logoutService, getOne, getAllMatching } from "../../JS/fetchServices";
 import { defineProps, ref, onMounted, defineEmits } from "vue";
 //import Amis from './amis.vue';
@@ -187,9 +186,9 @@ const toggleLogout = async () => {
   emit("showLogin");
 };
 
-onMounted(async () => {
+async function getUserInfos() {
   try {
-    const userData = await getOne("users","id", devId);
+    const userData = await getOne("users", "id", devId);
     console.log("userData : ", userData);
 
     leDevs.value = userData;
@@ -198,18 +197,29 @@ onMounted(async () => {
     if (leDevs.value) {
       const filters = {
         developerID: devId,
-      }
+      };
       const sorting = {
-        id: false
-      }
-      const includedColumns = ['id', 'title']
-      const dataDevs = await getAllMatching('games', filters, sorting, includedColumns);
-      console.log('dataDevs ', dataDevs)
-      // const jsonBody = { filters, sorting, includedColumns }
-      // const dataDevs = await fetchData('games', 'getAllMatching', null, null, null, null, jsonBody, 'POST');
+        id: false,
+      };
+      const includedColumns = ["id", "title"];
+      const dataDevs = await getAllMatching(
+        "games",
+        filters,
+        sorting,
+        includedColumns
+      );
+      console.log("dataDevs ", dataDevs);
       gameList.value = dataDevs;
-      console.log('gameList ', gameList)
+      console.log("gameList ", gameList);
     }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
+
+onMounted(async () => {
+  try {
+    await getUserInfos();
   } catch (error) {
     console.error("Error fetching data:", error);
   }

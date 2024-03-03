@@ -7,13 +7,24 @@
         v-model="store_data.searchQuery"
       /> -->
       <div class="search">
-      <Search class="barreR" />
-    </div>
+        <Search
+          v-model="store_data.searchQuery"
+          :placeholder="store_data.placeholder_title"
+          :onSearch="handleSearch"
+          class="barreR"
+        />
+      </div>
     </div>
     <div class="contenue">
-      <ListeJeux class="listeJeux roundBorderSmall" />
+      <ListeJeux
+        :gameList="store_data.gameList_result"
+        class="listeJeux roundBorderSmall"
+      />
       <div class="filtre glass roundBorderSmall">
-        <FilterComponent :title="store_data.filter_title" />
+        <FilterComponent
+          @update:filters="handleFilterUpdate"
+          :filter_title="store_data.filter_title"
+        />
       </div>
     </div>
     <div class="pagin">
@@ -23,12 +34,17 @@
 </template>
 
 <script setup>
-import { reactive,  watch } from "vue";
+import { reactive, watch, onMounted } from "vue";
 import FilterComponent from "../components/store/FilterComponent.vue";
 // Ensure Pagination is imported when you're ready to use it
 // import Pagination from '../components/Pagination.vue';
 // import SearchComponent from "../components/game/SearchComponent.vue";
-import Search from '../components/game/Search.vue';
+import Search from "../components/game/Search.vue";
+import {
+  searchOn_titleOrUsername,
+  search_AndFilter,
+} from "../JS/store_search.js";
+import { getAll, getAllGamesWithDeveloperName } from "../JS/fetchServices";
 import ListeJeux from "../components/store/GameListComponent.vue";
 
 const store_data = reactive({
@@ -42,19 +58,44 @@ const store_data = reactive({
   ],
   filter_title: "Filtrer les Jeux",
   placeholder_title: "Trouver un jeu...",
-  searchQuery: String,
+  searchQuery: "",
+  gameList_result: [],
 });
 
-// // Example function to handle search (adjust as needed)
-// const onSearchClick = () => {
-//   if (store_data.searchQuery.trim()) {
-//     console.log("Searching for:", store_data.searchQuery);
-//   }
-// };
+watch(
+  () => store_data.gameList_result,
+  (newValue) => {
+    // console.log("New search query from watch:", newValue);
+  }
+);
 
-// Optionally, watch the searchQuery for changes
-watch(store_data.searchQuery, (newValue) => {
-  console.log("Searching for:", newValue);
+async function handleFilterUpdate(filterData) {
+  console.log("Received filter data:", filterData);
+  let titleOrDevName = store_data.searchQuery ?? null;
+  let tags = filterData.tags ?? [];
+  let sorting = filterData.sorting ?? null;
+
+  let filteredGames = await search_AndFilter(titleOrDevName, tags, sorting);
+  console.log("filteredGames : ", filteredGames);
+  store_data.gameList_result = filteredGames
+  console.log(" store_data.gameList_result: ", store_data.gameList_result);
+}
+
+const handleSearch = async (query) => {
+  store_data.searchQuery = query;
+  console.log("searchQuery : ", store_data.searchQuery);
+  store_data.gameList_result = await searchOn_titleOrUsername(
+    store_data.searchQuery
+  );
+  console.log(" store_data.gameList_result: ", store_data.gameList_result);
+};
+
+onMounted(async () => {
+  store_data.gameList_result = await getAllGamesWithDeveloperName();
+  console.log(
+    " store_data.gameList_result:  onMounted ",
+    store_data.gameList_result
+  );
 });
 </script>
 
@@ -73,7 +114,6 @@ watch(store_data.searchQuery, (newValue) => {
 
     .barreR {
       width: 100%;
-
     }
   }
 

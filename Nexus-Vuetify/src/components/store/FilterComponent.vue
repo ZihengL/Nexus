@@ -1,19 +1,17 @@
 <template>
   <div class="filter-container roundBorderSmall glass">
     <h3>{{ props.filter_title }}</h3>
-    <div class="checkbox-group">
-      <label
-        class="filter-label glow"
-        v-for="genre in filter_data.genres.slice(0, 5)"
-        :key="genre.id"
-      >
-        <input type="checkbox" :name="genre.name" :value="genre.name" />
-        <span>{{ genre.name }}</span>
-      </label>
-    </div>
+   <div class="checkbox-group">
+  <label v-for="genre in filter_data.genres.slice(0, 5)" :key="genre.id"
+         :class="{'filter-label': true, 'glow': true, 'checked': genre.checked}">
+    <input type="checkbox" v-model="genre.checked" :name="genre.name" :value="genre.name" />
+    <span>{{ genre.name }}</span>
+  </label>
+</div>
 
     <div class="search-container">
       <input
+        v-model="filter_data.searchInput"
         type="text"
         id="gameSearch"
         name="gameSearch"
@@ -32,6 +30,9 @@
         </option>
       </select>
     </div>
+    <v-btn elevation="2" variant="tonal" class="" @click="returnFiltersData">
+      Rechercher
+    </v-btn>
   </div>
 </template>
 
@@ -41,32 +42,53 @@ import { onMounted, reactive } from "vue";
 import { getAll } from "../../JS/fetchServices";
 
 const props = defineProps({
-  title: String,
+  filter_title: String,
+  onFilter: Function,
 });
+const emit = defineEmits(["update:filters"]);
 
 const filter_data = reactive({
   genres: [
-    { name: "action", value: "action", label: "Action" },
-    { name: "adventure", value: "adventure", label: "Adventure" },
-    { name: "rpg", value: "rpg", label: "RPG" },
-    { name: "simulation", value: "simulation", label: "Simulation" },
-    { name: "strategy", value: "strategy", label: "Strategy" },
-    { name: "sports", value: "sports", label: "Sports" },
+    { id: 1, name: "simulation", checked: false },
+    { id: 2, name: "chocolate", checked: false },
   ],
   placeholder_title: "Chercher par filtre",
   selectedSort: "",
+  searchInput: "",
+  filter_results: Object,
   sortList: [
     { label: "Trier par : ", value: "" },
     { label: "Développeur", value: "developerID" },
     { label: "Date de relâche", value: "releaseDate" },
     { label: "Note de popularité", value: "ratingAverage" },
-    { label: "Titre", value: "title" },
+    { label: "A à Z", value: "title" },
   ],
 });
 
 async function getTags() {
-  filter_data.genres = await getAll("tags");
-  console.log("filter_data.genres : ", filter_data.genres);
+  const fetchedGenres = await getAll("tags");
+  filter_data.genres = fetchedGenres.map((genre) => ({
+    ...genre,
+    checked: false,
+  }));
+}
+function returnFiltersData() {
+  let selectedGenres = filter_data.genres
+    .filter((genre) => genre.checked)
+    .map((genre) => genre.name);
+
+  const trimmedSearchInput = filter_data.searchInput.trim();
+
+  if (trimmedSearchInput) {
+    selectedGenres.push(trimmedSearchInput);
+  }
+
+  let data = {
+    tags: selectedGenres,
+    sorting: filter_data.selectedSort,
+  };
+
+  emit("update:filters", data);
 }
 
 onMounted(async () => {
@@ -75,39 +97,27 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.filter-container {
-  background: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-  margin: 2% auto;
-  width: auto;
+.checked {
+  background-color: #0aade8;
+  color: #13aebf;
+}
+input[type="checkbox"]:checked + .filter-label {
+  background-color: #0aade8;
+  color: #13aebf;
 }
 
-.filter-container h3 {
-  color: #66c0f4;
-  margin-bottom: 15px;
+input[type="checkbox"]:checked + .filter-label:before {
+  content: "\2713";
+  color: #10cde2;
+  font-size: 14px;
+  text-align: center;
+  line-height: 20px;
 }
 
-.checkbox-group {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 10px;
+input[type="checkbox"] {
+  display: none;
 }
 
-.sort-container {
-  margin-top: 5%;
-}
-
-.sort-container select {
-  width: 100%;
-  padding: 10px;
-  border-radius: 4px;
-  border: 2px solid #303c3f;
-  background: rgba(68, 108, 137, 0.8);
-  color: #ffffff;
-}
 
 .filter-label {
   background: rgba(77, 77, 77, 0.8);
@@ -136,22 +146,45 @@ onMounted(async () => {
   display: inline-block;
 }
 
-input[type="checkbox"]:checked + .filter-label {
-  background-color: #0aade8;
-  color: #13aebf;
+/*  */
+.filter-container {
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  margin: 2% auto;
+  width: auto;
+  gap: 10px;
 }
 
-input[type="checkbox"]:checked + .filter-label:before {
-  content: "\2713";
-  color: #10cde2;
-  font-size: 14px;
-  text-align: center;
-  line-height: 20px;
+.filter-container h3 {
+  color: #66c0f4;
+  margin-bottom: 15px;
 }
 
-input[type="checkbox"] {
-  display: none;
+.checkbox-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
 }
+
+.sort-container {
+  margin-top: 5%;
+}
+
+.sort-container select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+  border: 2px solid #303c3f;
+  background: rgba(68, 108, 137, 0.8);
+  color: #ffffff;
+}
+
+
 .search-container {
   margin-top: 20px; /* Adjust space above search bar as needed */
 }
