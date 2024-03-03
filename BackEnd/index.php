@@ -88,7 +88,6 @@ switch ($method) {
         //   echo "<br>  sorting : " . $sorting["timestamp"] . "<br>";
         // echo "<br>  includedColumns : " . print_r($includedColumns, true);
         // echo "<br>  value : " . $value ."<br> " ;
-
         handleGet($table, $crud_action, $column, $value, $included_columns, $sorting);
         break;
     case 'POST':
@@ -210,6 +209,7 @@ function handleFilterData($decoded_data, $controller_name, $crud_action)
     return $central_controller->$controller_name->$crud_action($filters, $sorting, $included_columns);
 }
 
+
 /*******************************************************************/
 /**************************** VALIDATION ***************************/
 /*******************************************************************/
@@ -232,14 +232,14 @@ function handleLogout($decoded_data, $controllerName, $crud_action)
     // $id =  $data['id'];
     // $tokens = $data['tokens'];
 
-    ['logout' => $data, 'id' => $id, 'tokens' => $tokens] = $decoded_data;
+    ['logout' => $data, 'id' => $id, 'tokens' => $tokens] = $decoded_data['logout'];
     return $central_controller->$controllerName->$crud_action($id, $tokens);
 }
+
 
 /*******************************************************************/
 /****************************** CRUDS ******************************/
 /*******************************************************************/
-
 
 function handleCreate($decoded_data, $controller_name, $crud_action)
 {

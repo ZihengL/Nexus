@@ -44,7 +44,6 @@ class GamesController extends BaseController
     /****************************** CRUDS ******************************/
     /*******************************************************************/
 
-    // TODO: LINK BACK TO USER AUTH
     public function create($data, $jwts = null)
     {
         return $this->model->create($data);
