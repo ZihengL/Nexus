@@ -32,7 +32,7 @@ $joined_tables = [
     'gamestags' => ['gameId', 'tagId']
 ];
 
-//
+//  TODO: STANDARDIZE 
 echo '<hr><b>TEST</b><hr>';
 
 echo '<b>getOne</b><br>';

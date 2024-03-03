@@ -42,18 +42,23 @@ $central_controller = CentralController::getInstance();
 $method = $_SERVER["REQUEST_METHOD"];
 $requestUri = $_SERVER['REQUEST_URI'];
 
-// PARSE URL
+
+/*******************************************************************/
+/***************************** PARSING *****************************/
+/*******************************************************************/
+
+// URL
 $url_components = parse_url($requestUri);
 $path = $url_components['path'];
 $query_string = $url_components['query'] ?? '';
 
-// PARSE PATHING
+// PATHING
 $script_name = $_SERVER['SCRIPT_NAME'];
 $base_path = str_replace('/index.php', '', $script_name);
 $uri_path = str_replace($base_path, '', $path);
 $exploded_URI = explode('/', trim($uri_path, '/'));
 
-// PARSE PARAMS
+// PARAMS
 $table = $exploded_URI[0] ?? null;
 $crud_action = $exploded_URI[1] ?? null;
 $column = $exploded_URI[2] ?? null;
@@ -108,11 +113,8 @@ switch ($method) {
 function handleGet($table, $crud_action, $column, $value, $included_columns, $sorting)
 {
     global $central_controller;
-    //Do these if they arent empty
-    // $getAllFromTable = 'getAll_' . $table;
-    // $getByColumnName = 'getBy' . $columName;
-
     $controller_name = $table . '_controller';
+
     switch ($crud_action) {
         case 'getOne':
             $result = $central_controller->$controller_name->getOne($column, $value, $included_columns);
@@ -131,8 +133,8 @@ function handleGet($table, $crud_action, $column, $value, $included_columns, $so
 function handlePost($table, $crud_action, $column, $value, $included_columns, $sorting, $decoded_data)
 {
     global $central_controller;
-
     $controller_name = $table . '_controller';
+
     switch ($crud_action) {
         case 'getAllMatching':
         case 'login':
@@ -183,11 +185,11 @@ function handleRawData($decoded_data, $controller_name, $crud_action)
 
     // $action_map = [
     //     'filters'    => 'handleFilterData',
-    //     'createData' => 'handleCreate',
-    //     'deleteData' => 'handleDelete',
-    //     'updateData' => 'handleUpdate',
     //     'login'      => 'handleLogin',
     //     'logout'     => 'handleLogout',
+    //     'createData' => 'handleCreate',
+    //     'deleteData' => 'handleDelete',
+    //     'updateData' => 'handleUpdate'
     // ];
 
     // foreach ($action_map as $request => $method)

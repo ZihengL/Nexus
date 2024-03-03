@@ -116,6 +116,33 @@ class BaseController
     /****************************** CRUDS ******************************/
     /*******************************************************************/
 
+    public function getAny($options)
+    {
+        try {
+            [
+                'crud_action' => $method,
+                'included_columns' => $included_columns,
+                'joined_tables' => $joined_tables
+            ] = $options;
+
+            switch ($method) {
+                case 'getOne':
+                    ['column' => $column, 'value' => $value] = $options;
+                    return $this->getOne($column, $value, $included_columns, $joined_tables);
+                case 'getAll':
+                    ['column' => $column, 'value' => $value, 'sorting' => $sorting] = $options;
+                    return $this->getAll($column, $value, $included_columns, $sorting, $joined_tables);
+                case 'getAllMatching':
+                    ['filters' => $filters, 'sorting' => $sorting] = $options;
+                    return $this->getAllMatching($filters, $sorting, $included_columns, $joined_tables);
+                default:
+                    return "No method matching '$method' found.";
+            }
+        } catch (Exception $e) {
+            throw new Exception("Error while parsing request: " . $e->getMessage());
+        }
+    }
+
     public function getOne($column, $value, $included_columns = [], $joined_tables = [])
     {
         $included_columns = $this->validateAccess($included_columns);
