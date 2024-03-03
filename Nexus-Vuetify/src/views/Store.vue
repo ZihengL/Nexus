@@ -11,9 +11,9 @@
       </div>
 
     </div>
-    <div class="pagin">
+    <!-- <div class="pagin">
       <Pagination />
-    </div>
+    </div> -->
   </div>
 </template>
 

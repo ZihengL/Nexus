@@ -68,11 +68,14 @@ $included_columns = isset($_GET['includedColumns']) ? explode(',', $_GET['includ
 // $sorting = isset($_GET['sorting']) ? explode(',', $_GET['sorting']) : null;
 
 $sorting = [];
-if ($sorting_params = explode(',', $_GET['sorting']))
+if (isset($_GET['sorting'])) {
+    $sorting_params = explode(',', $_GET['sorting']);
+
     foreach ($sorting_params as $param) {
         list($key, $v) = explode(':', $param);
         $sorting[$key] = $v === 'true' ? true : false;
     }
+}
 
 // ENCODED DATA
 $raw_data = file_get_contents('php://input');
