@@ -70,6 +70,7 @@ class UsersModel extends BaseModel
                     $data['password'] = password_hash($new_password, PASSWORD_DEFAULT);
                 }
             }
+
             return parent::update($id, $data);
         }
 

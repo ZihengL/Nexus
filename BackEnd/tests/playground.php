@@ -23,7 +23,6 @@ $arr2 = ['c' => 213125, 'a'];
 $arr3 = array_intersect_key($arr1, $arr2);
 
 // $k1 = array_key
-
 // print_r($arr3);
 // printall(implode(", table.", array_keys($arr1)));
 
@@ -33,7 +32,7 @@ $joined_tables = [
 ];
 
 //  TODO: STANDARDIZE 
-echo '<hr><b>TEST</b><hr>';
+echo '<hr><b>BEGIN TEST</b><hr>';
 
 echo '<b>getOne</b><br>';
 $result = $games_ctrl->getOne('title', 'Space Odyssey', null, $joined_tables);
@@ -47,7 +46,7 @@ echo 'With included tables<br>';
 $result = $games_ctrl->getAllMatching(['title' => 'Space Odyssey'], null, ['id', 'developerID', 'title'], $joined_tables);
 printall($result);
 
-echo '<hr><hr>';
+echo '<b>END TEST</b><hr>';
 //
 
 // echo 'OLD<pre>';

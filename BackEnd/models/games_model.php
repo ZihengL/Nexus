@@ -12,7 +12,7 @@ class GamesModel extends BaseModel
         // printall($res->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    //Other Cruds
+    // Other Cruds
 
     public function create($game)
     {
@@ -37,7 +37,8 @@ class GamesModel extends BaseModel
         }
     }
 
-    //Updates
+    // Updates
+
     public function updateGameTags($pdo, $game_id, array $new_tags_ids)
     {
         // Begin a transaction
@@ -64,42 +65,38 @@ class GamesModel extends BaseModel
         }
     }
 
-    //Getters
+    // Getters
 
-    // public function getOne($column = null, $value = null, $included_columns = [], $join_keys = [])
-    // {
-    //     if (in_array('tags', $included_columns)) {
-    //         $key = array_search('tags', $included_columns);
-    //         if ($key !== false) {
-    //             unset($included_columns[$key]);
-    //         }
-    //         $results = $this->joinGamesAndTags($column, $value, $included_columns);
-    //         return $this->appendTagsToGames($results);
-    //     }
-    //     $results = $this->joinGamesAndTags($column, $value, $included_columns);
-    //     return $this->appendTagsToGames($results);
-    // }
+    public function getOne($column = null, $value = null, $included_columns = [], $join_keys = [])
+    {
+        if (in_array('tags', $included_columns)) {
+            $key = array_search('tags', $included_columns);
+            if ($key !== false) {
+                unset($included_columns[$key]);
+            }
+            $results = $this->joinGamesAndTags($column, $value, $included_columns);
+            return $this->appendTagsToGames($results);
+        }
+        $results = $this->joinGamesAndTags($column, $value, $included_columns);
+        return $this->appendTagsToGames($results);
+    }
 
-    // public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $join_keys = [])
-    // {
-    //     if (in_array('tags', $included_columns)) {
-    //         $key = array_search('tags', $included_columns);
-    //         if ($key !== false) {
-    //             unset($included_columns[$key]);
-    //         }
-    //         $results = $this->joinGamesAndTags($column, $value, $included_columns, $sorting);
-    //         return $this->appendTagsToGames($results);
-    //     }
-    //     $results = $this->joinGamesAndTags($column, $value, $included_columns, $sorting);
-    //     return $this->appendTagsToGames($results);
-    // }
+    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $join_keys = [])
+    {
+        if (in_array('tags', $included_columns)) {
+            $key = array_search('tags', $included_columns);
+            if ($key !== false) {
+                unset($included_columns[$key]);
+            }
+            $results = $this->joinGamesAndTags($column, $value, $included_columns, $sorting);
+            return $this->appendTagsToGames($results);
+        }
+        $results = $this->joinGamesAndTags($column, $value, $included_columns, $sorting);
+        return $this->appendTagsToGames($results);
+    }
 
-    // public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
-    // {
-    //     $res = parent::getAllMatching($filters, $sorting, $included_columns, $joined_tables);
-    // }
+    // Tools
 
-    //Tools
     public function appendTagsToGames($results)
     {
         // Organize games and their tags

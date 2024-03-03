@@ -63,8 +63,8 @@ $table = $exploded_URI[0] ?? null;
 $crud_action = $exploded_URI[1] ?? null;
 $column = $exploded_URI[2] ?? null;
 $value = $exploded_URI[3] ?? null;
-$included_columns = explode(',', $_GET['includedColumns']) ?? [];
-// $included_columns = isset($_GET['includedColumns']) ? explode(',', $_GET['includedColumns']) : [];
+// $included_columns = explode(',', $_GET['includedColumns']) ?? [];
+$included_columns = isset($_GET['includedColumns']) ? explode(',', $_GET['includedColumns']) : [];
 // $sorting = isset($_GET['sorting']) ? explode(',', $_GET['sorting']) : null;
 
 $sorting = [];
@@ -83,7 +83,8 @@ $options = [
     'column' => $column,
     'value' => $value,
     'included_columns' => $included_columns,
-    'sorting' => $sorting
+    'sorting' => $sorting,
+    'decoded_data' => $decoded_data
 ];
 
 
