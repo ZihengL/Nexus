@@ -1,5 +1,11 @@
 <?php
 
+function explodetest($a)
+{
+    echo "TEST ";
+    return explode(', ', $a) ?? [];
+}
+
 global $path;
 $path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd/';
 require_once $path . 'tests/temp_globals.php';
@@ -12,9 +18,11 @@ $gametags_ctrl = $central_controller->gamestags_controller;
 
 
 
-$arr1 = ['a' => 'tqifh', 'b' => 'kjahsdkjla', 'c' => 4231432];
-$arr2 = ['c' => 213125];
+$arr1 = ['a' => 'tqifh', 'b' => 'kjahsdkjla', 'c' => 4231432, 'd' => 1];
+$arr2 = ['c' => 213125, 'a'];
 $arr3 = array_intersect_key($arr1, $arr2);
+
+// $k1 = array_key
 
 // print_r($arr3);
 // printall(implode(", table.", array_keys($arr1)));
@@ -24,8 +32,7 @@ $joined_tables = [
     'gamestags' => ['gameId', 'tagId']
 ];
 
-// print_r($joined_tables['users']);
-
+//
 echo '<hr><b>TEST</b><hr>';
 
 echo '<b>getOne</b><br>';
@@ -37,10 +44,11 @@ $result = $games_ctrl->getAllMatching(['title' => 'Space Odyssey'], null, null, 
 printall($result);
 
 echo 'With included tables<br>';
-$result = $games_ctrl->getAllMatching(['title' => 'Space Odyssey'], null, ['id', 'userID', 'title'], $joined_tables);
+$result = $games_ctrl->getAllMatching(['title' => 'Space Odyssey'], null, ['id', 'developerID', 'title'], $joined_tables);
 printall($result);
 
 echo '<hr><hr>';
+//
 
 // echo 'OLD<pre>';
 // print_r($users);

@@ -56,7 +56,7 @@ class CentralController
         $this->gamestags_controller = new GamestagsController($this, $pdo);
         $this->users_downloads_controller = new UsersDownloadsController($this, $pdo);
 
-        $this->$this->$this->controllers_array = $this->getControllersAsArray();
+        $this->controllers_array = $this->getControllersAsArray();
     }
 
     public static function getInstance()

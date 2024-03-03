@@ -100,7 +100,8 @@ class BaseModel
 
     public function getOne($column, $value, $included_columns = [], $joined_tables = [])
     {
-        $sql = $this->buildSelectionLayer($included_columns, $joined_tables) . " WHERE {$this->table}.$column = ?";
+        $sql = $this->buildSelectionLayer($included_columns, $joined_tables);
+        $sql .= " WHERE {$this->table}.$column = ? GROUP BY {$this->table}.id";
         $result = $this->query($sql, [$value]);
 
         // Returns in function of possible multiplicity(one-to-many) relationships
@@ -118,7 +119,7 @@ class BaseModel
         }
 
         $sort_layer = $this->applySorting($sorting);
-        $sql .= !empty($sort_layer) ? " ORDER BY $sort_layer" : '';
+        $sql .= " GROUP BY {$this->table}.id" . (!empty($sort_layer) ? " ORDER BY $sort_layer" : '');
 
         return $this->query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -128,7 +129,7 @@ class BaseModel
         $sql = $this->buildSelectionLayer($included_columns, $joined_tables) . ' WHERE 1 = 1';
 
         ['sql' => $filtering_sql, 'params' => $params] = $this->applyFilters($filters);
-        $sql .= $filtering_sql;
+        $sql .= "$filtering_sql GROUP BY {$this->table}.id";
 
         if ($sorting_layer = $this->applySorting($sorting))
             $sql .= " ORDER BY $sorting_layer";
@@ -165,7 +166,7 @@ class BaseModel
 
         $sql = "UPDATE {$this->table} SET $pairs WHERE id = ?";
 
-        return $this->query($sql, $formatted_data)->fetch(); // Bugs?
+        return $this->query($sql, $formatted_data)->fetch();
     }
 
     public function delete($id)
@@ -198,9 +199,13 @@ class BaseModel
     {
         $result = $this->query("DESCRIBE {$this->table}")->fetchAll(PDO::FETCH_COLUMN);
 
-        return $include_id ? $result : array_filter($result, function ($column) {
-            return $column !== 'id';
-        });
+        if (!$include_id)
+            array_shift($result);
+
+        return $result;
+        // return $include_id ? $result : array_filter($result, function ($column) {
+        //     return $column !== 'id';
+        // });
     }
 
     public function getKeysDetails($is_internal_keys = true)
@@ -222,10 +227,14 @@ class BaseModel
             $table_condition = "REFERENCED_$table_condition";
         }
 
-        $sql = "SELECT $int_col, $ext_col, $ext_tab 
-                FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
-                WHERE TABLE_SCHEMA = '{$_ENV['DB_NAME']}' 
-                AND $table_condition";
+        $sql = "SELECT 
+                    $int_col, $ext_col, $ext_tab 
+                FROM 
+                    INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
+                WHERE 
+                    TABLE_SCHEMA = '{$_ENV['DB_NAME']}' 
+                AND 
+                    $table_condition";
 
         $keys_details = $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
         foreach ($keys_details as $key => $values) {
@@ -238,22 +247,24 @@ class BaseModel
     public function buildSelectionLayer($included_columns = [], $join_keys = [])
     {
         $columns = $this->parseColumns($included_columns);
-        $joins = $this->parseJoinedTables($join_keys);
+        ['selects' => $selects, 'joins' => $joins] = $this->parseJoinedTables($join_keys);
 
-        return "SELECT $columns {$joins['selects']} FROM {$this->table} {$joins['joins']}";
+        return "SELECT 
+                $columns 
+                $selects 
+                FROM 
+                {$this->table} 
+                $joins";
     }
 
     public function parseColumns($included_columns = [])
     {
-        // return "{$this->table}." . empty($included_columns) ? '*' : implode(", {$this->table}.", $included_columns);
         return "{$this->table}." . implode(", {$this->table}.", $included_columns);
     }
 
     public function parseJoinedTables($joined_tables = [])
     {
-        $join_layer = [];
-        $join_layer['selects'] = '';
-        $join_layer['joins'] = '';
+        $join_layer = ['selects' => '', 'joins' => ''];
 
         foreach ($joined_tables as $ref_tab => $included_columns)
             if ($keyset = $this->keys[$ref_tab]) {
@@ -266,6 +277,8 @@ class BaseModel
                 //https://www.w3schools.com/sql/sql_join.asp#:~:text=Different%20Types%20of%20SQL%20JOINs,records%20from%20the%20right%20table
                 $join_layer['joins'] .= " INNER JOIN $ref_tab ON {$this->table}.{$int_col} = {$ref_tab}.{$ext_col}";
             }
+
+        // $join_layer['selects'] .= !empty($join_layer['selects']) ? " GROUP BY {$this->table}.id" : '';
 
         return $join_layer;
     }

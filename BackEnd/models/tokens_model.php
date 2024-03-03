@@ -1,8 +1,7 @@
 <?php
+require_once "$path/models/base_model.php";
 
-require_once $path . '/models/base_model.php';
-
-class TokenModel extends BaseModel
+class TokensModel extends BaseModel
 {
     public function __construct($pdo)
     {

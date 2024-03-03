@@ -2,7 +2,7 @@
 
 require_once "$path/models/base_model.php";
 
-class ReviewModel extends BaseModel
+class ReviewsModel extends BaseModel
 {
     public function __construct($pdo)
     {

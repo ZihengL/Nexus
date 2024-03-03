@@ -22,15 +22,15 @@ class GamesModel extends BaseModel
         return $stmt->fetch();
     }
 
-    public function update($id, $Game)
+    public function update($id, $game)
     {
-        $formattedData = $this->formatData($Game);
-        $pairs = implode(' = ?, ', array_keys($formattedData)) . ' = ?';
-        $formattedData['id'] = $id;
+        $formatted_data = $this->formatData($game);
+        $pairs = implode(' = ?, ', array_keys($formatted_data)) . ' = ?';
+        $formatted_data['id'] = $id;
 
         $sql = "UPDATE $this->table SET $pairs WHERE id = ?";
 
-        if ($this->query($sql, $formattedData)) {
+        if ($this->query($sql, $formatted_data)) {
             return true;
         } else {
             return false;
@@ -38,21 +38,21 @@ class GamesModel extends BaseModel
     }
 
     //Updates
-    function updateGameTags($pdo, $gameId, array $newTagIds)
+    public function updateGameTags($pdo, $game_id, array $new_tags_ids)
     {
         // Begin a transaction
         $pdo->beginTransaction();
 
         try {
             // Remove existing tags for the game
-            $stmt = $pdo->prepare('DELETE FROM game_tags WHERE game_id = :game_id');
-            $stmt->execute([':game_id' => $gameId]);
+            $stmt = $pdo->prepare('DELETE FROM gamestags WHERE gameID = :game_id');
+            $stmt->execute([':game_id' => $game_id]);
 
             // Insert new tags
-            $sql = 'INSERT INTO gamestags (game_id, tag_id) VALUES (:game_id, :tag_id)';
+            $sql = 'INSERT INTO gamestags (gameID, tagID) VALUES (:game_id, :tag_id)';
             $stmt = $pdo->prepare($sql);
-            foreach ($newTagIds as $tagId) {
-                $stmt->execute([':game_id' => $gameId, ':tag_id' => $tagId]);
+            foreach ($new_tags_ids as $tagId) {
+                $stmt->execute([':game_id' => $game_id, ':tag_id' => $tagId]);
             }
 
             // Commit the transaction
@@ -92,6 +92,11 @@ class GamesModel extends BaseModel
     //     }
     //     $results = $this->joinGamesAndTags($column, $value, $included_columns, $sorting);
     //     return $this->appendTagsToGames($results);
+    // }
+
+    // public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
+    // {
+    //     $res = parent::getAllMatching($filters, $sorting, $included_columns, $joined_tables);
     // }
 
     //Tools

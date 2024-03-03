@@ -1,7 +1,7 @@
 <?php
 
 require_once "$path/controllers/base_controller.php";
-require_once "$path/models/review_model.php"; // Ensure this path is correct
+require_once "$path/models/reviews_model.php"; // Ensure this path is correct
 
 class ReviewsController extends BaseController
 {
@@ -13,7 +13,7 @@ class ReviewsController extends BaseController
 
     public function __construct($central_controller, $pdo)
     {
-        $this->model = new ReviewModel($pdo);
+        $this->model = new ReviewsModel($pdo);
         parent::__construct($central_controller);
     }
 

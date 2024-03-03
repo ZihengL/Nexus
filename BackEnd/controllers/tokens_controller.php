@@ -1,7 +1,7 @@
 <?php
 
 require_once "$path/controllers/base_controller.php";
-require_once $path . '/models/token_model.php';
+require_once $path . '/models/tokens_model.php';
 require_once $path . '/vendor/autoload.php';
 
 use Firebase\JWT\JWT;
@@ -43,9 +43,10 @@ class TokensController extends BaseController
         $this->issuer = $_ENV['JWT_ISSUER'];
         $this->audience = $_ENV['JWT_AUDIENCE'];
 
-        $this->model = new TokenModel($pdo);
+        $this->model = new TokensModel($pdo);
         parent::__construct($central_controller);
     }
+
 
     /*******************************************************************/
     /************************* ENCODE & DECODE *************************/
@@ -110,6 +111,7 @@ class TokensController extends BaseController
         return null;
     }
 
+
     /*******************************************************************/
     /*************************** VALIDATION ****************************/
     /*******************************************************************/
@@ -151,6 +153,7 @@ class TokensController extends BaseController
 
         return $jwts;
     }
+
 
     /*******************************************************************/
     /**************************** DATABASE *****************************/
