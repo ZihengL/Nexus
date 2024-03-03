@@ -63,23 +63,28 @@ $table = $exploded_URI[0] ?? null;
 $crud_action = $exploded_URI[1] ?? null;
 $column = $exploded_URI[2] ?? null;
 $value = $exploded_URI[3] ?? null;
-
-
+$included_columns = explode(',', $_GET['includedColumns']) ?? [];
 // $included_columns = isset($_GET['includedColumns']) ? explode(',', $_GET['includedColumns']) : [];
 // $sorting = isset($_GET['sorting']) ? explode(',', $_GET['sorting']) : null;
-$included_columns = explode(',', $_GET['includedColumns']) ?? [];
+
 $sorting = [];
-// if (isset($_GET['sorting']))
-//     $sorting_params = explode(',', $_GET['sorting']);
 if ($sorting_params = explode(',', $_GET['sorting']))
     foreach ($sorting_params as $param) {
         list($key, $v) = explode(':', $param);
         $sorting[$key] = $v === 'true' ? true : false;
     }
 
-// Read the input data for POST, PUT, DELETE methods
+// ENCODED DATA
 $raw_data = file_get_contents('php://input');
 $decoded_data = json_decode($raw_data, true);
+
+// ZI
+$options = [
+    'column' => $column,
+    'value' => $value,
+    'included_columns' => $included_columns,
+    'sorting' => $sorting
+];
 
 
 /*******************************************************************/
@@ -107,8 +112,9 @@ switch ($method) {
 }
 
 // ZI
-switch ($method | $crud_action) {
+switch ($method) {
     case $method === 'GET':
+
         break;
     case $crud_action === 'getAllMatching':
         break;
@@ -233,7 +239,7 @@ function handleLogin($decoded_data, $controller_name, $crud_action)
     return $central_controller->$controller_name->$crud_action($email, $password);
 }
 
-function handleLogout($decoded_data, $controllerName, $crud_action)
+function handleLogout($decoded_data, $controller_name, $crud_action)
 {
     global $central_controller;
     // $data = $decoded_data['logout'];
@@ -241,9 +247,8 @@ function handleLogout($decoded_data, $controllerName, $crud_action)
     // $tokens = $data['tokens'];
 
     ['id' => $id, 'tokens' => $tokens] = $decoded_data['logout'];
-    return $central_controller->$controllerName->$crud_action($id, $tokens);
+    return $central_controller->$controller_name->$crud_action($id, $tokens);
 }
-
 
 // CRUDS
 
