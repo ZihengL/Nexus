@@ -8,7 +8,7 @@
       <img
         :src="singleGame_data.image"
         alt="nothingBro"
-        class="roundBorderSmall"
+        class="roundBorderSmall gameImg"
       />
       <p class="roundBorderSmall">
         {{ singleGame_data.leGame.description }}

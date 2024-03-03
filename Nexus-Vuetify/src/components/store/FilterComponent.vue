@@ -66,10 +66,10 @@ const filter_data = reactive({
   filter_results: Object,
   sortList: [
     { label: "Trier par : ", value: "" },
-    { label: "Développeur", value: "developerID" },
-    { label: "Date de relâche", value: "releaseDate" },
-    { label: "Note de popularité", value: "ratingAverage" },
-    { label: "A à Z", value: "title" },
+    { label: "Développeur", value: "devName" },
+    { label: "Date de sortie", value: "releaseDate" },
+    { label: "Note d'évaluation", value: "ratingAverage" },
+    { label: "Titre", value: "title" },
   ],
 });
 
@@ -102,18 +102,27 @@ function returnFiltersData() {
 }
 
 watch(() => filter_data.searchInput, async (newVal, oldVal) => {
-  console.log("searched tag : " , newVal)
-  const fetchedGenres = await filterSearchedTags( newVal);
-  filter_data.genres = fetchedGenres.map((genre) => ({
-    ...genre,
-    checked: false,
-  }));
+  const fetchedGenres = await filterSearchedTags(newVal);
+  const updatedGenres = fetchedGenres.map((fetchedGenre) => {
+    const existingGenre = filter_data.genres.find(genre => genre.id === fetchedGenre.id);
+    return {
+      ...fetchedGenre,
+      checked: existingGenre ? existingGenre.checked : false,
+    };
+  });
+
+  // Keep already checked genres that are not included in the new search result
+  const checkedGenresNotIncluded = filter_data.genres.filter(genre => genre.checked && !updatedGenres.find(fetchedGenre => fetchedGenre.id === genre.id));
+
+  // Combine and sort so checked genres are first
+  filter_data.genres = [...checkedGenresNotIncluded, ...updatedGenres].sort((a, b) => b.checked - a.checked);
 });
+
 
 watch(
   () => filter_data.genres.map((genre) => genre.checked),
   (newVal, oldVal) => {
-    // Call returnFiltersData only if at least one genre's 'checked' value has changed.
+    // change the game list once any of the tags have been checked
     if (newVal.some((checked, index) => checked !== oldVal[index])) {
       returnFiltersData();
     }
