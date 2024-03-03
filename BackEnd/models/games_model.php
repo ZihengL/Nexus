@@ -49,7 +49,7 @@ class GamesModel extends BaseModel
             $stmt->execute([':game_id' => $gameId]);
 
             // Insert new tags
-            $sql = 'INSERT INTO game_tags (game_id, tag_id) VALUES (:game_id, :tag_id)';
+            $sql = 'INSERT INTO gamestags (game_id, tag_id) VALUES (:game_id, :tag_id)';
             $stmt = $pdo->prepare($sql);
             foreach ($newTagIds as $tagId) {
                 $stmt->execute([':game_id' => $gameId, ':tag_id' => $tagId]);
@@ -93,15 +93,6 @@ class GamesModel extends BaseModel
     //     $results = $this->joinGamesAndTags($column, $value, $included_columns, $sorting);
     //     return $this->appendTagsToGames($results);
     // }
-
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
-    {
-        echo '<b>';
-        printall($filters);
-        echo '</b>';
-
-        return parent::getAllMatching($filters, $sorting, $included_columns, $joined_tables);
-    }
 
     //Tools
     public function appendTagsToGames($results)

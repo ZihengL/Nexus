@@ -98,7 +98,7 @@ class BaseModel
 
     public function getOne($column, $value, $included_columns = [], $joined_tables = [])
     {
-        $sql = $this->buildSelectionLayer($included_columns, $joined_tables) . " WHERE $this->table.$column = ?";
+        $sql = $this->buildSelectionLayer($included_columns, $joined_tables) . " WHERE {$this->table}.$column = ?";
         $result = $this->query($sql, [$value]);
 
         // Returns in function of possible multiplicity(one-to-many) relationships
@@ -111,7 +111,7 @@ class BaseModel
         $params = [];
 
         if ($column && $value) {
-            $sql .= " WHERE $this->table.$column = ?";
+            $sql .= " WHERE {$this->table}.$column = ?";
             $params = [$value];
         }
 
@@ -144,7 +144,7 @@ class BaseModel
         $columns = implode(', ', array_keys($data));
         $placeholders = substr(str_repeat(", ?", count($data)), 1);
 
-        $sql = "INSERT INTO $this->table ($columns) VALUES ($placeholders)";
+        $sql = "INSERT INTO {$this->table} ($columns) VALUES ($placeholders)";
 
         if ($this->query($sql, $data)) {
             return true;
@@ -160,14 +160,14 @@ class BaseModel
         $pairs = implode(' = ?, ', array_keys($formatted_data)) . ' = ?';
         $formatted_data['id'] = $id;
 
-        $sql = "UPDATE $this->table SET $pairs WHERE id = ?";
+        $sql = "UPDATE {$this->table} SET $pairs WHERE id = ?";
 
         return $this->query($sql, $formatted_data)->fetch(); // Bugs?
     }
 
     public function delete($id)
     {
-        return $this->query("DELETE FROM $this->table WHERE id = $id")->fetch();
+        return $this->query("DELETE FROM {$this->table} WHERE id = $id")->fetch();
         // $stmt = $this->pdo->prepare($sql);
 
         // $stmt->bindParam(1, $id, PDO::PARAM_INT);
@@ -190,11 +190,11 @@ class BaseModel
     /************************* SELECTION LAYER *************************/
     /*******************************************************************/
 
-    public function getColumns($includeID = false)
+    public function getColumns($include_id = false)
     {
         $result = $this->query("DESCRIBE {$this->table}")->fetchAll(PDO::FETCH_COLUMN);
 
-        return $includeID ? $result : array_filter($result, function ($column) {
+        return $include_id ? $result : array_filter($result, function ($column) {
             return $column !== 'id';
         });
     }
@@ -330,21 +330,23 @@ class BaseModel
 
     protected function executeRelatedTableFilterAndGetIds($filterKey, $filterValue)
     {
-        $relatedTable = $filterValue['relatedTable'];
-        $filterValues = $filterValue['values'];
-        $wantedColumn = $filterValue['wantedColumn'];
+        ['relatedTable' => $related_table, 'values' => $filter_values, 'wantedColumn' => $included_columns] = $filterValue;
+        // $relatedTable = $filterValue['relatedTable'];
+        // $filter_values = $filterValue['values'];
+        // $included_columns = $filterValue['wantedColumn'];
 
         // Your existing SQL construction
-        $placeholders = implode(', ', array_fill(0, count($filterValues), '?'));
-        $sql = "SELECT {$wantedColumn} 
-                FROM {$relatedTable}  
+        $placeholders = implode(', ', array_fill(0, count($filter_values), '?'));
+        $sql = "SELECT {$included_columns} 
+                FROM {$related_table}  
                 WHERE {$filterKey} 
                 IN ($placeholders)";
 
         // Prepare and execute the query
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($filterValues);
-        $ids = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+        // $stmt = $this->pdo->prepare($sql);
+        // $stmt->execute($filter_values);
+        // Was executing it outside of the query with catch
+        $ids = $this->query($sql, $filter_values)->fetchAll(PDO::FETCH_COLUMN, 0);
 
         // Build the 'IN' clause for the main query using fetched IDs
         if (!empty($ids)) {
