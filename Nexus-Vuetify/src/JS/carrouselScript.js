@@ -10,8 +10,8 @@ const listRef = ref(storage, 'GameTitle/');
 // Find all the prefixes and items under 'GameTitle/'
 listAll(listRef)
   .then((res) => {
-
-
+    
+    
    console.log( "firebase:"+res)
     res.items.forEach((itemRef) => {
       // For each item found, assuming these are your images, get the download URL
@@ -69,9 +69,8 @@ export default {
     async fetchGameImages(games) {
       try {
         const imageFetchPromises = games.map(async (game) => {
-          const gameId= game.id
           const files = game.title || `defaultName.jpg`;
-          const imagePath = `Games/${gameId}/`;
+          const imagePath = `GameTitle/${files}.png`;
           const imageRef = ref(storage, imagePath);
 
           try {
@@ -119,6 +118,6 @@ export default {
       console.error("Error fetching game images:", error);
       //return []; // Return an empty array in case of error
     }
-
+  
   }
 }
