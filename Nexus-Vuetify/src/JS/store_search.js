@@ -25,25 +25,20 @@ export const search_AndFilter = async (
     ? await searchOn_titleOrUsername(titleOrDevName)
     : await getAllGamesWithDeveloperName();
 
-  // Filter games by tags
   if (tags.length > 0) {
     games = games.filter(game =>
       tags.every(tag => game.tags.some(gameTag => gameTag.name === tag))
     );
   }
 
-  // Sort games based on the sorting parameter
   if (sorting) {
-    // Specific condition for sorting by ratingAverage in descending order
     if (sorting === "ratingAverage") {
       games.sort((a, b) => {
-        // Descending order: higher ratings come first
         if (a[sorting] > b[sorting]) return -1;
         if (a[sorting] < b[sorting]) return 1;
         return 0;
       });
     } else {
-      // For other sorting criteria, use ascending order or customize as needed
       games.sort((a, b) => {
         if (a[sorting] < b[sorting]) return -1;
         if (a[sorting] > b[sorting]) return 1;
