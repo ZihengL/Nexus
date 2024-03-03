@@ -2,6 +2,7 @@
   <div class="filter-container roundBorderSmall glass">
     <h3>{{ props.filter_title }}</h3>
     <div class="checkbox-group">
+      <h4>{{ filter_data.tags_container_title }}</h4>
       <label
         v-for="genre in filter_data.genres.slice(0, 5)"
         :key="genre.id"
@@ -16,17 +17,20 @@
         />
         <span>{{ genre.name }}</span>
       </label>
+
+      <div class="search-container">
+        <input
+          v-model="filter_data.searchInput"
+          type="text"
+          id="gameSearch"
+          name="gameSearch"
+          placeholder="Chercher par genre"
+        />
+      </div>
     </div>
-    <div class="search-container">
-      <input
-        v-model="filter_data.searchInput"
-        type="text"
-        id="gameSearch"
-        name="gameSearch"
-        placeholder="Chercher par genre"
-      />
-    </div>
+
     <div class="sort-container">
+      <h4>{{ filter_data.sort_container_title }}</h4>
       <select v-model="filter_data.selectedSort">
         <option disabled value="">Trier par :</option>
         <option
@@ -64,6 +68,9 @@ const filter_data = reactive({
   selectedSort: "",
   searchInput: "",
   filter_results: Object,
+  tags_container_title: "Genres",
+  sort_container_title: "Trier Par :",
+
   sortList: [
     { label: "Trier par : ", value: "" },
     { label: "Développeur", value: "devName" },
@@ -80,7 +87,6 @@ async function getTags() {
     checked: false,
   }));
 }
-
 
 function returnFiltersData() {
   let selectedGenres = filter_data.genres
@@ -101,23 +107,33 @@ function returnFiltersData() {
   emit("update:filters", data);
 }
 
-watch(() => filter_data.searchInput, async (newVal, oldVal) => {
-  const fetchedGenres = await filterSearchedTags(newVal);
-  const updatedGenres = fetchedGenres.map((fetchedGenre) => {
-    const existingGenre = filter_data.genres.find(genre => genre.id === fetchedGenre.id);
-    return {
-      ...fetchedGenre,
-      checked: existingGenre ? existingGenre.checked : false,
-    };
-  });
+watch(
+  () => filter_data.searchInput,
+  async (newVal, oldVal) => {
+    const fetchedGenres = await filterSearchedTags(newVal);
+    const updatedGenres = fetchedGenres.map((fetchedGenre) => {
+      const existingGenre = filter_data.genres.find(
+        (genre) => genre.id === fetchedGenre.id
+      );
+      return {
+        ...fetchedGenre,
+        checked: existingGenre ? existingGenre.checked : false,
+      };
+    });
 
-  // Keep already checked genres that are not included in the new search result
-  const checkedGenresNotIncluded = filter_data.genres.filter(genre => genre.checked && !updatedGenres.find(fetchedGenre => fetchedGenre.id === genre.id));
+    // Keep already checked genres that are not included in the new search result
+    const checkedGenresNotIncluded = filter_data.genres.filter(
+      (genre) =>
+        genre.checked &&
+        !updatedGenres.find((fetchedGenre) => fetchedGenre.id === genre.id)
+    );
 
-  // Combine and sort so checked genres are first
-  filter_data.genres = [...checkedGenresNotIncluded, ...updatedGenres].sort((a, b) => b.checked - a.checked);
-});
-
+    // Combine and sort so checked genres are first
+    filter_data.genres = [...checkedGenresNotIncluded, ...updatedGenres].sort(
+      (a, b) => b.checked - a.checked
+    );
+  }
+);
 
 watch(
   () => filter_data.genres.map((genre) => genre.checked),
