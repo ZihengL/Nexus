@@ -1,4 +1,5 @@
 <?php
+require_once "$path/models/base_model.php";
 
 class UsersDownloadsModel extends BaseModel
 {

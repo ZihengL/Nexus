@@ -19,12 +19,11 @@ class GamesController extends BaseController
         parent::__construct($central_controller);
     }
 
+
     /*******************************************************************/
     /***************************** GETTERS *****************************/
     /*******************************************************************/
 
-    // $filters = ['tagId' => ['relatedTable' => 'gamesTags', 'values' => ['1', '3'], 'wantedColumn' => 'gameId']];
-    // $results_1 = $this->centralController->games_controller->getAllMatching($filters, null, null);
     public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [])
     {
         $included_columns = empty($included_columns) ? [] : $included_columns;
@@ -39,6 +38,7 @@ class GamesController extends BaseController
 
         return parent::getAllMatching($filters, $sorting, $included_columns, $joined_tables);
     }
+
 
     /*******************************************************************/
     /****************************** CRUDS ******************************/

@@ -1,6 +1,6 @@
 <?php
 require_once "$path/controllers/base_controller.php";
-require_once "$path/models/users_downloads_model.php";
+require_once "$path/models/multiplicity/users_downloads_model.php";
 
 class UsersDownloadsController extends BaseController
 {

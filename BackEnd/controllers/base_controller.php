@@ -13,11 +13,12 @@ class BaseController
         $this->central_controller = $central_controller;
     }
 
+
     /*******************************************************************/
     /****************************** GETTERS ****************************/
     /*******************************************************************/
 
-    // Managers
+    // MANAGERS
 
     protected function getDatabaseManager()
     {
@@ -34,7 +35,8 @@ class BaseController
         return $this->getGoogleClientManager()->drive_controller;
     }
 
-    // Controllers
+
+    // TABLES
 
     protected function getUsersController()
     {
@@ -61,10 +63,14 @@ class BaseController
         return $this->central_controller->reviews_controller;
     }
 
-    protected function getGameTagsController()
+
+    // MULTIPLICITY TABLES
+
+    protected function getGamesTagsController()
     {
-        return $this->central_controller->gametags_controller;
+        return $this->central_controller->gamestags_controller;
     }
+
 
     /*******************************************************************/
     /************************ ACCESS & SECURITY ************************/
@@ -101,6 +107,7 @@ class BaseController
 
         return $joined_tables;
     }
+
 
     /*******************************************************************/
     /****************************** CRUDS ******************************/
@@ -147,6 +154,7 @@ class BaseController
     {
         return $this->model->delete($id);
     }
+
 
     /*******************************************************************/
     /***************************** LOGGING *****************************/

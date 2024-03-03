@@ -1,5 +1,4 @@
 <?php
-
 require_once "$path/models/base_model.php";
 
 class GamestagsModel extends BaseModel
@@ -8,6 +7,7 @@ class GamestagsModel extends BaseModel
     {
         parent::__construct($pdo, "gamestags");
     }
+
 
     /*******************************************************************/
     /***************************** GETTERS *****************************/

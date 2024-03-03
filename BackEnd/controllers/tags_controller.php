@@ -52,7 +52,7 @@ class TagsController extends BaseController
                     return $this->createResponse(false, 'Failed to create new tag');
                 }
             }
-            return $this->getGameTagsController()->create($newData);
+            return $this->getGamesTagsController()->create($newData);
         }
         return $isValid;
     }
@@ -75,11 +75,11 @@ class TagsController extends BaseController
                     'gameId' => $gameId,
                     'tagId' => $tagId,
                 ];
-                $gameTagsRelation = $this->getGameTagsController()->getAllMatching($filters);
+                $gameTagsRelation = $this->getGamesTagsController()->getAllMatching($filters);
 
                 if (!empty($gameTagsRelation) && $this->model->delete($tagId)) {
                     // echo "gameTagsRelation ". print_r($gameTagsRelation, true). "<br>";
-                    if ($this->getGameTagsController()->delete($gameTagsRelation[0]["id"])) {
+                    if ($this->getGamesTagsController()->delete($gameTagsRelation[0]["id"])) {
                         return $this->createResponse(true, 'tags successfully deleted in gameTags and tags table');
                     }
                 }

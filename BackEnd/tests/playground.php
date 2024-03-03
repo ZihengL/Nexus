@@ -7,7 +7,7 @@ require_once $path . 'models/base_model.php';
 
 $users_ctrl = $central_controller->users_controller;
 $games_ctrl = $central_controller->games_controller;
-$gametags_ctrl = $central_controller->gametags_controller;
+$gametags_ctrl = $central_controller->gamestags_controller;
 
 
 
@@ -34,6 +34,10 @@ printall($result);
 
 echo '<b>getAllMatching</b><br>';
 $result = $games_ctrl->getAllMatching(['title' => 'Space Odyssey'], null, null, $joined_tables);
+printall($result);
+
+echo 'With included tables<br>';
+$result = $games_ctrl->getAllMatching(['title' => 'Space Odyssey'], null, ['id', 'userID', 'title'], $joined_tables);
 printall($result);
 
 echo '<hr><hr>';

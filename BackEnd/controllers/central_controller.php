@@ -4,8 +4,10 @@ require_once "$path/controllers/tokens_controller.php";
 require_once "$path/controllers/users_controller.php";
 require_once "$path/controllers/games_controller.php";
 require_once "$path/controllers/reviews_controller.php";
-require_once "$path/controllers/gamestags_controller.php";
 require_once "$path/controllers/tags_controller.php";
+
+require_once "$path/controllers/multiplicity/gamestags_controller.php";
+require_once "$path/controllers/multiplicity/users_downloads_controller.php";
 // require_once "$path/controllers/google/client_manager.php";
 
 require_once "$path/remote/routines.php";
@@ -16,16 +18,21 @@ class CentralController
 {
     private static $instance = null;
 
+    // MANAGERS
     public $database_manager;
     public $google_client_manager;
 
+    // TABLES
     public $tokens_controller;
     public $routines_controller;
     public $users_controller;
     public $games_controller;
     public $reviews_controller;
-    public $gametags_controller;
     public $tags_controller;
+
+    // MULTIPLICITY TABLES
+    public $gamestags_controller;
+    public $users_downloads_controller;
 
     public $controllers_array = [];
 
@@ -44,13 +51,12 @@ class CentralController
         $this->users_controller = new UsersController($this, $pdo);
         $this->games_controller = new GamesController($this, $pdo);
         $this->reviews_controller = new ReviewsController($this, $pdo);
-        $this->gametags_controller = new GamestagsController($this, $pdo);
         $this->tags_controller = new TagsController($this, $pdo);
 
-        $this->controllers_array = $this->getControllersAsArray();
+        $this->gamestags_controller = new GamestagsController($this, $pdo);
+        $this->users_downloads_controller = new UsersDownloadsController($this, $pdo);
 
-        include_once "$path/tests/queries.php";
-        $TestQueries = new TestQueries($pdo);
+        $this->$this->$this->controllers_array = $this->getControllersAsArray();
     }
 
     public static function getInstance()
@@ -72,7 +78,7 @@ class CentralController
             $this->users_controller,
             $this->games_controller,
             $this->reviews_controller,
-            $this->gametags_controller,
+            $this->gamestags_controller,
             $this->tags_controller
         ];
     }
