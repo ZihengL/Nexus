@@ -1,19 +1,17 @@
 <?php
-
 require_once "$path/controllers/base_controller.php";
 require_once "$path/models/games_model.php";
 
 class GamesController extends BaseController
 {
-    protected $id = "id";
-    protected $developerID = "developerID";
-    protected $stripeID = "stripeID";
-    protected $title = "title";
-    protected $files = "files";
-    protected $description = "description";
-    protected $ratingAverage = "ratingAverage";
-    protected $media = "media";
-    protected $releaseDate = "releaseDate";
+    protected $developerID = 'developerID';
+    protected $stripeID = 'stripeID';
+    protected $title = 'title';
+    protected $description = 'description';
+    protected $ratingAverage = 'ratingAverage';
+    protected $files = 'files';
+    protected $media = 'media';
+    protected $releaseDate = 'releaseDate';
 
     public function __construct($central_controller, $pdo)
     {

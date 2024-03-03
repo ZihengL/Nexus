@@ -1,5 +1,4 @@
 <?php
-
 require_once "$path/controllers/base_controller.php";
 
 class BaseController
@@ -7,6 +6,7 @@ class BaseController
     protected $central_controller;
     protected $model;
     protected $restricted_columns = [];
+    protected $id = 'id';
 
     public function __construct($central_controller)
     {

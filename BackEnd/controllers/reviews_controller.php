@@ -5,13 +5,11 @@ require_once "$path/models/review_model.php"; // Ensure this path is correct
 
 class ReviewsController extends BaseController
 {
-    // protected $model;
-    protected $id = "id";
-    protected $gameID = "gameID";
-    protected $userID = "userID";
-    protected $rating = "rating";
-    protected $timestamp = "timestamp";
-    protected $comment = "comment";
+    protected $gameID = 'gameID';
+    protected $userID = 'userID';
+    protected $rating = 'rating';
+    protected $comment = 'comment';
+    protected $timestamp = 'timestamp';
 
     public function __construct($central_controller, $pdo)
     {

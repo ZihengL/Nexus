@@ -1,13 +1,11 @@
 <?php
-
 require_once "$path/controllers/base_controller.php";
 require_once "$path/models/gamestags_model.php";
 
 class GamestagsController extends BaseController
 {
-    // protected $model;
-    protected $tagId = "tagId";
-    protected $gameID = "gameId";
+    protected $tagId = 'tagId';
+    protected $gameID = 'gameId';
 
     public function __construct($central_controller, $pdo)
     {

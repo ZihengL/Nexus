@@ -1,5 +1,4 @@
 <?php
-
 require_once "$path/controllers/database_manager.php";
 require_once "$path/controllers/tokens_controller.php";
 require_once "$path/controllers/users_controller.php";
