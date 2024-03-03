@@ -99,10 +99,9 @@ class BaseModel
     public function getOne($column, $value, $included_columns = [], $joined_tables = [])
     {
         $sql = $this->buildSelectionLayer($included_columns, $joined_tables) . " WHERE $this->table.$column = ?";
-
         $result = $this->query($sql, [$value]);
 
-        // return $this->query($sql, [$value])->fetch(PDO::FETCH_ASSOC);
+        // Returns in function of possible multiplicity(one-to-many) relationships
         return $joined_tables && !empty($joined_tables) ? $result->fetchAll(PDO::FETCH_ASSOC) : $result->fetch(PDO::FETCH_ASSOC);
     }
 
