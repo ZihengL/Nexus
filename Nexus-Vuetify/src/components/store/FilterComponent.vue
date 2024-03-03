@@ -1,14 +1,22 @@
 <template>
   <div class="filter-container roundBorderSmall glass">
     <h3>{{ props.filter_title }}</h3>
-   <div class="checkbox-group">
-  <label v-for="genre in filter_data.genres.slice(0, 5)" :key="genre.id"
-         :class="{'filter-label': true, 'glow': true, 'checked': genre.checked}">
-    <input type="checkbox" v-model="genre.checked" :name="genre.name" :value="genre.name" />
-    <span>{{ genre.name }}</span>
-  </label>
-</div>
-
+    <div class="checkbox-group">
+      <label
+        v-for="genre in filter_data.genres.slice(0, 5)"
+        :key="genre.id"
+        :class="{ 'filter-label': true, glow: true, checked: genre.checked }"
+      >
+        <input
+          @checked="returnFiltersData"
+          type="checkbox"
+          v-model="genre.checked"
+          :name="genre.name"
+          :value="genre.name"
+        />
+        <span>{{ genre.name }}</span>
+      </label>
+    </div>
     <div class="search-container">
       <input
         v-model="filter_data.searchInput"
@@ -37,9 +45,9 @@
 </template>
 
 <script setup>
-import { onMounted, reactive } from "vue";
+import { onMounted, reactive, watch } from "vue";
 // import SearchComponent from "../game/SearchComponent.vue";
-import { getAll } from "../../JS/fetchServices";
+import { getAll, filterSearchedTags } from "../../JS/fetchServices";
 
 const props = defineProps({
   filter_title: String,
@@ -72,16 +80,18 @@ async function getTags() {
     checked: false,
   }));
 }
+
+
 function returnFiltersData() {
   let selectedGenres = filter_data.genres
     .filter((genre) => genre.checked)
     .map((genre) => genre.name);
 
-  const trimmedSearchInput = filter_data.searchInput.trim();
+  // const trimmedSearchInput = filter_data.searchInput.trim();
 
-  if (trimmedSearchInput) {
-    selectedGenres.push(trimmedSearchInput);
-  }
+  // if (trimmedSearchInput) {
+  //   selectedGenres.push(trimmedSearchInput);
+  // }
 
   let data = {
     tags: selectedGenres,
@@ -90,6 +100,26 @@ function returnFiltersData() {
 
   emit("update:filters", data);
 }
+
+watch(() => filter_data.searchInput, async (newVal, oldVal) => {
+  console.log("searched tag : " , newVal)
+  const fetchedGenres = await filterSearchedTags( newVal);
+  filter_data.genres = fetchedGenres.map((genre) => ({
+    ...genre,
+    checked: false,
+  }));
+});
+
+watch(
+  () => filter_data.genres.map((genre) => genre.checked),
+  (newVal, oldVal) => {
+    // Call returnFiltersData only if at least one genre's 'checked' value has changed.
+    if (newVal.some((checked, index) => checked !== oldVal[index])) {
+      returnFiltersData();
+    }
+  },
+  { deep: true }
+);
 
 onMounted(async () => {
   await getTags();
@@ -117,7 +147,6 @@ input[type="checkbox"]:checked + .filter-label:before {
 input[type="checkbox"] {
   display: none;
 }
-
 
 .filter-label {
   background: rgba(77, 77, 77, 0.8);
@@ -183,7 +212,6 @@ input[type="checkbox"] {
   background: rgba(68, 108, 137, 0.8);
   color: #ffffff;
 }
-
 
 .search-container {
   margin-top: 20px; /* Adjust space above search bar as needed */

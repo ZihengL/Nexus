@@ -22,6 +22,18 @@ export const getAllMatching = async (table,filters, sorting = null, includedColu
 };
 
 
+export const filterSearchedTags = async (searchedTag) => {
+  let filters = {
+    name: { contain: searchedTag }
+  } 
+  let body = {
+    filters
+  }
+  let data = await fetchData("tags", "getAllMatching", null, null, null, null, body, "POST");
+  return data
+};
+
+
 export const loginService = async (login) => {
   //console.log(jsonObject)
   let body = {
