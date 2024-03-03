@@ -1,7 +1,7 @@
 <template>
-  <div v-if="gameList_data.listeJeux.length" id="storeComp" class="glass">
+  <div v-if="props.gameList.length" id="storeComp" class="glass">
     <SingleGameComponent
-      v-for="game in gameList_data.listeJeux"
+      v-for="game in props.gameList"
       :key="game.id"
       :idGame="game.id"
       class="vuee"
@@ -15,32 +15,33 @@
 
 <script setup>
 import SingleGameComponent from "./SingleGameComponent.vue";
-import { getAll } from "../../JS/fetchServices";
 // import { fetchData } from "../../JS/fetch";
 // let listeJeux = ref(null);
-import { reactive, onMounted } from "vue";
+import { reactive, onMounted, watch } from "vue";
+
+const props = defineProps({
+  gameList: {
+    type: Array,
+    default: () => {},
+  },
+});
 
 const gameList_data = reactive({
   listeJeux: [],
   errorMsg: "Error no game in List",
 });
 
-async function getGameList() {
-  let data = await getAll("games");
-  // console.log("Expected an array but got:", typeof data);
-  // console.log("gamelist data : ", data);
-  if (data) {
-    gameList_data.listeJeux = data;
-    // console.log("gamelist listeJeux : ", gameList_data.listeJeux);
-    // for (let game of gameList_data.listeJeux) {
-    //   console.log("game in listeJeux : ", game);
-    // }
-  }
-}
 
+watch(
+  () => gameList_data.gameList_result,
+  (newVal, oldVal) => {
+    console.log("gameList_result updated", newVal);
+  },
+  { deep: true }
+);
 
 onMounted(async () => {
-  await getGameList();
+  // await getGameList();
 });
 </script>
 

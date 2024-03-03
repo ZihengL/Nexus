@@ -8,7 +8,7 @@
       <img
         :src="singleGame_data.image"
         alt="nothingBro"
-        class="roundBorderSmall"
+        class="roundBorderSmall gameImg"
       />
       <p class="roundBorderSmall">
         {{ singleGame_data.leGame.description }}
@@ -54,14 +54,14 @@ import { getGameDetailsWithDeveloperName } from "../../JS/fetchServices";
 async function getGameInfos() {
   try {
     // console.log("props.idGame : ", props.idGame);
-    console.log("singleGame props.idGame :", props.idGame);
+    // console.log("singleGame props.idGame :", props.idGame);
     singleGame_data.leGame = await getGameDetailsWithDeveloperName(
       props.idGame
     );
-    console.log(
-      "typeOf singleGame_data.leGame:",
-      typeof singleGame_data.leGame
-    );
+    // console.log(
+    //   "typeOf singleGame_data.leGame:",
+    //   typeof singleGame_data.leGame
+    // );
     if (singleGame_data.leGame) {
       singleGame_data.image = singleGame_data.leGame.image
         ? singleGame_data.leGame.image

@@ -11,6 +11,28 @@ export const getAll = async (table, column = null, value = null, includedColumns
   return data
 };
 
+export const getAllMatching = async (table,filters, sorting = null, includedColumns = null) => {
+  let body = {
+    filters,
+    sorting,
+    includedColumns
+  }
+  let data = await fetchData(table, "getAllMatching", null, null, null, null, body, "POST");
+  return data
+};
+
+
+export const filterSearchedTags = async (searchedTag) => {
+  let filters = {
+    name: { contain: searchedTag }
+  } 
+  let body = {
+    filters
+  }
+  let data = await fetchData("tags", "getAllMatching", null, null, null, null, body, "POST");
+  return data
+};
+
 
 export const loginService = async (login) => {
   //console.log(jsonObject)
@@ -23,11 +45,11 @@ export const loginService = async (login) => {
 };
 
 
-export const registerService = async (register) => {
+export const registerService = async (createData) => {
   let body = {
-    register
+    createData
   }
-  let data = await fetchData("users", "register", null, null, null, null, body, "POST");
+  let data = await fetchData("users", "create", null, null, null, null, body, "POST");
   return data
 };
 
