@@ -80,11 +80,12 @@ if ($sorting_params = explode(',', $_GET['sorting']))
 // Read the input data for POST, PUT, DELETE methods
 $raw_data = file_get_contents('php://input');
 $decoded_data = json_decode($raw_data, true);
-// print_r($rawData);
 
-// console.log(" response : ", response.text());
-// console.log(' response : ', response.text())
-// Routing
+
+/*******************************************************************/
+/***************************** ROUTING *****************************/
+/*******************************************************************/
+
 switch ($method) {
     case 'GET':
         // print_r($explodedURI);
@@ -102,6 +103,14 @@ switch ($method) {
         break;
     default:
         echo json_encode(['error' => 'Method Not Allowed']);
+        break;
+}
+
+// ZI
+switch ($method | $crud_action) {
+    case $method === 'GET':
+        break;
+    case $crud_action === 'getAllMatching':
         break;
 }
 
@@ -211,10 +220,7 @@ function handleFilterData($decoded_data, $controller_name, $crud_action)
     return $central_controller->$controller_name->$crud_action($filters, $sorting, $included_columns);
 }
 
-
-/*******************************************************************/
-/**************************** VALIDATION ***************************/
-/*******************************************************************/
+// AUTHENTIFICATION
 
 function handleLogin($decoded_data, $controller_name, $crud_action)
 {
@@ -234,14 +240,12 @@ function handleLogout($decoded_data, $controllerName, $crud_action)
     // $id =  $data['id'];
     // $tokens = $data['tokens'];
 
-    ['logout' => $data, 'id' => $id, 'tokens' => $tokens] = $decoded_data['logout'];
+    ['id' => $id, 'tokens' => $tokens] = $decoded_data['logout'];
     return $central_controller->$controllerName->$crud_action($id, $tokens);
 }
 
 
-/*******************************************************************/
-/****************************** CRUDS ******************************/
-/*******************************************************************/
+// CRUDS
 
 function handleCreate($decoded_data, $controller_name, $crud_action)
 {
