@@ -6,6 +6,10 @@ class GamesModel extends BaseModel
     public function __construct($pdo)
     {
         parent::__construct($pdo, "games");
+
+        // $res = $this->query("SELECT games.*, gamestags.* FROM `games` INNER JOIN gamestags ON games.id = gamestags.gameId WHERE games.title = 'Space Odyssey'");
+
+        // printall($res->fetchAll(PDO::FETCH_ASSOC));
     }
 
     //Other Cruds
@@ -89,6 +93,15 @@ class GamesModel extends BaseModel
     //     $results = $this->joinGamesAndTags($column, $value, $included_columns, $sorting);
     //     return $this->appendTagsToGames($results);
     // }
+
+    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
+    {
+        echo '<b>';
+        printall($filters);
+        echo '</b>';
+
+        return parent::getAllMatching($filters, $sorting, $included_columns, $joined_tables);
+    }
 
     //Tools
     public function appendTagsToGames($results)

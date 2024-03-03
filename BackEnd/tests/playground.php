@@ -5,8 +5,6 @@ $path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd/';
 require_once $path . 'tests/temp_globals.php';
 require_once $path . 'models/base_model.php';
 
-BaseModel::$print_queries = true;
-
 $users_ctrl = $central_controller->users_controller;
 $games_ctrl = $central_controller->games_controller;
 $gametags_ctrl = $central_controller->gametags_controller;
@@ -23,18 +21,22 @@ $arr3 = array_intersect_key($arr1, $arr2);
 
 $joined_tables = [
     'users' => ['id', 'username'],
-    'gamestags' => ['gameId']
+    'gamestags' => ['gameId', 'tagId']
 ];
 
-$joined_tables = [
-    'gamestags' => ['gameId']
-];
 // print_r($joined_tables['users']);
 
-$result = $games_ctrl->getOne('title', 'Space Odyssey', [], $joined_tables);
+echo '<hr><b>TEST</b><hr>';
 
+echo '<b>getOne</b><br>';
+$result = $games_ctrl->getOne('title', 'Space Odyssey', null, $joined_tables);
 printall($result);
 
+echo '<b>getAllMatching</b><br>';
+$result = $games_ctrl->getAllMatching(['title' => 'Space Odyssey'], null, null, $joined_tables);
+printall($result);
+
+echo '<hr><hr>';
 
 // echo 'OLD<pre>';
 // print_r($users);
@@ -87,7 +89,7 @@ printall($result);
 
 // $refresh = $tokens_controller->generateRefreshToken(1990);
 
-// echo $refresh . '</br>';
+// echo $refresh . '</hr>';
 
 // $stored = $tokens_controller->getByHashcode($refresh);
 

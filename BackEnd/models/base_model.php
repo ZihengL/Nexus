@@ -2,7 +2,7 @@
 
 class BaseModel
 {
-    public static $print_queries = true;
+    public static $print_queries = false;
 
     protected $pdo;
     public $table;
@@ -48,6 +48,9 @@ class BaseModel
 
             return $stmt;
         } catch (PDOException $e) {
+            echo "<b>ERROR: </b> in <b>{$this->table}</b> for query: ";
+            printall($sql);
+
             throw new Exception("Database query error: " . $e->getMessage());
         }
     }
@@ -57,8 +60,8 @@ class BaseModel
         try {
             $stmt = $this->pdo->prepare($sql);
 
-            foreach ($params as $param => $value) {
-                $stmt->bindValue($param, $value);
+            foreach ($params as $column => $value) {
+                $stmt->bindValue($column, $value);
             }
             $stmt->execute();
 
@@ -69,7 +72,10 @@ class BaseModel
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            throw new Exception("Database query error: " . $e->getMessage());
+            echo "<b>ERROR: </b> in <b>{$this->table}</b> for query: ";
+            printall($sql);
+
+            throw new Exception("<br>Database query error: " . $e->getMessage());
         }
     }
 
@@ -94,7 +100,10 @@ class BaseModel
     {
         $sql = $this->buildSelectionLayer($included_columns, $joined_tables) . " WHERE $this->table.$column = ?";
 
-        return $this->query($sql, [$value])->fetch(PDO::FETCH_ASSOC);
+        $result = $this->query($sql, [$value]);
+
+        // return $this->query($sql, [$value])->fetch(PDO::FETCH_ASSOC);
+        return $joined_tables && !empty($joined_tables) ? $result->fetchAll(PDO::FETCH_ASSOC) : $result->fetch(PDO::FETCH_ASSOC);
     }
 
     public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [])
@@ -117,15 +126,13 @@ class BaseModel
     {
         $sql = $this->buildSelectionLayer($included_columns, $joined_tables) . ' WHERE 1 = 1';
 
-        $filterResults = $this->applyFilters($filters);
-        $sortingResults = $this->applySorting($sorting);
+        ['sql' => $filtering_sql, 'params' => $params] = $this->applyFilters($filters);
+        $sql .= $filtering_sql;
 
-        $sqlWithFilters = $filterResults['sql'];
-        $params = $filterResults['params'];
+        if ($sorting_layer = $this->applySorting($sorting))
+            $sql .= " ORDER BY $sorting_layer";
 
-        $sqlWithFiltersAndSorting = $sql . $sortingResults ? "$sqlWithFilters ORDER BY $sortingResults" : $sqlWithFilters;
-
-        return $this->bindingQuery($sqlWithFiltersAndSorting, $params);
+        return $this->bindingQuery($sql, $params);
     }
 
     /*******************************************************************/
@@ -150,13 +157,13 @@ class BaseModel
 
     public function update($id, $data)
     {
-        $formattedData = $this->formatData($data);
-        $pairs = implode(' = ?, ', array_keys($formattedData)) . ' = ?';
-        $formattedData['id'] = $id;
+        $formatted_data = $this->formatData($data);
+        $pairs = implode(' = ?, ', array_keys($formatted_data)) . ' = ?';
+        $formatted_data['id'] = $id;
 
         $sql = "UPDATE $this->table SET $pairs WHERE id = ?";
 
-        return $this->query($sql, $formattedData)->fetch(); // Bugs?
+        return $this->query($sql, $formatted_data)->fetch(); // Bugs?
     }
 
     public function delete($id)
@@ -225,13 +232,6 @@ class BaseModel
         return $keys_details;
     }
 
-    public function getAdjacentKeysDetails($table)
-    {
-        $sql = "SELECT
-                
-        ";
-    }
-
     public function buildSelectionLayer($included_columns = [], $join_keys = [])
     {
         $columns = $this->parseColumns($included_columns);
@@ -243,7 +243,7 @@ class BaseModel
     public function parseColumns($included_columns = [])
     {
         // return "{$this->table}." . empty($included_columns) ? '*' : implode(", {$this->table}.", $included_columns);
-        return $this->table . '.' . implode(", {$this->table}.", $included_columns);
+        return "{$this->table}." . implode(", {$this->table}.", $included_columns);
     }
 
     public function parseJoinedTables($joined_tables = [])
@@ -260,7 +260,8 @@ class BaseModel
                     $join_layer['selects'] .= ", {$ref_tab}.{$join_column} AS {$ref_tab}_{$join_column}";
 
                 // TODO: IF MULTIPLICITY CAN BE COMPUTED, CHANGE THE JOIN TYPE HERE
-                $join_layer['joins'] .= " FULL JOIN $ref_tab ON {$this->table}.{$int_col} = {$ref_tab}.{$ext_col}";
+                //https://www.w3schools.com/sql/sql_join.asp#:~:text=Different%20Types%20of%20SQL%20JOINs,records%20from%20the%20right%20table
+                $join_layer['joins'] .= " INNER JOIN $ref_tab ON {$this->table}.{$int_col} = {$ref_tab}.{$ext_col}";
             }
 
         return $join_layer;

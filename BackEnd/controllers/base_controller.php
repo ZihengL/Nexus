@@ -127,6 +127,9 @@ class BaseController
         $included_columns = $this->restrictAccess($included_columns);
         $joined_tables = $this->restrictJoinedTables($joined_tables);
 
+        printall($included_columns);
+        printall($joined_tables);
+
         return $this->model->getAllMatching($filters, $sorting, $included_columns, $joined_tables, $joined_tables);
     }
 

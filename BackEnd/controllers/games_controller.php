@@ -32,7 +32,7 @@ class GamesController extends BaseController
         $included_columns = empty($included_columns) ? [] : $included_columns;
         $sorting = empty($sorting) ?  [$this->ratingAverage => true] : $sorting;
 
-        return $this->model->getAll($column, $value, $included_columns, $sorting, $joined_tables = []);
+        return $this->model->getAll($column, $value, $included_columns, $sorting, $joined_tables);
     }
 
     public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
