@@ -11,9 +11,13 @@
     <v-btn class="bordered-btn" @click="deleteData">delete</v-btn>
     <v-btn class="bordered-btn" @click="updateData">update</v-btn>
     <v-btn class="bordered-btn" @click="createData">create</v-btn>
+    <hr>
+    <p>Zi tests</p>
+    <hr>
+    <v-btn class="bordered-btn" @click="createData">create</v-btn>
   </div>
   <div>
-    <ReviewsListComponent :sorting="{timestamp: false}"></ReviewsListComponent>
+    <ReviewsListComponent :sorting="{ timestamp: false }"></ReviewsListComponent>
   </div>
 </template>
 
@@ -96,7 +100,7 @@ export default {
       // );
       console.log(results);
     },
-    
+
     logout() {
       const access_token = localStorage.getItem("accessToken");
       const refresh_token = localStorage.getItem("refreshToken");
@@ -397,7 +401,9 @@ export default {
 }
 
 .bordered-btn {
-  border: 2px solid #1976d2; /* Example border: 2px solid, using Vuetify's primary color */
-  border-radius: 4px; /* Optional: Adjust border-radius for rounded corners */
+  border: 2px solid #1976d2;
+  /* Example border: 2px solid, using Vuetify's primary color */
+  border-radius: 4px;
+  /* Optional: Adjust border-radius for rounded corners */
 }
 </style>

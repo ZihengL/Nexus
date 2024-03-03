@@ -67,7 +67,7 @@ class GamesModel extends BaseModel
 
     // Getters
 
-    public function getOne($column = null, $value = null, $included_columns = [], $join_keys = [])
+    public function getOne($column = null, $value = null, $included_columns = [], $joined_tables = [])
     {
         if (in_array('tags', $included_columns)) {
             $key = array_search('tags', $included_columns);
@@ -81,7 +81,7 @@ class GamesModel extends BaseModel
         return $this->appendTagsToGames($results);
     }
 
-    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $join_keys = [])
+    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [])
     {
         if (in_array('tags', $included_columns)) {
             $key = array_search('tags', $included_columns);

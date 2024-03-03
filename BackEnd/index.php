@@ -3,9 +3,7 @@
 
 function printall($item)
 {
-    echo '<pre>';
-    print_r($item);
-    echo '</pre><hr>';
+    echo '<pre>' . print_r($item, true) . '</pre><hr>';
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -63,9 +61,8 @@ $table = $exploded_URI[0] ?? null;
 $crud_action = $exploded_URI[1] ?? null;
 $column = $exploded_URI[2] ?? null;
 $value = $exploded_URI[3] ?? null;
-// $included_columns = explode(',', $_GET['includedColumns']) ?? [];
+
 $included_columns = isset($_GET['includedColumns']) ? explode(',', $_GET['includedColumns']) : [];
-// $sorting = isset($_GET['sorting']) ? explode(',', $_GET['sorting']) : null;
 
 $sorting = [];
 if (isset($_GET['sorting'])) {
@@ -144,7 +141,7 @@ function handleGet($table, $crud_action, $column, $value, $included_columns, $so
             echo json_encode($result);
             break;
         default:
-            echo json_encode(['error' => "Table $table Doesn't Exist"]);
+            echo json_encode(['error' => "Table $table doesn't exist"]);
             break;
     }
 }
