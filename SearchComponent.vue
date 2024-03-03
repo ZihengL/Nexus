@@ -6,43 +6,54 @@
         rel="stylesheet"
       />
     </head>
-    <div class="search-container roundBorderSmall glass">
+    <div :class="props.inputClass">
       <input
+        @input="updateValue($event.target.value)"
         type="text"
         :value="props.modelValue"
-        @input="onInput"
-        @keyup.enter="props.onSearch(props.modelValue)"
-        class="search-input"
-        :placeholder="props.placeholder_title"
+        :placeholder="props.placeholder"
       />
-      <button class="search-button">
-        <i @click="() => props.onSearch(props.modelValue)" class="fa-solid fa-magnifying-glass"></i>
+      <button :class="props.loopClass">
+        <i class="fa-solid fa-magnifying-glass"></i>
       </button>
     </div>
   </div>
 </template>
+
 <script setup>
-import { reactive, defineProps } from "vue";
-const emits = defineEmits(["update:modelValue"]);
+import { onMounted, reactive, defineEmits } from "vue";
 
 const props = defineProps({
-  placeholder_title: {
-    type: String,
-    default: "Trouver un jeu...",
-  },
+  placeholder: String,
   modelValue: String,
-  onSearch: Function,
+  inputClass: {
+    type: String,
+    default: "search-container roundBorderSmall glass",
+  },
+  loopClass: {
+    type: String,
+    default: "search-button",
+  },
 });
 
-const onInput = (event) => {
-  emits("update:modelValue", event.target.value);
-  // console.log(event.target.value);
-};
+const emit = defineEmits({
+  "update:modelValue": null,
+  // "update:": (payload) => typeof payload === "string",
+  // 'itemSelected': payload => typeof payload === 'object', // Assuming payload is an object
+  // 'selectionCleared': null // No payload expected
+});
 
+function updateValue(value) {
+  emit("update:modelValue", value);
+  console.log("search text  : ", value);
+}
 
+const search_data = reactive({});
+
+onMounted(async () => {});
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" scoped >
 #search {
   .search-container {
     margin-top: 5%;

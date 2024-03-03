@@ -110,6 +110,7 @@ class UsersController extends BaseController
     // Do this if user needs to do a fresh login
     public function login($email, $password)
     {
+        // echo "login email: " . $email . "<br>";
         $user = $this->model->getOne($this->email, $email);
         // echo "login user: " . print_r($user, true) . "<br>";
 

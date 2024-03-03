@@ -68,7 +68,7 @@ import { defineProps, onMounted, reactive } from "vue";
 import game from "../components/game/GameCarrousel.vue";
 // import PaginationComponent from "../components/PaginationComponent.vue";
 import ReviewsListComponent from "../components/reviewsListComponent.vue";
-import {getGameDetails } from '../JS/fetchServices';
+import {getGameDetailsWithDeveloperName } from '../JS/fetchServices';
 
 const gameInfos = reactive({
   leGame: {}, 
@@ -90,10 +90,12 @@ const props = defineProps({
 onMounted(async () => {
   // console.log("sortByRating : ", gameInfos.sortByRating)
   try {
-    let dataGame = await getGameDetails(props.idGame)
-    gameInfos.leGame = dataGame[0]
+    let dataGame = await getGameDetailsWithDeveloperName(props.idGame)
+    gameInfos.leGame = dataGame
+    gameInfos.tags = gameInfos.leGame.tags
+    gameInfos.devName = gameInfos.leGame.devName
     console.log("leGame : ", gameInfos.leGame)
-    
+
   } catch (error) {
     console.error("Error during component mounting:", error);
   }
@@ -101,4 +103,3 @@ onMounted(async () => {
 </script>
 
 <style src="../styles/GameVueStyle.scss" lang="scss"></style>
-../JS/fetchServices

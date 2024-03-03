@@ -132,7 +132,6 @@ export default {
     async login() {
       const login = {
         email: "b",
-        name: "charles",
         password: "b",
       };
       const loginBody = { login };
@@ -205,8 +204,8 @@ export default {
 
       ////////////////////CREATE TAG//////////////////////
       const createData = {
-        gameId: "10",
-        name: "princess",
+        gameId: "6",
+        name: "multiplayer",
       };
       const createBody = { createData };
       let results = fetchData(

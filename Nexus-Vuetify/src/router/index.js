@@ -22,7 +22,7 @@ const routes = [
         // route level code-splitting
         // this generates a separate chunk (Home-[hash].js) for this route
         // which is lazy-loaded when the route is visited.
-        component: () => import('@/views/Store.vue'),
+        component: () => import('@/views/StoreView.vue'),
       },
       {
         path: '/Profile/:IdDev',
@@ -82,12 +82,12 @@ const routes = [
         component: () => import('@/views/testView.vue'),
       },
       {
-        path: '/zitest',
-        name: 'zitest',
+        path: '/upload',
+        name: 'upload',
         // route level code-splitting
         // this generates a separate chunk (Home-[hash].js) for this route
         // which is lazy-loaded when the route is visited.
-        component: () => import('@/views/ZITESTS.vue'),
+        component: () => import('@/views/uploadGameView.vue'),
       },
     ],
   },

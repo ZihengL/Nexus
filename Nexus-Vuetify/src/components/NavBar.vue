@@ -30,8 +30,8 @@
 import { defineProps, ref, watch } from 'vue';
 
 let hover = ref(false);
-let logoURL = '/src/assets/logos/Nexus_c5c3c0.svg';
-let logo2URL = '/src/assets/logos/Nexus_171d25.svg';
+let logoURL = '/src/assets/logos/Nexus_c5c3c0.png';
+let logo2URL = '/src/assets/logos/Nexus_171d25.png';
 
 const props = defineProps(['connected']);
 
