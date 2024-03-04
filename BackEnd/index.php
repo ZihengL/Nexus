@@ -1,9 +1,14 @@
 <?php
 //index.php
 
-function printall($item)
+function printall($item, $return = false)
 {
-    echo '<pre>' . print_r($item, true) . '</pre><hr>';
+    $element = "<pre>{print_r($item, true)}</pre><hr>";
+    
+    if ($return)
+        return $element;
+
+    echo $element;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -56,21 +61,25 @@ $base_path = str_replace('/index.php', '', $script_name);
 $uri_path = str_replace($base_path, '', $path);
 $exploded_URI = explode('/', trim($uri_path, '/'));
 
-// PARAMS
+// --- PARAMS ---
+
+// Selection & action layer
 $table = $exploded_URI[0] ?? null;
 $crud_action = $exploded_URI[1] ?? null;
+
+// Selection layer
 $column = $exploded_URI[2] ?? null;
 $value = $exploded_URI[3] ?? null;
 
+// Sieving layer
 $included_columns = isset($_GET['includedColumns']) ? explode(',', $_GET['includedColumns']) : [];
-
 $sorting = [];
 if (isset($_GET['sorting'])) {
     $sorting_params = explode(',', $_GET['sorting']);
 
     foreach ($sorting_params as $param) {
-        list($key, $v) = explode(':', $param);
-        $sorting[$key] = $v === 'true' ? true : false;
+        list($key, $value) = explode(':', $param);
+        $sorting[$key] = $value === 'true' ? true : false;
     }
 }
 
@@ -276,3 +285,10 @@ function handleUpdate($decoded_data, $controller_name, $crud_action)
     $data = $decoded_data['updateData'];
     return $central_controller->$controller_name->$crud_action($data["id"], $data);
 }
+
+
+/*******************************************************************/
+/****************************** TOOLS ******************************/
+/*******************************************************************/
+
+function parse

@@ -34,11 +34,12 @@ export function fetchData(
   }
 
   // Joined tables handling
+  // Array w multiple sets of keys and values = in body instead?
   if (joinedTables) {
     let result = ``;
 
     for (const [table, includedColumns] of Object.entries(joinedTables)) {
-      result += `&${table}-${includedColumns.join(",")}`;
+      result += `${table}:${includedColumns.join(",")}`;
     }
     result = result.substring(1);
 

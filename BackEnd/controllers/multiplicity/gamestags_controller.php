@@ -47,4 +47,8 @@ class GamestagsController extends BaseController
 
         return parent::getAllMatching($filters, $sorting, $included_columns, $joined_tables);
     }
+
+    public function getRelated() {
+        
+    }
 }
