@@ -14,12 +14,14 @@
     <hr>
     <p>Zi tests</p>
     <hr>
-    <v-btn class="bordered-btn" @click="createData">create</v-btn>
+    <v-btn class="bordered-btn" @click="ZITEST">TEST</v-btn>
   </div>
   <div>
     <ReviewsListComponent :sorting="{ timestamp: false }"></ReviewsListComponent>
   </div>
 </template>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
 
 <script>
 import { fetchData } from "../JS/fetch";
@@ -381,6 +383,32 @@ export default {
           "POST"
         )
       );
+    },
+
+    // TESTING ENCODING URI - FOR ENCODING JSONBODY
+    // '/tests/playground.php' in backend for decoding test
+    ZITEST() {
+      const crud_action = 'getAllMatching';
+      const table = 'games';
+      const filters = {
+        ratingAverage: "5",
+        id: 703493,
+        asdas: "dklajjsdlak",
+        asfhjkqfnqiol: ['aasdas', 'asdasdas', 'adsadaeqf', 'qweasdfsd'],
+        qwerfsdfsd: [['asdasasd', 'asfqwedqwrfq', 'qerqwwqrq'], ['asdasdasdas'], 'asdasgqqwqw'] 
+      };
+      const sorting = {
+        ratingAverage: true,
+      };
+      const includedColumns = ["id", "developerID", "tags", "ratingAverage"];
+      const jsonBody = { filters, sorting, includedColumns };
+
+      const queryString = btoa(JSON.stringify(jsonBody));
+      const encodedURI = encodeURIComponent(queryString);
+
+      const lzCompressed = LZString.compr
+
+      console.log(encodedURI);
     },
   },
 };

@@ -4,7 +4,7 @@
 function printall($item, $return = false)
 {
     $element = "<pre>{print_r($item, true)}</pre><hr>";
-    
+
     if ($return)
         return $element;
 
@@ -49,6 +49,12 @@ $requestUri = $_SERVER['REQUEST_URI'];
 /*******************************************************************/
 /***************************** PARSING *****************************/
 /*******************************************************************/
+
+/***** PARSING TOOLS *****/
+
+function parseData($data)
+{
+}
 
 // URL
 $url_components = parse_url($requestUri);
@@ -122,12 +128,8 @@ switch ($method) {
 }
 
 // ZI
-switch ($method) {
-    case $method === 'GET':
-
-        break;
-    case $crud_action === 'getAllMatching':
-        break;
+if ($method === 'GET') {
+} else {
 }
 
 
@@ -227,12 +229,11 @@ function handleRawData($decoded_data, $controller_name, $crud_action)
 function handleFilterData($decoded_data, $controller_name, $crud_action)
 {
     global $central_controller;
+    // $filters = $decoded_data['filters'];
+    // $sorting = $decoded_data['sorting'] ?? [];
+    // $included_columns = $decoded_data['includedColumns'] ?? [];
 
-    $filters = $decoded_data['filters'];
-    $sorting = $decoded_data['sorting'] ?? [];
-    $included_columns = $decoded_data['includedColumns'] ?? [];
-    // $sorting = isset($decoded_data['sorting']) ? $decoded_data['sorting'] : [];
-    // $included_columns = isset($decoded_data['includedColumns']) ? $decoded_data['includedColumns'] : [];
+    ['filters' => $filters, 'sorting' => $sorting, 'includedColumns' => $included_columns] = $decoded_data;
     return $central_controller->$controller_name->$crud_action($filters, $sorting, $included_columns);
 }
 
@@ -273,22 +274,21 @@ function handleCreate($decoded_data, $controller_name, $crud_action)
 function handleDelete($decoded_data, $controller_name, $crud_action)
 {
     global $central_controller;
-
     $data = $decoded_data['deleteData'];
+
     return $central_controller->$controller_name->$crud_action($data);
 }
 
 function handleUpdate($decoded_data, $controller_name, $crud_action)
 {
     global $central_controller;
-
     $data = $decoded_data['updateData'];
-    return $central_controller->$controller_name->$crud_action($data["id"], $data);
+    $id = $data['id'];
+
+    return $central_controller->$controller_name->$crud_action($id, $data);
 }
 
 
 /*******************************************************************/
 /****************************** TOOLS ******************************/
 /*******************************************************************/
-
-function parse

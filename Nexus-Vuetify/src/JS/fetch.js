@@ -5,7 +5,7 @@ export function fetchData(
   value = null,
   includedColumns = null,
   sorting = null,
-  joinedTables = null,
+  // joinedTables = null,
   jsonBody = null,
   method
 ) {
@@ -35,16 +35,16 @@ export function fetchData(
 
   // Joined tables handling
   // Array w multiple sets of keys and values = in body instead?
-  if (joinedTables) {
-    let result = ``;
+  // if (joinedTables) {
+  //   let result = ``;
 
-    for (const [table, includedColumns] of Object.entries(joinedTables)) {
-      result += `${table}:${includedColumns.join(",")}`;
-    }
-    result = result.substring(1);
+  //   for (const [table, includedColumns] of Object.entries(joinedTables)) {
+  //     result += `${table}:${includedColumns.join(",")}`;
+  //   }
+  //   result = result.substring(1);
 
-    queryParams.push(`joinedTables=${result}`);
-  }
+  //   queryParams.push(`joinedTables=${result}`);
+  // }
 
   // Append query parameters to URI
   if (queryParams.length > 0) {

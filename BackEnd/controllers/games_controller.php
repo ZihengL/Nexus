@@ -58,4 +58,11 @@ class GamesController extends BaseController
     {
         return $this->model->delete($id);
     }
+
+    //
+
+    public function TEST()
+    {
+        return $this->model->testGroup();
+    }
 }

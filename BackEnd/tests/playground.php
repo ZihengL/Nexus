@@ -6,6 +6,8 @@ function explodetest($a)
     return explode(', ', $a) ?? [];
 }
 
+/*******************************/
+
 global $path;
 $path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd/';
 require_once $path . 'tests/temp_globals.php';
@@ -15,25 +17,18 @@ $users_ctrl = $central_controller->users_controller;
 $games_ctrl = $central_controller->games_controller;
 $gametags_ctrl = $central_controller->gamestags_controller;
 
+/*******************************/
 
+BaseModel::$print_queries = true;
 
-
-$arr1 = ['a' => 'tqifh', 'b' => 'kjahsdkjla', 'c' => 4231432, 'd' => 1];
-$arr2 = ['c' => 213125, 'a'];
-$arr3 = array_intersect_key($arr1, $arr2);
-
-// $k1 = array_key
-// print_r($arr3);
-// printall(implode(", table.", array_keys($arr1)));
+echo '<hr><b>BEGIN TEST</b><hr>';
 
 $joined_tables = [
     'users' => ['id', 'username'],
     'gamestags' => ['gameId', 'tagId']
 ];
 
-//  TODO: STANDARDIZE 
-echo '<hr><b>BEGIN TEST</b><hr>';
-
+/* JOINED_TABLES */
 echo '<b>getOne</b><br>';
 $result = $games_ctrl->getOne('title', 'Space Odyssey', null, $joined_tables);
 printall($result);
@@ -46,8 +41,46 @@ echo 'With included tables<br>';
 $result = $games_ctrl->getAllMatching(['title' => 'Space Odyssey'], null, ['id', 'developerID', 'title'], $joined_tables);
 printall($result);
 
+$games_ctrl->TEST();
+
+
+/* URL DECODING */
+$encoded = 'eyJmaWx0ZXJzIjp7InJhdGluZ0F2ZXJhZ2UiOiI1In0sInNvcnRpbmciOnsicmF0aW5nQXZlcmFnZSI6dHJ1ZX0sImluY2x1ZGVkQ29sdW1ucyI6WyJpZCIsImRldmVsb3BlcklEIiwidGFncyIsInJhdGluZ0F2ZXJhZ2UiXX0%3D';
+$filtersJson = base64_decode(urldecode($encoded));
+
+printall($filtersJson);
+
+$filters = json_decode($filtersJson);
+
+printall($filters);
+
 echo '<b>END TEST</b><hr>';
-//
+
+
+/*******************************/
+
+$arr1 = ['a' => 'tqifh', 'b' => 'kjahsdkjla', 'c' => 4231432, 'd' => 1];
+$arr2 = ['c' => 213125, 'a'];
+$arr3 = array_intersect_key($arr1, $arr2);
+
+['a' => $a, 'c' => $c, 'd' => $d] = $arr1;
+
+// echo $a . ' - ' . $c;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*******************************/
 
 // echo 'OLD<pre>';
 // print_r($users);

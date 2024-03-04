@@ -52,7 +52,7 @@ class BaseModel
             echo "<b>ERROR: </b> in <b>{$this->table}</b> for query: ";
             printall($sql);
 
-            throw new Exception("Database query error: " . $e->getMessage());
+            throw new Exception("Database query error: \n" . $e->getMessage());
         }
     }
 
@@ -91,50 +91,6 @@ class BaseModel
         }
 
         return $params;
-    }
-
-
-    /*******************************************************************/
-    /***************************** GETTERS *****************************/
-    /*******************************************************************/
-
-    public function getOne($column, $value, $included_columns = [], $joined_tables = [])
-    {
-        $sql = $this->buildSelectionLayer($included_columns, $joined_tables);
-        $sql .= " WHERE {$this->table}.$column = ? GROUP BY {$this->table}.id";
-        $result = $this->query($sql, [$value]);
-
-        // Returns in function of possible multiplicity(one-to-many) relationships
-        return $joined_tables && !empty($joined_tables) ? $result->fetchAll(PDO::FETCH_ASSOC) : $result->fetch(PDO::FETCH_ASSOC);
-    }
-
-    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [])
-    {
-        $sql = $this->buildSelectionLayer($included_columns, $joined_tables);
-        $params = [];
-
-        if ($column && $value) {
-            $sql .= " WHERE {$this->table}.$column = ?";
-            $params = [$value];
-        }
-
-        $sort_layer = $this->applySorting($sorting);
-        $sql .= " GROUP BY {$this->table}.id" . (!empty($sort_layer) ? " ORDER BY $sort_layer" : '');
-
-        return $this->query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
-    {
-        $sql = $this->buildSelectionLayer($included_columns, $joined_tables) . ' WHERE 1 = 1';
-
-        ['sql' => $filtering_sql, 'params' => $params] = $this->applyFilters($filters);
-        $sql .= "$filtering_sql GROUP BY {$this->table}.id";
-
-        if ($sorting_layer = $this->applySorting($sorting))
-            $sql .= " ORDER BY $sorting_layer";
-
-        return $this->bindingQuery($sql, $params);
     }
 
 
@@ -188,6 +144,50 @@ class BaseModel
                 $formatted[$column] = $data[$column];
 
         return $formatted;
+    }
+
+
+    /*******************************************************************/
+    /***************************** GETTERS *****************************/
+    /*******************************************************************/
+
+    public function getOne($column, $value, $included_columns = [], $joined_tables = [])
+    {
+        $sql = $this->buildSelectionLayer($included_columns, $joined_tables);
+        $sql .= " WHERE {$this->table}.$column = ? GROUP BY {$this->table}.id";
+        $result = $this->query($sql, [$value]);
+
+        // Returns in function of possible multiplicity(one-to-many) relationships
+        return $joined_tables && !empty($joined_tables) ? $result->fetchAll(PDO::FETCH_ASSOC) : $result->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [])
+    {
+        $sql = $this->buildSelectionLayer($included_columns, $joined_tables);
+        $params = [];
+
+        if ($column && $value) {
+            $sql .= " WHERE {$this->table}.$column = ?";
+            $params = [$value];
+        }
+
+        $sort_layer = $this->applySorting($sorting);
+        $sql .= " GROUP BY {$this->table}.id" . (!empty($sort_layer) ? " ORDER BY $sort_layer" : '');
+
+        return $this->query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
+    {
+        $sql = $this->buildSelectionLayer($included_columns, $joined_tables) . ' WHERE 1 = 1';
+
+        ['sql' => $filtering_sql, 'params' => $params] = $this->applyFilters($filters);
+        $sql .= "$filtering_sql GROUP BY {$this->table}.id";
+
+        if ($sorting_layer = $this->applySorting($sorting))
+            $sql .= " ORDER BY $sorting_layer";
+
+        return $this->bindingQuery($sql, $params);
     }
 
 
@@ -262,6 +262,9 @@ class BaseModel
         return "{$this->table}." . implode(", {$this->table}.", $included_columns);
     }
 
+
+    // TODO: IF MULTIPLICITY CAN BE COMPUTED, CHANGE THE JOIN TYPE HERE
+    //https://www.w3schools.com/sql/sql_join.asp#:~:text=Different%20Types%20of%20SQL%20JOINs,records%20from%20the%20right%20table
     public function parseJoinedTables($joined_tables = [])
     {
         $join_layer = ['selects' => '', 'joins' => ''];
@@ -270,11 +273,10 @@ class BaseModel
             if ($keyset = $this->keys[$ref_tab]) {
                 ['INT_COL' => $int_col, 'EXT_COL' => $ext_col] = $keyset;
 
-                foreach ($included_columns as $join_column)
-                    $join_layer['selects'] .= ", {$ref_tab}.{$join_column} AS {$ref_tab}_{$join_column}";
+                $join_layer['selects'] .= ", $ref_tab.*";
+                // foreach ($included_columns as $join_column)
+                //     $join_layer['selects'] .= ", {$ref_tab}.{$join_column} AS {$ref_tab}_{$join_column}";
 
-                // TODO: IF MULTIPLICITY CAN BE COMPUTED, CHANGE THE JOIN TYPE HERE
-                //https://www.w3schools.com/sql/sql_join.asp#:~:text=Different%20Types%20of%20SQL%20JOINs,records%20from%20the%20right%20table
                 $join_layer['joins'] .= " INNER JOIN $ref_tab ON {$this->table}.{$int_col} = {$ref_tab}.{$ext_col}";
             }
 
