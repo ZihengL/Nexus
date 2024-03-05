@@ -38,10 +38,10 @@ import { getReviews, getUsername, getReviewsAndUsernames } from '../../JS/fetchS
     try {      
       let sorting = null;
       if(props.sort == "1"){
-        sorting = { timestamp: true };
+        sorting = { timestamp: false };
       }
       else if (props.sort == "2"){
-        sorting = { timestamp: false };
+        sorting = { timestamp: true };
       }
       else {
         sorting = { rating: false };
