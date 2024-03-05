@@ -11,10 +11,11 @@
                 <!-- <p>UserTOTO {{ userName.value[index]?.username ?? 'Nom d\'utilisateur non disponible' }}</p> -->
               </div>
               {{ avis.comment }}
-
+              <p>{{ avis.timestamp }}</p>
             </div>
+
             <div class="ratings">
-              <v-rating hover half-increments :length="5" :size="32" :model-value="avis.rating" active-color="primary" class="rat" />
+              <v-rating readonly hover half-increments :length="5" :size="32" :model-value="avis.rating" active-color="primary" class="rat" />
             </div>
           </div>
         </li>
