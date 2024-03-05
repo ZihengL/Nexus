@@ -1,5 +1,5 @@
 <template>
-    <div class="fieldBtn">
+    <div class="fieldBtn roundBorderSmall">
         <div class="btn-layer"></div>
         <v-btn density="default" class="submit" @click="toggleBtn">
             {{contenu}}
@@ -26,7 +26,6 @@
 .fieldBtn{
     height: 50px;
     width: 100%;
-    border-radius: 5px;
     position: relative;
     overflow: hidden;
 

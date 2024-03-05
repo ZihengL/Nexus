@@ -104,7 +104,7 @@ export const getReviews = async (gameID) => {
 };
 
 
-export const getReviewsAndUsernames = async (gameID, sorting = null) => {
+export const getReviewsAndUsernames = async (gameID, sorting) => {
   // console.log(" getReviewsAndUsernames sorting : ", sorting)
   // console.log(" getReviewsAndUsernames gameID : ", gameID)
   const reviews = await fetchData("reviews", "getAll", "gameID", gameID, null,  sorting, null, "GET");
