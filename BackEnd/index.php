@@ -85,14 +85,14 @@ $decodedData = json_decode($rawData, true);
 // print_r($rawData);
 
 // console.log(" response : ", response.text());
-      // console.log(' response : ', response.text())
+// console.log(' response : ', response.text())
 // Routing
 switch ($method) {
     case 'GET':
         // print_r($explodedURI);
         // echo "<br> crud_action: " . $crud_action;
-        //   echo "<br>  sorting : " . print_r($sorting, true) . "<br>";
-        //   echo "<br>  sorting : " . $sorting["timestamp"] . "<br>";
+        // echo "<br>  sorting : " . print_r($sorting, true) . "<br>";
+        // echo "<br>  sorting : " . $sorting["timestamp"] . "<br>";
         // echo "<br>  includedColumns : " . print_r($includedColumns, true);
         // echo "<br>  value : " . $value ."<br> " ;
        

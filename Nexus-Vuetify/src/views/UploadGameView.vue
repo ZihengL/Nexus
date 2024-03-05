@@ -1,8 +1,11 @@
 <template>
   <div id="upload_game">
-    <h2>Upload Your Game</h2>
+    <h2>{{ props.pageTitle }}</h2>
+    <div v-if="state.errorMessage" class="error-message">
+      {{ state.errorMessage }}
+    </div>
     <div>
-      <label for="title">Game Title:</label>
+      <label for="title">Game Title*</label>
       <input
         type="text"
         id="title"
@@ -11,7 +14,7 @@
       />
     </div>
     <div>
-      <label for="tags">Tags:</label>
+      <label for="tags">Tags:*</label>
       <input
         type="text"
         id="tags"
@@ -58,7 +61,12 @@
         <ol>
           <li v-for="(file, index) in state.videoFiles" :key="index">
             {{ file.name }}
-            <video controls :src="file.url" :alt="file.name" style="width: 25%"></video> 
+            <video
+              controls
+              :src="file.url"
+              :alt="file.name"
+              style="width: 25%"
+            ></video>
             <button @click="removeFile(index, state.videoFiles)">X</button>
           </li>
         </ol>
@@ -68,7 +76,24 @@
   </div>
 </template>
 <script setup>
-import { reactive } from "vue";
+import { reactive, defineProps } from "vue";
+
+const props = defineProps({
+  pageTitle: {
+    type: String,
+    default: "Add or Update Game",
+  },
+  gameTitle: {
+    type: String,
+  },
+  tags: {
+    type: Array,
+  },
+  gameFile: Object,
+  gameFilePath: String,
+  imageFiles: [],
+  videoFiles: [],
+});
 
 const state = reactive({
   gameTitle: "",
@@ -79,6 +104,7 @@ const state = reactive({
   videoFiles: [],
   maxImgs: 10,
   maxVids: 2,
+  errorMessage: "",
 });
 
 const openFileBrowser = () => {
@@ -106,22 +132,24 @@ const openVideoBrowser = () => {
   const fileInput = document.createElement("input");
   fileInput.type = "file";
   fileInput.multiple = true;
-  fileInput.accept = "video/*"; // Accept only video files
+  fileInput.accept = "video/*"; 
   fileInput.onchange = (e) => {
     const newFiles = Array.from(e.target.files);
     const availableSlots = state.maxVids - state.videoFiles.length;
 
     if (newFiles.length > availableSlots) {
-      alert(`You can only upload a maximum of ${availableSlots} more video(s).`);
+      alert(
+        `You can only upload a maximum of ${availableSlots} more video(s).`
+      );
       return;
     }
 
-    const newVideoFiles = newFiles.slice(0, availableSlots).map(file => ({
-      name: file.name, 
-      size: file.size, 
-      type: file.type, 
-      lastModified: file.lastModified, 
-      url: URL.createObjectURL(file), 
+    const newVideoFiles = newFiles.slice(0, availableSlots).map((file) => ({
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      lastModified: file.lastModified,
+      url: URL.createObjectURL(file),
     }));
 
     state.videoFiles = [...state.videoFiles, ...newVideoFiles];
@@ -155,15 +183,6 @@ const openImageBrowser = () => {
   fileInput.click();
 };
 
-const submitGame = () => {
-  console.log("Submitting:", {
-    gameTitle: state.gameTitle,
-    tags: state.tags.trim().split(","),
-    gameFilePath: state.gameFilePath,
-    imageFiles: state.imageFiles,
-  });
-};
-
 const removeFile = (indexToRemove, fileList) => {
   URL.revokeObjectURL(fileList[indexToRemove].url);
   if (fileList === state.imageFiles) {
@@ -171,6 +190,45 @@ const removeFile = (indexToRemove, fileList) => {
   } else if (fileList === state.videoFiles) {
     state.videoFiles.splice(indexToRemove, 1);
   }
+};
+
+const formatData = () => {
+  const tagsArray = state.tags.trim().split(",").filter(Boolean);
+  if (!state.gameTitle) {
+    state.errorMessage = "Game title is required.";
+    return false;
+  } else if (tagsArray.length < 5) {
+    state.errorMessage = "At least 5 tags are required.";
+    return false;
+  } else if (state.imageFiles.length < 5) {
+    state.errorMessage = "At least 5 images are required.";
+    return false;
+  } else {
+    state.errorMessage = "";
+    console.log("Submitting:", {
+      gameTitle: state.gameTitle,
+      tags: tagsArray,
+      gameFilePath: state.gameFilePath,
+      imageFiles: state.imageFiles,
+    });
+    return true;
+  }
+}
+
+const createGame = () => {
+
+}
+
+const createFirebaseFolders = () => {
+
+}
+
+
+
+const submitGame = () => {
+ if(formatData()){
+
+ }
 };
 </script>
 
@@ -214,5 +272,14 @@ img {
 
 #upload_game input[type="text"]:focus {
   outline: 2px solid #007bff;
+}
+
+.error-message {
+  color: #ff3860;
+  background-color: #ffe5e7;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid #ff3860;
 }
 </style>
