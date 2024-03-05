@@ -2,11 +2,11 @@
   <router-link
     v-if="singleGame_data.leGame"
     :to="{ name: 'Game', params: { idGame: props.idGame } }"
-    class="glass2 roundBorderSmall"
+    class="single glass2 roundBorderSmall"
   >
     <div class="img roundBorderSmall">
       <img
-        :src="singleGame_data.image"
+        :src="singleGame_data.image.image"
         alt="nothingBro"
         class="roundBorderSmall gameImg"
       />
@@ -29,7 +29,7 @@
       />
     </div>
     <div class="tags">
-          <ul class="glow" v-for="tag in singleGame_data.tags" :key="tag.id">{{ tag.name }}</ul>
+      <ul class="glow" v-for="tag in singleGame_data.tags" :key="tag.id">{{ tag.name }}</ul>
     </div>
   </router-link>
 </template>
@@ -37,6 +37,10 @@
 <script setup>
 // import { fetchData } from "../../JS/fetch";
 import { reactive, onMounted } from "vue";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { getGameDetailsWithDeveloperName } from "../../JS/fetchServices";
+
+const storage = getStorage();
 
 const props = defineProps({
   idGame: Number,
@@ -49,7 +53,26 @@ const singleGame_data = reactive({
 });
 
 
-import { getGameDetailsWithDeveloperName } from "../../JS/fetchServices";
+
+async function fetchGameImages(gameId) {
+  try {
+    const imagePath = `Games/${gameId}/media/${gameId}_0.png`;
+    console.log('imagePath : ', imagePath);
+    const imageRef = ref(storage, imagePath);
+
+    try {
+      const url = await getDownloadURL(imageRef);
+      return { id: gameId, image: url }; // Corrected the return statement
+    } catch (error) {
+      console.error(`Error fetching image for ${gameId}:`, error);
+      return { id: gameId, image: "../assets/imgJeuxLogo/Mario.png" }; // Fallback image
+    }
+  } catch (error) {
+    console.error("Error fetching game images:", error);
+    throw error; // Re-throw the error to handle it at a higher level if needed
+  }
+}
+
 
 async function getGameInfos() {
   try {
@@ -62,9 +85,10 @@ async function getGameInfos() {
     //   "typeOf singleGame_data.leGame:",
     //   typeof singleGame_data.leGame
     // );
+    const image = await fetchGameImages(singleGame_data.leGame.id)
     if (singleGame_data.leGame) {
-      singleGame_data.image = singleGame_data.leGame.image
-        ? singleGame_data.leGame.image
+      singleGame_data.image = image
+        ? image
         : "/src/assets/img/dontstarve.png";
         singleGame_data.tags =singleGame_data.leGame.tags
     }
@@ -83,16 +107,20 @@ onMounted(async () => {
 </script>
 
 <style lang="scss">
-.glass2 {
+.single  {
   text-decoration: none;
   color: var(--light-trans-2);
   padding-bottom: 2%;
+  display: flex;
+  flex-direction: column;
+  height: 25rem;
   .img {
-    flex: 5;
+    flex: 6;
     position: relative;
 
     img {
       width: 100%;
+      height: 100%;
       display: inline-block;
       transition: opacity 0.3s ease;
       opacity: 1;
@@ -108,8 +136,11 @@ onMounted(async () => {
       z-index: 2;
     }
   }
-
+  h3, h4, .ratings, .tags {
+    flex: 1;
+  }
   ul {
+    
     display: flex;
     justify-content: space-around;
     flex-direction: row;

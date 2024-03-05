@@ -29,16 +29,8 @@
               <span class="link-btn">Gerer son profil</span>
             </router-link>
 
-            <div class="fieldBtn">
-              <div class="btn-layer"></div>
-              <v-btn
-                density="default"
-                class="submit glow"
-                @click="toggleLogout()"
-              >
-                Se deconnecter
-              </v-btn>
-            </div>
+            <btnComp :contenu="'Se deconnecter'" @toggle-btn="toggleLogout"/>
+
           </div>
         </div>
         <div class="wrapper glass roundBorderSmall">
@@ -127,6 +119,7 @@
 import ListeDeJeu from "./ListeDeJeu.vue";
 import { logoutService, getOne, getAllMatching } from "../../JS/fetchServices";
 import { defineProps, ref, onMounted, defineEmits } from "vue";
+import btnComp from "../btnComponent.vue"
 //import Amis from './amis.vue';
 
 const props = defineProps(["isHimself", "idDevl"]);

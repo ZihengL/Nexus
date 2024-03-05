@@ -25,12 +25,7 @@
           <div class="pass-link glow">
             <a href="#">Mot de passe oublier ?</a>
           </div>
-          <div class="fieldBtn">
-            <div class="btn-layer"></div>
-            <v-btn density="default" class="submit glow" @click="toggleProfileLog">
-              Se connecter
-            </v-btn>
-          </div>
+          <btnComp :contenu="'Se connecter'" @toggle-btn="toggleProfileLog"/>
           <div class="signup-link">
             Pas encore inscris ? <a style=" cursor: pointer;" class=" glow">S'inscrire</a>
           </div>
@@ -57,12 +52,7 @@
           <div class="field">
             <input type="password" v-model="passwordConfSign" placeholder="Confirmer le mot de passe *" required>
           </div>
-          <div class="fieldBtn">
-            <div class="btn-layer"></div>
-            <v-btn density="default" class="submit glow" @click="toggleProfileSign">
-              S'inscrire
-            </v-btn>
-          </div>
+          <btnComp :contenu="'S\'inscrire'" @toggle-btn="toggleProfileSign"/>
         </form>
 
       </div>
@@ -77,6 +67,7 @@ import loginScript from '../../JS/LoginScript.js';
 import { ref, onMounted, defineEmits } from 'vue';
 import { loginService, registerService } from '../../JS/fetchServices';
 import { fetchData } from '../../JS/fetch';
+import btnComp from "../btnComponent.vue"
 
 const isLogin = ref(true);
 const emit = defineEmits(['showProfile']);
@@ -155,17 +146,27 @@ const toggleProfileSign = async () =>{
     lastname: !lastnameSign.value ? lastnameSign.value : null,
     firstname: !firstnameSign.value ? firstnameSign.value : null,
     tel: !telSign.value ? telSign.value : null,
+    /*email: 'c',
+    username: 'c',
+    password: 'c',*/
   };
   console.log('createData : ' ,createData);
   console.log('createData.password : ' ,createData.password);
   console.log('reateData.email  : ' ,createData.email );
+
   if( createData.password == passwordConfSign.value ){
     //const createBody = { createData };
     console.log("check");
     let results = await registerService(createData);
     console.log('retour sign : ' , results);
     toggleProfileLog()
-  }
+  } 
+  //const createBody = { createData };
+  /*console.log("check");
+  let results = await registerService(createData);
+  console.log('retour sign : ' , results);
+  toggleProfileLog()
+  */
 
 };
 

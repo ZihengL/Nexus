@@ -34,17 +34,7 @@
           <a href="#" class="glow" v-for="tag in gameInfos.tags" :key="tag.id">{{ tag.name }}</a>
         </div>
 
-        <div class="fieldBtn">
-          <div class="btn-layer"></div>
-          <v-btn
-            :id="gameInfos.leGame.id"
-            density="default"
-            class="submit glow"
-            @click="toggleProfile"
-          >
-            Telecharger
-          </v-btn>
-        </div>
+        <btnComp :contenu="'Telecharger'" @toggle-btn="toggleProfile"/>
       </div>
     </div>
 
@@ -62,6 +52,7 @@
 </template>
 
 <script setup>
+import btnComp from "../components/btnComponent.vue"
 import { defineProps, onMounted, reactive } from "vue";
 // import AvisRating from "../components/AvisRating.vue";
 // import AvisRecent from "../components/AvisRecent.vue";
