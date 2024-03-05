@@ -1,11 +1,6 @@
 <template>
   <div id="store">
     <div class="search">
-      <!-- <SearchComponent
-        :class="'barreR'"
-        :placeholder="store_data.placeholder_title"
-        v-model="store_data.searchQuery"
-      /> -->
       <div class="search">
         <Search
           v-model="store_data.searchQuery"
@@ -34,7 +29,7 @@
 </template>
 
 <script setup>
-import { reactive, watch, onMounted } from "vue";
+import { reactive, onMounted } from "vue";
 import FilterComponent from "../components/store/FilterComponent.vue";
 // Ensure Pagination is imported when you're ready to use it
 // import Pagination from '../components/Pagination.vue';
@@ -44,7 +39,7 @@ import {
   searchOn_titleOrUsername,
   search_AndFilter,
 } from "../JS/store_search.js";
-import { getAll, getAllGamesWithDeveloperName } from "../JS/fetchServices";
+import {  getAllGamesWithDeveloperName } from "../JS/fetchServices";
 import ListeJeux from "../components/store/GameListComponent.vue";
 
 const store_data = reactive({
@@ -62,12 +57,6 @@ const store_data = reactive({
   gameList_result: [],
 });
 
-watch(
-  () => store_data.gameList_result,
-  (newValue) => {
-    // console.log("New search query from watch:", newValue);
-  }
-);
 
 async function handleFilterUpdate(filterData) {
   console.log("Received filter data:", filterData);
