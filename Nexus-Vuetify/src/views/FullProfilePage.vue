@@ -29,16 +29,13 @@
           <div class="field">
             <input type="password" placeholder="Confirmer le mot de passe" required>
           </div>
-          <div class="fieldBtn">
-            <div class="btn-layer"></div>
-            <v-btn density="default" class="submit glow" @click="toggleProfile">
-              Modifier
-            </v-btn>
-          </div>
+          <btnComp :contenu="'Modifier'" @toggle-btn="toggleLogout"/>
         </form>
   </div>
 </template>
-
+<script>
+  import btnComp from "../components/btnComponent.vue"
+</script>
 <style lang="scss" scoped>
 #fullProfile {
   width: 100%;

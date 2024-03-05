@@ -42,7 +42,7 @@ const onInput = (event) => {
 
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 #search {
   .search-container {
     margin-top: 5%;
@@ -62,11 +62,13 @@ const onInput = (event) => {
     font-size: 16px;
     border: none;
     outline: none;
-    color: #000000; /* Black text */
+    color:  var(--light-trans); /* Black text */
     background: transparent; /* Inherit from container */
     width: 100%; /* Full width to fill the container */
   }
-
+  .search-input::placeholder {
+    color: var(--light-trans);
+  }
   .search-button {
     position: absolute;
     right: 0; /* Align to the right */
