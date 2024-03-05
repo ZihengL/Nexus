@@ -67,6 +67,7 @@
 <script setup>
 import { defineProps, ref, onMounted } from 'vue';
 import { fetchData } from '../JS/fetch';
+import { create, getOne } from "../JS/fetchServices";
 
 const props = defineProps(['IdDev']);
 
@@ -81,6 +82,7 @@ const user = ref(null);
 onMounted(async () => {
     try {
       const dataUser = await fetchData("users", "getOne", "id",  props.IdDev, null, null, null, "GET");
+      //  await getOne("users", "id", props.IdDev)
       user.value = dataUser;
       //console.log('LeGame : ' , LeGame._rawValue.developerID)    
     } catch (error) { 

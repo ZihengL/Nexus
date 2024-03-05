@@ -226,11 +226,13 @@ function handleLogout($centralController, $decodedData, $controllerName, $crud_a
 
 function handleCreate($centralController, $decodedData, $controllerName, $crud_action)
 {
-    $data = $decodedData['createData'];
+    $createData = $decodedData['createData'];
+    $email = $createData['email'];
 
-    // echo "<br> register data : <br>";
-    // print_r($data);
-    return $centralController->$controllerName->$crud_action($data);
+    echo "<br> handleCreate  createData : ".  print_r($createData, true) ." <br>";
+    echo "<br> register email : ".  print_r($email, true) ." <br>";
+   
+    return $centralController->$controllerName->$crud_action($createData);
 }
 
 function handleDelete($centralController, $decodedData, $controllerName, $crud_action)

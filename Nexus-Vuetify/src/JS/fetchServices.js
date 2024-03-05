@@ -20,7 +20,7 @@ export const getAllMatching = async (table, filters, sorting = null, includedCol
   return data
 };
 
-export const createData = async (table, createData) => {
+export const create = async (table, createData) => {
   let body = {
     createData
   }
@@ -49,7 +49,9 @@ export const updateData = async(table, updateData) => {
 /*******************************************************************/
 
 export const registerService = async (createData) => {
-  let data = await createData("users", createData)
+  console.log('registerService createData : ' ,createData);
+
+  let data = await create("users", createData)
   return data
 };
 

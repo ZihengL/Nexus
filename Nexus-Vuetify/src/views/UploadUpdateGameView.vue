@@ -89,7 +89,7 @@
 </template>
 <script setup>
 import { reactive, defineProps, computed } from "vue";
-import { createData, getAllMatching } from "../JS/fetchServices.js";
+import { create, getAllMatching } from "../JS/fetchServices.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const props = defineProps({
@@ -265,7 +265,7 @@ const createGame = async () => {
     releaseDate: state.creation_date,
     ratingAverage: 0,
   };
-  let wasGameCreated = await createData("games", jsonObject);
+  let wasGameCreated = await create("games", jsonObject);
   console.log("wasGameCreated : ", wasGameCreated);
   if (wasGameCreated) {
     createTags();
@@ -295,7 +295,7 @@ const createTags = async () => {
       name: tag,
       gameId: gameId,
     };
-    result = await createData("tags", jsonObject);
+    result = await create("tags", jsonObject);
     console.log("Tag was created:", result);
   }
 };
