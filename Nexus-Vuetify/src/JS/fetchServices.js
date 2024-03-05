@@ -20,16 +20,36 @@ export const getAllMatching = async (table, filters, sorting = null, includedCol
   return data
 };
 
+export const createData = async (table, createData) => {
+  let body = {
+    createData
+  }
+  let data = await fetchData(table, "create", null, null, null, null, body, "POST");
+  return data;
+};
+
+export const deleteData = async(table, deleteData) => {
+  let body = {
+    deleteData
+  }
+  let data = await fetchData(table, "delete", null, null, null, null, body, "POST");
+  return data;
+};
+
+export const updateData = async(table, updateData) => {
+  let body = {
+    updateData
+  }
+  let data = await fetchData(table, "update", null, null, null, null, body, "POST");
+  return data;
+};
 
 /*******************************************************************/
 /****************************** USERS ******************************/
 /*******************************************************************/
 
 export const registerService = async (createData) => {
-  let body = {
-    createData
-  }
-  let data = await fetchData("users", "create", null, null, null, null, body, "POST");
+  let data = await createData("users", createData)
   return data
 };
 
@@ -52,11 +72,11 @@ export const logoutService = async (logout) => {
 };
 
 export const getUser = async (developerID) => {
-  return await fetchData("users", "getOne", "id", developerID, null, null, null, "GET");
+  return await getOne("users", "id", developerID)
 };
 
 export const getUsername = async (userID) => {
-  return await fetchData("users", "getOne", "id", userID, null, null, null, "GET");
+  return await getOne("users", "id", userID)
 };
 
 
@@ -65,7 +85,7 @@ export const getUsername = async (userID) => {
 /*******************************************************************/
 
 export const getGameDetails = async (idGame) => {
-  let data = await fetchData("games", "getOne", "id", idGame, null, null, null, "GET");
+  let data = await getAll("games", "id", idGame);
   return data
 };
 
@@ -128,13 +148,13 @@ export const getGameDetailsWithDeveloperName = async (idGame) => {
 /*******************************************************************/
 
 export const getReviews = async (gameID) => {
-  return await fetchData("reviews", "getAll", "gameID", gameID, null, null, null, "GET");
+  return await getAll("reviews", "gameID", gameID);
 };
 
 export const getReviewsAndUsernames = async (gameID, sorting = null) => {
   // console.log(" getReviewsAndUsernames sorting : ", sorting)
   // console.log(" getReviewsAndUsernames gameID : ", gameID)
-  const reviews = await fetchData("reviews", "getAll", "gameID", gameID, null, sorting, null, "GET");
+  const reviews = await getAll("reviews", "gameID", gameID, null, sorting, null);
 
   if (reviews && reviews.length) {
     const reviewsWithUsernames = await Promise.all(reviews.map(async (review) => {
@@ -187,10 +207,7 @@ export const filterSearchedTags = async (searchedTag) => {
   let filters = {
     name: { contain: searchedTag }
   }
-  let body = {
-    filters
-  }
-  let data = await fetchData("tags", "getAllMatching", null, null, null, null, body, "POST");
+  let data = await getAllMatching("tags", filters);
   return data
 };
 

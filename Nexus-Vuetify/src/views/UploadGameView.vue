@@ -216,7 +216,7 @@ const formatData = () => {
 }
 
 const createGame = () => {
-
+  
 }
 
 const createFirebaseFolders = () => {

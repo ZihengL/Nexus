@@ -45,12 +45,12 @@
         </option>
       </select>
     </div>
-    <!-- 
+    
       <v-btn elevation="2" variant="tonal" class="" @click="returnFiltersData">
         Rechercher
       </v-btn>
-    -->
-    <btnComp :contenu="'Rechercher'"/>
+   
+    <!-- <btnComp :contenu="'Rechercher'"/> -->
   </div>
 </template>
 
@@ -58,7 +58,7 @@
 import { onMounted, reactive, watch } from "vue";
 // import SearchComponent from "../game/SearchComponent.vue";
 import { getAll, filterSearchedTags } from "../../JS/fetchServices";
-import btnComp from "../btnComponent.vue"
+// import btnComp from "../btnComponent.vue"
 const props = defineProps({
   filter_title: String,
   onFilter: Function,
