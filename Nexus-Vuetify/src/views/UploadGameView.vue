@@ -20,7 +20,19 @@
         id="tags"
         v-model="state.tags"
         placeholder="action, relax, wholesome"
+        @input="updateTagsArray"
       />
+    </div>
+    <div>
+      <p class="description">Description : *</p>
+      <textarea
+        class="description"
+        name="description"
+        placeholder="Enter a description..."
+        v-on:input="validateDescriptionLength"
+        v-model="state.description"
+      ></textarea>
+      <p id="charCount">{{ charCountText }}</p>
     </div>
     <div>
       <button @click="openFileBrowser">Select Game File</button>
@@ -38,7 +50,7 @@
     </div>
     <div>
       <button @click="openImageBrowser">
-        Upload Images (Max {{ state.maxImgs }})
+        Upload Images (Max {{ state.MAX_IMGS }})
       </button>
       <div v-if="state.imageFiles.length">
         <p>Selected Images:</p>
@@ -54,7 +66,7 @@
 
     <div>
       <button @click="openVideoBrowser">
-        Upload Videos (Max {{ state.maxVids }})
+        Upload Videos (Max {{ state.MAX_VIDS }})
       </button>
       <div v-if="state.videoFiles.length">
         <p>Selected videos:</p>
@@ -76,9 +88,12 @@
   </div>
 </template>
 <script setup>
-import { reactive, defineProps } from "vue";
+import { reactive, defineProps, computed } from "vue";
+import { createData, getAllMatching } from "../JS/fetchServices.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const props = defineProps({
+  gameObject: Object,
   pageTitle: {
     type: String,
     default: "Add or Update Game",
@@ -86,26 +101,50 @@ const props = defineProps({
   gameTitle: {
     type: String,
   },
-  tags: {
+  tagsArray: {
     type: Array,
   },
   gameFile: Object,
   gameFilePath: String,
   imageFiles: [],
   videoFiles: [],
+  developerID: {
+    type: Number,
+    default: 5,
+  },
 });
 
 const state = reactive({
   gameTitle: "",
   tags: "",
+  tagsArray: [],
   gameFile: null,
   gameFilePath: "",
   imageFiles: [],
   videoFiles: [],
-  maxImgs: 10,
-  maxVids: 2,
+  MAX_IMGS: 10,
+  MAX_VIDS: 2,
+  MIN_TAG: 1,
+  MIN_IMG: 1,
+  DESC_MAX_LENGTH: 500,
   errorMessage: "",
+  creation_date: new Date().toISOString().replace("T", " ").substring(0, 16),
+  description: "",
 });
+
+// Instead of manipulating the DOM directly, use a computed property
+const charCountText = computed(() => {
+  let currentLength = state.description.length;
+  return `${currentLength}/${state.DESC_MAX_LENGTH} characters`;
+});
+
+// Update your method to just ensure the description's length
+function validateDescriptionLength() {
+  const maxLength = 500;
+  if (state.description.length > maxLength) {
+    state.description = state.description.substring(0, maxLength);
+  }
+}
 
 const openFileBrowser = () => {
   const fileInput = document.createElement("input");
@@ -132,10 +171,10 @@ const openVideoBrowser = () => {
   const fileInput = document.createElement("input");
   fileInput.type = "file";
   fileInput.multiple = true;
-  fileInput.accept = "video/*"; 
+  fileInput.accept = "video/*";
   fileInput.onchange = (e) => {
     const newFiles = Array.from(e.target.files);
-    const availableSlots = state.maxVids - state.videoFiles.length;
+    const availableSlots = state.MAX_VIDS - state.videoFiles.length;
 
     if (newFiles.length > availableSlots) {
       alert(
@@ -165,7 +204,7 @@ const openImageBrowser = () => {
   fileInput.accept = "image/*";
   fileInput.onchange = (e) => {
     const newFiles = Array.from(e.target.files);
-    const availableSlots = state.maxImgs - state.imageFiles.length;
+    const availableSlots = state.MAX_IMGS - state.imageFiles.length;
 
     if (newFiles.length > availableSlots) {
       alert(
@@ -193,46 +232,121 @@ const removeFile = (indexToRemove, fileList) => {
 };
 
 const formatData = () => {
-  const tagsArray = state.tags.trim().split(",").filter(Boolean);
   if (!state.gameTitle) {
     state.errorMessage = "Game title is required.";
     return false;
-  } else if (tagsArray.length < 5) {
-    state.errorMessage = "At least 5 tags are required.";
+  } else if (state.tagsArray.length < state.MIN_TAG) {
+    (state.errorMessage = "At least"), state.MIN_TAG, "tags are required.";
     return false;
-  } else if (state.imageFiles.length < 5) {
-    state.errorMessage = "At least 5 images are required.";
+  } else if (state.imageFiles.length < state.MIN_IMG) {
+    (state.errorMessage = "At least "), state.MIN_IMG, "images are required.";
+    return false;
+  } else if (!state.description.trim()) {
+    state.errorMessage = "Description is required.";
     return false;
   } else {
     state.errorMessage = "";
     console.log("Submitting:", {
       gameTitle: state.gameTitle,
-      tags: tagsArray,
+      tags: state.tagsArray,
+      description: state.description,
       gameFilePath: state.gameFilePath,
       imageFiles: state.imageFiles,
     });
     return true;
   }
+};
+
+const createGame = async () => {
+  let jsonObject = {
+    title: state.gameTitle,
+    developerID: props.developerID,
+    description: state.description,
+    releaseDate: state.creation_date,
+    ratingAverage: 0,
+  };
+  let wasGameCreated = await createData("games", jsonObject);
+  console.log("wasGameCreated : ", wasGameCreated);
+  if (wasGameCreated) {
+    createTags();
+  }
+};
+
+function updateTagsArray() {
+  state.tagsArray = state.tags
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter(Boolean);
+
+  // console.log("updating tags array : ", state.tagsArray);
 }
 
-const createGame = () => {
-  
+const createTags = async () => {
+  let result = false;
+  const gameId = await get_CreatedGameID();
+
+  if (!gameId) {
+    console.error("Failed to get game ID");
+    return;
+  }
+
+  for (const tag of state.tagsArray) {
+    const jsonObject = {
+      name: tag,
+      gameId: gameId,
+    };
+    result = await createData("tags", jsonObject);
+    console.log("Tag was created:", result);
+  }
+};
+
+async function get_CreatedGameID() {
+  const filters = {
+    title: state.gameTitle,
+    developerID: props.developerID,
+    description: state.description,
+  };
+
+  try {
+    let game = await getAllMatching("games", filters);
+    if (game.length > 0) {
+      console.log("created game :", game);
+      return game[0].id;
+    } else {
+      console.log("No games found with the specified criteria.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching game ID:", error);
+    return null;
+  }
 }
 
-const createFirebaseFolders = () => {
 
-}
-
-
-
-const submitGame = () => {
- if(formatData()){
-
- }
+const submitGame = async () => {
+  if (formatData()) {
+    await createGame();
+  }
 };
 </script>
 
 <style scoped>
+textarea {
+  background-color: #555; 
+  color: white; 
+  padding: 10px; 
+  border: 2px solid #777;
+  border-radius: 5px;
+  width: 50%;
+  box-sizing: border-box; 
+  margin: 5px 0; 
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #007bff; 
+}
+
 img {
   width: 100px;
 }

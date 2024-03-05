@@ -6,7 +6,7 @@
       <div class="checkbox-group">
         <!--  -->
         <label
-          v-for="genre in filter_data.genres.slice(0, 5)"
+          v-for="genre in filter_data.genres.slice(0, 6)"
           :key="genre.id"
           :class="{ 'filter-label': true, glow: true, checked: genre.checked }"
           class="roundBorderSmall glass2"
