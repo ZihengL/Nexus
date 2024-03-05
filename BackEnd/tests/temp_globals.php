@@ -23,9 +23,7 @@ function printer($content, $title = null)
 
 function printall($item)
 {
-    echo '<pre>';
-    print_r($item);
-    echo '</pre><hr>';
+    echo '<pre>' . print_r($item, true) . '</pre><hr>';
 }
 
 

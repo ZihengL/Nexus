@@ -1,25 +1,26 @@
 <?php
 
-function explodetest($a)
+function explodetest($a, $b, $c, $d = 5)
 {
     echo "TEST ";
-    return explode(', ', $a) ?? [];
+    echo $a . $b;
+    echo " $c $d";
 }
 
 /*******************************/
 
 global $path;
 $path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd/';
-require_once $path . 'tests/temp_globals.php';
-require_once $path . 'models/base_model.php';
+// require_once $path . 'tests/temp_globals.php';
+// require_once $path . 'models/base_model.php';
 
-$users_ctrl = $central_controller->users_controller;
-$games_ctrl = $central_controller->games_controller;
-$gametags_ctrl = $central_controller->gamestags_controller;
+// $users_ctrl = $central_controller->users_controller;
+// $games_ctrl = $central_controller->games_controller;
+// $gametags_ctrl = $central_controller->gamestags_controller;
 
 /*******************************/
 
-BaseModel::$print_queries = true;
+// BaseModel::$print_queries = true;
 
 echo '<hr><b>BEGIN TEST</b><hr>';
 
@@ -84,7 +85,31 @@ $arr1 = ['a' => 'tqifh', 'b' => 'kjahsdkjla', 'c' => 4231432, 'd' => 1];
 $arr2 = ['c' => 213125, 'a'];
 $arr3 = array_intersect_key($arr1, $arr2);
 
+$a1 = ['a' => [1, 2, 3], 'b', 'c'];
+$a2 = ['a' => [4], 'b' => 2, 'd'];
+
+foreach ($a1 as $key => $value) {
+    $a3 = array_merge($a1, $a2);
+}
+// echo print_r($a3, true);
+$a2 = [...$a1, 'd', 'e'];
+
+$a = 3;
+$b = 'asdas';
+$c = 23423;
+
+$arr = ['b' => $b, 'c' => $c, 'a' => $a];
+$method = 'explodetest';
+
+echo $method(...$arr);
+
+// printall($a2);
+
+
+
 ['a' => $a, 'c' => $c, 'd' => $d] = $arr1;
+
+
 
 // echo $a . ' - ' . $c;
 
@@ -105,13 +130,6 @@ $action = $parsed_uri['action'] ?? null;
 if ($controller = $central_controller->getTableController($table)) {
     echo 'good';
 } else {
-
-}
-
-if ($controller = $central_controller->getTableController($table)) {
-    echo 'good';
-} else {
-    echo 'bad';
 }
 
 echo '<br><b>END TEST</b><hr>';

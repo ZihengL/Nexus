@@ -1,14 +1,15 @@
 <?php
 require_once "$path/controllers/database_manager.php";
+// require_once "$path/controllers/google/client_manager.php";
+
+require_once "$path/controllers/base_controller.php";
 require_once "$path/controllers/tokens_controller.php";
 require_once "$path/controllers/users_controller.php";
 require_once "$path/controllers/games_controller.php";
 require_once "$path/controllers/reviews_controller.php";
 require_once "$path/controllers/tags_controller.php";
-
 require_once "$path/controllers/multiplicity/gamestags_controller.php";
 require_once "$path/controllers/multiplicity/users_downloads_controller.php";
-// require_once "$path/controllers/google/client_manager.php";
 
 require_once "$path/remote/routines.php";
 
@@ -30,11 +31,9 @@ class CentralController
     public $reviews_controller;
     public $tags_controller;
 
-    // MULTIPLICITY TABLES
+    // RELATIONAL TABLES
     public $gamestags_controller;
     public $users_downloads_controller;
-
-    public $controllers_array = [];
 
     private function __construct()
     {
@@ -53,10 +52,9 @@ class CentralController
         $this->reviews_controller = new ReviewsController($this, $pdo);
         $this->tags_controller = new TagsController($this, $pdo);
 
+        // Relational tables
         $this->gamestags_controller = new GamestagsController($this, $pdo);
         $this->users_downloads_controller = new UsersDownloadsController($this, $pdo);
-
-        $this->controllers_array = $this->getControllersAsArray();
     }
 
     public static function getInstance()
@@ -71,65 +69,17 @@ class CentralController
     /****************************** GETTERS ****************************/
     /*******************************************************************/
 
-    public function getControllersAsArray()
+    public function parseRequest($table, $action, $data)
     {
-        return [
-            $this->tokens_controller,
-            $this->users_controller,
-            $this->games_controller,
-            $this->reviews_controller,
-            $this->gamestags_controller,
-            $this->tags_controller
-        ];
+        if (!isset(BaseController::$controllers[$table]))
+            throw new Exception("Unable to find request table '$table'.");
+
+        $controller = BaseController::$controllers[$table];
+        if (!in_array($action, $controller->actions))
+            throw new Exception("Innaplicable request action '$action'.");
+
+        return $controller->$action(...$data);
     }
-
-    public function getTableController($table)
-    {
-        if ($table)
-            foreach ($this->controllers_array as $controller)
-                if ($controller->getTableName() === $table)
-                    return $controller;
-
-        return null;
-    }
-
-    public function validateCrudAction($action)
-    {
-        $valid_actions = [
-            'login',
-            'logout',
-            'getOne',
-            'getAll',
-            'getAllMatching',
-            'create',
-            'update',
-            'delete'
-        ];
-
-        return in_array($action, $valid_actions);
-    }
-
-    // public function restrictAccessOnJoinedTables($joined_tables = [])
-    // {
-    //     if (!is_array($joined_tables) || count($joined_tables) === 0) return;
-
-    //     foreach ($joined_tables as $tablename => $included_columns) {
-    //         foreach ($this->getControllersAsArray() as $controller) {
-    //             $controller_table = $controller->getTableName();
-
-    //             if ($tablename === $controller_table) {
-    //                 $included_columns = $controller->restrictAccess($included_columns);
-    //             }
-    //         }
-    //     }
-
-    //     return $joined_tables;
-    // }
-
-    // public function getAllMatching($controller, $filters = [], $sorting = [], $included_columns = [])
-    // {
-    //     return $controller->getAllMatching($filters, $sorting, $included_columns);
-    // }
 
     // COMMANDS
 

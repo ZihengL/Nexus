@@ -1,23 +1,45 @@
 <?php
-require_once "$path/controllers/base_controller.php";
 
 class BaseController
 {
+    public static $controllers = [];
+
+    public $actions = [
+        'getOne',
+        'getAll',
+        'getAllMatching',
+        'create',
+        'update',
+        'delete'
+    ];
+
     protected $central_controller;
     protected $model;
     protected $restricted_columns = [];
 
     protected $id = 'id';
 
-    public function __construct($central_controller)
+    public function __construct($central_controller, $actions_map = [])
     {
         $this->central_controller = $central_controller;
+
+        self::$controllers[$this->model->table] = $this;
     }
 
 
     /*******************************************************************/
     /****************************** GETTERS ****************************/
     /*******************************************************************/
+
+    public function getTableName()
+    {
+        return $this->model->table;
+    }
+
+    public function getTableController($table)
+    {
+        return self::$controllers[$table];
+    }
 
     // MANAGERS
 
@@ -74,20 +96,33 @@ class BaseController
 
 
     /*******************************************************************/
-    /************************ ACCESS & SECURITY ************************/
+    /****************** VALIDATION, ACCESS & SECURITY ******************/
     /*******************************************************************/
 
-    public function getTableName()
+    public function validateRequestAction($action)
     {
-        return $this->model->table;
+        $valid_actions = [
+            'getOne',
+            'getAll',
+            'getAllMatching',
+            'create',
+            'update',
+            'delete'
+        ];
+
+        return in_array($action, $valid_actions);
     }
 
-    public function getTableController($table)
+    public function validateRequestData($data, $mandatory_entries = [])
     {
-        return $this->central_controller->getTableController($table);
+        foreach ($mandatory_entries as $mandatory_entry)
+            if (!isset($data[$mandatory_entry]))
+                throw new Exception("Mandatory entry '$mandatory_entry' not set");
+
+        return $data;
     }
 
-    public function validateAccess($included_columns = [])
+    protected function filterAccess($included_columns = [])
     {
         $valid_columns = array_diff($this->model->getColumns(true), $this->restricted_columns);
 
@@ -97,14 +132,18 @@ class BaseController
         return array_intersect($valid_columns, $included_columns);
     }
 
-    public function validateJoinedTables($joined_tables = [])
+    protected function filterJoinedTables($joined_tables = [])
     {
         if (is_array($joined_tables))
             foreach ($joined_tables as $ext_tab => $included_columns)
-                if ($table_controller = $this->getTableController($ext_tab))
-                    $included_columns = $table_controller->validateAccess($included_columns);
+                if ($table_controller = self::$controllers[$ext_tab])
+                    $included_columns = $table_controller->filterAccess($included_columns);
 
         return $joined_tables;
+    }
+
+    public function procesRequest($action, $data)
+    {
     }
 
 
@@ -112,54 +151,26 @@ class BaseController
     /****************************** CRUDS ******************************/
     /*******************************************************************/
 
-    // MAYBE JUST ONE PARAM FOR ALL CRUD ACTIONS IN BASE CONTROLLER OR CHECK (...PARAMS)
-    public function parseRequest($action, $options)
-    {
-        try {
-            [
-                'crud_action' => $method,
-                'included_columns' => $included_columns,
-                'joined_tables' => $joined_tables
-            ] = $options;
-
-            switch ($method) {
-                case 'getOne':
-                    ['column' => $column, 'value' => $value] = $options;
-                    return $this->getOne($column, $value, $included_columns, $joined_tables);
-                case 'getAll':
-                    ['column' => $column, 'value' => $value, 'sorting' => $sorting] = $options;
-                    return $this->getAll($column, $value, $included_columns, $sorting, $joined_tables);
-                case 'getAllMatching':
-                    ['filters' => $filters, 'sorting' => $sorting] = $options;
-                    return $this->getAllMatching($filters, $sorting, $included_columns, $joined_tables);
-                default:
-                    return "No method matching '$method' found.";
-            }
-        } catch (Exception $e) {
-            throw new Exception("Error while parsing request: " . $e->getMessage());
-        }
-    }
-
     public function getOne($column, $value, $included_columns = [], $joined_tables = [])
     {
-        $included_columns = $this->validateAccess($included_columns);
-        $joined_tables = $this->validateJoinedTables($joined_tables);
+        $included_columns = $this->filterAccess($included_columns);
+        $joined_tables = $this->filterJoinedTables($joined_tables);
 
         return $this->model->getOne($column, $value, $included_columns, $joined_tables);
     }
 
     public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [])
     {
-        $included_columns = $this->validateAccess($included_columns);
-        $joined_tables = $this->validateJoinedTables($joined_tables);
+        $included_columns = $this->filterAccess($included_columns);
+        $joined_tables = $this->filterJoinedTables($joined_tables);
 
         return $this->model->getAll($column, $value, $included_columns, $sorting, $joined_tables);
     }
 
     public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
     {
-        $included_columns = $this->validateAccess($included_columns);
-        $joined_tables = $this->validateJoinedTables($joined_tables);
+        $included_columns = $this->filterAccess($included_columns);
+        $joined_tables = $this->filterJoinedTables($joined_tables);
 
         return $this->model->getAllMatching($filters, $sorting, $included_columns, $joined_tables, $joined_tables);
     }
@@ -186,11 +197,108 @@ class BaseController
 
     public function createResponse($isSuccess, $message)
     {
+        if (!$isSuccess)
+            throw new Exception($message);
+
         $response = [
             'isSuccessful' => (bool) $isSuccess,
             'message' => $message,
         ];
 
-        return json_encode($response);
+        return $response;
+
+        // return json_encode($response);
     }
+
+    // public function createResponse($isSuccess, $message)
+    // {
+    //     $response = [
+    //         'isSuccessful' => (bool) $isSuccess,
+    //         'message' => $message,
+    //     ];
+
+    //     return json_encode($response);
+    // }
+
+    // protected function getOne($data, $mandatory_entries = [])
+    // {
+    //     $mandatory_entries = [...$mandatory_entries, 'column', 'value'];
+
+    //     if ($this->validateMandatoryData($mandatory_entries, $data)) {
+    //         [
+    //             'column' => $column,
+    //             'value' => $value,
+    //             'includedColumns' => $included_columns,
+    //             'joinedTables' => $joined_tables
+    //         ] = $data;
+
+    //         return $this->model->getOne($column, $value, $included_columns, $joined_tables);
+    //     }
+
+    //     return null;
+    // }
+
+    // protected function getAll($data, $mandatory_entries = [])
+    // {
+    //     if ($this->validateMandatoryData($data, $mandatory_entries)) {
+    //         [
+    //             'column' => $column,
+    //             'value' => $value,
+    //             'includedColumns' => $included_columns,
+    //             'sorting' => $sorting,
+    //             'joinedTables' => $joined_tables
+    //         ] = $data;
+
+    //         return $this->model->getAll($column, $value, $included_columns, $sorting, $joined_tables);
+    //     }
+
+    //     return null;
+    // }
+
+    // protected function getAllMatching($data, $mandatory_entries = [])
+    // {
+    //     if ($this->validateMandatoryData($data, $mandatory_entries)) {
+    //         [
+    //             'filters' => $filters,
+    //             'sorting' => $sorting,
+    //             'includedColumns' => $included_columns,
+    //             'joinedTables' => $joined_tables
+    //         ] = $data;
+
+    //         return $this->model->getAllMatching($filters, $sorting, $included_columns, $joined_tables);
+    //     }
+
+    //     return null;
+    // }
+
+    // protected function create($data, $mandatory_entries = [])
+    // {
+    //     if ($this->validateMandatoryData($data, $mandatory_entries)) {
+    //         return $this->model->create($data);
+    //     }
+
+    //     return null;
+    // }
+
+    // protected function update($data, $mandatory_entries = [])
+    // {
+    //     $mandatory_entries = [...$mandatory_entries, $this->id];
+
+    //     if ($this->validateMandatoryData($data, $mandatory_entries)) {
+    //         $id = $data[$this->id];
+
+    //         return $this->model->update($id, $data);
+    //     }
+    // }
+
+    // protected function delete($data, $mandatory_entries = [])
+    // {
+    //     $mandatory_entries = [...$mandatory_entries, $this->id];
+
+    //     if ($this->validateMandatoryData($data, $mandatory_entries)) {
+    //         $id = $data[$this->id];
+
+    //         return $this->model->delete($id);
+    //     }
+    // }
 }

@@ -30,67 +30,51 @@ header('Pragma: no-cache');
 
 global $path;
 global $baseURL;
-global $central_controller;
-
 $path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd/';
-require_once $path . '/controllers/central_controller.php';
 
+require_once "$path/controllers/central_controller.php";
 $central_controller = CentralController::getInstance();
 
 
 /*******************************************************************/
-/***************************** PARSING *****************************/
+/***************************** REQUEST *****************************/
 /*******************************************************************/
 
-// All requests are channeled through POSTs.
-if ($_SERVER["REQUEST_METHOD"] !== 'POST')
-    displayError('Unsupported method type.');
+try {
+    $raw_data = file_get_contents('php://input');
+    $decoded_data = json_decode($raw_data, true);
+    ['table' => $table, 'action' => $action] = parseURL();
 
-
-// PARSING URL & URI
-$parsed_uri = [];
-
-if (isset($_SERVER['REQUEST_URI'])) {
-    $split_uri = explode('/', $_SERVER['REQUEST_URI']);
-    $end_uri = array_pop($split_uri);
-    parse_str($end_uri, $parsed_uri);
-} else
-    displayError('Invalid URI format.');
-
-
-// PARSING TABLE & CRUD REQUEST
-if (isset($parsed_uri['table']) && isset($parsed_uri['action'])) {
-    ['table' => $table, 'action' => $action] = $parsed_uri;
-
-    if ($controller = $central_controller->getTableController($table)) {
-        if ($central_controller->validateCrudAction($action)) {
-            $raw_data = file_get_contents('php://input');
-            $decoded_data = json_decode($raw_data, true);
-
-            echo json_encode($controller->parseRequest($action, $decoded_data));
-        } else
-            displayError("Action '$crud_action' is innaplicable");
-    } else
-        displayError("Table '$table' doesn't exist.");
-} else
-    displayError('Invalid URI format.');
+    $request_result = $central_controller->parseRequest($table, $action, $decoded_data);
+    echo json_encode($request_result);
+} catch (Exception $e) {
+    echo json_encode(['ERROR' => $e->getMessage()]);
+}
 
 
 /*******************************************************************/
 /****************************** TOOLS ******************************/
 /*******************************************************************/
 
-function displayError($message)
+function parseURL()
 {
-    echo json_encode(['Error' => $message]);
+    $method = $_SERVER["REQUEST_METHOD"];
+    $uri = $_SERVER['REQUEST_URI'];
+
+    if ($method !== 'POST' || empty($uri))
+        throw new Exception("Unsupported request format.");
+
+    $split_uri = explode('/', $uri);
+    $end_uri = array_pop($split_uri);
+    parse_str($end_uri, $request_components);
+
+    if (!isset($request_components['table']) || !isset($request_components['action']))
+        throw new Exception("URI format '$end_uri' is innaplicable.");
+
+    return $request_components;
 }
 
-function printall($item, $return = false)
+function printall($item)
 {
-    $element = "<pre>{print_r($item, true)}</pre><hr>";
-
-    if (!$return)
-        echo $element;
-
-    return $element;
+    echo '<pre>' . print_r($item, true) . '</pre>';
 }
