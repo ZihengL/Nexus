@@ -119,6 +119,44 @@ export const getAllGamesWithDeveloperName = async (column = null, value = null, 
   }
 };
 
+
+export const getGameDetails = async (idGame) => {
+  let data = await fetchData("games", "getOne", "id", idGame, null, null, null, "GET");
+  return data
+};
+
+export const getUsername = async (userID) => {
+  return await fetchData("users", "getOne", "id", userID, null, null, null, "GET");
+};
+
+export const getReviews = async (gameID) => {
+  return await fetchData("reviews", "getAll", "gameID", gameID, null, null, null, "GET");
+};
+
+
+export const getReviewsAndUsernames = async (gameID, sorting) => {
+  // console.log(" getReviewsAndUsernames sorting : ", sorting)
+  // console.log(" getReviewsAndUsernames gameID : ", gameID)
+  const reviews = await fetchData("reviews", "getAll", "gameID", gameID, null,  sorting, null, "GET");
+
+  if (reviews && reviews.length) {
+    const reviewsWithUsernames = await Promise.all(reviews.map(async (review) => {
+      if (review.userID) {
+        const userDetails = await getUsername(review.userID);
+        if (userDetails) {
+          review.username = userDetails.username;
+        }
+      }
+      return review;
+    }));
+
+    return reviewsWithUsernames;
+  }
+
+  return reviews;
+};
+
+
 export const getGameDetailsWithDeveloperName = async (idGame) => {
   try {
     const gameDetailsArray = await getGameDetails(idGame);
@@ -153,7 +191,7 @@ export const getReviews = async (gameID) => {
   return await getAll("reviews", "gameID", gameID);
 };
 
-export const getReviewsAndUsernames = async (gameID, sorting = null) => {
+export const getReviewsAndUsernames = async (gameID, sorting) => {
   // console.log(" getReviewsAndUsernames sorting : ", sorting)
   // console.log(" getReviewsAndUsernames gameID : ", gameID)
   const reviews = await getAll("reviews", "gameID", gameID, null, sorting, null);
