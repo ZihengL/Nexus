@@ -52,8 +52,8 @@ $central_controller = CentralController::getInstance();
 
 // METHOD & URI
 $method = $_SERVER["REQUEST_METHOD"];
-$uri = $_SERVER["REQUEST_URI"];
-$exploded_URI = explode('/', $uri);
+$url = $_SERVER["REQUEST_URI"];
+$exploded_URI = explode('/', $url);
 $endURI = end($exploded_URI);
 
 $result = null;

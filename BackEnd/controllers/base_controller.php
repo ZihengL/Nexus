@@ -84,11 +84,7 @@ class BaseController
 
     public function getTableController($table)
     {
-        foreach ($this->central_controller->controllers_array as $controller)
-            if ($controller->getTableName() === $table)
-                return $controller;
-
-        return null;
+        return $this->central_controller->getTableController($table);
     }
 
     public function validateAccess($included_columns = [])
@@ -116,7 +112,8 @@ class BaseController
     /****************************** CRUDS ******************************/
     /*******************************************************************/
 
-    public function getAny($options)
+    // MAYBE JUST ONE PARAM FOR ALL CRUD ACTIONS IN BASE CONTROLLER OR CHECK (...PARAMS)
+    public function parseRequest($action, $options)
     {
         try {
             [

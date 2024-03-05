@@ -83,6 +83,32 @@ class CentralController
         ];
     }
 
+    public function getTableController($table)
+    {
+        if ($table)
+            foreach ($this->controllers_array as $controller)
+                if ($controller->getTableName() === $table)
+                    return $controller;
+
+        return null;
+    }
+
+    public function validateCrudAction($action)
+    {
+        $valid_actions = [
+            'login',
+            'logout',
+            'getOne',
+            'getAll',
+            'getAllMatching',
+            'create',
+            'update',
+            'delete'
+        ];
+
+        return in_array($action, $valid_actions);
+    }
+
     // public function restrictAccessOnJoinedTables($joined_tables = [])
     // {
     //     if (!is_array($joined_tables) || count($joined_tables) === 0) return;

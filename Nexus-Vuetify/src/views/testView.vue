@@ -21,10 +21,9 @@
   </div>
 </template>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
-
 <script>
 import { fetchData } from "../JS/fetch";
+import { fetchData2 } from '../JS/fetch2'
 import ReviewsListComponent from "../components/reviewsListComponent.vue";
 
 export default {
@@ -395,7 +394,7 @@ export default {
         id: 703493,
         asdas: "dklajjsdlak",
         asfhjkqfnqiol: ['aasdas', 'asdasdas', 'adsadaeqf', 'qweasdfsd'],
-        qwerfsdfsd: [['asdasasd', 'asfqwedqwrfq', 'qerqwwqrq'], ['asdasdasdas'], 'asdasgqqwqw'] 
+        qwerfsdfsd: [['asdasasd', 'asfqwedqwrfq', 'qerqwwqrq'], ['asdasdasdas'], 'asdasgqqwqw']
       };
       const sorting = {
         ratingAverage: true,
@@ -403,12 +402,15 @@ export default {
       const includedColumns = ["id", "developerID", "tags", "ratingAverage"];
       const jsonBody = { filters, sorting, includedColumns };
 
-      const queryString = btoa(JSON.stringify(jsonBody));
-      const encodedURI = encodeURIComponent(queryString);
+      // const queryString = btoa(JSON.stringify(jsonBody));
+      // const encodedURI = encodeURIComponent(queryString);
+      // console.log(encodedURI);
 
-      const lzCompressed = LZString.compr
+      const test = { games: 'is a game' };
 
-      console.log(encodedURI);
+      const result = fetchData2(test);
+
+      console.log(result);
     },
   },
 };

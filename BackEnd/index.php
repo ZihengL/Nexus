@@ -45,16 +45,11 @@ $central_controller = CentralController::getInstance();
 $method = $_SERVER["REQUEST_METHOD"];
 $requestUri = $_SERVER['REQUEST_URI'];
 
-
 /*******************************************************************/
 /***************************** PARSING *****************************/
 /*******************************************************************/
 
 /***** PARSING TOOLS *****/
-
-function parseData($data)
-{
-}
 
 // URL
 $url_components = parse_url($requestUri);
@@ -93,15 +88,6 @@ if (isset($_GET['sorting'])) {
 $raw_data = file_get_contents('php://input');
 $decoded_data = json_decode($raw_data, true);
 
-// ZI
-$options = [
-    'column' => $column,
-    'value' => $value,
-    'included_columns' => $included_columns,
-    'sorting' => $sorting,
-    'decoded_data' => $decoded_data
-];
-
 
 /*******************************************************************/
 /***************************** ROUTING *****************************/
@@ -126,12 +112,6 @@ switch ($method) {
         echo json_encode(['error' => 'Method Not Allowed']);
         break;
 }
-
-// ZI
-if ($method === 'GET') {
-} else {
-}
-
 
 /*******************************************************************/
 /***************************** HANDLERS ****************************/
@@ -287,8 +267,3 @@ function handleUpdate($decoded_data, $controller_name, $crud_action)
 
     return $central_controller->$controller_name->$crud_action($id, $data);
 }
-
-
-/*******************************************************************/
-/****************************** TOOLS ******************************/
-/*******************************************************************/

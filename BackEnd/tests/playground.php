@@ -23,41 +23,62 @@ BaseModel::$print_queries = true;
 
 echo '<hr><b>BEGIN TEST</b><hr>';
 
-$joined_tables = [
-    'users' => ['id', 'username'],
-    'gamestags' => ['gameId', 'tagId']
-];
+// JOINED_TABLES
+// $joined_tables = [
+//     'users' => ['id', 'username'],
+//     'gamestags' => ['gameId', 'tagId']
+// ];
 
-/* JOINED_TABLES */
-echo '<b>getOne</b><br>';
-$result = $games_ctrl->getOne('title', 'Space Odyssey', null, $joined_tables);
-printall($result);
+// echo '<b>getOne</b><br>';
+// $result = $games_ctrl->getOne('title', 'Space Odyssey', null, $joined_tables);
+// printall($result);
 
-echo '<b>getAllMatching</b><br>';
-$result = $games_ctrl->getAllMatching(['title' => 'Space Odyssey'], null, null, $joined_tables);
-printall($result);
+// echo '<b>getAllMatching</b><br>';
+// $result = $games_ctrl->getAllMatching(['title' => 'Space Odyssey'], null, null, $joined_tables);
+// printall($result);
 
-echo 'With included tables<br>';
-$result = $games_ctrl->getAllMatching(['title' => 'Space Odyssey'], null, ['id', 'developerID', 'title'], $joined_tables);
-printall($result);
+// echo 'With included tables<br>';
+// $result = $games_ctrl->getAllMatching(['title' => 'Space Odyssey'], null, ['id', 'developerID', 'title'], $joined_tables);
+// printall($result);
 
-$games_ctrl->TEST();
-
-
-/* URL DECODING */
-$encoded = 'eyJmaWx0ZXJzIjp7InJhdGluZ0F2ZXJhZ2UiOiI1In0sInNvcnRpbmciOnsicmF0aW5nQXZlcmFnZSI6dHJ1ZX0sImluY2x1ZGVkQ29sdW1ucyI6WyJpZCIsImRldmVsb3BlcklEIiwidGFncyIsInJhdGluZ0F2ZXJhZ2UiXX0%3D';
-$filtersJson = base64_decode(urldecode($encoded));
-
-printall($filtersJson);
-
-$filters = json_decode($filtersJson);
-
-printall($filters);
-
-echo '<b>END TEST</b><hr>';
+// $games_ctrl->TEST();
 
 
-/*******************************/
+// URL DECODING
+// try {
+//     // $encoded = $_GET['action'];
+//     $encodedData = 'MTIwLDE1NiwyMDMsNDMsMjA1LDIwMSwxLDAsNCw5NSwxLDE4OA==';
+
+//     $compressedData = base64_decode($encodedData); // Base64 decode
+
+//     // Decompress data
+//     $decompressedData = gzuncompress($compressedData);
+
+//     if ($decompressedData === FALSE) {
+//         // Handle decompression error
+//         die('Decompression failed');
+//     } else {
+//         // Convert JSON string back to array
+//         $dataArray = json_decode($decompressedData, true);
+
+//         // Now, use $dataArray as needed
+//         var_dump($dataArray);
+//     }
+
+//     $decodedURL = urldecode($encoded);
+//     echo "DECODED URL: $decodedURL<br>";
+
+//     $filtersJson = gzinflate(substr(urldecode($encoded), 2, -4));
+
+//     // printall($filtersJson);
+
+//     $filters = json_decode($filtersJson, true);
+
+//     printall($filters);
+// } catch (Exception $e) {
+//     printall($e->getMessage());
+// }
+
 
 $arr1 = ['a' => 'tqifh', 'b' => 'kjahsdkjla', 'c' => 4231432, 'd' => 1];
 $arr2 = ['c' => 213125, 'a'];
@@ -67,6 +88,36 @@ $arr3 = array_intersect_key($arr1, $arr2);
 
 // echo $a . ' - ' . $c;
 
+$url = 'https://www.php.net/manual/en/function.parse-url.php';
+$url = 'http://localhost:4208/Nexus/BackEnd/table=users&action=getAll';
+$url = 'http://localhost:4208/Nexus/BackEnd/table=users&asdasda=getAll';
+
+$url_components = parse_url($url);
+printall($url_components);
+
+$split_uri = explode('/', $url_components['path']);
+$end_uri = array_pop($split_uri);
+
+parse_str($end_uri, $parsed_uri);
+$table = $parsed_uri['table'] ?? null;
+$action = $parsed_uri['action'] ?? null;
+
+if ($controller = $central_controller->getTableController($table)) {
+    echo 'good';
+} else {
+
+}
+
+if ($controller = $central_controller->getTableController($table)) {
+    echo 'good';
+} else {
+    echo 'bad';
+}
+
+echo '<br><b>END TEST</b><hr>';
+
+
+/*******************************/
 
 
 
