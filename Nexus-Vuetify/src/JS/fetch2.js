@@ -6,7 +6,7 @@ export function fetchData2(table, action, data = null) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(validateData(data)),
   };
 
   return fetch(uri, options)
@@ -22,6 +22,24 @@ export function fetchData2(table, action, data = null) {
       console.error("Network error:", error);
       return null;
     });
+}
+
+function validateData(data) {
+  const keymap = {
+    columnName: "column",
+    includedColumns: "included_columns",
+  };
+
+  Object.keys(keymap).forEach((key) => {
+    if (Object.prototype.hasOwnProperty.call(data, key)) {
+      const newKey = keymap[key];
+
+      data[newKey] = data[key];
+      delete data[key];
+    }
+  });
+
+  return data;
 }
 
 // URL COMPRESSION

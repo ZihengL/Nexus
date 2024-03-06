@@ -45,8 +45,7 @@ try {
     $decoded_data = json_decode($raw_data, true);
     ['table' => $table, 'action' => $action] = parseURL();
 
-    $request_result = $central_controller->parseRequest($table, $action, $decoded_data);
-    echo json_encode($request_result);
+    echo json_encode($central_controller->parseRequest($table, $action, $decoded_data));
 } catch (Exception $e) {
     echo json_encode(['ERROR' => $e->getMessage()]);
 }

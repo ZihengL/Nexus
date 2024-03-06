@@ -114,8 +114,6 @@ class TagsController extends BaseController
         }
     }
 
-
-
     public function validateData($action, $data)
     {
         $id = $data["id"] ?? null;

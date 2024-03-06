@@ -26,21 +26,6 @@ class UsersController extends BaseController
         parent::__construct($central_controller, ['login', 'logout', 'authenticate']);
     }
 
-    // public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
-    // {
-    //     $included_columns = $this->restrictAccess($included_columns);
-
-    //     return $this->model->getAllMatching($filters, $sorting, $included_columns);
-    // }
-
-    // public function getOne($column, $value, $included_columns = [])
-    // {
-
-    //     $included_columns = $this->restrictAccess($included_columns);
-
-    //     return $this->model->getOne($column, $value, $included_columns);
-    // }
-
     public function userExists($data)
     {
         return isset($data[$this->email]) &&
@@ -136,4 +121,19 @@ class UsersController extends BaseController
         // echo "isVerifiedPwd: " . $isVerifiedPwd . "<br>";
         return $user[$this->email] === $email && password_verify($password, $user[$this->password]);
     }
+
+    // public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
+    // {
+    //     $included_columns = $this->restrictAccess($included_columns);
+
+    //     return $this->model->getAllMatching($filters, $sorting, $included_columns);
+    // }
+
+    // public function getOne($column, $value, $included_columns = [])
+    // {
+
+    //     $included_columns = $this->restrictAccess($included_columns);
+
+    //     return $this->model->getOne($column, $value, $included_columns);
+    // }
 }

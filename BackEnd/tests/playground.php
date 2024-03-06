@@ -91,6 +91,13 @@ $a2 = ['a' => [4], 'b' => 2, 'd'];
 foreach ($a1 as $key => $value) {
     $a3 = array_merge($a1, $a2);
 }
+
+if (array_key_exists('A', $a1))
+    echo 'exist';
+else
+    echo 'no';
+
+
 echo print_r($a3, true) . '<br>';
 $a2 = [...$a1, 'd', 'e'];
 

@@ -78,6 +78,7 @@ class CentralController
         if (!in_array($action, $controller->actions))
             throw new Exception("Innaplicable request action '$action'.");
 
+        $data = $controller->standardizeRequestData($data);
         return $controller->$action(...$data);
     }
 

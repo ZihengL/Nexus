@@ -100,25 +100,18 @@ class BaseController
     /****************** VALIDATION, ACCESS & SECURITY ******************/
     /*******************************************************************/
 
-    public function validateRequestAction($action)
+    public function standardizeRequestData($data)
     {
-        $valid_actions = [
-            'getOne',
-            'getAll',
-            'getAllMatching',
-            'create',
-            'update',
-            'delete'
+        $client_to_server = [
+            'columnName' => 'column',
+            'includedColumns' => 'included_columns'
         ];
 
-        return in_array($action, $valid_actions);
-    }
-
-    public function validateRequestData($data, $mandatory_entries = [])
-    {
-        foreach ($mandatory_entries as $mandatory_entry)
-            if (!isset($data[$mandatory_entry]))
-                throw new Exception("Mandatory entry '$mandatory_entry' not set");
+        foreach ($client_to_server as $client_value => $server_value)
+            if (array_key_exists($client_value, $data)) {
+                $data[$server_value] = $data[$client_value];
+                unset($data[$client_value]);
+            }
 
         return $data;
     }
@@ -141,10 +134,6 @@ class BaseController
                     $included_columns = $table_controller->filterAccess($included_columns);
 
         return $joined_tables;
-    }
-
-    public function procesRequest($action, $data)
-    {
     }
 
 
