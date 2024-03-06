@@ -86,7 +86,7 @@ if (isset($_GET['sorting'])) {
 
 // ENCODED DATA
 $raw_data = file_get_contents('php://input');
-$decoded_data = json_decode($raw_data, true);
+$data = json_decode($raw_data, true);
 
 
 /*******************************************************************/
@@ -106,7 +106,7 @@ switch ($method) {
     case 'POST':
     case 'DELETE':
     case 'PUT':
-        handlePost($table, $crud_action, $column, $value, $included_columns, $sorting, $decoded_data);
+        handlePost($table, $crud_action, $column, $value, $included_columns, $sorting, $data);
         break;
     default:
         echo json_encode(['error' => 'Method Not Allowed']);

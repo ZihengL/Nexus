@@ -69,7 +69,7 @@ class CentralController
     /****************************** GETTERS ****************************/
     /*******************************************************************/
 
-    public function parseRequest($table, $action, $data)
+    public function parseRequest($table, $action, $data = null)
     {
         if (!isset(BaseController::$controllers[$table]))
             throw new Exception("Unable to find request table '$table'.");
@@ -78,8 +78,12 @@ class CentralController
         if (!in_array($action, $controller->actions))
             throw new Exception("Innaplicable request action '$action'.");
 
-        $data = $controller->standardizeRequestData($data);
-        return $controller->$action(...$data);
+        if ($data) {
+            $data = $controller->standardizeRequestData($data);
+            return $controller->$action(...$data);
+        }
+
+        return $controller->$action();
     }
 
     // COMMANDS

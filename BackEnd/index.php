@@ -41,11 +41,22 @@ $central_controller = CentralController::getInstance();
 /*******************************************************************/
 
 try {
-    $raw_data = file_get_contents('php://input');
-    $decoded_data = json_decode($raw_data, true);
     ['table' => $table, 'action' => $action] = parseURL();
+    $request_method = $_SERVER['REQUEST_METHOD'];
 
-    echo json_encode($central_controller->parseRequest($table, $action, $decoded_data));
+    switch ($request_method) {
+        case 'POST':
+            $raw_data = file_get_contents('php://input');
+            $data = json_decode($raw_data, true);
+            break;
+        case 'GET':
+            $data = null;
+            break;
+        default:
+            throw new Exception("Unsupported request method type '$request_method'.");
+    }
+
+    echo json_encode($central_controller->parseRequest($table, $action, $data));
 } catch (Exception $e) {
     echo json_encode(['ERROR' => $e->getMessage()]);
 }
@@ -57,11 +68,10 @@ try {
 
 function parseURL()
 {
-    $method = $_SERVER["REQUEST_METHOD"];
     $uri = $_SERVER['REQUEST_URI'];
 
-    if ($method !== 'POST' || empty($uri))
-        throw new Exception("Unsupported request format.");
+    if (empty($uri))
+        throw new Exception("Missing table and action parameters in request URI.");
 
     $split_uri = explode('/', $uri);
     $end_uri = array_pop($split_uri);
