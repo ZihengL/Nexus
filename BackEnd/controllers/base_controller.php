@@ -19,11 +19,12 @@ class BaseController
 
     protected $id = 'id';
 
-    public function __construct($central_controller, $actions_map = [])
+    public function __construct($central_controller, $actions = [])
     {
         $this->central_controller = $central_controller;
 
         self::$controllers[$this->model->table] = $this;
+        $this->actions = array_merge($this->actions, $actions);
     }
 
 

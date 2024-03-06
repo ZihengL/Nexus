@@ -23,7 +23,7 @@ class UsersController extends BaseController
     {
         $this->model = new UsersModel($pdo);
         $this->restricted_columns = ['password', 'email', 'phoneNumber', 'isAdmin'];
-        parent::__construct($central_controller);
+        parent::__construct($central_controller, ['login', 'logout', 'authenticate']);
     }
 
     // public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
