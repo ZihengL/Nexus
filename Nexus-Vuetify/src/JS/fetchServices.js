@@ -1,25 +1,43 @@
 import { fetchData } from "./fetch";
+import { fetchData2 } from "./fetch2";
 
-export const getOne = async (table, column, value, includedColumns = null, sorting = null) => {
-  let data = await fetchData(table, "getOne", column, value, includedColumns, sorting, null, "GET");
+export const getOne = async (table, column, value, included_columns = null, sorting = null) => {
+  const body = {
+    column,
+    value,
+    included_columns,
+    sorting
+  }
+
+  // let data = await fetchData(table, "getOne", column, value, included_columns, sorting, null, "GET");
+  let data = await fetchData2(table, 'getOne', body);
   return data;
 };
 
-export const getAll = async (table, column = null, value = null, includedColumns = null, sorting = null) => {
-  let data = await fetchData(table, "getAll", column, value, includedColumns, sorting, null, "GET");
+export const getAll = async (table, column = null, value = null, included_columns = null, sorting = null) => {
+  const body = {
+    column,
+    value,
+    included_columns,
+    sorting
+  }
+
+  // let data = await fetchData(table, "getAll", column, value, included_columns, sorting, null, "GET");
+  let data = await fetchData2(table, 'getAll', body);
   return data
 };
 
-export const getAllMatching = async (table, filters, sorting = null, includedColumns = null) => {
+export const getAllMatching = async (table, filters, sorting = null, included_columns = null) => {
   let body = {
     filters,
     sorting,
-    includedColumns
+    included_columns
   }
-  let data = await fetchData(table, "getAllMatching", null, null, null, null, body, "POST");
+
+  // let data = await fetchData(table, "getAllMatching", null, null, null, null, body, "POST");
+  let data = await fetchData2(table, 'getAllMatching', body);
   return data
 };
-
 
 /*******************************************************************/
 /****************************** USERS ******************************/

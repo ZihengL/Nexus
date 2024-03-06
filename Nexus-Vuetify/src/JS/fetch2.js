@@ -1,12 +1,12 @@
 // all other params in data
-export function fetchData2(table, action, data = null) {
+export function fetchData2(table, action, body = null) {
   const uri = `http://localhost:4208/Nexus/Backend/table=${table}&action=${action}`;
   const options = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(validateData(data)),
+    body: JSON.stringify(validateData(body)),
   };
 
   return fetch(uri, options)

@@ -19,12 +19,12 @@ class BaseController
 
     protected $id = 'id';
 
-    public function __construct($central_controller, $actions = [])
+    public function __construct($central_controller, $table_specific_actions = [])
     {
         $this->central_controller = $central_controller;
 
         self::$controllers[$this->model->table] = $this;
-        $this->actions = array_merge($this->actions, $actions);
+        $this->actions = array_merge($this->actions, $table_specific_actions);
     }
 
 
@@ -126,7 +126,7 @@ class BaseController
         return array_intersect($valid_columns, $included_columns);
     }
 
-    protected function filterJoinedTables($joined_tables = [])
+    protected function filterAccessOnJoins($joined_tables = [])
     {
         if (is_array($joined_tables))
             foreach ($joined_tables as $ext_tab => $included_columns)
@@ -144,7 +144,7 @@ class BaseController
     public function getOne($column, $value, $included_columns = [], $joined_tables = [])
     {
         $included_columns = $this->filterAccess($included_columns);
-        $joined_tables = $this->filterJoinedTables($joined_tables);
+        $joined_tables = $this->filterAccessOnJoins($joined_tables);
 
         return $this->model->getOne($column, $value, $included_columns, $joined_tables);
     }
@@ -152,7 +152,7 @@ class BaseController
     public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [])
     {
         $included_columns = $this->filterAccess($included_columns);
-        $joined_tables = $this->filterJoinedTables($joined_tables);
+        $joined_tables = $this->filterAccessOnJoins($joined_tables);
 
         return $this->model->getAll($column, $value, $included_columns, $sorting, $joined_tables);
     }
@@ -160,7 +160,7 @@ class BaseController
     public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
     {
         $included_columns = $this->filterAccess($included_columns);
-        $joined_tables = $this->filterJoinedTables($joined_tables);
+        $joined_tables = $this->filterAccessOnJoins($joined_tables);
 
         return $this->model->getAllMatching($filters, $sorting, $included_columns, $joined_tables, $joined_tables);
     }
