@@ -25,29 +25,29 @@ export function fetchData2(table, action, data = null) {
 }
 
 // URL COMPRESSION
-async function compressAndEncode(data) {
-  const jsonString = JSON.stringify(object);
-  const compressed = pako.deflate(jsonString, { to: "string" });
-  const encoded = encodeURIComponent(compressed); // Encode for URI compatibility
+// async function compressAndEncode(data) {
+//   const jsonString = JSON.stringify(object);
+//   const compressed = pako.deflate(jsonString, { to: "string" });
+//   const encoded = encodeURIComponent(compressed); // Encode for URI compatibility
 
-  return encoded;
+//   return encoded;
 
-  // const compressed = await new Promise((resolve) => {
-  //   const blob = new Blob([jsonData], { type: "application/json" });
-  //   const reader = new FileReader();
+// const compressed = await new Promise((resolve) => {
+//   const blob = new Blob([jsonData], { type: "application/json" });
+//   const reader = new FileReader();
 
-  //   reader.onload = function (event) {
-  //     const compressedData = pako.deflate(
-  //       new TextEncoder().encode(event.target.result),
-  //       { to: "string" }
-  //     );
+//   reader.onload = function (event) {
+//     const compressedData = pako.deflate(
+//       new TextEncoder().encode(event.target.result),
+//       { to: "string" }
+//     );
 
-  //     resolve(window.btoa(compressedData));
-  //   };
+//     resolve(window.btoa(compressedData));
+//   };
 
-  //   reader.readAsText(blob);
-  // });
-}
+//   reader.readAsText(blob);
+// });
+// }
 
 // app.config.globalProperties.$fetchData = function (url, method = 'GET', data = null) {
 //   const options = {

@@ -387,20 +387,16 @@ export default {
     // TESTING ENCODING URI - FOR ENCODING JSONBODY
     // '/tests/playground.php' in backend for decoding test
     ZITEST() {
-      const crud_action = 'getAllMatching';
+      const action = 'getAllMatching';
       const table = 'games';
       const filters = {
-        ratingAverage: "5",
-        id: 703493,
-        asdas: "dklajjsdlak",
-        asfhjkqfnqiol: ['aasdas', 'asdasdas', 'adsadaeqf', 'qweasdfsd'],
-        qwerfsdfsd: [['asdasasd', 'asfqwedqwrfq', 'qerqwwqrq'], ['asdasdasdas'], 'asdasgqqwqw']
+        id: 2
       };
       const sorting = {
         ratingAverage: true,
       };
-      const includedColumns = ["id", "developerID", "tags", "ratingAverage"];
-      const jsonBody = { filters, sorting, includedColumns };
+      const included_columns = ["id", "developerID", "tags", "ratingAverage"];
+      const jsonBody = { filters, sorting, included_columns };
 
       // const queryString = btoa(JSON.stringify(jsonBody));
       // const encodedURI = encodeURIComponent(queryString);
@@ -408,7 +404,7 @@ export default {
 
       const test = { games: 'is a game' };
 
-      const result = fetchData2(test);
+      const result = fetchData2(table, action, jsonBody);
 
       console.log(result);
     },
