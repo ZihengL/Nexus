@@ -45,6 +45,7 @@ class TokensController extends BaseController
 
         $this->model = new TokensModel($pdo);
         parent::__construct($central_controller);
+        $this->actions = [];
     }
 
 
@@ -154,10 +155,33 @@ class TokensController extends BaseController
         return $jwts;
     }
 
+    public function revokeAccess($user_id, $jwts)
+    {
+        $access_jwt = $jwts[self::ACCESS];
+        $refresh_jwt = $jwts[self::REFRESH];
+
+        if ($this->validateAccessToken($access_jwt) || $this->validateRefreshToken($user_id, $refresh_jwt)) {
+            return $this->delete($refresh_jwt, $jwts);
+        }
+
+        return false;
+    }
+
 
     /*******************************************************************/
     /**************************** DATABASE *****************************/
     /*******************************************************************/
+
+    public function getTokenSub($access_token = null, $refresh_token = null)
+    {
+        if ($access_token)
+            return $this->decodeToken($access_token, false)[self::SUB];
+
+        if ($refresh_token)
+            return $this->decodeToken($refresh_token, true)[self::SUB];
+
+        return false;
+    }
 
     protected function getByUserId($user_id)
     {
@@ -169,7 +193,7 @@ class TokensController extends BaseController
         return $this->getOne(self::SHA, hash($this->hashing_alg, $jwt));
     }
 
-    public function create($jwt, $decoded = null, $jwts = null)
+    public function create($jwt = null, $decoded = null, $jwts = null, ...$data)
     {
         if ($jwt && $decoded) {
             $decoded[self::SHA] = hash($this->hashing_alg, $jwt);
@@ -180,7 +204,7 @@ class TokensController extends BaseController
         return false;
     }
 
-    public function update($id, $jwt, $jwts = null)
+    public function update($id = null, $jwt = null, $jwts = null, ...$data)
     {
         if ($decoded = $this->decodeToken($jwt, true)) {
             $decoded[self::SHA] = hash($this->hashing_alg, $jwt);
@@ -191,7 +215,7 @@ class TokensController extends BaseController
         return false;
     }
 
-    public function delete($jwt, $jwts = null)
+    public function delete($jwt = null, $jwts = null, ...$data)
     {
         if ($stored = $this->getByHashcode($jwt)) {
             return parent::delete($stored[self::ID]);

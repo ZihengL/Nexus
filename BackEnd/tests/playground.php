@@ -1,5 +1,10 @@
 <?php
 
+function printall($item)
+{
+    echo '<pre>' . print_r($item, true) . '</pre><hr>';
+}
+
 function explodetest($a, $b, $c, $d = 5)
 {
     echo "TEST ";
@@ -7,22 +12,91 @@ function explodetest($a, $b, $c, $d = 5)
     echo " $c $d";
 }
 
+// stuff between $a and $c will result in error without destructuring param arg
+function datatest($a, $c = null, ...$arr)
+{
+    echo $a . '<br>';
+    if ($c)
+        echo $c . '<br>';
+    echo print_r($arr, true);
+}
+
+// Don't invoke one param functions with destructuring
+function datatest2($arr)
+{
+    print_r($arr);
+}
+
+function datatest3(...$arr)
+{
+    print_r($arr);
+}
+
+function datatest4($a, $b = null)
+{
+    echo $a . ' ' . $b;
+}
+
+$arr1 = ['a' => 'a val', 'b' => 'b val', 'c' => 'c val', 'd' => 'd val'];
+
+
+datatest3(...$arr1);
+// // datatest2(...$arr1);
+// datatest3(...$arr1);
+// datatest4(...$arr1);
+
+function datatest5($email = array('email'))
+{
+    echo 'datatest5<br>';
+    echo $email . '<br><br>';
+}
+
+$arr = ['a' => 'asdsadas', 'email' => 'a@a', 'asdasdas' => 'fsafasfa'];
+
+// datatest5($arr);
+
+function makecoffee($types = array("cappuccino"), $coffeeMaker = NULL)
+{
+    $device = is_null($coffeeMaker) ? "hands" : $coffeeMaker;
+    return "Making a cup of " . join(", ", $types) . " with $device.\n";
+}
+echo makecoffee();
+echo makecoffee(array("cappuccino", "lavazza"), "teapot");
+
 /*******************************/
 
 global $path;
 $path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd/';
 // require_once $path . 'tests/temp_globals.php';
-// require_once $path . 'models/base_model.php';
+require_once $path . 'models/base_model.php';
 
-// $users_ctrl = $central_controller->users_controller;
-// $games_ctrl = $central_controller->games_controller;
-// $gametags_ctrl = $central_controller->gamestags_controller;
+require_once $path . 'controllers/central_controller.php';
+$central_controller = CentralController::getInstance();
+
+$users_ctrl = $central_controller->users_controller;
+$games_ctrl = $central_controller->games_controller;
+$gamestags_ctrl = $central_controller->gamestags_controller;
 
 /*******************************/
 
 // BaseModel::$print_queries = true;
 
 echo '<hr><b>BEGIN TEST</b><hr>';
+
+printall($gamestags_ctrl->getGamesWith(true, true));
+
+$createData = [
+    'username' => 'testUser123',
+    'password' => '123',
+    'email' => 'testUser@email',
+];
+
+// echo $users_ctrl->create($createData);
+
+$tokens = $users_ctrl->login('testUser@email', '123');
+
+printall($tokens);
+
 
 // JOINED_TABLES
 // $joined_tables = [
@@ -92,10 +166,11 @@ foreach ($a1 as $key => $value) {
     $a3 = array_merge($a1, $a2);
 }
 
-if (!$arr['z'])
-    echo 'asdsadas';
-else
-    echo 'nah';
+
+// if (!$arr['z'])
+//     echo 'asdsadas';
+// else
+//     echo 'nah';
 
 // if (array_key_exists('A', $a1))
 //     echo 'exist';
@@ -103,17 +178,17 @@ else
 //     echo 'no';
 
 
-echo print_r($a3, true) . '<br>';
-$a2 = [...$a1, 'd', 'e'];
+// echo print_r($a3, true) . '<br>';
+// $a2 = [...$a1, 'd', 'e'];
 
-$a = 3;
-$b = 'asdas';
-$c = 23423;
+// $a = 3;
+// $b = 'asdas';
+// $c = 23423;
 
-$arr = ['b' => $b, 'c' => $c, 'a' => $a];
-$method = 'explodetest';
+// $arr = ['b' => $b, 'c' => $c, 'a' => $a];
+// $method = 'explodetest';
 
-echo $method(...$arr);
+// echo $method(...$arr);
 
 // printall($a2);
 
@@ -139,10 +214,7 @@ parse_str($end_uri, $parsed_uri);
 $table = $parsed_uri['table'] ?? null;
 $action = $parsed_uri['action'] ?? null;
 
-if ($controller = $central_controller->getTableController($table)) {
-    echo 'good';
-} else {
-}
+
 
 echo '<br><b>END TEST</b><hr>';
 

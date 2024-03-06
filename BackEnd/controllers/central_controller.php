@@ -75,15 +75,19 @@ class CentralController
             throw new Exception("Unable to find request table '$table'.");
 
         $controller = BaseController::$controllers[$table];
-        if (!in_array($action, $controller->actions))
+        if (!$controller->isValidAction($action))
             throw new Exception("Innaplicable request action '$action'.");
 
-        if ($data) {
-            $data = $controller->standardizeRequestData($data);
-            return $controller->$action(...$data);
-        }
+        try {
+            if ($data) {
+                $data = $controller->standardizeRequestData($data);
+                return $controller->$action(...$data);
+            }
 
-        return $controller->$action();
+            return $controller->$action();
+        } catch (InvalidArgumentException $e) {
+            throw new Exception("Error parsing request data: {$e->getMessage()}");
+        }
     }
 
     // COMMANDS

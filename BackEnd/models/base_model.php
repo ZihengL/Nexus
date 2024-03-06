@@ -52,7 +52,7 @@ class BaseModel
             echo "<b>ERROR: </b> in <b>{$this->table}</b> for query: ";
             printall($sql);
 
-            throw new Exception("Database query error: \n" . $e->getMessage());
+            throw new Exception("Database query error: " . $e->getMessage());
         }
     }
 
@@ -76,7 +76,7 @@ class BaseModel
             echo "<b>ERROR: </b> in <b>{$this->table}</b> for query: ";
             printall($sql);
 
-            throw new Exception("<br>Database query error: " . $e->getMessage());
+            throw new Exception("Database query error: " . $e->getMessage());
         }
     }
 
@@ -273,9 +273,9 @@ class BaseModel
             if ($keyset = $this->keys[$ref_tab]) {
                 ['INT_COL' => $int_col, 'EXT_COL' => $ext_col] = $keyset;
 
-                $join_layer['selects'] .= ", $ref_tab.*";
-                // foreach ($included_columns as $join_column)
-                //     $join_layer['selects'] .= ", {$ref_tab}.{$join_column} AS {$ref_tab}_{$join_column}";
+                // $join_layer['selects'] .= ", $ref_tab.*";
+                foreach ($included_columns as $join_column)
+                    $join_layer['selects'] .= ", GROUP_CONCAT({$ref_tab}.{$join_column} SEPARATOR ', ') AS {$ref_tab}_{$join_column}";
 
                 $join_layer['joins'] .= " INNER JOIN $ref_tab ON {$this->table}.{$int_col} = {$ref_tab}.{$ext_col}";
             }

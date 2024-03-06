@@ -31,7 +31,7 @@ class TagsController extends BaseController
 
     //REBECCA
 
-    public function create($data, $jwts = null)
+    public function create($data, $tokens = null)
     {
         $isValid = $this->validateData("create", $data);
         $name = $data["name"];
@@ -58,7 +58,7 @@ class TagsController extends BaseController
     }
 
 
-    public function delete($data, $jwts = null)
+    public function delete($data, $tokens = null)
     {
         $isValid = $this->validateData("delete", $data);
         $name = $data["name"];
@@ -92,7 +92,7 @@ class TagsController extends BaseController
 
 
 
-    public function update($id, $data, $jwts = null)
+    public function update($id, $data, $tokens = null)
     {
         $isValid = $this->validateData("update", $data);
         $isValidArray = json_decode($isValid, true);

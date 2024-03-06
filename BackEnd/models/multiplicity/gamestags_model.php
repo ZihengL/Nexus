@@ -51,4 +51,29 @@ class GamestagsModel extends BaseModel
 
     //     return $this->bindingQuery($sqlWithFiltersAndSorting, $params);
     // }
+
+    public function getGamesWith($users = true, $tags = false)
+    {
+        $selections = "";
+        $joins = "";
+
+        if ($users) {
+            $selections .= "users.id AS userId, users.username AS username, ";
+            $joins .= "LEFT JOIN users ON games.developerID = users.id ";
+        }
+
+        if ($tags) {
+            $selections .= "GROUP_CONCAT(tags.name SEPARATOR ', ') AS tags, ";
+            $joins .= "LEFT JOIN tags ON games.developerID = users.id ";
+        }
+
+        $sql = "SELECT $selections games.* 
+                FROM games 
+                $joins 
+                LEFT JOIN
+                gamestags ON games.id = gamestags.gameId 
+                GROUP BY games.id";
+
+        return $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

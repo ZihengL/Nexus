@@ -44,25 +44,41 @@ class GamesController extends BaseController
     /****************************** CRUDS ******************************/
     /*******************************************************************/
 
-    public function create($data, $jwts = null)
+    public function create($tokens = null, ...$data)
     {
-        return $this->model->create($data);
+        if ($user_id = $this->getTokenSub($tokens)) {
+            $data['developerID'] = $user_id;
+
+            return $this->model->create($data);
+        }
+
+        return false;
     }
 
-    public function update($id, $data, $jwts = null)
+    public function update($id = null, $tokens = null, ...$data)
     {
-        return $this->model->update($id, $data);
+        if ($user = $this->getGameDeveloper($id))
+            if ($validated_tokens = $this->authenticate($user['id'], $tokens)) {
+                $this->model->update($id, $data);
+
+                return $validated_tokens;
+            }
+
+        return false;
     }
 
-    public function delete($id, $jwts = null)
+    public function delete($id, $jwts = null, ...$data)
     {
         return $this->model->delete($id);
     }
 
-    //
+    // Tools
 
-    public function TEST()
+    public function getGameDeveloper($id)
     {
-        return $this->model->testGroup();
+        if ($game = $this->model->getOne('id', $id))
+            return $this->getUsersController()->getOne('id', $game['developerID']);
+
+        return null;
     }
 }

@@ -23,7 +23,9 @@ class UsersController extends BaseController
     {
         $this->model = new UsersModel($pdo);
         $this->restricted_columns = ['password', 'email', 'phoneNumber', 'isAdmin'];
-        parent::__construct($central_controller, ['login', 'logout', 'authenticate']);
+
+        $table_specific_actions = ['login', 'logout', 'authenticate'];
+        parent::__construct($central_controller, $table_specific_actions);
     }
 
     public function userExists($data)
@@ -41,7 +43,7 @@ class UsersController extends BaseController
 
     // Returns tokens to log the user in
     // TODO: CREATE USER FOLDER
-    public function create($data, $jwts = null)
+    public function create(...$data)
     {
         if ($this->model->create($data)) {
             $user = $this->getOne($this->email, $data[$this->email]);
@@ -58,39 +60,42 @@ class UsersController extends BaseController
         return false;
     }
 
-    public function update($id, $data, $jwts = null)
+    public function update($id = null, $tokens = null, ...$data)
     {
-        $jwts = $data["tokens"];
-        if ($jwts = $this->authenticate($id, $jwts)) {
+        if ($validated_tokens = $this->authenticate($id, $tokens)) {
             $this->model->update($id, $data);
 
-            return $jwts;
+            return $validated_tokens;
         }
 
         return false;
     }
 
-    public function delete($data, $jwts = null)
+    public function delete($id = null, $tokens = null, ...$data)
     {
-        $jwts = $data["tokens"];
-        $id = $data["id"];
-        if ($jwts = $this->authenticate($id, $jwts)) {
-            $this->model->delete($id);
-            $this->getTokensController()->deleteAllFromUser($id, $jwts);
+        // $jwts = $data["tokens"];
+        // $id = $data["id"];
 
-            return $jwts;
-        }
+        $validated_tokens = $this->authenticate($id, $tokens);
 
-        return false;
+        $this->model->delete($id);
+        $this->getTokensController()->deleteAllFromUser($id, $validated_tokens);
+
+        return $validated_tokens;
     }
 
     //  ACCESS & SECURITY
 
     // Do this if user has valid tokens stored
-    public function authenticate($id, $jwts)
-    {
-        return $this->getTokensController()->validateTokens($id, $jwts);
-    }
+    // public function authenticate($id, $tokens)
+    // {
+    //     $tokens_controller = $this->getTokensController();
+
+    //     if ($validated_tokens = $tokens_controller->validateTokens($id, $tokens))
+    //         return $validated_tokens;
+
+    //     throw new Exception("Invalid authentication tokens provided for User id '$id'.");
+    // }
 
     // Do this if user needs to do a fresh login
     public function login($email, $password)
@@ -102,15 +107,9 @@ class UsersController extends BaseController
         return $this->getTokensController()->generateTokensOnValidation($user, $email, $password);
     }
 
-    public function logout($id, $jwts)
+    public function logout($id, $tokens)
     {
-        $tokens_controller = $this->getTokensController();
-
-        if ($tokens_controller->validateTokens($id, $jwts)) {
-            return $this->getTokensController()->delete($jwts["refresh_token"]);
-        }
-
-        return false;
+        return $this->getTokensController()->revokeAccess($id, $tokens);
     }
 
     private function verifyUser($user, $email, $password)

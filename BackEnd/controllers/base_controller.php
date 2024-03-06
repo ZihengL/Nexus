@@ -4,7 +4,7 @@ class BaseController
 {
     public static $controllers = [];
 
-    public $actions = [
+    protected $actions = [
         'getOne',
         'getAll',
         'getAllMatching',
@@ -31,6 +31,11 @@ class BaseController
     /*******************************************************************/
     /****************************** GETTERS ****************************/
     /*******************************************************************/
+
+    public function isValidAction($action)
+    {
+        return in_array($action, $this->actions);
+    }
 
     public function getTableName()
     {
@@ -99,7 +104,6 @@ class BaseController
     /*******************************************************************/
     /****************** VALIDATION, ACCESS & SECURITY ******************/
     /*******************************************************************/
-
     public function standardizeRequestData($data)
     {
         $client_to_server = [
@@ -120,10 +124,10 @@ class BaseController
     {
         $valid_columns = array_diff($this->model->getColumns(true), $this->restricted_columns);
 
-        if (!is_array($included_columns) || empty($included_columns))
-            return $valid_columns;
+        // if (!is_array($included_columns) || empty($included_columns))
+        // return $valid_columns;
 
-        return array_intersect($valid_columns, $included_columns);
+        return empty($included_columns) ? $valid_columns : array_intersect($valid_columns, $included_columns);
     }
 
     protected function filterAccessOnJoins($joined_tables = [])
@@ -135,6 +139,20 @@ class BaseController
 
         return $joined_tables;
     }
+
+    protected function authenticate($user_id, $tokens)
+    {
+        if ($validated_tokens = $this->getTokensController()->validateTokens($user_id, $tokens))
+            return $validated_tokens;
+
+        throw new Exception("Invalid authentication tokens provided for User id '$user_id'.");
+    }
+
+    protected function getTokenSub($jwts)
+    {
+        return $this->getTokensController()->getTokenSub($jwts);
+    }
+
 
 
     /*******************************************************************/
@@ -165,19 +183,21 @@ class BaseController
         return $this->model->getAllMatching($filters, $sorting, $included_columns, $joined_tables, $joined_tables);
     }
 
-    public function create($data)
+    public function create(...$data)
     {
         return $this->model->create($data);
     }
 
-    public function update($id, $data)
+    public function update(...$data)
     {
+        $id = $data[$this->id];
         return $this->model->update($id, $data);
     }
 
-    public function delete($id)
+    public function delete(...$data)
     {
-        return $this->model->delete($id);
+        $id = $data[$this->id];
+        return $this->model->delete($id, $data);
     }
 
 

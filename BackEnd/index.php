@@ -42,21 +42,10 @@ $central_controller = CentralController::getInstance();
 
 try {
     ['table' => $table, 'action' => $action] = parseURL();
-    $request_method = $_SERVER['REQUEST_METHOD'];
+    $data = parseRequestMethod();
 
-    switch ($request_method) {
-        case 'POST':
-            $raw_data = file_get_contents('php://input');
-            $data = json_decode($raw_data, true);
-            break;
-        case 'GET':
-            $data = null;
-            break;
-        default:
-            throw new Exception("Unsupported request method type '$request_method'.");
-    }
-
-    echo json_encode($central_controller->parseRequest($table, $action, $data));
+    $result = $central_controller->parseRequest($table, $action, $data);
+    echo json_encode($result);
 } catch (Exception $e) {
     echo json_encode(['ERROR' => $e->getMessage()]);
 }
@@ -81,6 +70,21 @@ function parseURL()
         throw new Exception("URI format '$end_uri' is innaplicable.");
 
     return $request_components;
+}
+
+function parseRequestMethod()
+{
+    $request_method = $_SERVER['REQUEST_METHOD'];
+
+    switch ($request_method) {
+        case 'POST':
+            $raw_data = file_get_contents('php://input');
+            return json_decode($raw_data, true);
+        case 'GET':
+            return null;
+        default:
+            throw new Exception("Unsupported request method type '$request_method'.");
+    }
 }
 
 function printall($item)

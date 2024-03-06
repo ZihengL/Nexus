@@ -10,10 +10,12 @@ class GamestagsController extends BaseController
     public function __construct($central_controller, $pdo)
     {
         $this->model = new GamestagsModel($pdo);
-        parent::__construct($central_controller);
+        
+        $table_specific_actions = ['getAllGamesWith'];
+        parent::__construct($central_controller, $table_specific_actions);
     }
 
-    public function create($data, $jwts = null)
+    public function create($data, $tokens = null)
     {
         $tagName = $data["name"];
         $tagWasAdded = $this->getTagsController()->getOne('name', $tagName);
@@ -48,7 +50,9 @@ class GamestagsController extends BaseController
         return parent::getAllMatching($filters, $sorting, $included_columns, $joined_tables);
     }
 
-    public function getRelated() {
-        
+    // GET REQUEST
+    public function getGamesWith($users = true, $tags = false)
+    {
+        return $this->model->getGamesWith($users, $tags);
     }
 }
