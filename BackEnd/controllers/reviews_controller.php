@@ -17,21 +17,28 @@ class ReviewsController extends BaseController
         parent::__construct($central_controller);
     }
 
+    protected function setGetDataDefaults($data)
+    {
+        $data['sorting'] ??= [$this->rating => true];
+
+        return $data;
+    }
+
 
     /*******************************************************************/
     /***************************** GETTERS *****************************/
     /*******************************************************************/
 
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
+    public function getAllMatching(...$data)
     {
-        if (empty($sorting)) {
-            $sorting = [$this->rating => true];
-        }
+        // if (empty($sorting)) {
+        //     $sorting = [$this->rating => true];
+        // }
 
-        return parent::getAllMatching($filters, $sorting, $included_columns);
+        return parent::getAllMatching(...$data);
     }
 
-    public function create($data, $jwts = null)
+    public function create($tokens = null, ...$data)
     {
         // echo "<br> create reviews_controller <br>";
         // print_r($data);
@@ -53,15 +60,16 @@ class ReviewsController extends BaseController
         return false;
     }
 
-    public function delete($data, $jwts = null)
+    public function delete($id, $tokens = null, ...$data)
     {
         // echo "<br> delete reviews_controller <br>";
         // print_r($data);
+        $data['id'] = $id;
         if ($this->validateReview("delete", $data)) {
-            if ($this->getOne("id", $data["id"])) {
+            if ($this->getOne("id", $id)) {
                 // echo "delete review: ";
                 // echo "proper review  : ", $data["id"], "<br>";
-                if ($this->model->delete($data["id"])) {
+                if ($this->model->delete($id)) {
                     // echo "mlep: ";
                     return $this->updateGameRatingAverage($data["gameID"]);
                 }
@@ -71,11 +79,11 @@ class ReviewsController extends BaseController
         return false;
     }
 
-
-    public function update($id, $data, $jwts = null)
+    public function update($id, $tokens = null, ...$data)
     {
         // echo "<br> update reviews_controller <br>";
         // print_r($data);
+        $data['id'] = $id;
         if ($this->validateReview("update", $data)) {
             if ($this->getOne("id", $id)) {
                 // echo "update review: ";

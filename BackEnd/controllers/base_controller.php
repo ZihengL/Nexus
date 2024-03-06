@@ -153,51 +153,69 @@ class BaseController
         return $this->getTokensController()->getTokenSub($jwts);
     }
 
+    protected function setGetDataDefaults($data)
+    {
+        $data['included_columns'] ??= [];
+        $data['included_columns'] = $this->filterAccess($data['included_columns']);
+
+        $data['joined_tables'] ??= [];
+        $data['joined_tables'] = $this->filterAccessOnJoins($data['joined_tables']);
+
+        $data['paging'] ??= ['limit' => -1, 'offset' => 0];
+
+        return $data;
+    }
 
 
     /*******************************************************************/
     /****************************** CRUDS ******************************/
     /*******************************************************************/
 
-    public function getOne($column, $value, $included_columns = [], $joined_tables = [])
+    // public function getOne($column, $value, $included_columns = [], $joined_tables = [])
+    public function getOne(...$data)
     {
-        $included_columns = $this->filterAccess($included_columns);
-        $joined_tables = $this->filterAccessOnJoins($joined_tables);
+        // $included_columns = $this->filterAccess($included_columns);
+        // $joined_tables = $this->filterAccessOnJoins($joined_tables);
 
-        return $this->model->getOne($column, $value, $included_columns, $joined_tables);
+        $data = $this->setGetDataDefaults($data);
+        return $this->model->getOne(...$data);
     }
 
-    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [])
+    // public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [])
+    public function getAll(...$data)
     {
-        $included_columns = $this->filterAccess($included_columns);
-        $joined_tables = $this->filterAccessOnJoins($joined_tables);
+        // $data['included_columns'] ??= [];
+        // $data['included_columns'] = $this->filterAccess($data['included_columns']);
+        // $data['joined_tables'] ??= [];
+        // $data['joined_tables'] = $this->filterAccessOnJoins($data['joined_tables']);
 
-        return $this->model->getAll($column, $value, $included_columns, $sorting, $joined_tables);
+        $data = $this->setGetDataDefaults($data);
+        return $this->model->getAll(...$data);
     }
 
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
+    // public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
+    public function getAllMatching(...$data)
     {
-        $included_columns = $this->filterAccess($included_columns);
-        $joined_tables = $this->filterAccessOnJoins($joined_tables);
+        // $included_columns = $this->filterAccess($included_columns);
+        // $joined_tables = $this->filterAccessOnJoins($joined_tables);
 
-        return $this->model->getAllMatching($filters, $sorting, $included_columns, $joined_tables, $joined_tables);
+        $data = $this->setGetDataDefaults($data);
+        return $this->model->getAllMatching(...$data);
     }
 
     public function create(...$data)
     {
-        return $this->model->create($data);
+        return $this->model->create(...$data);
     }
 
-    public function update(...$data)
+    public function update($id, ...$data)
     {
-        $id = $data[$this->id];
-        return $this->model->update($id, $data);
+        return $this->model->update($id, ...$data);
     }
 
-    public function delete(...$data)
+    public function delete($id, ...$data)
     {
-        $id = $data[$this->id];
-        return $this->model->delete($id, $data);
+        return $this->model->delete($id, ...$data);
     }
 
 

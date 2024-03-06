@@ -204,7 +204,7 @@ class TokensController extends BaseController
         return false;
     }
 
-    public function update($id = null, $jwt = null, $jwts = null, ...$data)
+    public function update($id, $jwt = null, $jwts = null, ...$data)
     {
         if ($decoded = $this->decodeToken($jwt, true)) {
             $decoded[self::SHA] = hash($this->hashing_alg, $jwt);
@@ -215,11 +215,11 @@ class TokensController extends BaseController
         return false;
     }
 
-    public function delete($jwt = null, $jwts = null, ...$data)
+    public function delete($id, $jwts = null, ...$data)
     {
-        if ($stored = $this->getByHashcode($jwt)) {
-            return parent::delete($stored[self::ID]);
-        }
+        if ($jwts && isset($jwts[self::REFRESH]))
+            if ($stored = $this->getByHashcode($jwts[self::REFRESH]))
+                return parent::delete($stored[self::ID]);
 
         return false;
     }

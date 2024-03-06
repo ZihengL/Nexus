@@ -52,7 +52,7 @@ class GamestagsModel extends BaseModel
     //     return $this->bindingQuery($sqlWithFiltersAndSorting, $params);
     // }
 
-    public function getGamesWith($users = true, $tags = false)
+    public function getGamesWith($users = true, $tags = false, $filters = [], $sorting = [], $paging = [])
     {
         $selections = "";
         $joins = "";
@@ -72,8 +72,13 @@ class GamestagsModel extends BaseModel
                 $joins 
                 LEFT JOIN
                 gamestags ON games.id = gamestags.gameId 
-                GROUP BY games.id";
+                GROUP BY games.id
+                LIMIT 3 OFFSET 2";
 
         return $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function buildSelectionLayer($included_columns = [], $join_keys = [])
+    {
     }
 }

@@ -161,7 +161,7 @@ class BaseModel
         return $joined_tables && !empty($joined_tables) ? $result->fetchAll(PDO::FETCH_ASSOC) : $result->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [])
+    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [], $paging = [])
     {
         $sql = $this->buildSelectionLayer($included_columns, $joined_tables);
         $params = [];
@@ -173,11 +173,12 @@ class BaseModel
 
         $sort_layer = $this->applySorting($sorting);
         $sql .= " GROUP BY {$this->table}.id" . (!empty($sort_layer) ? " ORDER BY $sort_layer" : '');
+        $sql .= $this->getPaging(...$paging);   // TESTING PAGING
 
         return $this->query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
+    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [], $paging = [])
     {
         $sql = $this->buildSelectionLayer($included_columns, $joined_tables) . ' WHERE 1 = 1';
 
@@ -186,6 +187,8 @@ class BaseModel
 
         if ($sorting_layer = $this->applySorting($sorting))
             $sql .= " ORDER BY $sorting_layer";
+
+        $sql .= $this->getPaging(...$paging);
 
         return $this->bindingQuery($sql, $params);
     }
@@ -259,6 +262,9 @@ class BaseModel
 
     public function parseColumns($included_columns = [])
     {
+        if (empty($included_columns))
+            return "{$this->table}.*";
+
         return "{$this->table}." . implode(", {$this->table}.", $included_columns);
     }
 
@@ -289,6 +295,14 @@ class BaseModel
     /*******************************************************************/
     /************************** SIEVING LAYER **************************/
     /*******************************************************************/
+
+    public function getPaging($limit = -1, $offset = 0)
+    {
+        if ($limit !== -1)
+            return " LIMIT $limit OFFSET $offset";
+
+        return;
+    }
 
     public function applyFilters($filters, $included_columns = [])
     {

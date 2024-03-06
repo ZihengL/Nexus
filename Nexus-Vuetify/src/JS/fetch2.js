@@ -33,6 +33,7 @@ function standardizeData(data) {
   const keymap = {
     columnName: "column",
     includedColumns: "included_columns",
+    joinedTables: "joined_tables",
   };
 
   Object.keys(keymap).forEach((key) => {

@@ -67,83 +67,32 @@ class GamesModel extends BaseModel
 
     // Getters
 
-    // public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [])
-    // {
-    //     if (in_array('tags', $included_columns)) {
-    //         $key = array_search('tags', $included_columns);
-    //         if ($key !== false) {
-    //             unset($included_columns[$key]);
-    //         }
-    //         $results = $this->joinGamesAndTags($column, $value, $included_columns, $sorting);
-    //         return $this->appendTagsToGames($results);
-    //     }
-    //     $results = $this->joinGamesAndTags($column, $value, $included_columns, $sorting);
-    //     return $this->appendTagsToGames($results);
-    // }
-
-    // public function getOne($column = null, $value = null, $included_columns = [], $joined_tables = [])
-    // {
-    //     if (in_array('tags', $included_columns)) {
-    //         $key = array_search('tags', $included_columns);
-    //         if ($key !== false) {
-    //             unset($included_columns[$key]);
-    //         }
-    //         $results = $this->joinGamesAndTags($column, $value, $included_columns);
-    //         return $this->appendTagsToGames($results);
-    //     }
-    //     $results = $this->joinGamesAndTags($column, $value, $included_columns);
-    //     return $this->appendTagsToGames($results);
-    // }
-
-    // public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [])
-    // {
-    //     $result = parent::getAll($column, $value, $included_columns, $sorting, $joined_tables);
-
-    //     printall($result);
-
-    //     return $result;
-    // }
-
-    // public function getOne($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
-    // {
-    //     $result = parent::getOne($filters, $sorting, $included_columns, $joined_tables);
-
-    //     printall($result);
-
-    //     return $result;
-    // }
-
-    // public function getAllMatching($column = null, $value = null, $included_columns = [], $joined_tables = [])
-    // {
-    //     $result = parent::getOne($column, $value, $included_columns, $joined_tables);
-
-    //     printall($result);
-
-    //     return $result;
-    // }
-
-    public function testGroup()
+    public function getAllAsJoined($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [], ...$data)
     {
-        $sql = <<<TEST
-        SELECT 
-            games.id,
-            gamestags.id,
-        FROM
-            games
-        JOIN
-            gamestags ON gamestags.gameId = games.id
-        WHERE
-            games.title = ?
-        GROUP BY
-            games.id
-        TEST;
+        if (in_array('tags', $included_columns)) {
+            $key = array_search('tags', $included_columns);
+            if ($key !== false) {
+                unset($included_columns[$key]);
+            }
+            $results = $this->joinGamesAndTags($column, $value, $included_columns, $sorting);
+            return $this->appendTagsToGames($results);
+        }
+        $results = $this->joinGamesAndTags($column, $value, $included_columns, $sorting);
+        return $this->appendTagsToGames($results);
+    }
 
-        $params = ['title' => 'Space Odyssey'];
-
-        $result = $this->query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
-        printall($result);
-
-        return $result;
+    public function getOneAsJoined($column = null, $value = null, $included_columns = [], $joined_tables = [], ...$data)
+    {
+        if (in_array('tags', $included_columns)) {
+            $key = array_search('tags', $included_columns);
+            if ($key !== false) {
+                unset($included_columns[$key]);
+            }
+            $results = $this->joinGamesAndTags($column, $value, $included_columns);
+            return $this->appendTagsToGames($results);
+        }
+        $results = $this->joinGamesAndTags($column, $value, $included_columns);
+        return $this->appendTagsToGames($results);
     }
 
     // Tools

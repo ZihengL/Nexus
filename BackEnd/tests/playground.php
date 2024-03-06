@@ -13,12 +13,13 @@ function explodetest($a, $b, $c, $d = 5)
 }
 
 // stuff between $a and $c will result in error without destructuring param arg
-function datatest($a, $c = null, ...$arr)
+function datatest($a, $z = null, ...$arr)
 {
-    echo $a . '<br>';
-    if ($c)
-        echo $c . '<br>';
-    echo print_r($arr, true);
+    echo print_r($arr) . '<br>';
+    if (!$z)
+        $z = 'abqwea';
+
+    return [...func_get_args(), $arr];
 }
 
 // Don't invoke one param functions with destructuring
@@ -39,8 +40,11 @@ function datatest4($a, $b = null)
 
 $arr1 = ['a' => 'a val', 'b' => 'b val', 'c' => 'c val', 'd' => 'd val'];
 
+$arr1['z'] ??= 2;
 
-datatest3(...$arr1);
+
+$arr2 = datatest(...$arr1);
+print_r($arr2);
 // // datatest2(...$arr1);
 // datatest3(...$arr1);
 // datatest4(...$arr1);
@@ -93,9 +97,9 @@ $createData = [
 
 // echo $users_ctrl->create($createData);
 
-$tokens = $users_ctrl->login('testUser@email', '123');
+// $tokens = $users_ctrl->login('testUser@email', '123');
 
-printall($tokens);
+// printall($tokens);
 
 
 // JOINED_TABLES
@@ -200,19 +204,19 @@ foreach ($a1 as $key => $value) {
 
 // echo $a . ' - ' . $c;
 
-$url = 'https://www.php.net/manual/en/function.parse-url.php';
-$url = 'http://localhost:4208/Nexus/BackEnd/table=users&action=getAll';
-$url = 'http://localhost:4208/Nexus/BackEnd/table=users&asdasda=getAll';
+// $url = 'https://www.php.net/manual/en/function.parse-url.php';
+// $url = 'http://localhost:4208/Nexus/BackEnd/table=users&action=getAll';
+// $url = 'http://localhost:4208/Nexus/BackEnd/table=users&asdasda=getAll';
 
-$url_components = parse_url($url);
-printall($url_components);
+// $url_components = parse_url($url);
+// printall($url_components);
 
-$split_uri = explode('/', $url_components['path']);
-$end_uri = array_pop($split_uri);
+// $split_uri = explode('/', $url_components['path']);
+// $end_uri = array_pop($split_uri);
 
-parse_str($end_uri, $parsed_uri);
-$table = $parsed_uri['table'] ?? null;
-$action = $parsed_uri['action'] ?? null;
+// parse_str($end_uri, $parsed_uri);
+// $table = $parsed_uri['table'] ?? null;
+// $action = $parsed_uri['action'] ?? null;
 
 
 

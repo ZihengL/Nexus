@@ -60,7 +60,7 @@ class UsersController extends BaseController
         return false;
     }
 
-    public function update($id = null, $tokens = null, ...$data)
+    public function update($id, $tokens = null, ...$data)
     {
         if ($validated_tokens = $this->authenticate($id, $tokens)) {
             $this->model->update($id, $data);
@@ -71,11 +71,8 @@ class UsersController extends BaseController
         return false;
     }
 
-    public function delete($id = null, $tokens = null, ...$data)
+    public function delete($id, $tokens = null, ...$data)
     {
-        // $jwts = $data["tokens"];
-        // $id = $data["id"];
-
         $validated_tokens = $this->authenticate($id, $tokens);
 
         $this->model->delete($id);

@@ -19,24 +19,28 @@ class GamesController extends BaseController
         parent::__construct($central_controller);
     }
 
+    protected function setGetDataDefaults($data)
+    {
+        $data['sorting'] ??= [$this->ratingAverage => true];
+
+        return parent::setGetDataDefaults($data);
+    }
+
 
     /*******************************************************************/
     /***************************** GETTERS *****************************/
     /*******************************************************************/
 
-    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [])
+    public function getOneAsJoined(...$data)
     {
-        $included_columns = empty($included_columns) ? [] : $included_columns;
-        $sorting = empty($sorting) ?  [$this->ratingAverage => true] : $sorting;
-
-        return $this->model->getAll($column, $value, $included_columns, $sorting, $joined_tables);
+        $data = $this->setGetDataDefaults($data);
+        return $this->model->getOneAsJoined(...$data);
     }
 
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
+    public function getAllAsJoined(...$data)
     {
-        $sorting = empty($sorting) ?  [$this->ratingAverage => true] : $sorting;
-
-        return parent::getAllMatching($filters, $sorting, $included_columns, $joined_tables);
+        $data = $this->setGetDataDefaults($data);
+        return $this->model->getOneAsJoined(...$data);
     }
 
 
@@ -55,9 +59,9 @@ class GamesController extends BaseController
         return false;
     }
 
-    public function update($id = null, $tokens = null, ...$data)
+    public function update($id, $tokens = null, ...$data)
     {
-        if ($user = $this->getGameDeveloper($id))
+        if ($user = $this->getDeveloper($id))
             if ($validated_tokens = $this->authenticate($user['id'], $tokens)) {
                 $this->model->update($id, $data);
 
@@ -67,17 +71,18 @@ class GamesController extends BaseController
         return false;
     }
 
-    public function delete($id, $jwts = null, ...$data)
+    public function delete($id, $tokens = null, ...$data)
     {
         return $this->model->delete($id);
     }
 
     // Tools
 
-    public function getGameDeveloper($id)
+    public function getDeveloper($game_id)
     {
-        if ($game = $this->model->getOne('id', $id))
+        if ($game = $this->model->getOne('id', $game_id, included_columns: ['developerID'])) {
             return $this->getUsersController()->getOne('id', $game['developerID']);
+        }
 
         return null;
     }

@@ -10,12 +10,12 @@ class GamestagsController extends BaseController
     public function __construct($central_controller, $pdo)
     {
         $this->model = new GamestagsModel($pdo);
-        
-        $table_specific_actions = ['getAllGamesWith'];
+
+        $table_specific_actions = ['getGamesWith'];
         parent::__construct($central_controller, $table_specific_actions);
     }
 
-    public function create($data, $tokens = null)
+    public function create($tokens = null, ...$data)
     {
         $tagName = $data["name"];
         $tagWasAdded = $this->getTagsController()->getOne('name', $tagName);
@@ -29,26 +29,26 @@ class GamestagsController extends BaseController
         return $this->createResponse(false, 'Failed to create tag');
     }
 
-    public function getOne($column, $value, $included_columns = [], $joined_tables = [])
-    {
-        //TODO: FULL JOIN BY DEFAULT ON BOTH ENDS
+    // public function getOne($column, $value, $included_columns = [], $joined_tables = [])
+    // {
+    //     //TODO: FULL JOIN BY DEFAULT ON BOTH ENDS
 
-        return parent::getOne($column, $value, $included_columns, $joined_tables);
-    }
+    //     return parent::getOne($column, $value, $included_columns, $joined_tables);
+    // }
 
-    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [])
-    {
-        //TODO: FULL JOIN BY DEFAULT ON BOTH ENDS
+    // public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [])
+    // {
+    //     //TODO: FULL JOIN BY DEFAULT ON BOTH ENDS
 
-        return parent::getAll($column, $value, $included_columns, $sorting, $joined_tables);
-    }
+    //     return parent::getAll($column, $value, $included_columns, $sorting, $joined_tables);
+    // }
 
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
-    {
-        //TODO: FULL JOIN BY DEFAULT ON BOTH ENDS
+    // public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
+    // {
+    //     //TODO: FULL JOIN BY DEFAULT ON BOTH ENDS
 
-        return parent::getAllMatching($filters, $sorting, $included_columns, $joined_tables);
-    }
+    //     return parent::getAllMatching($filters, $sorting, $included_columns, $joined_tables);
+    // }
 
     // GET REQUEST
     public function getGamesWith($users = true, $tags = false)
