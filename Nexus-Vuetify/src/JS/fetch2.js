@@ -1,5 +1,5 @@
 // all other params in data
-export function fetchData2(table, action, body = null) {
+export function fetchData2(table, action, body = []) {
   const uri = `http://localhost:4208/Nexus/Backend/table=${table}&action=${action}`;
   const options = {
     method: "POST",
