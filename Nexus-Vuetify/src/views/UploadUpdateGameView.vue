@@ -89,7 +89,7 @@
 </template>
 <script setup>
 import { reactive, defineProps, computed } from "vue";
-import { create, getAllMatching } from "../JS/fetchServices.js";
+import { create, getAllMatching, deleteData } from "../JS/fetchServices.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const props = defineProps({
@@ -125,7 +125,7 @@ const state = reactive({
   MAX_IMGS: 10,
   MAX_VIDS: 2,
   MIN_TAG: 1,
-  MIN_IMG: 1,
+  MIN_IMG: 0,
   DESC_MAX_LENGTH: 500,
   errorMessage: "",
   creation_date: new Date().toISOString().replace("T", " ").substring(0, 16),
@@ -257,21 +257,6 @@ const formatData = () => {
   }
 };
 
-const createGame = async () => {
-  let jsonObject = {
-    title: state.gameTitle,
-    developerID: props.developerID,
-    description: state.description,
-    releaseDate: state.creation_date,
-    ratingAverage: 0,
-  };
-  let wasGameCreated = await create("games", jsonObject);
-  console.log("wasGameCreated : ", wasGameCreated);
-  if (wasGameCreated) {
-    createTags();
-  }
-};
-
 function updateTagsArray() {
   state.tagsArray = state.tags
     .split(",")
@@ -281,22 +266,67 @@ function updateTagsArray() {
   // console.log("updating tags array : ", state.tagsArray);
 }
 
-const createTags = async () => {
-  let result = false;
-  const gameId = await get_CreatedGameID();
+const createGame = async () => {
+  let jsonObject = {
+    title: state.gameTitle,
+    developerID: props.developerID,
+    description: state.description,
+    releaseDate: state.creation_date,
+    ratingAverage: 0,
+  };
+  let wasGameCreated = await create("games", jsonObject);
+  console.log("wasGameCreated:", wasGameCreated);
 
+  if (wasGameCreated) {
+    const tagsCreationResult = await createTags();
+    if (!tagsCreationResult) {
+      console.error(
+        "Game couldn't be added because tags were not successfully created."
+      );
+      await deleteGame(); 
+    }
+  } else {
+    console.error("Game creation failed.");
+  }
+};
+
+const createTags = async () => {
+  const gameId = await get_CreatedGameID();
   if (!gameId) {
     console.error("Failed to get game ID");
-    return;
+    return false;
   }
 
+  let allTagsCreated = true;
   for (const tag of state.tagsArray) {
     const jsonObject = {
       name: tag,
       gameId: gameId,
     };
-    result = await create("tags", jsonObject);
+    const result = await create("tags", jsonObject);
     console.log("Tag was created:", result);
+    if (!result) {
+      allTagsCreated = false;
+      break; 
+    }
+  }
+  return allTagsCreated; 
+};
+
+
+const deleteGame = async () => {
+  const gameId = await get_CreatedGameID();
+  if (!gameId) {
+    console.error("Failed to get game ID for deletion");
+    return;
+  }
+
+  const response = await deleteData("games", {id:gameId})
+
+   if (response.ok) {
+    console.log("Game was successfully deleted");
+  } else {
+    console.error("Failed to delete the game");
   }
 };
 
@@ -322,7 +352,6 @@ async function get_CreatedGameID() {
   }
 }
 
-
 const submitGame = async () => {
   if (formatData()) {
     await createGame();
@@ -332,19 +361,19 @@ const submitGame = async () => {
 
 <style scoped>
 textarea {
-  background-color: #555; 
-  color: white; 
-  padding: 10px; 
+  background-color: #555;
+  color: white;
+  padding: 10px;
   border: 2px solid #777;
   border-radius: 5px;
   width: 50%;
-  box-sizing: border-box; 
-  margin: 5px 0; 
+  box-sizing: border-box;
+  margin: 5px 0;
 }
 
 textarea:focus {
   outline: none;
-  border-color: #007bff; 
+  border-color: #007bff;
 }
 
 img {

@@ -99,8 +99,9 @@ class GamesController extends BaseController
         return $this->model->update($id, $data);
     }
 
-    public function delete($id, $jwts = null)
+    public function delete($data, $jwts = null)
     {
+        $id = $data["id"];
         return $this->model->delete($id);
     }
 
