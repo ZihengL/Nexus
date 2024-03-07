@@ -28,6 +28,10 @@ export const clearFromStorage = (key = null) => {
 
 // user
 
+export const isLoggedIn = () => {
+  return localStorage.getItem("user") !== null;
+};
+
 export const storeUser = (user) => {
   storeData("user", user);
 };
@@ -69,10 +73,10 @@ export const login = (email, password) => {
     storeUser(user);
     storeTokens(tokens);
 
-    return true;
+    return user;
   }
 
-  return false;
+  return null;
 };
 
 export const logout = () => {

@@ -23,7 +23,7 @@
 
 <script>
 import { fetchData } from "../JS/fetch";
-import { fetchData2 } from '../JS/fetch2'
+import { fetchData2 } from '../JS/fetchData'
 import ReviewsListComponent from "../components/reviewsListComponent.vue";
 
 export default {
@@ -384,8 +384,6 @@ export default {
       );
     },
 
-    // TESTING ENCODING URI - FOR ENCODING JSONBODY
-    // '/tests/playground.php' in backend for decoding test
     ZITEST() {
       const action = 'getAllMatching';
       const table = 'games';
@@ -405,8 +403,8 @@ export default {
       const test = { games: 'is a game' };
 
       const result = fetchData2(table, action, jsonBody);
-
       console.log(result);
+      // console.log(localStorage.getItem('asdasdas'));
     },
   },
 };
