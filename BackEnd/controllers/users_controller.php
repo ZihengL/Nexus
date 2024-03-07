@@ -73,12 +73,7 @@ class UsersController extends BaseController
 
     public function delete($id, $tokens = null, ...$data)
     {
-        $validated_tokens = $this->authenticate($id, $tokens);
-
-        $this->model->delete($id);
-        $this->getTokensController()->deleteAllFromUser($id, $validated_tokens);
-
-        return $validated_tokens;
+        return $this->validate($id, $tokens) && $this->model->delete($id);
     }
 
     //  ACCESS & SECURITY

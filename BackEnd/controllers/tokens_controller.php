@@ -102,7 +102,7 @@ class TokensController extends BaseController
 
     public function generateTokensOnValidation($user, $email, $password)
     {
-        if ($this->validateUser($user, $email, $password)) {
+        if ($this->validateCredentials($user, $email, $password)) {
             $refresh_jwt = $this->generateRefreshToken($user['id']);
             $access_jwt = $this->generateAccessToken($user['id']);
 
@@ -116,6 +116,19 @@ class TokensController extends BaseController
     /*******************************************************************/
     /*************************** VALIDATION ****************************/
     /*******************************************************************/
+
+    protected function validateCredentials($user, $email, $password)
+    {
+        if (!$user)
+            throw new Exception("No user found with email '$email'.");
+
+        if ($user['email'] !== $email || !password_verify($password, $user['password'])) {
+            $this->revokeAccess($user['id']);
+            throw new Exception("Provided crendentials mismatch.");
+        }
+
+        return true;
+    }
 
     public function validateRefreshToken($user_id, $jwt)
     {
@@ -133,7 +146,7 @@ class TokensController extends BaseController
         return false;
     }
 
-    // Doesn't refresh access
+    // Doesn't refresh access; revokes all access from user if not valid
     public function validateTokens($user_id, $jwts)
     {
         $access_token = $jwts[self::ACCESS] ??= null;

@@ -50,10 +50,12 @@ class GamesController extends BaseController
 
     public function create($tokens = null, ...$data)
     {
-        if ($user_id = $this->getUserIdFromToken($tokens)) {
-            $data['developerID'] = $user_id;
+        // if ($user_id = $this->getUserIdFromToken($tokens)) {
+        //     $data['developerID'] = $user_id;
+        if ($authenticated_tokens = $this->authenticate($data['developerID'], $tokens)) {
+            $this->model->create($data);
 
-            return $this->model->create($data);
+            return $authenticated_tokens;
         }
 
         return false;
@@ -62,10 +64,10 @@ class GamesController extends BaseController
     public function update($id, $tokens = null, ...$data)
     {
         if ($user = $this->getDeveloper($id))
-            if ($validated_tokens = $this->authenticate($user['id'], $tokens)) {
+            if ($authenticated_tokens = $this->authenticate($user['id'], $tokens)) {
                 $this->model->update($id, $data);
 
-                return $validated_tokens;
+                return $authenticated_tokens;
             }
 
         return false;

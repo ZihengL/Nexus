@@ -91,24 +91,16 @@ class BaseController
     /****************** VALIDATION, ACCESS & SECURITY ******************/
     /*******************************************************************/
 
-    // User validation
+    // User validation & authentification
+
+    protected function validate($user_id, $tokens)
+    {
+        return $this->getTokensController()->validateTokens($user_id, $tokens);
+    }
 
     protected function authenticate($user_id, $tokens)
     {
         return $this->getTokensController()->authenticateTokens($user_id, $tokens);
-    }
-
-    protected function validateUser($user, $email, $password)
-    {
-        if (!$user)
-            throw new Exception("No user found with email '$email'.");
-
-        if ($user['email'] !== $email || !password_verify($password, $user['password'])) {
-            $this->revokeAccess($user['id']);
-            throw new Exception("Provided crendentials mismatch.");
-        }
-
-        return true;
     }
 
     protected function revokeAccess($user_id = null, $tokens = null)
