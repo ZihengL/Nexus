@@ -1,6 +1,6 @@
 <template>
   <div id="upload_game">
-    <h2>{{ props.pageTitle }}</h2>
+    <h2>{{ state.pageTitle }}</h2>
     <div v-if="state.errorMessage" class="error-message">
       {{ state.errorMessage }}
     </div>
@@ -88,26 +88,11 @@
   </div>
 </template>
 <script setup>
-import { reactive, defineProps, computed } from "vue";
-import { create, getAllMatching } from "../JS/fetchServices.js";
+import { reactive, defineProps, computed, onMounted } from "vue";
+import { create, getAllMatching, deleteData } from "../JS/fetchServices.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const props = defineProps({
-  gameObject: Object,
-  pageTitle: {
-    type: String,
-    default: "Add or Update Game",
-  },
-  gameTitle: {
-    type: String,
-  },
-  tagsArray: {
-    type: Array,
-  },
-  gameFile: Object,
-  gameFilePath: String,
-  imageFiles: [],
-  videoFiles: [],
   developerID: {
     type: Number,
     default: 5,
@@ -122,27 +107,25 @@ const state = reactive({
   gameFilePath: "",
   imageFiles: [],
   videoFiles: [],
+  MIN_IMG: 0,
   MAX_IMGS: 10,
   MAX_VIDS: 2,
   MIN_TAG: 1,
-  MIN_IMG: 1,
-  DESC_MAX_LENGTH: 500,
+  MIN_DESC_LENGTH: 1,
+  MAX_DESC_LENGTH: 500,
   errorMessage: "",
   creation_date: new Date().toISOString().replace("T", " ").substring(0, 16),
   description: "",
 });
 
-// Instead of manipulating the DOM directly, use a computed property
 const charCountText = computed(() => {
   let currentLength = state.description.length;
-  return `${currentLength}/${state.DESC_MAX_LENGTH} characters`;
+  return `${currentLength}/${state.MAX_DESC_LENGTH} characters`;
 });
 
-// Update your method to just ensure the description's length
 function validateDescriptionLength() {
-  const maxLength = 500;
-  if (state.description.length > maxLength) {
-    state.description = state.description.substring(0, maxLength);
+  if (state.description.length > state.MAX_DESC_LENGTH) {
+    state.description = state.description.substring(0, state.MAX_DESC_LENGTH);
   }
 }
 
@@ -236,15 +219,15 @@ const formatData = () => {
     state.errorMessage = "Game title is required.";
     return false;
   } else if (state.tagsArray.length < state.MIN_TAG) {
-    (state.errorMessage = "At least"), state.MIN_TAG, "tags are required.";
+    state.errorMessage = `At least ${state.MIN_TAG} tags are required.`;
     return false;
   } else if (state.imageFiles.length < state.MIN_IMG) {
-    (state.errorMessage = "At least "), state.MIN_IMG, "images are required.";
+    state.errorMessage = `At least ${state.MIN_IMG} images are required.`;
     return false;
-  } else if (!state.description.trim()) {
+  } else if (state.description.trim().length < state.MIN_DESC_LENGTH) {
     state.errorMessage = "Description is required.";
     return false;
-  } else {
+  }else {
     state.errorMessage = "";
     console.log("Submitting:", {
       gameTitle: state.gameTitle,
@@ -257,21 +240,6 @@ const formatData = () => {
   }
 };
 
-const createGame = async () => {
-  let jsonObject = {
-    title: state.gameTitle,
-    developerID: props.developerID,
-    description: state.description,
-    releaseDate: state.creation_date,
-    ratingAverage: 0,
-  };
-  let wasGameCreated = await create("games", jsonObject);
-  console.log("wasGameCreated : ", wasGameCreated);
-  if (wasGameCreated) {
-    createTags();
-  }
-};
-
 function updateTagsArray() {
   state.tagsArray = state.tags
     .split(",")
@@ -281,22 +249,68 @@ function updateTagsArray() {
   // console.log("updating tags array : ", state.tagsArray);
 }
 
-const createTags = async () => {
-  let result = false;
-  const gameId = await get_CreatedGameID();
+const create_gameAndTags = async () => {
+  await createGame();
 
+  const tagsCreationResult = await createTags();
+  if (!tagsCreationResult) {
+    console.error(
+      "Game couldn't be added because tags were not successfully created."
+    );
+    await deleteGame();
+  } else {
+    console.error("Game creation failed.");
+  }
+};
+
+const createGame = async () => {
+  let jsonObject = {
+    title: state.gameTitle,
+    developerID: props.developerID,
+    description: state.description,
+    releaseDate: state.creation_date,
+    ratingAverage: 0,
+  };
+  let wasGameCreated = await create("games", jsonObject);
+  console.log("wasGameCreated:", wasGameCreated);
+};
+
+const createTags = async () => {
+  const gameId = await get_CreatedGameID();
   if (!gameId) {
     console.error("Failed to get game ID");
-    return;
+    return false;
   }
 
+  let allTagsCreated = true;
   for (const tag of state.tagsArray) {
     const jsonObject = {
       name: tag,
       gameId: gameId,
     };
-    result = await create("tags", jsonObject);
+    const result = await create("tags", jsonObject);
     console.log("Tag was created:", result);
+    if (!result) {
+      allTagsCreated = false;
+      break;
+    }
+  }
+  return allTagsCreated;
+};
+
+const deleteGame = async () => {
+  const gameId = await get_CreatedGameID();
+  if (!gameId) {
+    console.error("Failed to get game ID for deletion");
+    return;
+  }
+
+  const response = await deleteData("games", { id: gameId });
+
+  if (response.ok) {
+    console.log("Game was successfully deleted");
+  } else {
+    console.error("Failed to delete the game");
   }
 };
 
@@ -322,29 +336,35 @@ async function get_CreatedGameID() {
   }
 }
 
-
 const submitGame = async () => {
   if (formatData()) {
-    await createGame();
+    await create_gameAndTags();
   }
 };
+
+async function setDefaultValues(){
+  
+}
+
+onMounted(async () => {
+});
 </script>
 
 <style scoped>
 textarea {
-  background-color: #555; 
-  color: white; 
-  padding: 10px; 
+  background-color: #555;
+  color: white;
+  padding: 10px;
   border: 2px solid #777;
   border-radius: 5px;
   width: 50%;
-  box-sizing: border-box; 
-  margin: 5px 0; 
+  box-sizing: border-box;
+  margin: 5px 0;
 }
 
 textarea:focus {
   outline: none;
-  border-color: #007bff; 
+  border-color: #007bff;
 }
 
 img {

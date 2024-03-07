@@ -87,7 +87,15 @@ const routes = [
         // route level code-splitting
         // this generates a separate chunk (Home-[hash].js) for this route
         // which is lazy-loaded when the route is visited.
-        component: () => import('@/views/UploadUpdateGameView.vue'),
+        component: () => import('@/views/UploadGameView.vue'),
+      },
+      {
+        path: '/update',
+        name: 'update',
+        // route level code-splitting
+        // this generates a separate chunk (Home-[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () => import('@/views/UpdateGameView.vue'),
       },
     ],
   },
