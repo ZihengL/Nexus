@@ -1,6 +1,6 @@
 <template>
   <div id="upload_game">
-    <h2>{{ props.pageTitle }}</h2>
+    <h2>{{ state.pageTitle }}</h2>
     <div v-if="state.errorMessage" class="error-message">
       {{ state.errorMessage }}
     </div>
@@ -88,26 +88,11 @@
   </div>
 </template>
 <script setup>
-import { reactive, defineProps, computed } from "vue";
+import { reactive, defineProps, computed, onMounted } from "vue";
 import { create, getAllMatching, deleteData } from "../JS/fetchServices.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const props = defineProps({
-  gameObject: Object,
-  pageTitle: {
-    type: String,
-    default: "Add or Update Game",
-  },
-  gameTitle: {
-    type: String,
-  },
-  tagsArray: {
-    type: Array,
-  },
-  gameFile: Object,
-  gameFilePath: String,
-  imageFiles: [],
-  videoFiles: [],
   developerID: {
     type: Number,
     default: 5,
@@ -234,15 +219,15 @@ const formatData = () => {
     state.errorMessage = "Game title is required.";
     return false;
   } else if (state.tagsArray.length < state.MIN_TAG) {
-    (state.errorMessage = "At least"), state.MIN_TAG, "tags are required.";
+    state.errorMessage = `At least ${state.MIN_TAG} tags are required.`;
     return false;
   } else if (state.imageFiles.length < state.MIN_IMG) {
-    (state.errorMessage = "At least "), state.MIN_IMG, "images are required.";
+    state.errorMessage = `At least ${state.MIN_IMG} images are required.`;
     return false;
-  } else if (!state.description.trim()) {
+  } else if (state.description.trim().length < state.MIN_DESC_LENGTH) {
     state.errorMessage = "Description is required.";
     return false;
-  } else {
+  }else {
     state.errorMessage = "";
     console.log("Submitting:", {
       gameTitle: state.gameTitle,
@@ -356,6 +341,13 @@ const submitGame = async () => {
     await create_gameAndTags();
   }
 };
+
+async function setDefaultValues(){
+  
+}
+
+onMounted(async () => {
+});
 </script>
 
 <style scoped>

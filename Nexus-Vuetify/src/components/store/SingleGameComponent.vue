@@ -87,12 +87,9 @@ async function getGameInfos() {
     //   "typeOf singleGame_data.leGame:",
     //   typeof singleGame_data.leGame
     // );
-    const image = await fetchGameImages(singleGame_data.leGame.id)
     if (singleGame_data.leGame) {
+      const image = await fetchGameImages(singleGame_data.leGame.id)
       singleGame_data.image = image
-        ? image
-        : singleGame_data.DEFAULT_IMAGE_PATH;
-        singleGame_data.tags =singleGame_data.leGame.tags
     }
     // singleGame_data.leGame = singleGame_data.leGame.image;
     // console.log("singleGame data :", data);
