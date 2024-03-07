@@ -122,27 +122,25 @@ const state = reactive({
   gameFilePath: "",
   imageFiles: [],
   videoFiles: [],
+  MIN_IMG: 0,
   MAX_IMGS: 10,
   MAX_VIDS: 2,
   MIN_TAG: 1,
-  MIN_IMG: 0,
-  DESC_MAX_LENGTH: 500,
+  MIN_DESC_LENGTH: 1,
+  MAX_DESC_LENGTH: 500,
   errorMessage: "",
   creation_date: new Date().toISOString().replace("T", " ").substring(0, 16),
   description: "",
 });
 
-// Instead of manipulating the DOM directly, use a computed property
 const charCountText = computed(() => {
   let currentLength = state.description.length;
-  return `${currentLength}/${state.DESC_MAX_LENGTH} characters`;
+  return `${currentLength}/${state.MAX_DESC_LENGTH} characters`;
 });
 
-// Update your method to just ensure the description's length
 function validateDescriptionLength() {
-  const maxLength = 500;
-  if (state.description.length > maxLength) {
-    state.description = state.description.substring(0, maxLength);
+  if (state.description.length > state.MAX_DESC_LENGTH) {
+    state.description = state.description.substring(0, state.MAX_DESC_LENGTH);
   }
 }
 
@@ -266,6 +264,20 @@ function updateTagsArray() {
   // console.log("updating tags array : ", state.tagsArray);
 }
 
+const create_gameAndTags = async () => {
+  await createGame();
+
+  const tagsCreationResult = await createTags();
+  if (!tagsCreationResult) {
+    console.error(
+      "Game couldn't be added because tags were not successfully created."
+    );
+    await deleteGame();
+  } else {
+    console.error("Game creation failed.");
+  }
+};
+
 const createGame = async () => {
   let jsonObject = {
     title: state.gameTitle,
@@ -276,18 +288,6 @@ const createGame = async () => {
   };
   let wasGameCreated = await create("games", jsonObject);
   console.log("wasGameCreated:", wasGameCreated);
-
-  if (wasGameCreated) {
-    const tagsCreationResult = await createTags();
-    if (!tagsCreationResult) {
-      console.error(
-        "Game couldn't be added because tags were not successfully created."
-      );
-      await deleteGame(); 
-    }
-  } else {
-    console.error("Game creation failed.");
-  }
 };
 
 const createTags = async () => {
@@ -307,12 +307,11 @@ const createTags = async () => {
     console.log("Tag was created:", result);
     if (!result) {
       allTagsCreated = false;
-      break; 
+      break;
     }
   }
-  return allTagsCreated; 
+  return allTagsCreated;
 };
-
 
 const deleteGame = async () => {
   const gameId = await get_CreatedGameID();
@@ -321,9 +320,9 @@ const deleteGame = async () => {
     return;
   }
 
-  const response = await deleteData("games", {id:gameId})
+  const response = await deleteData("games", { id: gameId });
 
-   if (response.ok) {
+  if (response.ok) {
     console.log("Game was successfully deleted");
   } else {
     console.error("Failed to delete the game");
@@ -354,7 +353,7 @@ async function get_CreatedGameID() {
 
 const submitGame = async () => {
   if (formatData()) {
-    await createGame();
+    await create_gameAndTags();
   }
 };
 </script>

@@ -89,6 +89,14 @@ const routes = [
         // which is lazy-loaded when the route is visited.
         component: () => import('@/views/UploadUpdateGameView.vue'),
       },
+      {
+        path: '/testupload',
+        name: 'testupload',
+        // route level code-splitting
+        // this generates a separate chunk (Home-[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () => import('@/views/TestUploadView.vue'),
+      },
     ],
   },
 ]

@@ -39,6 +39,7 @@
 import { reactive, onMounted } from "vue";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { getGameDetailsWithDeveloperName } from "../../JS/fetchServices";
+import defaultImage from '@/assets/imgJeuxLogo/noImg.jpg';
 
 const storage = getStorage();
 
@@ -49,6 +50,7 @@ const props = defineProps({
 const singleGame_data = reactive({
   leGame: {},
   tags :[],
+  DEFAULT_IMAGE_PATH : defaultImage,
   image: String,
 });
 
@@ -65,7 +67,7 @@ async function fetchGameImages(gameId) {
       return { id: gameId, image: url }; // Corrected the return statement
     } catch (error) {
       console.error(`Error fetching image for ${gameId}:`, error);
-      return { id: gameId, image: "../assets/imgJeuxLogo/Mario.png" }; // Fallback image
+      return { id: gameId, image: singleGame_data.DEFAULT_IMAGE_PATH };// Fallback image
     }
   } catch (error) {
     console.error("Error fetching game images:", error);
@@ -89,7 +91,7 @@ async function getGameInfos() {
     if (singleGame_data.leGame) {
       singleGame_data.image = image
         ? image
-        : "/src/assets/img/dontstarve.png";
+        : singleGame_data.DEFAULT_IMAGE_PATH;
         singleGame_data.tags =singleGame_data.leGame.tags
     }
     // singleGame_data.leGame = singleGame_data.leGame.image;
