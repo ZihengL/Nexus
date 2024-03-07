@@ -15,6 +15,7 @@
     <p>Zi tests</p>
     <hr>
     <v-btn class="bordered-btn" @click="ZITEST">TEST</v-btn>
+    <v-btn class="bordered-btn" @click="test2">TEST 2</v-btn>
   </div>
   <div>
     <ReviewsListComponent :sorting="{ timestamp: false }"></ReviewsListComponent>
@@ -23,8 +24,11 @@
 
 <script>
 import { fetchData } from "../JS/fetch";
-import { fetchData2 } from '../JS/fetchData'
 import ReviewsListComponent from "../components/reviewsListComponent.vue";
+
+// ZI TESTS
+import { fetchData2 } from '../JS/fetchData';
+import { login, logout } from '../JS/services';
 
 export default {
   components: {
@@ -394,17 +398,32 @@ export default {
         ratingAverage: true,
       };
       const included_columns = ["id", "developerID", "tags", "ratingAverage"];
-      const jsonBody = { filters, sorting, included_columns };
 
-      // const queryString = btoa(JSON.stringify(jsonBody));
-      // const encodedURI = encodeURIComponent(queryString);
-      // console.log(encodedURI);
+      const body = { filters, sorting, included_columns };
+
 
       const test = { games: 'is a game' };
 
-      const result = fetchData2(table, action, jsonBody);
+      const result = fetchData2(table, action, body);
       console.log(result);
-      // console.log(localStorage.getItem('asdasdas'));
+    },
+
+    test2() {
+      const table = 'users';
+      const action = 'login';
+
+      const email = 'testUser@email';
+      const password = '123';
+
+      const body = {
+        email,
+        password
+      };
+
+      const result = fetchData2(table, action, body);
+      
+
+      console.log(result);
     },
   },
 };

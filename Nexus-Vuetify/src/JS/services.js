@@ -69,11 +69,13 @@ export const login = (email, password) => {
   });
 
   if (result) {
-    const [user, tokens] = result;
-    storeUser(user);
-    storeTokens(tokens);
+    // const [user, tokens] = result;
+    console.log(result);
+    
+    // storeUser(user);
+    // storeTokens(tokens);
 
-    return user;
+    // return user;
   }
 
   return null;
