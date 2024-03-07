@@ -206,9 +206,6 @@ class BaseModel
             array_shift($result);
 
         return $result;
-        // return $include_id ? $result : array_filter($result, function ($column) {
-        //     return $column !== 'id';
-        // });
     }
 
     public function getKeysDetails($is_internal_keys = true)

@@ -83,17 +83,6 @@ class UsersController extends BaseController
 
     //  ACCESS & SECURITY
 
-    // Do this if user has valid tokens stored
-    // public function authenticate($id, $tokens)
-    // {
-    //     $tokens_controller = $this->getTokensController();
-
-    //     if ($validated_tokens = $tokens_controller->validateTokens($id, $tokens))
-    //         return $validated_tokens;
-
-    //     throw new Exception("Invalid authentication tokens provided for User id '$id'.");
-    // }
-
     // Do this if user needs to do a fresh login
     public function login($email, $password)
     {
@@ -108,30 +97,9 @@ class UsersController extends BaseController
 
     public function logout($id, $tokens)
     {
-        return $this->getTokensController()->revokeAccess($id, $tokens);
+        $tokens_controller = $this->getTokensController();
+
+        if ($tokens_controller->validateTokens($id, $tokens))
+            return $this->revokeAccess($tokens);
     }
-
-    private function verifyUser($user, $email, $password)
-    {
-        // echo "password: " .$password . "<br>";
-        // // echo "user[$this->password]: " .$user[$this->password] . "<br>";
-        // $isVerifiedPwd = password_verify($password, $hashed);
-        // echo "isVerifiedPwd: " . $isVerifiedPwd . "<br>";
-        return $user[$this->email] === $email && password_verify($password, $user[$this->password]);
-    }
-
-    // public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
-    // {
-    //     $included_columns = $this->restrictAccess($included_columns);
-
-    //     return $this->model->getAllMatching($filters, $sorting, $included_columns);
-    // }
-
-    // public function getOne($column, $value, $included_columns = [])
-    // {
-
-    //     $included_columns = $this->restrictAccess($included_columns);
-
-    //     return $this->model->getOne($column, $value, $included_columns);
-    // }
 }

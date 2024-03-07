@@ -54,17 +54,6 @@ class BaseController
         return $this->central_controller->database_manager;
     }
 
-    protected function getGoogleClientManager()
-    {
-        return $this->central_controller->client_manager;
-    }
-
-    protected function getDriveController()
-    {
-        return $this->getGoogleClientManager()->drive_controller;
-    }
-
-
     // TABLES
 
     protected function getUsersController()
@@ -92,9 +81,6 @@ class BaseController
         return $this->central_controller->reviews_controller;
     }
 
-
-    // MULTIPLICITY TABLES
-
     protected function getGamesTagsController()
     {
         return $this->central_controller->gamestags_controller;
@@ -104,28 +90,37 @@ class BaseController
     /*******************************************************************/
     /****************** VALIDATION, ACCESS & SECURITY ******************/
     /*******************************************************************/
-    public function standardizeRequestData($data)
+
+    // User validation
+
+    protected function authenticate($user_id, $tokens)
     {
-        $client_to_server = [
-            'columnName' => 'column',
-            'includedColumns' => 'included_columns'
-        ];
-
-        foreach ($client_to_server as $client_value => $server_value)
-            if (array_key_exists($client_value, $data)) {
-                $data[$server_value] = $data[$client_value];
-                unset($data[$client_value]);
-            }
-
-        return $data;
+        return $this->getTokensController()->authenticateTokens($user_id, $tokens);
     }
+
+    protected function validateUser($user, $email, $password)
+    {
+        if (!$user)
+            throw new Exception("No user found with email '$email'.");
+
+        if ($user['email'] !== $email || !password_verify($password, $user['password'])) {
+            $this->revokeAccess($user['id']);
+            throw new Exception("Provided crendentials mismatch.");
+        }
+
+        return true;
+    }
+
+    protected function revokeAccess($user_id = null, $tokens = null)
+    {
+        return $this->getTokensController()->revokeAccess($user_id, $tokens);
+    }
+
+    // Need this to filter out indirect access to restricted columns
 
     protected function filterAccess($included_columns = [])
     {
         $valid_columns = array_diff($this->model->getColumns(true), $this->restricted_columns);
-
-        // if (!is_array($included_columns) || empty($included_columns))
-        // return $valid_columns;
 
         return empty($included_columns) ? $valid_columns : array_intersect($valid_columns, $included_columns);
     }
@@ -140,32 +135,6 @@ class BaseController
         return $joined_tables;
     }
 
-    protected function authenticate($user_id, $tokens)
-    {
-        if ($validated_tokens = $this->getTokensController()->validateTokens($user_id, $tokens))
-            return $validated_tokens;
-
-        throw new Exception("Invalid authentication tokens provided for User id '$user_id'.");
-    }
-
-    protected function getTokenSub($jwts)
-    {
-        return $this->getTokensController()->getTokenSub($jwts);
-    }
-
-    protected function setGetDataDefaults($data)
-    {
-        $data['included_columns'] ??= [];
-        $data['included_columns'] = $this->filterAccess($data['included_columns']);
-
-        $data['joined_tables'] ??= [];
-        $data['joined_tables'] = $this->filterAccessOnJoins($data['joined_tables']);
-
-        $data['paging'] ??= ['limit' => -1, 'offset' => 0];
-
-        return $data;
-    }
-
 
     /*******************************************************************/
     /****************************** CRUDS ******************************/
@@ -174,33 +143,22 @@ class BaseController
     // public function getOne($column, $value, $included_columns = [], $joined_tables = [])
     public function getOne(...$data)
     {
-        // $included_columns = $this->filterAccess($included_columns);
-        // $joined_tables = $this->filterAccessOnJoins($joined_tables);
-
-        $data = $this->setGetDataDefaults($data);
-        return $this->model->getOne(...$data);
+        // $data = $this->setGetterDefaults($data);
+        return $this->model->getOne(...$this->setGetterDefaults($data));
     }
 
     // public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [])
     public function getAll(...$data)
     {
-        // $data['included_columns'] ??= [];
-        // $data['included_columns'] = $this->filterAccess($data['included_columns']);
-        // $data['joined_tables'] ??= [];
-        // $data['joined_tables'] = $this->filterAccessOnJoins($data['joined_tables']);
-
-        $data = $this->setGetDataDefaults($data);
-        return $this->model->getAll(...$data);
+        // $data = $this->setGetterDefaults($data);
+        return $this->model->getAll(...$this->setGetterDefaults($data));
     }
 
     // public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
     public function getAllMatching(...$data)
     {
-        // $included_columns = $this->filterAccess($included_columns);
-        // $joined_tables = $this->filterAccessOnJoins($joined_tables);
-
-        $data = $this->setGetDataDefaults($data);
-        return $this->model->getAllMatching(...$data);
+        // $data = $this->setGetterDefaults($data);
+        return $this->model->getAllMatching(...$this->setGetterDefaults($data));
     }
 
     public function create(...$data)
@@ -220,7 +178,7 @@ class BaseController
 
 
     /*******************************************************************/
-    /***************************** LOGGING *****************************/
+    /****************************** TOOLS ******************************/
     /*******************************************************************/
 
     public function createResponse($isSuccess, $message)
@@ -236,6 +194,40 @@ class BaseController
         return $response;
 
         // return json_encode($response);
+    }
+
+    protected function getUserIdFromToken($tokens)
+    {
+        return $this->getTokensController()->getTokenSub($tokens);
+    }
+
+    protected function setGetterDefaults($data)
+    {
+        $data['included_columns'] ??= [];
+        $data['included_columns'] = $this->filterAccess($data['included_columns']);
+
+        $data['joined_tables'] ??= [];
+        $data['joined_tables'] = $this->filterAccessOnJoins($data['joined_tables']);
+
+        $data['paging'] ??= [];
+
+        return $data;
+    }
+
+    public function standardizeRequestData($data)
+    {
+        $client_to_server = [
+            'columnName' => 'column',
+            'includedColumns' => 'included_columns'
+        ];
+
+        foreach ($client_to_server as $client_value => $server_value)
+            if (array_key_exists($client_value, $data)) {
+                $data[$server_value] = $data[$client_value];
+                unset($data[$client_value]);
+            }
+
+        return $data;
     }
 
     // public function createResponse($isSuccess, $message)

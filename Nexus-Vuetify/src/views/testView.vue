@@ -11,11 +11,13 @@
     <v-btn class="bordered-btn" @click="deleteData">delete</v-btn>
     <v-btn class="bordered-btn" @click="updateData">update</v-btn>
     <v-btn class="bordered-btn" @click="createData">create</v-btn>
-    <hr>
+
     <p>Zi tests</p>
-    <hr>
-    <v-btn class="bordered-btn" @click="ZITEST">TEST</v-btn>
-    <v-btn class="bordered-btn" @click="test2">TEST 2</v-btn>
+
+    <v-btn class="bordered-btn" @click="ziGetAllMatching">getAllMatching</v-btn>
+    <v-btn class="bordered-btn" @click="isLoggedIn">is Logged in</v-btn>
+    <v-btn class="bordered-btn" @click="ziLogin">Login</v-btn>
+    <v-btn class="bordered-btn" @click="ziLogout">Logout</v-btn>
   </div>
   <div>
     <ReviewsListComponent :sorting="{ timestamp: false }"></ReviewsListComponent>
@@ -27,8 +29,8 @@ import { fetchData } from "../JS/fetch";
 import ReviewsListComponent from "../components/reviewsListComponent.vue";
 
 // ZI TESTS
-import { fetchData2 } from '../JS/fetchData';
-import { login, logout } from '../JS/services';
+// import { fetchData2 } from '../JS/fetchData';
+// import { login, logout } from '../JS/services';
 
 export default {
   components: {
@@ -388,9 +390,7 @@ export default {
       );
     },
 
-    ZITEST() {
-      const action = 'getAllMatching';
-      const table = 'games';
+    ziGetAllMatching() {
       const filters = {
         id: 2
       };
@@ -399,31 +399,35 @@ export default {
       };
       const included_columns = ["id", "developerID", "tags", "ratingAverage"];
 
-      const body = { filters, sorting, included_columns };
-
-
-      const test = { games: 'is a game' };
-
-      const result = fetchData2(table, action, body);
+      const result = this.$fetchData('games', 'getAllMatching', { filters, sorting, included_columns });
       console.log(result);
     },
 
-    test2() {
-      const table = 'users';
-      const action = 'login';
+    isLoggedIn() {
+      const user = this.$getStoredUser();
 
+      if (user) {
+        console.log('User logged in', user);
+      } else {
+        console.log('User not logged in', user);
+      }
+    },
+
+    ziLogin() {
       const email = 'testUser@email';
       const password = '123';
 
-      const body = {
-        email,
-        password
-      };
-
-      const result = fetchData2(table, action, body);
-      
-
+      const result = this.$login(email, password);
       console.log(result);
+    },
+
+    ziLogout() {
+      this.isLoggedIn();
+
+      const result = this.$logout();
+      console.log('result', result);
+
+      this.isLoggedIn();
     },
   },
 };
@@ -444,6 +448,7 @@ export default {
 }
 
 .bordered-btn {
+  margin: 15px;
   border: 2px solid #1976d2;
   /* Example border: 2px solid, using Vuetify's primary color */
   border-radius: 4px;

@@ -19,11 +19,11 @@ class GamesController extends BaseController
         parent::__construct($central_controller);
     }
 
-    protected function setGetDataDefaults($data)
+    protected function setGetterDefaults($data)
     {
         $data['sorting'] ??= [$this->ratingAverage => true];
 
-        return parent::setGetDataDefaults($data);
+        return parent::setGetterDefaults($data);
     }
 
 
@@ -33,13 +33,13 @@ class GamesController extends BaseController
 
     public function getOneAsJoined(...$data)
     {
-        $data = $this->setGetDataDefaults($data);
+        $data = $this->setGetterDefaults($data);
         return $this->model->getOneAsJoined(...$data);
     }
 
     public function getAllAsJoined(...$data)
     {
-        $data = $this->setGetDataDefaults($data);
+        $data = $this->setGetterDefaults($data);
         return $this->model->getOneAsJoined(...$data);
     }
 
@@ -50,7 +50,7 @@ class GamesController extends BaseController
 
     public function create($tokens = null, ...$data)
     {
-        if ($user_id = $this->getTokenSub($tokens)) {
+        if ($user_id = $this->getUserIdFromToken($tokens)) {
             $data['developerID'] = $user_id;
 
             return $this->model->create($data);

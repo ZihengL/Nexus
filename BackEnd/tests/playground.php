@@ -40,7 +40,10 @@ function datatest4($a, $b = null)
 
 $arr1 = ['a' => 'a val', 'b' => 'b val', 'c' => 'c val', 'd' => 'd val'];
 
-$arr1['z'] ??= 2;
+$ac = $arr1['z'] ??= 2;
+echo 'AC ' . $ac;
+
+// ['z' = $z, 'a' = $a] = $arr1 ??= ['def'];
 
 
 $arr2 = datatest(...$arr1);

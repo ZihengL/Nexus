@@ -1,20 +1,21 @@
-// all other params in data
+// all other params than table and action shoved into data
 export function fetchData2(table, action, body = null) {
-  const url = "http://localhost:4208/Nexus/Backend";
-
   let method = "GET";
   if (body !== null) {
     method = "POST";
     body = JSON.stringify(standardizeData(body));
   }
 
-  return fetch(`${url}/table=${table}&action=${action}`, {
-    method: method,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: body,
-  })
+  return fetch(
+    `http://localhost:4208/Nexus/Backend/table=${table}&action=${action}`,
+    {
+      method: method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: body,
+    }
+  )
     .then((response) => {
       if (response.ok && response.status === 200) {
         return response.json();
