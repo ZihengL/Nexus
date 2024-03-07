@@ -156,7 +156,8 @@ class TokensController extends BaseController
             ($access_token && $this->validateAccessToken($access_token)) ||
             ($refresh_token && $this->validateRefreshToken($user_id, $refresh_token))
         )
-            return true;
+            return ['a' => $access_token, 'r' => $refresh_token];
+        // return true;
 
         $this->revokeAccess(user_id: $user_id);
         throw new Exception("Invalid authentication tokens provided for User id '$user_id'.");

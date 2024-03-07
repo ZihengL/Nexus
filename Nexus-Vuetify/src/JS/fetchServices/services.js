@@ -145,6 +145,7 @@ export async function logout() {
   });
 
   if (result) {
+    console.log(result);
     clearFromStorage();
     return true;
   }

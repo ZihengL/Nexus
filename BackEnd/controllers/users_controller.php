@@ -62,7 +62,7 @@ class UsersController extends BaseController
 
     public function update($id, $tokens = null, ...$data)
     {
-        if ($validated_tokens = $this->authenticate($id, $tokens)) {
+        if ($validated_tokens = $this->authenticateUser($id, $tokens)) {
             $this->model->update($id, $data);
 
             return $validated_tokens;
@@ -73,7 +73,7 @@ class UsersController extends BaseController
 
     public function delete($id, $tokens = null, ...$data)
     {
-        return $this->validate($id, $tokens) && $this->model->delete($id);
+        return $this->validateUser($id, $tokens) && $this->model->delete($id);
     }
 
     //  ACCESS & SECURITY
@@ -81,10 +81,9 @@ class UsersController extends BaseController
     // Do this if user needs to do a fresh login
     public function login($email, $password)
     {
-        // echo "login email: " . $email . "<br>";
         $user = $this->model->getOne($this->email, $email);
-        // echo "login user: " . print_r($user, true) . "<br>";
         $tokens_controller = $this->getTokensController();
+
         if ($tokens = $tokens_controller->generateTokensOnValidation($user, $email, $password)) {
             return ['user' => $user, 'tokens' => $tokens];
         }
@@ -94,7 +93,7 @@ class UsersController extends BaseController
     {
         $tokens_controller = $this->getTokensController();
 
-        if ($tokens_controller->validateTokens($id, $tokens))
-            return $this->revokeAccess($tokens);
+        return $tokens_controller->validateTokens($id, $tokens) &&
+            $tokens_controller->revokeAccess($tokens);
     }
 }

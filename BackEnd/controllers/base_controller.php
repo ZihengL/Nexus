@@ -93,19 +93,14 @@ class BaseController
 
     // User validation & authentification
 
-    protected function validate($user_id, $tokens)
+    protected function validateUser($user_id, $tokens)
     {
         return $this->getTokensController()->validateTokens($user_id, $tokens);
     }
 
-    protected function authenticate($user_id, $tokens)
+    protected function authenticateUser($user_id, $tokens)
     {
         return $this->getTokensController()->authenticateTokens($user_id, $tokens);
-    }
-
-    protected function revokeAccess($user_id = null, $tokens = null)
-    {
-        return $this->getTokensController()->revokeAccess($user_id, $tokens);
     }
 
     // Need this to filter out indirect access to restricted columns

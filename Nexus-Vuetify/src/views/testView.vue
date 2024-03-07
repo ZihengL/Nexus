@@ -408,6 +408,14 @@ export default {
 
       if (user) {
         console.log('User logged in', user);
+
+        const tokens = this.$getStoredTokens();
+        console.log(tokens);
+
+        Object.values(tokens).forEach((value) => {
+          console.log(value);
+        });
+
       } else {
         console.log('User not logged in', user);
       }
@@ -422,12 +430,12 @@ export default {
     },
 
     ziLogout() {
-      this.isLoggedIn();
+      // this.isLoggedIn();
 
       const result = this.$logout();
       console.log('result', result);
 
-      this.isLoggedIn();
+      // this.isLoggedIn();
     },
   },
 };
