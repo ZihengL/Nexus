@@ -433,3 +433,4 @@ export default {
   /* Optional: Adjust border-radius for rounded corners */
 }
 </style>
+../JS/fetchData

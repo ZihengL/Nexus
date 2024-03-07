@@ -100,8 +100,10 @@ class UsersController extends BaseController
         // echo "login email: " . $email . "<br>";
         $user = $this->model->getOne($this->email, $email);
         // echo "login user: " . print_r($user, true) . "<br>";
-
-        return $this->getTokensController()->generateTokensOnValidation($user, $email, $password);
+        $tokens_controller = $this->getTokensController();
+        if ($tokens = $tokens_controller->generateTokensOnValidation($user, $email, $password)) {
+            return ['user' => $user, 'tokens' => $tokens];
+        }
     }
 
     public function logout($id, $tokens)

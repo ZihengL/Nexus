@@ -1,5 +1,5 @@
 import { fetchData } from "./fetch";
-import { fetchData2 } from "./fetch2";
+import { fetchData2 } from "./fetchData";
 
 export const getOne = async (table, column, value, included_columns = null, sorting = null) => {
   const body = {

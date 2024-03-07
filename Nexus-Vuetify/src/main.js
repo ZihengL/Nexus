@@ -10,6 +10,8 @@ import App from "./App.vue";
 // Import Firebase functionalities
 import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
+import { fetchData2 } from "./JS/fetchData";
+import "./JS/services";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -30,6 +32,15 @@ const storage = getStorage();
 
 // Create Vue app
 const app = createApp(App);
+
+// global fetch
+app.config.globalProperties.$fetch = async function (
+  table,
+  action,
+  body = null
+) {
+  return await fetchData2(table, action, body);
+};
 
 // Utilisez app.config.globalProperties pour définir une propriété globale
 //app.config.globalProperties.$isConnected = ref(false);
