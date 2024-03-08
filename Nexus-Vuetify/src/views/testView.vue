@@ -18,6 +18,7 @@
     <v-btn class="bordered-btn" @click="isLoggedIn">is Logged in</v-btn>
     <v-btn class="bordered-btn" @click="ziLogin">Login</v-btn>
     <v-btn class="bordered-btn" @click="ziLogout">Logout</v-btn>
+    <v-btn class="bordered-btn" @click="updateUser">update user</v-btn>
   </div>
   <div>
     <ReviewsListComponent :sorting="{ timestamp: false }"></ReviewsListComponent>
@@ -404,39 +405,41 @@ export default {
     },
 
     isLoggedIn() {
-      const user = this.$getStoredUser();
 
-      if (user) {
-        console.log('User logged in', user);
+      if (this.$isLoggedIn()) {
+        console.log('logged in');
 
-        const tokens = this.$getStoredTokens();
-        console.log(tokens);
-
-        Object.values(tokens).forEach((value) => {
-          console.log(value);
-        });
-
+        console.log('User logged in', this.$getUser());
+        console.log('User tokens', this.$getTokens());
       } else {
-        console.log('User not logged in', user);
+        console.log('User not logged in', this.$getUser());
       }
     },
 
-    ziLogin() {
+    async ziLogin() {
       const email = 'testUser@email';
       const password = '123';
 
-      const result = this.$login(email, password);
+      const result = await this.$login(email, password);
       console.log(result);
     },
 
-    ziLogout() {
+    async ziLogout() {
       // this.isLoggedIn();
 
-      const result = this.$logout();
-      console.log('result', result);
+      await this.$logout().then(
+        this.isLoggedIn()
+      );
 
-      // this.isLoggedIn();
+
     },
+
+    async updateUser() {
+
+      // const username = 'nexusfrontendupdatetest';
+      this.$updateUser({ username: 'LOL' });
+    },
+
   },
 };
 </script>

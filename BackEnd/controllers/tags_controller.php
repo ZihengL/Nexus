@@ -17,7 +17,7 @@ class TagsController extends BaseController
 
     public function getById($id)
     {
-        return $this->model->getOne($this->id, $id);
+        return $this->model->getOne(column: $this->id, value: $id);
     }
 
     public function getByName($name)

@@ -22,6 +22,17 @@ function datatest($a, $z = null, ...$arr)
     return [...func_get_args(), $arr];
 }
 
+// function testz($a, $arr, $z, ...$arr1)
+// {
+//     printall($arr1);
+//     echo $z;
+
+// }
+
+// $arr1 = ['a' => 'a val', 'b' => 'b val', 'c' => 'c val', 'd' => 'd val', 'z' => 'z val'];
+
+// testz(...$arr1);
+
 // Don't invoke one param functions with destructuring
 function datatest2($arr)
 {
@@ -30,7 +41,7 @@ function datatest2($arr)
 
 function datatest3(...$arr)
 {
-    print_r($arr);
+    print_r(...$arr);
 }
 
 function datatest4($a, $b = null)
@@ -38,16 +49,18 @@ function datatest4($a, $b = null)
     echo $a . ' ' . $b;
 }
 
-$arr1 = ['a' => 'a val', 'b' => 'b val', 'c' => 'c val', 'd' => 'd val'];
+$arr1 = ['a' => 'a val', 'b' => 'b val', 'c' => 'c val', 'd' => 'd val', 'z' => 'z val'];
 
-$ac = $arr1['z'] ??= 2;
-echo 'AC ' . $ac;
+
+// $ac = $arr1['z'] ??= 2;
+// echo 'AC ' . $arr1['z'];
+// printall($arr1);
 
 // ['z' = $z, 'a' = $a] = $arr1 ??= ['def'];
 
 
-$arr2 = datatest(...$arr1);
-print_r($arr2);
+// $arr2 = datatest(...$arr1);
+// print_r($arr2);
 // // datatest2(...$arr1);
 // datatest3(...$arr1);
 // datatest4(...$arr1);
@@ -62,13 +75,13 @@ $arr = ['a' => 'asdsadas', 'email' => 'a@a', 'asdasdas' => 'fsafasfa'];
 
 // datatest5($arr);
 
-function makecoffee($types = array("cappuccino"), $coffeeMaker = NULL)
-{
-    $device = is_null($coffeeMaker) ? "hands" : $coffeeMaker;
-    return "Making a cup of " . join(", ", $types) . " with $device.\n";
-}
-echo makecoffee();
-echo makecoffee(array("cappuccino", "lavazza"), "teapot");
+// function makecoffee($types = array("cappuccino"), $coffeeMaker = NULL)
+// {
+//     $device = is_null($coffeeMaker) ? "hands" : $coffeeMaker;
+//     return "Making a cup of " . join(", ", $types) . " with $device.\n";
+// }
+// echo makecoffee();
+// echo makecoffee(array("cappuccino", "lavazza"), "teapot");
 
 /*******************************/
 
@@ -83,6 +96,7 @@ $central_controller = CentralController::getInstance();
 $users_ctrl = $central_controller->users_controller;
 $games_ctrl = $central_controller->games_controller;
 $gamestags_ctrl = $central_controller->gamestags_controller;
+$tokens_ctrl = $central_controller->tokens_controller;
 
 /*******************************/
 
@@ -90,13 +104,13 @@ $gamestags_ctrl = $central_controller->gamestags_controller;
 
 echo '<hr><b>BEGIN TEST</b><hr>';
 
-printall($gamestags_ctrl->getGamesWith(true, true));
+// printall($gamestags_ctrl->getGamesWith(true, true));
 
-$createData = [
-    'username' => 'testUser123',
-    'password' => '123',
-    'email' => 'testUser@email',
-];
+// $createData = [
+//     'username' => 'testUser123',
+//     'password' => '123',
+//     'email' => 'testUser@email',
+// ];
 
 // echo $users_ctrl->create($createData);
 
@@ -221,7 +235,21 @@ foreach ($a1 as $key => $value) {
 // $table = $parsed_uri['table'] ?? null;
 // $action = $parsed_uri['action'] ?? null;
 
+$email = 'testUser@email';
+$password = '123';
 
+['user' => $user, 'tokens' => $tokens] = $users_ctrl->login($email, $password);
+
+printall($user);
+
+// $tokens = ['access_token' => $access, 'refresh_token' => $refresh];
+// $res = $users_ctrl->login('testUser@email', '123');
+
+$updatedata = ['id' => 9, 'tokens' => $tokens, 'data' => ['username' => 'playgroundtest']];
+$res = $users_ctrl->update(...$updatedata);
+
+echo '<br>UPDATE';
+printall($res);
 
 echo '<br><b>END TEST</b><hr>';
 

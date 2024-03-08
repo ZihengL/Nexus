@@ -87,6 +87,15 @@ function parseRequestMethod()
     }
 }
 
+function unwrap($item)
+{
+    if ($item) {
+        return var_export($item, true);
+    }
+
+    return '';
+}
+
 function printall($item)
 {
     echo '<pre>' . print_r($item, true) . '</pre>';

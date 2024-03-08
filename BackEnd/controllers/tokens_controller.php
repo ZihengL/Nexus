@@ -123,17 +123,17 @@ class TokensController extends BaseController
             throw new Exception("No user found with email '$email'.");
 
         if ($user['email'] !== $email || !password_verify($password, $user['password'])) {
-            $this->revokeAccess($user['id']);
+            $this->revokeAccess(id: $user['id']);
             throw new Exception("Provided crendentials mismatch.");
         }
 
         return true;
     }
 
-    public function validateRefreshToken($user_id, $jwt)
+    public function validateRefreshToken($id, $refresh_token)
     {
-        if ($stored = $this->getByHashcode($jwt))
-            return $stored[self::EXP] > time() && $stored[self::SUB] === $user_id;
+        if ($stored = $this->getBySha($refresh_token))
+            return $stored[self::EXP] > time() && $stored[self::SUB] === $id;
 
         return false;
     }
@@ -156,10 +156,9 @@ class TokensController extends BaseController
             ($access_token && $this->validateAccessToken($access_token)) ||
             ($refresh_token && $this->validateRefreshToken($user_id, $refresh_token))
         )
-            return ['a' => $access_token, 'r' => $refresh_token];
-        // return true;
+            return true;
 
-        $this->revokeAccess(user_id: $user_id);
+        $this->revokeAccess(id: $user_id);
         throw new Exception("Invalid authentication tokens provided for User id '$user_id'.");
     }
 
@@ -177,20 +176,33 @@ class TokensController extends BaseController
             return $jwts;
         }
 
-        $this->revokeAccess(user_id: $user_id);
+        $this->revokeAccess(id: $user_id);
         throw new Exception("Invalid authentication tokens provided for User id '$user_id'.");
     }
 
-    public function revokeAccess($user_id = null, $tokens = null)
+    public function revokeAccess($id = null, $tokens = null)
     {
+        // return $this->getByHashcode($tokens['refresh_token']);
+
         return ($tokens && $this->deleteByHash($tokens)) ||
-            ($user_id && $this->deleteAllFromUser($user_id));
+            ($id && $this->deleteAllFromUser($id));
     }
 
 
     /*******************************************************************/
     /***************************** CRUDS *******************************/
     /*******************************************************************/
+
+    public function create($jwt = null, $decoded = null, $jwts = null, ...$data)
+    {
+        if ($jwt && $decoded) {
+            $decoded[self::SHA] = hash($this->hashing_alg, $jwt);
+
+            return parent::create($decoded);
+        }
+
+        return false;
+    }
 
     public function update($id, $jwt = null, ...$data)
     {
@@ -203,10 +215,10 @@ class TokensController extends BaseController
         return false;
     }
 
-    private function deleteByHash($jwts, ...$data)
+    private function deleteByHash($jwts)
     {
         if ($jwts && isset($jwts[self::REFRESH]))
-            if ($stored = $this->getByHashcode($jwts[self::REFRESH]))
+            if ($stored = $this->getBySha($jwts[self::REFRESH]))
                 return parent::delete($stored[self::ID]);
 
         return false;
@@ -214,7 +226,7 @@ class TokensController extends BaseController
 
     private function deleteAllFromUser($user_id, ...$data)
     {
-        if ($stored_tokens = $this->model->getAllMatching([self::SUB => $user_id])) {
+        if ($stored_tokens = $this->model->getAllMatching(filters: [self::SUB => $user_id])) {
             foreach ($stored_tokens as $stored)
                 parent::delete($stored[self::ID]);
 
@@ -242,23 +254,12 @@ class TokensController extends BaseController
 
     protected function getBySub($user_id)
     {
-        return $this->getOne(self::SUB, $user_id);
+        return $this->model->getOne(column: self::SUB, value: $user_id);
     }
 
-    protected function getByHashcode($jwt)
+    protected function getBySha($refresh_jwt)
     {
-        return $this->getOne(self::SHA, hash($this->hashing_alg, $jwt));
-    }
-
-    public function create($jwt = null, $decoded = null, $jwts = null, ...$data)
-    {
-        if ($jwt && $decoded) {
-            $decoded[self::SHA] = hash($this->hashing_alg, $jwt);
-
-            return parent::create($decoded);
-        }
-
-        return false;
+        return $this->model->getOne(column: self::SHA, value: hash($this->hashing_alg, $refresh_jwt));
     }
 
     public function deleteExpiredTokens()

@@ -31,12 +31,12 @@ class UsersController extends BaseController
     public function userExists($data)
     {
         return isset($data[$this->email]) &&
-            !empty($this->model->getOne($this->email, $data[$this->email]));
+            !empty($this->model->getOne(column: $this->email, value: $data[$this->email]));
     }
 
     private function getByEmail($email)
     {
-        return $this->model->getOne($this->email, $email);
+        return $this->model->getOne(column: $this->email, value: $email);
     }
 
     // OTHER CRUDS
@@ -63,7 +63,7 @@ class UsersController extends BaseController
     public function update($id, $tokens = null, ...$data)
     {
         if ($validated_tokens = $this->authenticateUser($id, $tokens)) {
-            $this->model->update($id, $data);
+            $this->model->update(id: $id, data: $data);
 
             return $validated_tokens;
         }
@@ -81,7 +81,8 @@ class UsersController extends BaseController
     // Do this if user needs to do a fresh login
     public function login($email, $password)
     {
-        $user = $this->model->getOne($this->email, $email);
+
+        $user = $this->model->getOne(column: $this->email, value: $email);
         $tokens_controller = $this->getTokensController();
 
         if ($tokens = $tokens_controller->generateTokensOnValidation($user, $email, $password)) {
@@ -91,9 +92,7 @@ class UsersController extends BaseController
 
     public function logout($id, $tokens)
     {
-        $tokens_controller = $this->getTokensController();
-
-        return $tokens_controller->validateTokens($id, $tokens) &&
-            $tokens_controller->revokeAccess($tokens);
+        return $this->validateUser($id, $tokens) &&
+            $this->getTokensController()->revokeAccess(tokens: $tokens);
     }
 }

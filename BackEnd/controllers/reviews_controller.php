@@ -21,7 +21,7 @@ class ReviewsController extends BaseController
     {
         $data['sorting'] ??= [$this->rating => true];
 
-        return $data;
+        return parent::setGetterDefaults($data);
     }
 
 
@@ -66,7 +66,7 @@ class ReviewsController extends BaseController
         // print_r($data);
         $data['id'] = $id;
         if ($this->validateReview("delete", $data)) {
-            if ($this->getOne("id", $id)) {
+            if ($this->model->getOne(column: "id", value: $id)) {
                 // echo "delete review: ";
                 // echo "proper review  : ", $data["id"], "<br>";
                 if ($this->model->delete($id)) {
@@ -83,9 +83,9 @@ class ReviewsController extends BaseController
     {
         // echo "<br> update reviews_controller <br>";
         // print_r($data);
-        $data['id'] = $id;
+        // $data['id'] = $id;
         if ($this->validateReview("update", $data)) {
-            if ($this->getOne("id", $id)) {
+            if ($this->model->getOne(column: "id", value: $id)) {
                 // echo "update review: ";
                 //update review, remove the tokens and send infos without tokens
                 unset($data['tokens']);

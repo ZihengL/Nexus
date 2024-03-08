@@ -31,13 +31,13 @@ class GamesController extends BaseController
     /***************************** GETTERS *****************************/
     /*******************************************************************/
 
-    public function getOneAsJoined(...$data)
+    public function getOneAsJoined($data)
     {
         $data = $this->setGetterDefaults($data);
         return $this->model->getOneAsJoined(...$data);
     }
 
-    public function getAllAsJoined(...$data)
+    public function getAllAsJoined($data)
     {
         $data = $this->setGetterDefaults($data);
         return $this->model->getOneAsJoined(...$data);
@@ -73,7 +73,7 @@ class GamesController extends BaseController
         return false;
     }
 
-    public function delete($id, $tokens = null, ...$data)
+    public function delete($id, $tokens = null)
     {
         return $this->model->delete($id);
     }
@@ -82,7 +82,7 @@ class GamesController extends BaseController
 
     public function getDeveloper($game_id)
     {
-        if ($game = $this->model->getOne('id', $game_id, included_columns: ['developerID'])) {
+        if ($game = $this->model->getOne(column: 'id', value: $game_id, included_columns: ['developerID'])) {
             return $this->getUsersController()->getOne('id', $game['developerID']);
         }
 

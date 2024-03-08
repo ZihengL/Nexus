@@ -43,15 +43,15 @@ class BaseModel
             }
 
             if (self::$print_queries) {
-                echo "<h5>{$this->table}</h5><br>";
-                printall($stmt);
+                echo "<h5>{$this->table}</h5><br><pre>";
+                var_dump($stmt);
+                echo '<br>';
+                var_dump($params);
+                echo '</pre><hr>';
             }
 
             return $stmt;
         } catch (PDOException $e) {
-            echo "<b>ERROR: </b> in <b>{$this->table}</b> for query: ";
-            printall($sql);
-
             throw new Exception("Database query error: " . $e->getMessage());
         }
     }
@@ -67,15 +67,15 @@ class BaseModel
             $stmt->execute();
 
             if (self::$print_queries) {
-                echo "<h5>{$this->table}</h5><br>";
-                printall($stmt);
+                echo "<h5>{$this->table}</h5><br><pre>";
+                var_dump($stmt);
+                echo '<br>';
+                var_dump($params);
+                echo '</pre><hr>';
             }
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            echo "<b>ERROR: </b> in <b>{$this->table}</b> for query: ";
-            printall($sql);
-
             throw new Exception("Database query error: " . $e->getMessage());
         }
     }
@@ -98,7 +98,7 @@ class BaseModel
     /****************************** CRUDS ******************************/
     /*******************************************************************/
 
-    public function create($data)
+    public function create(...$data)
     {
         $data = $this->formatData($data);
         $columns = implode(', ', array_keys($data));
@@ -114,18 +114,23 @@ class BaseModel
         }
     }
 
-    public function update($id, $data)
+    public function update($id, ...$data)
     {
         $formatted_data = $this->formatData($data);
-        $pairs = implode(' = ?, ', array_keys($formatted_data)) . ' = ?';
-        $formatted_data['id'] = $id;
 
-        $sql = "UPDATE {$this->table} SET $pairs WHERE id = ?";
+        if (!empty($formatted_data)) {
+            $pairs = implode(' = ?, ', array_keys($formatted_data)) . ' = ?';
+            $formatted_data['id'] = $id;
 
-        return $this->query($sql, $formatted_data)->fetch();
+            $sql = "UPDATE {$this->table} SET $pairs WHERE id = ?";
+
+            return $this->query($sql, $formatted_data)->fetch();
+        }
+
+        throw new Exception("Update operation failed on {$this->table} for id '$id' with datas: " . unwrap($data));
     }
 
-    public function delete($id)
+    public function delete($id, ...$data)
     {
         return $this->query("DELETE FROM {$this->table} WHERE id = $id")->fetch();
         // $stmt = $this->pdo->prepare($sql);
@@ -139,10 +144,10 @@ class BaseModel
     {
         $formatted = [];
 
-        foreach ($this->columns as $column)
+        foreach ($this->getColumns(false) as $column) {
             if (in_array($column, array_keys($data)))
                 $formatted[$column] = $data[$column];
-
+        }
         return $formatted;
     }
 
@@ -151,17 +156,16 @@ class BaseModel
     /***************************** GETTERS *****************************/
     /*******************************************************************/
 
-    public function getOne($column, $value, $included_columns = [], $joined_tables = [])
+    public function getOne($column, $value, $included_columns = [], $joined_tables = [], ...$other)
     {
         $sql = $this->buildSelectionLayer($included_columns, $joined_tables);
-        $sql .= " WHERE {$this->table}.$column = ? GROUP BY {$this->table}.id";
-        $result = $this->query($sql, [$value]);
+        $sql .= " WHERE {$this->table}.$column = ?" . (count($joined_tables) > 0 ? " GROUP BY {$this->table}.id" : '');
+        // $result = $this->query($sql, [$value]);
 
-        // Returns in function of possible multiplicity(one-to-many) relationships
-        return $joined_tables && !empty($joined_tables) ? $result->fetchAll(PDO::FETCH_ASSOC) : $result->fetch(PDO::FETCH_ASSOC);
+        return $this->query($sql, [$value])->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [], $paging = [])
+    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [], $paging = [], ...$data)
     {
         $sql = $this->buildSelectionLayer($included_columns, $joined_tables);
         $params = [];
@@ -172,23 +176,24 @@ class BaseModel
         }
 
         $sort_layer = $this->applySorting($sorting);
-        $sql .= " GROUP BY {$this->table}.id" . (!empty($sort_layer) ? " ORDER BY $sort_layer" : '');
-        $sql .= $this->getPaging(...$paging);   // TESTING PAGING
+        $sql .= !empty($joined_tables) ? " GROUP BY {$this->table}.id" : '';
+        $sql .= !empty($sort_layer) ? " ORDER BY $sort_layer" : '';
+        $sql .= $this->getPaging($paging['limit'] ?? -1, $paging['offset'] ?? 0);   // TESTING PAGING
 
         return $this->query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [], $paging = [])
+    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [], $paging = [], ...$data)
     {
         $sql = $this->buildSelectionLayer($included_columns, $joined_tables) . ' WHERE 1 = 1';
 
         ['sql' => $filtering_sql, 'params' => $params] = $this->applyFilters($filters);
-        $sql .= "$filtering_sql GROUP BY {$this->table}.id";
+        $sql .= $filtering_sql . (!empty($joined_tables) ? " GROUP BY {$this->table}.id" : '');
 
         if ($sorting_layer = $this->applySorting($sorting))
             $sql .= " ORDER BY $sorting_layer";
 
-        $sql .= $this->getPaging(...$paging);
+        $sql .= $this->getPaging($paging['limit'] ?? -1, $paging['offset'] ?? 0);
 
         return $this->bindingQuery($sql, $params);
     }
@@ -298,7 +303,7 @@ class BaseModel
         if ($limit !== -1)
             return " LIMIT $limit OFFSET $offset";
 
-        return;
+        return '';
     }
 
     public function applyFilters($filters, $included_columns = [])

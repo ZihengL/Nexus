@@ -7,15 +7,18 @@ export function storeData(key, data) {
 }
 
 export function getStoredData(key, field = null) {
-  if (localStorage.getItem(key)) {
-    const data = JSON.parse(localStorage.getItem(key));
+  let item = localStorage.getItem(key);
 
-    return field ? data[field] : data;
+  if (item !== null) {
+    item = JSON.parse(item);
+
+    return field !== null ? item[field] : item;
   }
 
   return null;
 }
 
+// User or tokens
 export function clearFromStorage(key = null) {
   if (key) {
     localStorage.removeItem(key);
@@ -27,15 +30,19 @@ export function clearFromStorage(key = null) {
 // USER OBJ INFOS -- todo: save password only if user chooses to
 
 export function isLoggedIn() {
-  return localStorage.getItem("user") !== null;
+  return getStoredData("user") !== null;
 }
 
 export function storeUser(user) {
   storeData("user", user);
 }
 
-export function getStoredUser() {
-  return getStoredData("user");
+export function getUser(field = null) {
+  if (isLoggedIn()) {
+    return getStoredData("user", field);
+  }
+
+  return null;
 }
 
 export function getFromUser(field) {
@@ -48,7 +55,7 @@ export function storeTokens(tokens) {
   storeData("tokens", tokens);
 }
 
-export function getStoredTokens() {
+export function getTokens() {
   return getStoredData("tokens");
 }
 
@@ -125,10 +132,7 @@ export async function login(email, password) {
     password: password,
   });
 
-  if (result) {
-    // console.log("result.user", result.user);
-    // console.log(result.tokens);
-
+  if (await result) {
     storeUser(result.user);
     storeTokens(result.tokens);
 
@@ -139,18 +143,38 @@ export async function login(email, password) {
 }
 
 export async function logout() {
-  const result = await fetchData("users", "logout", {
-    id: getFromUser("id"),
-    tokens: getStoredTokens(),
-  });
+  if (isLoggedIn()) {
+    const result = await fetchData("users", "logout", {
+      id: getFromUser("id"),
+      tokens: getTokens(),
+    });
 
-  if (result) {
-    console.log(result);
-    clearFromStorage();
-    return true;
+    if (result) {
+      console.log("logout results", await result);
+      clearFromStorage();
+      console.log("STORED USER", getUser());
+
+      return await result;
+    }
   }
 
   return false;
+}
+
+export async function updateUser(data) {
+  if (isLoggedIn()) {
+    const result = await fetchData("users", "update", {
+      id: getFromUser("id"),
+      tokens: getTokens(),
+      data,
+    });
+
+    console.log("UPDATE", result);
+
+    if (result) {
+      storeTokens(result.tokens);
+    }
+  }
 }
 
 // GENERICS

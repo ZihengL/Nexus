@@ -44,7 +44,7 @@ class UsersModel extends BaseModel
 
     public function userExists($email)
     {
-        return !empty($this->getOne('email', $email, ['email']));
+        return !empty($this->getOne(column: 'email', value: $email, included_columns: ['email']));
     }
 
     public function create($data)
@@ -63,10 +63,10 @@ class UsersModel extends BaseModel
         $user = $this->getOne('id', $id);
 
         if ($user) {
-            if (array_key_exists("password", $data)) {
+            if (isset($data['password'])) {
                 $new_password = $data['password'];
 
-                if ($new_password && !password_verify($new_password, $user['password'])) {
+                if (count($new_password) > 0) {
                     $data['password'] = password_hash($new_password, PASSWORD_DEFAULT);
                 }
             }
@@ -122,7 +122,7 @@ class UsersModel extends BaseModel
     {
         if (isset($data['email']) && isset($data['password']) && !empty($data['email']) && !empty($data['password'])) {
             $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
-            $data['creationDate'] = date('Y-m-d');
+            // $data['creationDate'] = date('Y-m-d');
 
             return $data;
         }

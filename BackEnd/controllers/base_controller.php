@@ -93,14 +93,14 @@ class BaseController
 
     // User validation & authentification
 
-    protected function validateUser($user_id, $tokens)
+    protected function validateUser($id, $tokens)
     {
-        return $this->getTokensController()->validateTokens($user_id, $tokens);
+        return $this->getTokensController()->validateTokens($id, $tokens);
     }
 
-    protected function authenticateUser($user_id, $tokens)
+    protected function authenticateUser($id, $tokens)
     {
-        return $this->getTokensController()->authenticateTokens($user_id, $tokens);
+        return $this->getTokensController()->authenticateTokens($id, $tokens);
     }
 
     // Need this to filter out indirect access to restricted columns
@@ -131,21 +131,19 @@ class BaseController
     public function getOne(...$data)
     {
         // $data = $this->setGetterDefaults($data);
-        return $this->model->getOne(...$this->setGetterDefaults($data));
+        return $this->model->getOne(...$this->setGetterDefaults(...$data));
     }
 
     // public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [])
     public function getAll(...$data)
     {
-        // $data = $this->setGetterDefaults($data);
-        return $this->model->getAll(...$this->setGetterDefaults($data));
+        return $this->model->getAll(...$this->setGetterDefaults(...$data));
     }
 
     // public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
     public function getAllMatching(...$data)
     {
-        // $data = $this->setGetterDefaults($data);
-        return $this->model->getAllMatching(...$this->setGetterDefaults($data));
+        return $this->model->getAllMatching(...$this->setGetterDefaults(...$data));
     }
 
     public function create(...$data)
@@ -158,9 +156,9 @@ class BaseController
         return $this->model->update($id, ...$data);
     }
 
-    public function delete($id, ...$data)
+    public function delete($id)
     {
-        return $this->model->delete($id, ...$data);
+        return $this->model->delete($id);
     }
 
 
@@ -183,7 +181,7 @@ class BaseController
         // return json_encode($response);
     }
 
-    protected function getUserIdFromToken($tokens)
+    protected function getUserIdFromTokens($tokens)
     {
         return $this->getTokensController()->getTokenSub($tokens);
     }
@@ -196,7 +194,7 @@ class BaseController
         $data['joined_tables'] ??= [];
         $data['joined_tables'] = $this->filterAccessOnJoins($data['joined_tables']);
 
-        $data['paging'] ??= [];
+        $data['paging'] ??= ['limit' => -1, 'offset' => 0];
 
         return $data;
     }
