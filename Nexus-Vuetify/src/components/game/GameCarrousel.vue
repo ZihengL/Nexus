@@ -14,54 +14,43 @@
     </ul>
   </div>
 </template>
-
 <script setup>
-import { onMounted, onBeforeUnmount, defineProps  } from 'vue';
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { onMounted, onBeforeUnmount, ref as vueRef, reactive } from 'vue';
+import { getStorage, ref as firebaseRef, getDownloadURL } from "firebase/storage";
+
 const storage = getStorage();
 
 const props = defineProps(['idJeux']);
 const defaultPath = "/src/assets/image/img1.png";
-const tabImgGame = [];
-const sliderList = ref(null);
-const items = ref(null);
-const next = ref(null);
-const prev = ref(null);
-const dots = ref(null);
+const tabImgGame = vueRef([]);
+const sliderList = vueRef(null);
 
+let active = vueRef(0);
 let lengthItems = 0;
-let active = 0;
 let refreshInterval;
 
 async function fetchCarouselGameImages(gameId, index) {
   const imagePath = `Games/${gameId}/media/${gameId}_${index}.png`;
-  const imageRef = ref(storage, imagePath);
-  console.log('comm : ' , imagePath)
+  const imageRef = firebaseRef(storage, imagePath);
   try {
     const url = await getDownloadURL(imageRef);
-    return { id: gameId, image: url };
+    tabImgGame.value.push({ id: gameId, image: url });
   } catch (error) {
     console.error(`Error fetching image for ${gameId}:`, error);
-    return { id: gameId, image: defaultPath };
+    tabImgGame.value.push({ id: gameId, image: defaultPath });
   }
 }
 
 onMounted(async () => {
   for (let index = 1; index <= 4; index++) {
-    const imageInfo = await fetchCarouselGameImages(props.idJeux, index);
-    tabImgGame.push(imageInfo);
+    await fetchCarouselGameImages(props.idJeux, index);
   }
-  console.log('lenght : ', tabImgGame.length)
-  console.log('comm : ', tabImgGame)
-  if (tabImgGame.length > 0){
-    items.value = sliderList.value.querySelectorAll('.item');
-    lengthItems = items.value.length - 1;
-    next.value = document.getElementById('next');
-    prev.value = document.getElementById('prev');
-    dots.value = sliderList.value.querySelectorAll('.dots li');
+  if (tabImgGame.value.length > 0){
+    await nextTick(); // Ensure the DOM is updated
+    lengthItems = sliderList.value.querySelectorAll('.item').length - 1;
 
     refreshInterval = setInterval(() => {
-      next.value.click();
+      nextFunc();
     }, 3000);
   }
 });
@@ -71,37 +60,42 @@ onBeforeUnmount(() => {
 });
 
 const nextFunc = () => {
-  active = active + 1 <= lengthItems ? active + 1 : 0;
+  active.value = active.value + 1 <= lengthItems ? active.value + 1 : 0;
   reloadSlider();
 };
 
 const prevFunc = () => {
-  active = active - 1 >= 0 ? active - 1 : lengthItems;
+  active.value = active.value - 1 >= 0 ? active.value - 1 : lengthItems;
   reloadSlider();
 };
 
 const reloadSlider = () => {
-  sliderList.value.style.left = -items.value[active].offsetLeft + 'px';
+  const items = sliderList.value.querySelectorAll('.item');
+  const dots = document.querySelectorAll('.dots li');
+  
+  sliderList.value.style.transform = `translateX(-${items[active.value].offsetLeft}px)`;
 
-  let lastActiveDot = sliderList.value.querySelector('.dots li.active');
+  const lastActiveDot = document.querySelector('.dots li.active');
   if (lastActiveDot) {
       lastActiveDot.classList.remove('active');
   }
   
-  dots.value[active].classList.add('active');
+  if(dots.length > 0) {
+    dots[active.value].classList.add('active');
+  }
 
   clearInterval(refreshInterval);
   refreshInterval = setInterval(() => {
-      next.value.click();
+    nextFunc();
   }, 3000);
 };
 
-
 const goToSlide = (index) => {
-  active = index;
+  active.value = index;
   reloadSlider();
 };
 </script>
+
 
 
 <style src="../../styles/GameCarrouselStyle.scss"></style>
