@@ -47,7 +47,7 @@ class UsersModel extends BaseModel
         return !empty($this->getOne(column: 'email', value: $email, included_columns: ['email']));
     }
 
-    public function create($data)
+    public function create(...$data)
     {
         if (!$this->userExists($data['email'])) {
             $data = $this->validateData($data);
@@ -58,7 +58,7 @@ class UsersModel extends BaseModel
         return false;
     }
 
-    public function update($id, $data)
+    public function update($id, ...$data)
     {
         $user = $this->getOne('id', $id);
 
@@ -71,7 +71,7 @@ class UsersModel extends BaseModel
                 }
             }
 
-            return parent::update($id, $data);
+            return parent::update($id, ...$data);
         }
 
         return false;

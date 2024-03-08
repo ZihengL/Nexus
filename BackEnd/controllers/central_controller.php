@@ -81,12 +81,21 @@ class CentralController
         try {
             if ($data) {
                 $data = $controller->standardizeRequestData($data);
-                return $controller->$action(...$data);
-            }
 
-            return $controller->$action();
+                if ($controller->isPrivilegedAction($action)) {
+                    [$tokens, $data] = $controller->verifyCredentials($data);
+
+                    $result = $controller->$action($data);
+                    return ['tokens' => $tokens, 'result' => $result];
+                } else {
+                    return $controller->$action($data);
+                }
+            } else {
+                return $controller->$action();
+            }
         } catch (InvalidArgumentException $e) {
-            throw new Exception("Error parsing request data: {$e->getMessage()}");
+            $unwrapped = unwrap($data);
+            throw new Exception("Error parsing request data from '$unwrapped': {$e->getMessage()}");
         }
     }
 

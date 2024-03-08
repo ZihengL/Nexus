@@ -24,8 +24,9 @@ class UsersController extends BaseController
         $this->model = new UsersModel($pdo);
         $this->restricted_columns = ['password', 'email', 'phoneNumber', 'isAdmin'];
 
-        $table_specific_actions = ['login', 'logout', 'authenticate'];
-        parent::__construct($central_controller, $table_specific_actions);
+        $specific_actions = ['login', 'logout', 'authenticate'];
+        $privileged_actions = ['update', 'delete'];
+        parent::__construct($central_controller, $specific_actions, $privileged_actions);
     }
 
     public function userExists($data)
@@ -43,22 +44,19 @@ class UsersController extends BaseController
 
     // Returns tokens to log the user in
     // TODO: CREATE USER FOLDER
-    public function create(...$data)
-    {
-        if ($this->model->create($data)) {
-            $user = $this->getOne($this->email, $data[$this->email]);
+    // public function create($data)
+    // {
+    //     if ($this->model->create($data)) {
+    //         $user = $this->model->getOne($this->email, $data[$this->email]);
 
-            if ($user) {
-                // $drive_id = $this->getGoogleClientManager()->createUserFolder($user);
-                // $user[$this->drive_id] = $drive_id;
-                // echo "register";
-                // $this->model->update($user[$this->id], $user);
-                return true;
-            }
-        }
+    //         if ($user) {
 
-        return false;
-    }
+    //             return true;
+    //         }
+    //     }
+
+    //     return false;
+    // }
 
     public function update($id, $tokens = null, ...$data)
     {
@@ -79,8 +77,9 @@ class UsersController extends BaseController
     //  ACCESS & SECURITY
 
     // Do this if user needs to do a fresh login
-    public function login($email, $password)
+    public function login($data)
     {
+        
 
         $user = $this->model->getOne(column: $this->email, value: $email);
         $tokens_controller = $this->getTokensController();
@@ -90,7 +89,7 @@ class UsersController extends BaseController
         }
     }
 
-    public function logout($id, $tokens)
+    public function logout($data)
     {
         return $this->validateUser($id, $tokens) &&
             $this->getTokensController()->revokeAccess(tokens: $tokens);

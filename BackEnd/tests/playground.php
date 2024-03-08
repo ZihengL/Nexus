@@ -22,6 +22,7 @@ function datatest($a, $z = null, ...$arr)
     return [...func_get_args(), $arr];
 }
 
+
 // function testz($a, $arr, $z, ...$arr1)
 // {
 //     printall($arr1);
@@ -29,7 +30,12 @@ function datatest($a, $z = null, ...$arr)
 
 // }
 
-// $arr1 = ['a' => 'a val', 'b' => 'b val', 'c' => 'c val', 'd' => 'd val', 'z' => 'z val'];
+$arr1 = ['a' => 'a val', 'b' => 'b val', 'c' => 'c val', 'd' => 'd val', 'z' => 'z val'];
+
+$arr2 = ['asdsadas', 'agweqwtn'];
+
+printall([...$arr1, $arr2]);
+
 
 // testz(...$arr1);
 

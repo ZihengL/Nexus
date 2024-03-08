@@ -47,7 +47,7 @@ try {
     $result = $central_controller->parseRequest($table, $action, $data);
     echo json_encode($result);
 } catch (Exception $e) {
-    echo json_encode(['ERROR' => $e->getMessage()]);
+    echo json_encode(['ERROR' => strip_tags($e->getMessage())]);
 }
 
 
@@ -87,13 +87,42 @@ function parseRequestMethod()
     }
 }
 
-function unwrap($item)
+function getFromData($keys, $data, $unset = true)
 {
-    if ($item) {
-        return var_export($item, true);
+    $items = [];
+
+    foreach ($keys as $key)
+        if (isset($data[$key])) {
+            array_push($items, $data[$key]);
+
+            if ($unset)
+                unset($data[$key]);
+        } else {
+            throw new Exception("Missing $key parameter for request in data: " . unwrap($data));
+        }
+
+    return [...$items, $data];
+}
+
+function getOneFromData($key, $data, $unset = false)
+{
+    if (isset($data[$key])) {
+        $item = $data[$key];
+
+        if ($unset) {
+            unset($data[$key]);
+            return [$item, $data];
+        }
+
+        return $item;
     }
 
-    return '';
+    throw new Exception("Missing '$key' parameter for request in data: " . unwrap($data));
+}
+
+function unwrap($item)
+{
+    return var_export($item, true) ?? '';
 }
 
 function printall($item)

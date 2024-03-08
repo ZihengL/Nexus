@@ -14,7 +14,7 @@ class GamesModel extends BaseModel
 
     // Other Cruds
 
-    public function create($game)
+    public function create(...$game)
     {
         $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE game = ?");
         $stmt->execute([$game]);
@@ -22,7 +22,7 @@ class GamesModel extends BaseModel
         return $stmt->fetch();
     }
 
-    public function update($id, $game)
+    public function update($id, ...$game)
     {
         $formatted_data = $this->formatData($game);
         $pairs = implode(' = ?, ', array_keys($formatted_data)) . ' = ?';

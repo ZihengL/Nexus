@@ -98,7 +98,7 @@ class BaseModel
     /****************************** CRUDS ******************************/
     /*******************************************************************/
 
-    public function create(...$data)
+    public function create($data)
     {
         $data = $this->formatData($data);
         $columns = implode(', ', array_keys($data));
@@ -114,7 +114,7 @@ class BaseModel
         }
     }
 
-    public function update($id, ...$data)
+    public function update(int $id, $data)
     {
         $formatted_data = $this->formatData($data);
 
@@ -130,7 +130,7 @@ class BaseModel
         throw new Exception("Update operation failed on {$this->table} for id '$id' with datas: " . unwrap($data));
     }
 
-    public function delete($id, ...$data)
+    public function delete($id)
     {
         return $this->query("DELETE FROM {$this->table} WHERE id = $id")->fetch();
         // $stmt = $this->pdo->prepare($sql);
@@ -156,7 +156,7 @@ class BaseModel
     /***************************** GETTERS *****************************/
     /*******************************************************************/
 
-    public function getOne($column, $value, $included_columns = [], $joined_tables = [], ...$other)
+    public function getOne($column, $value, $included_columns = [], $joined_tables = [])
     {
         $sql = $this->buildSelectionLayer($included_columns, $joined_tables);
         $sql .= " WHERE {$this->table}.$column = ?" . (count($joined_tables) > 0 ? " GROUP BY {$this->table}.id" : '');
@@ -165,7 +165,7 @@ class BaseModel
         return $this->query($sql, [$value])->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [], $paging = [], ...$data)
+    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [], $paging = [])
     {
         $sql = $this->buildSelectionLayer($included_columns, $joined_tables);
         $params = [];
@@ -183,7 +183,7 @@ class BaseModel
         return $this->query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [], $paging = [], ...$data)
+    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [], $paging = [])
     {
         $sql = $this->buildSelectionLayer($included_columns, $joined_tables) . ' WHERE 1 = 1';
 

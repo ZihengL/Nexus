@@ -5,12 +5,12 @@ class BaseController
     public static $controllers = [];
 
     protected $actions = [
-        'getOne',
-        'getAll',
-        'getAllMatching',
-        'create',
-        'update',
-        'delete'
+        'getOne' => false,
+        'getAll' => false,
+        'getAllMatching' => false,
+        'create' => false,
+        'update' => false,
+        'delete' => false
     ];
 
     protected $central_controller;
@@ -19,23 +19,22 @@ class BaseController
 
     protected $id = 'id';
 
-    public function __construct($central_controller, $table_specific_actions = [])
+    public function __construct($central_controller, $table_specific_actions = [], $restricted_actions = [])
     {
         $this->central_controller = $central_controller;
+        $this->actions = array_merge($this->actions, $table_specific_actions);
+
+        foreach ($restricted_actions as $action)
+            if (isset($this->actions[$action]))
+                $this->actions[$action] = true;
 
         self::$controllers[$this->model->table] = $this;
-        $this->actions = array_merge($this->actions, $table_specific_actions);
     }
 
 
     /*******************************************************************/
     /****************************** GETTERS ****************************/
     /*******************************************************************/
-
-    public function isValidAction($action)
-    {
-        return in_array($action, $this->actions);
-    }
 
     public function getTableName()
     {
@@ -91,6 +90,26 @@ class BaseController
     /****************** VALIDATION, ACCESS & SECURITY ******************/
     /*******************************************************************/
 
+    public function isValidAction($action)
+    {
+        return in_array($action, array_keys($this->actions));
+    }
+
+    public function isPrivilegedAction($action)
+    {
+        return $this->actions[$action];
+    }
+
+    public function verifyCredentials($data)
+    {
+        [$credentials, $data] = getFromData(['credentials'], $data, true);
+
+        if ($authenticated_tokens = $this->authenticateUser(...$credentials))
+            return [$authenticated_tokens, $data];
+
+        return false;
+    }
+
     // User validation & authentification
 
     protected function validateUser($id, $tokens)
@@ -103,88 +122,10 @@ class BaseController
         return $this->getTokensController()->authenticateTokens($id, $tokens);
     }
 
-    // Need this to filter out indirect access to restricted columns
-
-    protected function filterAccess($included_columns = [])
-    {
-        $valid_columns = array_diff($this->model->getColumns(true), $this->restricted_columns);
-
-        return empty($included_columns) ? $valid_columns : array_intersect($valid_columns, $included_columns);
-    }
-
-    protected function filterAccessOnJoins($joined_tables = [])
-    {
-        if (is_array($joined_tables))
-            foreach ($joined_tables as $ext_tab => $included_columns)
-                if ($table_controller = self::$controllers[$ext_tab])
-                    $included_columns = $table_controller->filterAccess($included_columns);
-
-        return $joined_tables;
-    }
-
 
     /*******************************************************************/
-    /****************************** CRUDS ******************************/
+    /************************* PROCESSING DATA *************************/
     /*******************************************************************/
-
-    // public function getOne($column, $value, $included_columns = [], $joined_tables = [])
-    public function getOne(...$data)
-    {
-        // $data = $this->setGetterDefaults($data);
-        return $this->model->getOne(...$this->setGetterDefaults(...$data));
-    }
-
-    // public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [])
-    public function getAll(...$data)
-    {
-        return $this->model->getAll(...$this->setGetterDefaults(...$data));
-    }
-
-    // public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [])
-    public function getAllMatching(...$data)
-    {
-        return $this->model->getAllMatching(...$this->setGetterDefaults(...$data));
-    }
-
-    public function create(...$data)
-    {
-        return $this->model->create(...$data);
-    }
-
-    public function update($id, ...$data)
-    {
-        return $this->model->update($id, ...$data);
-    }
-
-    public function delete($id)
-    {
-        return $this->model->delete($id);
-    }
-
-
-    /*******************************************************************/
-    /****************************** TOOLS ******************************/
-    /*******************************************************************/
-
-    public function createResponse($isSuccess, $message)
-    {
-        if (!$isSuccess)
-            throw new Exception($message);
-
-        $response = [
-            'isSuccessful' => (bool) $isSuccess,
-            'message' => $message,
-        ];
-
-        return $response;
-
-        // return json_encode($response);
-    }
-
-    protected function getUserIdFromTokens($tokens)
-    {
-        return $this->getTokensController()->getTokenSub($tokens);
-    }
 
     protected function setGetterDefaults($data)
     {
@@ -214,6 +155,91 @@ class BaseController
 
         return $data;
     }
+
+    // Need this to filter out indirect access to restricted columns
+
+    protected function filterAccess($included_columns = [])
+    {
+        $valid_columns = array_diff($this->model->getColumns(true), $this->restricted_columns);
+
+        return empty($included_columns) ? $valid_columns : array_intersect($valid_columns, $included_columns);
+    }
+
+    protected function filterAccessOnJoins($joined_tables = [])
+    {
+        if (is_array($joined_tables))
+            foreach ($joined_tables as $ext_tab => $included_columns)
+                if ($table_controller = self::$controllers[$ext_tab])
+                    $included_columns = $table_controller->filterAccess($included_columns);
+
+        return $joined_tables;
+    }
+
+
+    /*******************************************************************/
+    /****************************** CRUDS ******************************/
+    /*******************************************************************/
+
+    public function getOne($data)
+    {
+        return $this->model->getOne(...$this->setGetterDefaults($data));
+    }
+
+    public function getAll($data)
+    {
+        return $this->model->getAll(...$this->setGetterDefaults($data));
+    }
+
+    public function getAllMatching($data)
+    {
+        return $this->model->getAllMatching(...$this->setGetterDefaults($data));
+    }
+
+    public function create($data)
+    {
+        return $this->model->create($data);
+    }
+
+    public function update($data)
+    {
+        $id = getOneFromData([$this->id], $data);
+
+        return $this->model->update($id, $data);
+    }
+
+    public function delete($data)
+    {
+        $id = getOneFromData([$this->id], $data);
+
+        return $this->model->delete($id);
+    }
+
+
+    /*******************************************************************/
+    /****************************** TOOLS ******************************/
+    /*******************************************************************/
+
+    public function createResponse($isSuccess, $message)
+    {
+        if (!$isSuccess)
+            throw new Exception($message);
+
+        $response = [
+            'isSuccessful' => (bool) $isSuccess,
+            'message' => $message,
+        ];
+
+        return $response;
+
+        // return json_encode($response);
+    }
+
+    protected function getUserIdFromTokens($tokens)
+    {
+        return $this->getTokensController()->getTokenSub($tokens);
+    }
+
+
 
     // public function createResponse($isSuccess, $message)
     // {
