@@ -5,7 +5,7 @@
       <div class="gameInfo roundBorderSmall glass">
         <div class="gameImg">
           <img
-            src="../assets/image/img1.png"
+            :src="UrlGameImg"
             alt="#"
             class="roundBorderSmall"
           />
@@ -86,14 +86,15 @@
 <script setup>
 import btnComp from "../components/btnComponent.vue";
 import myAvis from "../components/game/myAvis.vue";
-import { defineProps, onMounted, reactive, ref } from "vue";
-import AvisRating from "../components/game/AvisRating.vue";
+import { defineProps, onMounted, reactive,ref as vueRef } from "vue";
 import Avis from "../components/game/Avis.vue";
 import game from "../components/game/GameCarrousel.vue";
 // import PaginationComponent from "../components/PaginationComponent.vue";
-import ReviewsListComponent from "../components/reviewsListComponent.vue";
 import {getGameDetailsWithDeveloperName, getReviews } from '../JS/fetchServices';
+import { getStorage, ref as firebaseRef, getDownloadURL, ref } from "firebase/storage";
 
+const storage = getStorage();
+let UrlGameImg = ref(null);
 const gameInfos = reactive({
   leGame: {}, 
   reviewDate_titre : "Avis les plus récents",
@@ -104,11 +105,16 @@ const gameInfos = reactive({
   sortByRating: {rating: false},
 });
 
+const defaultPath = "/src/assets/image/img1.png";
 const props = defineProps({
   idGame: {
     type : Number,
     default: 4,
   },
+  // urlImg: {
+  //   type : String,
+  //   default: "/src/assets/image/img1.png",
+  // }
 });
 let reviewTemp = ref(null);
 
@@ -119,7 +125,6 @@ const toggleLogin = () => {
  //const gamesContainer = document.querySelector(".gamesss"); // Use class selector
   if (gamessShow) {
     gamessShow.style.marginLeft = "0%";
-    gamesContainer.style.marginLeft = "0%";
   }
 };
 
@@ -129,13 +134,35 @@ const toggleSignup = () => {
   //const gamesContainer = document.querySelector(".gamesss"); // Use class selector
   if (gamessShow) {
     gamessShow.style.marginLeft = "-50%";
-    gamesContainer.style.marginLeft = "-50%";
   }
 };
 
-onMounted(async () => {
-  // console.log("sortByRating : ", gameInfos.sortByRating)
+async function fetchGameUrl(gameId) {
   try {
+    const imagePath = `Games/${gameId}/media/${gameId}_Store.png`;
+    //console.log('imagePath : ', imagePath);
+    const imageRef = ref(storage, imagePath);
+
+    try {
+      const url = await getDownloadURL(imageRef);
+      return { id: gameId, image: url }; // Corrected the return statement
+    } catch (error) {
+      console.error(`Error fetching image for ${gameId}:`, error);
+      return { id: gameId, image: defaultPath };// Fallback image
+    }
+  } catch (error) {
+    console.error("Error fetching game images:", error);
+    throw error; // Re-throw the error to handle it at a higher level if needed
+  }
+}
+
+onMounted(async () => {
+  
+  try {
+    UrlGameImg.value = fetchGameUrl(props.idGame);
+
+    console.log('url : ', UrlGameImg.value);
+
     let dataGame = await getGameDetailsWithDeveloperName(props.idGame)
     gameInfos.leGame = dataGame
     gameInfos.tags = gameInfos.leGame.tags

@@ -1,7 +1,7 @@
 <template>
   <router-link
     v-if="singleGame_data.leGame"
-    :to="{ name: 'Game', params: { idGame: props.idGame } }"
+    :to="{ name: 'Game', params: { idGame: props.idGame, urlImg:  singleGame_data.image.image} }"
     class="single glass2 roundBorderSmall"
   >
     <div class="img roundBorderSmall">
@@ -91,6 +91,7 @@ async function getGameInfos() {
       const image = await fetchGameImages(singleGame_data.leGame.id)
       singleGame_data.image = image
     }
+    //console.log('url : ', singleGame_data.image.image)
     // singleGame_data.leGame = singleGame_data.leGame.image;
     // console.log("singleGame data :", data);
     // singleGame_data.leGame = await data;
@@ -99,7 +100,6 @@ async function getGameInfos() {
     console.error("Error fetching game details:", error);
   }
 }
-
 onMounted(async () => {
   await getGameInfos();
 });
