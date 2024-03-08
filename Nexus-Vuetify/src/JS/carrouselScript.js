@@ -77,7 +77,7 @@ export default {
         if (!Array.isArray(data)) {
           throw new Error("Fetched data is not an array");
         }
-        console.log('data : ' , data)
+        //console.log('data : ' , data)
         return this.fetchGameImages(data.slice(0, 4));
       })
       .then((carouselItemsWithImages) => {

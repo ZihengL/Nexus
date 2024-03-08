@@ -49,7 +49,7 @@ import { getReviews, getUsername, getReviewsAndUsernames } from '../../JS/fetchS
       let reviewData = await getReviewsAndUsernames(props.idGame, sorting)
       //let reviewData = await getReviewsAndUsernames(props.idGame)
       review.value = reviewData;
-      console.log('review : ', review.value)
+      //console.log('review : ', review.value)
 
     } catch (error) {
       console.error("Error during component mounting:", error);

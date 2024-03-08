@@ -35,7 +35,7 @@ const gameList_data = reactive({
 watch(
   () => gameList_data.gameList_result,
   (newVal, oldVal) => {
-    console.log("gameList_result updated", newVal);
+    //console.log("gameList_result updated", newVal);
   },
   { deep: true }
 );

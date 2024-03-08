@@ -12,7 +12,7 @@
 
     const props = defineProps(['contenu']);
     const emit = defineEmits(['toggle-btn'])
-    console.log(props.contenu);
+    //console.log(props.contenu);
 
     const toggleBtn = () => {
         // Ajoutez votre logique de bascule (toggle) ici si nécessaire

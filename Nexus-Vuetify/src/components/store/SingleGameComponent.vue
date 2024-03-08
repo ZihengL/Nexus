@@ -59,7 +59,7 @@ const singleGame_data = reactive({
 async function fetchGameImages(gameId) {
   try {
     const imagePath = `Games/${gameId}/media/${gameId}_Store.png`;
-    console.log('imagePath : ', imagePath);
+    //console.log('imagePath : ', imagePath);
     const imageRef = ref(storage, imagePath);
 
     try {

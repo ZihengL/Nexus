@@ -140,10 +140,10 @@ onMounted(async () => {
     gameInfos.leGame = dataGame
     gameInfos.tags = gameInfos.leGame.tags
     gameInfos.devName = gameInfos.leGame.devName
-    console.log("leGame : ", gameInfos.leGame)
+    //console.log("leGame : ", gameInfos.leGame)
     let dataReview = await getReviews(props.idGame)
     reviewTemp.value = dataReview.length
-    console.log('rev lenght : ', reviewTemp.value)
+    //console.log('rev lenght : ', reviewTemp.value)
 
   } catch (error) {
     console.error("Error during component mounting:", error);
