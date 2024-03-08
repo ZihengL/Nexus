@@ -113,7 +113,24 @@ const props = defineProps({
 });
 let reviewTemp = ref(null);
 
-// Toggle functions for login and signup remain unchanged
+const isLogin = ref(true);
+const toggleLogin = () => {
+  isLogin.value = true;
+  const gamessShow = document.querySelector(".recent"); // Use class selector
+ //const gamesContainer = document.querySelector(".gamesss"); // Use class selector
+  if (gamessShow) {
+    gamessShow.style.marginLeft = "0%";
+  }
+};
+
+const toggleSignup = () => {
+  isLogin.value = false;
+  const gamessShow = document.querySelector(".recent"); // Use class selector
+  //const gamesContainer = document.querySelector(".gamesss"); // Use class selector
+  if (gamessShow) {
+    gamessShow.style.marginLeft = "-50%";
+  }
+};
 
 async function fetchGameUrl(gameId) {
   const imagePath = `Games/${gameId}/media/${gameId}_Store.png`;

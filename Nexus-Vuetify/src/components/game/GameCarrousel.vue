@@ -6,11 +6,11 @@
       </div>
     </div>
     <div class="buttons">
-      <button id="prev" @click="prevFunc">&lt;</button>
-      <button id="next" @click="nextFunc">&gt;</button>
+      <button id="prev" @click="prevFunc"  class="glow2">&lt;</button>
+      <button id="next" @click="nextFunc"  class="glow2">&gt;</button>
     </div>
     <ul class="dots">
-      <li :class="{ active: active === index }" v-for="(dot, index) in tabImgGame" :key="index" @click="goToSlide(index)"></li>
+      <li :class="{ active: active === index }" v-for="(dot, index) in tabImgGame" :key="index" @click="goToSlide(index)" class="glow2"></li>
     </ul>
   </div>
 </template>
