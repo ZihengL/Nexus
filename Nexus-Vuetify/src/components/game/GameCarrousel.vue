@@ -16,14 +16,13 @@
   </template>
   
   <script setup>
-  import { ref, onMounted, onBeforeUnmount } from 'vue';
-  const tabImgGame = [
-	"/src/assets/image/img1.jpg",
-	"/src/assets/image/img2.jpg",
-	"/src/assets/image/img3.jpg",
-	"/src/assets/image/img1.jpg",
-	"/src/assets/image/img4.jpg",
-  ];
+  import { ref, onMounted, onBeforeUnmount, defineProps  } from 'vue';
+  import { getStorage, getDownloadURL } from "firebase/storage";
+  const storage = getStorage();
+
+  const props = defineProps(['idJeux']);
+  const defaultPath = "../../assets/img/dontstarve.png"
+  const tabImgGame = new Array();
   const sliderList = ref(null);
   const items = ref(null);
   const next = ref(null);
@@ -34,7 +33,29 @@
   let active = 0;
   let refreshInterval;
   
-  onMounted(() => {
+  async function fetchCarouselGameImages(gameId, index) {
+    try {
+      const imagePath = `Games/${gameId}/media/${gameId}_${index}.png`;
+      console.log('imagePath : ', imagePath);
+      const imageRef = ref(storage, imagePath);
+
+      try {
+        const url = await getDownloadURL(imageRef);
+        return { id: gameId, image: url }; // Corrected the return statement
+      } catch (error) {
+        console.error(`Error fetching image for ${gameId}:`, error);
+        return { id: gameId, image: defaultPath };// Fallback image
+      }
+    } catch (error) {
+      console.error("Error fetching game images:", error);
+      throw error; // Re-throw the error to handle it at a higher level if needed
+    }
+  }
+
+  onMounted(async () => {
+    for (let index = 1; index <= 4; index++) {
+      tabImgGame.append = await fetchCarouselGameImages(props.idJeux, index)
+    }
     items.value = sliderList.value.querySelectorAll('.item');
     lengthItems = items.value.length - 1;
     next.value = document.getElementById('next');

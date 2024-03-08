@@ -112,7 +112,7 @@ onMounted(async () => {
   padding-bottom: 2%;
   display: flex;
   flex-direction: column;
-  height: 25rem;
+  height: 20rem;
   .img {
     flex: 6;
     position: relative;

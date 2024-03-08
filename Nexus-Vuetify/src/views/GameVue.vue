@@ -1,7 +1,7 @@
 <template>
   <div  v-if="gameInfos.leGame && gameInfos.devName" id="gameVue">
     <div class="content">
-      <game class="gameCarrousel" />
+      <game class="gameCarrousel" :idJeux="props.idGame"/>
       <div class="gameInfo roundBorderSmall glass">
         <div class="gameImg">
           <img
