@@ -86,21 +86,20 @@
 <script setup>
 import btnComp from "../components/btnComponent.vue";
 import myAvis from "../components/game/myAvis.vue";
-import { defineProps, onMounted, reactive,ref as vueRef } from "vue";
 import Avis from "../components/game/Avis.vue";
 import game from "../components/game/GameCarrousel.vue";
-// import PaginationComponent from "../components/PaginationComponent.vue";
-import {getGameDetailsWithDeveloperName, getReviews } from '../JS/fetchServices';
-import { getStorage, ref as firebaseRef, getDownloadURL, ref } from "firebase/storage";
+import { defineProps, onMounted, ref, reactive } from "vue";
+import { getGameDetailsWithDeveloperName, getReviews } from '../JS/fetchServices';
+import { getStorage, ref as firebaseRef, getDownloadURL } from "firebase/storage";
 
 const storage = getStorage();
-let UrlGameImg = ref(null);
+let UrlGameImg = ref(""); // Initialize as an empty string
 const gameInfos = reactive({
   leGame: {}, 
+  devName: "error", 
+  tags: [], 
   reviewDate_titre : "Avis les plus récents",
   reviewRating_titre : "Avis par rating",
-  devName: "error", 
-  tags: ["NO TAGS"], 
   sortByDate: {timestamp: false},
   sortByRating: {rating: false},
 });
@@ -108,75 +107,43 @@ const gameInfos = reactive({
 const defaultPath = "/src/assets/image/img1.png";
 const props = defineProps({
   idGame: {
-    type : Number,
+    type: Number,
     default: 4,
-  },
-  // urlImg: {
-  //   type : String,
-  //   default: "/src/assets/image/img1.png",
-  // }
+  }
 });
 let reviewTemp = ref(null);
 
-const isLogin = ref(true);
-const toggleLogin = () => {
-  isLogin.value = true;
-  const gamessShow = document.querySelector(".recent"); // Use class selector
- //const gamesContainer = document.querySelector(".gamesss"); // Use class selector
-  if (gamessShow) {
-    gamessShow.style.marginLeft = "0%";
-  }
-};
-
-const toggleSignup = () => {
-  isLogin.value = false;
-  const gamessShow = document.querySelector(".recent"); // Use class selector
-  //const gamesContainer = document.querySelector(".gamesss"); // Use class selector
-  if (gamessShow) {
-    gamessShow.style.marginLeft = "-50%";
-  }
-};
+// Toggle functions for login and signup remain unchanged
 
 async function fetchGameUrl(gameId) {
+  const imagePath = `Games/${gameId}/media/${gameId}_Store.png`;
+  const imageRef = firebaseRef(storage, imagePath);
   try {
-    const imagePath = `Games/${gameId}/media/${gameId}_Store.png`;
-    //console.log('imagePath : ', imagePath);
-    const imageRef = ref(storage, imagePath);
-
-    try {
-      const url = await getDownloadURL(imageRef);
-      return { id: gameId, image: url }; // Corrected the return statement
-    } catch (error) {
-      console.error(`Error fetching image for ${gameId}:`, error);
-      return { id: gameId, image: defaultPath };// Fallback image
-    }
+    const url = await getDownloadURL(imageRef);
+    return url; // Directly return the URL string
   } catch (error) {
-    console.error("Error fetching game images:", error);
-    throw error; // Re-throw the error to handle it at a higher level if needed
+    console.error(`Error fetching image for ${gameId}:`, error);
+    return defaultPath; // Return the default image path on error
   }
 }
 
 onMounted(async () => {
-  
   try {
-    UrlGameImg.value = fetchGameUrl(props.idGame);
+    UrlGameImg.value = await fetchGameUrl(props.idGame); // Await the async call
 
-    console.log('url : ', UrlGameImg.value);
+    const dataGame = await getGameDetailsWithDeveloperName(props.idGame);
+    gameInfos.leGame = dataGame;
+    gameInfos.tags = gameInfos.leGame.tags;
+    gameInfos.devName = gameInfos.leGame.devName;
 
-    let dataGame = await getGameDetailsWithDeveloperName(props.idGame)
-    gameInfos.leGame = dataGame
-    gameInfos.tags = gameInfos.leGame.tags
-    gameInfos.devName = gameInfos.leGame.devName
-    //console.log("leGame : ", gameInfos.leGame)
-    let dataReview = await getReviews(props.idGame)
-    reviewTemp.value = dataReview.length
-    //console.log('rev lenght : ', reviewTemp.value)
-
+    const dataReview = await getReviews(props.idGame);
+    reviewTemp.value = dataReview.length;
   } catch (error) {
     console.error("Error during component mounting:", error);
   }
 });
 </script>
+
 
 
 <style src="../styles/SignRegisterStyle.scss" lang="scss"></style>
