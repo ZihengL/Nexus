@@ -82,7 +82,11 @@ class TokensController extends BaseController
         $payload = $this->createPayload($user_id, self::REFRESH_TIME);
         $jwt = JWT::encode($payload, $this->refresh_key, $this->encoding_alg);
 
-        return $this->create($jwt, $payload) ? $jwt : null;
+        $payload[self::SHA] = hash($this->hashing_alg, $jwt);
+        if ($this->model->create($payload))
+            return $jwt;
+
+        return null;
     }
 
     private function generateAccessToken($user_id)
@@ -155,9 +159,10 @@ class TokensController extends BaseController
         if (
             ($access_token && $this->validateAccessToken($access_token)) ||
             ($refresh_token && $this->validateRefreshToken($user_id, $refresh_token))
-        )
-            return true;
+        ) {
 
+            return true;
+        }
         $this->revokeAccess(id: $user_id);
         throw new Exception("Invalid authentication tokens provided for User id '$user_id'.");
     }
@@ -193,24 +198,35 @@ class TokensController extends BaseController
     /***************************** CRUDS *******************************/
     /*******************************************************************/
 
-    public function create($jwt = null, $decoded = null, $jwts = null, ...$data)
+    public function create($data)
     {
-        if ($jwt && $decoded) {
-            $decoded[self::SHA] = hash($this->hashing_alg, $jwt);
+        // if ($jwt && $decoded) {
+        //     $decoded[self::SHA] = hash($this->hashing_alg, $jwt);
 
-            return parent::create($decoded);
-        }
+        //     return parent::create($decoded);
+        // }
 
         return false;
     }
 
-    public function update($id, $jwt = null, ...$data)
+    public function update($data)
     {
-        if ($decoded = $this->decodeToken($jwt, true)) {
-            $decoded[self::SHA] = hash($this->hashing_alg, $jwt);
+        // if ($decoded = $this->decodeToken($jwt, true)) {
+        //     $decoded[self::SHA] = hash($this->hashing_alg, $jwt);
 
-            return parent::update($id, $decoded);
-        }
+        //     return parent::update($id, $decoded);
+        // }
+
+        return false;
+    }
+
+    public function delete($data)
+    {
+        // if ($decoded = $this->decodeToken($jwt, true)) {
+        //     $decoded[self::SHA] = hash($this->hashing_alg, $jwt);
+
+        //     return parent::update($id, $decoded);
+        // }
 
         return false;
     }
@@ -218,20 +234,17 @@ class TokensController extends BaseController
     private function deleteByHash($jwts)
     {
         if ($jwts && isset($jwts[self::REFRESH]))
-            if ($stored = $this->getBySha($jwts[self::REFRESH]))
-                return parent::delete($stored[self::ID]);
+            if ($stored = $this->getBySha($jwts[self::REFRESH])) {
+                return $this->model->delete($stored[self::ID]);
+            }
 
         return false;
     }
 
-    private function deleteAllFromUser($user_id, ...$data)
+    private function deleteAllFromUser($user_id)
     {
-        if ($stored_tokens = $this->model->getAllMatching(filters: [self::SUB => $user_id])) {
-            foreach ($stored_tokens as $stored)
-                parent::delete($stored[self::ID]);
-
+        if ($this->model->deleteAllFromUser($user_id))
             return true;
-        }
 
         return false;
     }

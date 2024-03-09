@@ -23,10 +23,14 @@ class UsersController extends BaseController
     {
         $this->model = new UsersModel($pdo);
         $this->restricted_columns = ['password', 'email', 'phoneNumber', 'isAdmin'];
+        $specific_actions = [
+            'login' => false,
+            'logout' => false,
+            'update' => true,
+            'delete' => true
+        ];
 
-        $specific_actions = ['login', 'logout', 'authenticate'];
-        $privileged_actions = ['update', 'delete'];
-        parent::__construct($central_controller, $specific_actions, $privileged_actions);
+        parent::__construct($central_controller, $specific_actions);
     }
 
     public function userExists($data)
@@ -58,32 +62,36 @@ class UsersController extends BaseController
     //     return false;
     // }
 
-    public function update($id, $tokens = null, ...$data)
-    {
-        if ($validated_tokens = $this->authenticateUser($id, $tokens)) {
-            $this->model->update(id: $id, data: $data);
+    // public function update($id, $tokens = null, ...$data)
+    // {
 
-            return $validated_tokens;
-        }
+    //     if ($validated_tokens = $this->authenticateUser($id, $tokens)) {
+    //         $this->model->update(id: $id, data: $data);
 
-        return false;
-    }
+    //         return $validated_tokens;
+    //     }
 
-    public function delete($id, $tokens = null, ...$data)
-    {
-        return $this->validateUser($id, $tokens) && $this->model->delete($id);
-    }
+    //     return false;
+    // }
+
+    // public function delete($id, $tokens = null, ...$data)
+    // public function delete($data)
+    // {
+    //     [$tokens, $data] = getOneFromData('tokens', $data, true);
+
+    //     return $this->validateUser($id, $tokens) && $this->model->delete($id);
+    // }
 
     //  ACCESS & SECURITY
 
     // Do this if user needs to do a fresh login
     public function login($data)
     {
-        
+        [$email, $password, $data] = getFromData(['email', 'password'], $data, true);
 
         $user = $this->model->getOne(column: $this->email, value: $email);
-        $tokens_controller = $this->getTokensController();
 
+        $tokens_controller = $this->getTokensController();
         if ($tokens = $tokens_controller->generateTokensOnValidation($user, $email, $password)) {
             return ['user' => $user, 'tokens' => $tokens];
         }
@@ -91,7 +99,14 @@ class UsersController extends BaseController
 
     public function logout($data)
     {
+        [$id, $tokens] = getFromData(['id', 'tokens'], $data, false);
+
         return $this->validateUser($id, $tokens) &&
             $this->getTokensController()->revokeAccess(tokens: $tokens);
+    }
+
+    public function deleteuser($id)
+    {
+        return $this->model->delete($id);
     }
 }

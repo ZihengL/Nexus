@@ -52,6 +52,11 @@ class BaseModel
 
             return $stmt;
         } catch (PDOException $e) {
+            echo '<br>Error<br>';
+            var_dump($stmt);
+            echo '<br>';
+            var_dump($params);
+            echo '<br>';
             throw new Exception("Database query error: " . $e->getMessage());
         }
     }
@@ -76,6 +81,11 @@ class BaseModel
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
+            echo '<br>Error<br>';
+            var_dump($stmt);
+            echo '<br>';
+            var_dump($params);
+            echo '<br>';
             throw new Exception("Database query error: " . $e->getMessage());
         }
     }
@@ -114,7 +124,7 @@ class BaseModel
         }
     }
 
-    public function update(int $id, $data)
+    public function update($id, $data)
     {
         $formatted_data = $this->formatData($data);
 
@@ -132,7 +142,8 @@ class BaseModel
 
     public function delete($id)
     {
-        return $this->query("DELETE FROM {$this->table} WHERE id = $id")->fetch();
+        return $this->query("DELETE FROM {$this->table} WHERE id = $id")->rowCount();
+
         // $stmt = $this->pdo->prepare($sql);
 
         // $stmt->bindParam(1, $id, PDO::PARAM_INT);

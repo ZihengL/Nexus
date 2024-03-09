@@ -16,10 +16,15 @@ class GamesController extends BaseController
     public function __construct($central_controller, $pdo)
     {
         $this->model = new GamesModel($pdo);
-        $specific_actions = ['getOneAsJoined', 'getAllAsJoined'];
-        $restricted_actions = ['create', 'update', 'delete'];
-        
-        parent::__construct($central_controller, $specific_actions, $restricted_actions);
+        $specific_actions = [
+            'getOneAsJoined' => false,
+            'getAllAsJoined' => false,
+            'create' => true,
+            'update' => true,
+            'delete' => true
+        ];
+
+        parent::__construct($central_controller, $specific_actions);
     }
 
     protected function setGetterDefaults($data)
@@ -52,40 +57,40 @@ class GamesController extends BaseController
     /*******************************************************************/
 
     // public function create($tokens = null, ...$data)
-    public function create($data)
-    {
-        [$credentials, $create_data] = getFromData(['credentials'], $data, true);
+    // public function create($data)
+    // {
+    //     [$credentials, $create_data] = getFromData(['credentials'], $data, true);
 
-        if ($authenticated_tokens = $this->authenticateUser(...$credentials)) {
-            parent::create($create_data);
+    //     if ($authenticated_tokens = $this->authenticateUser(...$credentials)) {
+    //         parent::create($create_data);
 
-            return $authenticated_tokens;
-        }
+    //         return $authenticated_tokens;
+    //     }
 
-        return false;
-    }
+    //     return false;
+    // }
 
     // public function update($id, $tokens = null, ...$data)
-    public function update($data)
-    {
-        [$credentials, $update_data] = getFromData(['credentials'], $data, true);
+    // public function update($data)
+    // {
+    //     [$credentials, $update_data] = getFromData(['credentials'], $data, true);
 
-        if ($authenticated_tokens = $this->authenticateUser(...$credentials)) {
-            parent::update($update_data);
+    //     if ($authenticated_tokens = $this->authenticateUser(...$credentials)) {
+    //         parent::update($update_data);
 
-            return $authenticated_tokens;
-        }
+    //         return $authenticated_tokens;
+    //     }
 
-        return false;
-    }
+    //     return false;
+    // }
 
     // public function delete($id, $tokens = null)
-    public function delete($data)
-    {
-        [$credentials, $update_data] = getFromData(['credentials'], $data, true);
+    // public function delete($data)
+    // {
+    //     [$credentials, $update_data] = getFromData(['credentials'], $data, true);
 
-        return $this->model->delete($id);
-    }
+    //     return $this->model->delete($id);
+    // }
 
     // Tools
 

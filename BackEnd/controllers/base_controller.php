@@ -2,7 +2,7 @@
 
 class BaseController
 {
-    public static $controllers = [];
+    protected static $controllers = [];
 
     protected $actions = [
         'getOne' => false,
@@ -19,14 +19,16 @@ class BaseController
 
     protected $id = 'id';
 
-    public function __construct($central_controller, $table_specific_actions = [], $restricted_actions = [])
+    public function __construct($central_controller, $table_specific_actions = [])
     {
         $this->central_controller = $central_controller;
         $this->actions = array_merge($this->actions, $table_specific_actions);
 
-        foreach ($restricted_actions as $action)
-            if (isset($this->actions[$action]))
-                $this->actions[$action] = true;
+        // echo '<hr>' . $this->model->table;
+        // foreach ($this->actions as $action => $value) {
+        //     // $this->actions[$action] ??= false;
+        //     echo '<br>' . $action . ' ' . ($value === false ? 'public' : 'private');
+        // }
 
         self::$controllers[$this->model->table] = $this;
     }
@@ -90,9 +92,21 @@ class BaseController
     /****************** VALIDATION, ACCESS & SECURITY ******************/
     /*******************************************************************/
 
+    public static function getController($table)
+    {
+        if (isset(self::$controllers[$table]))
+            return self::$controllers[$table];
+
+        throw new Exception("Unable to find request table '$table'.");
+    }
+
     public function isValidAction($action)
     {
-        return in_array($action, array_keys($this->actions));
+        if (in_array($action, array_keys($this->actions)))
+            return true;
+
+        $imploded = implode(', ', array_keys($this->actions));
+        throw new Exception("Innaplicable request action '$action' from '$imploded'.");
     }
 
     public function isPrivilegedAction($action)
@@ -100,17 +114,17 @@ class BaseController
         return $this->actions[$action];
     }
 
+    // TODO: CHANGING FROM AUTHENTICATION TO JUST VALIDATION?
     public function verifyCredentials($data)
     {
-        [$credentials, $data] = getFromData(['credentials'], $data, true);
+        [$id, $tokens, $data] = getFromData(['id', 'tokens'], $data, true);
 
-        if ($authenticated_tokens = $this->authenticateUser(...$credentials))
-            return [$authenticated_tokens, $data];
+        // if ($authenticated_tokens = $this->authenticateUser(...$credentials))
+        if ($this->validateUser($id, $tokens))
+            return $data;
 
         return false;
     }
-
-    // User validation & authentification
 
     protected function validateUser($id, $tokens)
     {
@@ -157,7 +171,6 @@ class BaseController
     }
 
     // Need this to filter out indirect access to restricted columns
-
     protected function filterAccess($included_columns = [])
     {
         $valid_columns = array_diff($this->model->getColumns(true), $this->restricted_columns);
@@ -202,14 +215,18 @@ class BaseController
 
     public function update($data)
     {
-        $id = getOneFromData([$this->id], $data);
+        $id = getOneFromData($this->id, $data);
 
-        return $this->model->update($id, $data);
+        if ($this->model->update($id, $data)) {
+            return $this->model->getOne($this->id, $id);
+        }
+
+        return false;
     }
 
     public function delete($data)
     {
-        $id = getOneFromData([$this->id], $data);
+        $id = getOneFromData($this->id, $data);
 
         return $this->model->delete($id);
     }

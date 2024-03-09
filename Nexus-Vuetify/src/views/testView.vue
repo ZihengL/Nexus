@@ -425,11 +425,13 @@ export default {
     },
 
     async ziLogout() {
-      // this.isLoggedIn();
-
-      await this.$logout().then(
-        this.isLoggedIn()
-      );
+      const res = this.$getCredentials();
+      if (res) {
+        console.log(res);
+      }
+      // await this.$logout().then(
+      //   this.isLoggedIn()
+      // );
 
 
     },

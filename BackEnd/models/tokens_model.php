@@ -19,8 +19,15 @@ class TokensModel extends BaseModel
 
     public function deleteExpiredTokens()
     {
-        $sql = "DELETE FROM $this->table WHERE exp < " . time();
+        $sql = "DELETE FROM {$this->table} WHERE exp < " . time();
 
-        return parent::query($sql);
+        return parent::query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function deleteAllFromUser($user_id)
+    {
+        $sql = "DELETE FROM {$this->table} WHERE sub = $user_id";
+
+        return parent::query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 }

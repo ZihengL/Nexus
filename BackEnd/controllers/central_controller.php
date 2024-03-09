@@ -71,31 +71,35 @@ class CentralController
 
     public function parseRequest($table, $action, $data = null)
     {
-        if (!isset(BaseController::$controllers[$table]))
-            throw new Exception("Unable to find request table '$table'.");
-
-        $controller = BaseController::$controllers[$table];
-        if (!$controller->isValidAction($action))
-            throw new Exception("Innaplicable request action '$action'.");
-
-        try {
-            if ($data) {
-                $data = $controller->standardizeRequestData($data);
-
-                if ($controller->isPrivilegedAction($action)) {
-                    [$tokens, $data] = $controller->verifyCredentials($data);
-
-                    $result = $controller->$action($data);
-                    return ['tokens' => $tokens, 'result' => $result];
-                } else {
-                    return $controller->$action($data);
+        if ($controller = BaseController::getController($table)) {
+            if ($controller->isValidAction($action)) {
+                try {
+                    return $this->processData($controller, $action, $data);
+                } catch (InvalidArgumentException $e) {
+                    $unwrapped = unwrap($data);
+                    throw new Exception("Error parsing request data from '$unwrapped': {$e->getMessage()}");
                 }
-            } else {
-                return $controller->$action();
             }
-        } catch (InvalidArgumentException $e) {
-            $unwrapped = unwrap($data);
-            throw new Exception("Error parsing request data from '$unwrapped': {$e->getMessage()}");
+        }
+    }
+
+    private function processData($controller, $action, $data)
+    {
+        if ($data) {
+            if ($controller->isPrivilegedAction($action))
+                $data = $controller->verifyCredentials($data);
+            // $data = $controller->standardizeRequestData($data);
+
+            // if ($controller->isPrivilegedAction($action) && $controller->verifyCredentials($data)) {
+            // [$tokens, $data] = $controller->verifyCredentials($data);
+
+            // $result = $controller->$action($data);
+            // return ['tokens' => $tokens, 'result' => $result];
+            // return $controller->$action($data);
+
+            return $controller->$action($data);
+        } else {
+            return $controller->$action();
         }
     }
 

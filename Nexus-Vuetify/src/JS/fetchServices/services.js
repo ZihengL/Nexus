@@ -18,6 +18,10 @@ export function getStoredData(key, field = null) {
   return null;
 }
 
+export function hasData(key) {
+  return localStorage.getItem(key) !== null;
+}
+
 // User or tokens
 export function clearFromStorage(key = null) {
   if (key) {
@@ -30,7 +34,7 @@ export function clearFromStorage(key = null) {
 // USER OBJ INFOS -- todo: save password only if user chooses to
 
 export function isLoggedIn() {
-  return getStoredData("user") !== null;
+  return hasData("user");
 }
 
 export function storeUser(user) {
@@ -49,7 +53,7 @@ export function getFromUser(field) {
   return getStoredData("user", field);
 }
 
-// USER TOKENS
+// TOKENS
 
 export function storeTokens(tokens) {
   storeData("tokens", tokens);
@@ -57,6 +61,19 @@ export function storeTokens(tokens) {
 
 export function getTokens() {
   return getStoredData("tokens");
+}
+
+export function getCredentials() {
+  if (isLoggedIn() && hasData("tokens")) {
+    return {
+      credentials: {
+        id: getFromUser("id"),
+        tokens: getTokens(),
+      },
+    };
+  }
+
+  return null;
 }
 
 /*******************************************************************/
@@ -101,7 +118,7 @@ const options = (body = null) => {
 // BASE FETCH
 
 export async function fetchData(table, action, body = null) {
-  return fetch(uri(table, action), options(body))
+  const result = await fetch(uri(table, action), options(body))
     .then((response) => {
       if (response.ok && response.status === 200) {
         return response.json();
@@ -114,6 +131,13 @@ export async function fetchData(table, action, body = null) {
       console.error("Network error:", error);
       return null;
     });
+
+  if (Object.prototype.hasOwnProperty.call(result, "ERROR")) {
+    console.log(result);
+    return false;
+  } else {
+    return result;
+  }
 }
 
 /*******************************************************************/
@@ -132,7 +156,7 @@ export async function login(email, password) {
     password: password,
   });
 
-  if (await result) {
+  if (result) {
     storeUser(result.user);
     storeTokens(result.tokens);
 
@@ -144,17 +168,12 @@ export async function login(email, password) {
 
 export async function logout() {
   if (isLoggedIn()) {
-    const result = await fetchData("users", "logout", {
-      id: getFromUser("id"),
-      tokens: getTokens(),
-    });
+    const result = await fetchData("users", "logout", getCredentials());
 
     if (result) {
-      console.log("logout results", await result);
       clearFromStorage();
-      console.log("STORED USER", getUser());
 
-      return await result;
+      return result;
     }
   }
 
@@ -164,13 +183,11 @@ export async function logout() {
 export async function updateUser(data) {
   if (isLoggedIn()) {
     const result = await fetchData("users", "update", {
-      id: getFromUser("id"),
-      tokens: getTokens(),
+      credentials: getCredentials(),
       data,
     });
 
     console.log("UPDATE", result);
-
     if (result) {
       storeTokens(result.tokens);
     }

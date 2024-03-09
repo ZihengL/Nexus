@@ -1,93 +1,51 @@
 <?php
 
+function getFromData($keys, $data, $unset = true)
+{
+    $items = [];
+
+    foreach ($keys as $key)
+        if (isset($data[$key])) {
+            $items[] = $data[$key];
+
+            if ($unset)
+                unset($data[$key]);
+        } else {
+            echo '<br>' . $key . '<br>';
+            printall($data);
+            // throw new Exception("Missing $key parameter for request in data: " . unwrap($data));
+        }
+
+    return [...$items, $data];
+}
+
+function getOneFromData($key, $data, $unset = false)
+{
+    if (isset($data[$key])) {
+        $item = $data[$key];
+
+        if ($unset) {
+            unset($data[$key]);
+            return [$item, $data];
+        }
+
+        return $item;
+    }
+
+    throw new Exception("Missing '$key' parameter for request in data: " . unwrap($data));
+}
+
+function unwrap($item)
+{
+    return var_export($item, true) ?? '';
+}
+
 function printall($item)
 {
-    echo '<pre>' . print_r($item, true) . '</pre><hr>';
-}
-
-function explodetest($a, $b, $c, $d = 5)
-{
-    echo "TEST ";
-    echo $a . $b;
-    echo " $c $d";
-}
-
-// stuff between $a and $c will result in error without destructuring param arg
-function datatest($a, $z = null, ...$arr)
-{
-    echo print_r($arr) . '<br>';
-    if (!$z)
-        $z = 'abqwea';
-
-    return [...func_get_args(), $arr];
+    echo '<pre>' . print_r($item, true) . '</pre>';
 }
 
 
-// function testz($a, $arr, $z, ...$arr1)
-// {
-//     printall($arr1);
-//     echo $z;
-
-// }
-
-$arr1 = ['a' => 'a val', 'b' => 'b val', 'c' => 'c val', 'd' => 'd val', 'z' => 'z val'];
-
-$arr2 = ['asdsadas', 'agweqwtn'];
-
-printall([...$arr1, $arr2]);
-
-
-// testz(...$arr1);
-
-// Don't invoke one param functions with destructuring
-function datatest2($arr)
-{
-    print_r($arr);
-}
-
-function datatest3(...$arr)
-{
-    print_r(...$arr);
-}
-
-function datatest4($a, $b = null)
-{
-    echo $a . ' ' . $b;
-}
-
-$arr1 = ['a' => 'a val', 'b' => 'b val', 'c' => 'c val', 'd' => 'd val', 'z' => 'z val'];
-
-
-// $ac = $arr1['z'] ??= 2;
-// echo 'AC ' . $arr1['z'];
-// printall($arr1);
-
-// ['z' = $z, 'a' = $a] = $arr1 ??= ['def'];
-
-
-// $arr2 = datatest(...$arr1);
-// print_r($arr2);
-// // datatest2(...$arr1);
-// datatest3(...$arr1);
-// datatest4(...$arr1);
-
-function datatest5($email = array('email'))
-{
-    echo 'datatest5<br>';
-    echo $email . '<br><br>';
-}
-
-$arr = ['a' => 'asdsadas', 'email' => 'a@a', 'asdasdas' => 'fsafasfa'];
-
-// datatest5($arr);
-
-// function makecoffee($types = array("cappuccino"), $coffeeMaker = NULL)
-// {
-//     $device = is_null($coffeeMaker) ? "hands" : $coffeeMaker;
-//     return "Making a cup of " . join(", ", $types) . " with $device.\n";
-// }
-// echo makecoffee();
-// echo makecoffee(array("cappuccino", "lavazza"), "teapot");
 
 /*******************************/
 
@@ -104,11 +62,72 @@ $games_ctrl = $central_controller->games_controller;
 $gamestags_ctrl = $central_controller->gamestags_controller;
 $tokens_ctrl = $central_controller->tokens_controller;
 
+$cc = $central_controller;
+
 /*******************************/
 
 // BaseModel::$print_queries = true;
 
+function parse($table, $action, $data)
+{
+    $cc = CentralController::getInstance();
+
+    return $cc->parseRequest($table, $action, $data);
+}
+
 echo '<hr><b>BEGIN TEST</b><hr>';
+
+$at = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwLCJpYXQiOjE3MDk5Mzc0NDcsImV4cCI6MTcwOTk0MTA0NywiaXNzIjoiTkVYVVMiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZC8ifQ.LdKdhOazveam73aZ_p5yGmvIuDcKWSxk-DntT7AJRZQ';
+$rt = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwLCJpYXQiOjE3MDk5Mzc0NDcsImV4cCI6MTcxMDU0MjI0NywiaXNzIjoiTkVYVVMiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZC8ifQ.nmZCM5gCZkdCaSnnYS-M6kUdZua6FsLtGoOA2zKXr44';
+$tks = ['access_token' => $at, 'refresh_token' => $rt];
+$id = 10;
+
+// $credentials = ['id' => $id, 'tokens' => $tks];
+
+// [$id, $tokens, $data] = getFromData(['id', 'tokens'], $credentials, false);
+
+// printall($id);
+// printall($tokens);
+// printall($data);
+
+// [$id, $tokens, $data] = getFromData(['id', 'tokens'], $credentials, true);
+
+// echo $id;
+// printall($tokens);
+// printall($data);
+
+
+
+
+// $central_controller->parseRequest('users', 'create', ['email' => 'test@test', 'password' => '123']);
+
+$login = ['email' => 'test@test', 'password' => '123'];
+$result = $cc->parseRequest('users', 'login', ['email' => 'test@test', 'password' => '123']);
+
+$user = $result['user'];
+$tokens = $result['tokens'];
+printall($result);
+
+$credentials = ['id' => $user['id'], 'tokens' => $tokens];
+echo parse('users', 'logout', $credentials) ? 'success' : 'fail';
+
+// printall($users_ctrl->deleteuser(10));
+
+
+
+
+
+
+
+
+
+
+
+
+
+// $user = $central_controller->parseRequest('users', 'login', ['email' => 'test@test', 'password' => '123']);
+
+// printall($result);
 
 // printall($gamestags_ctrl->getGamesWith(true, true));
 
@@ -182,16 +201,16 @@ echo '<hr><b>BEGIN TEST</b><hr>';
 // }
 
 
-$arr1 = ['a' => 'tqifh', 'b' => 'kjahsdkjla', 'c' => 4231432, 'd' => 1];
-$arr2 = ['c' => 213125, 'a'];
-$arr3 = array_intersect_key($arr1, $arr2);
+// $arr1 = ['a' => 'tqifh', 'b' => 'kjahsdkjla', 'c' => 4231432, 'd' => 1];
+// $arr2 = ['c' => 213125, 'a'];
+// $arr3 = array_intersect_key($arr1, $arr2);
 
-$a1 = ['a' => [1, 2, 3], 'b', 'c'];
-$a2 = ['a' => [4], 'b' => 2, 'd'];
+// $a1 = ['a' => [1, 2, 3], 'b', 'c'];
+// $a2 = ['a' => [4], 'b' => 2, 'd'];
 
-foreach ($a1 as $key => $value) {
-    $a3 = array_merge($a1, $a2);
-}
+// foreach ($a1 as $key => $value) {
+//     $a3 = array_merge($a1, $a2);
+// }
 
 
 // if (!$arr['z'])
@@ -221,7 +240,7 @@ foreach ($a1 as $key => $value) {
 
 
 
-['a' => $a, 'c' => $c, 'd' => $d] = $arr1;
+// ['a' => $a, 'c' => $c, 'd' => $d] = $arr1;
 
 
 
@@ -241,21 +260,21 @@ foreach ($a1 as $key => $value) {
 // $table = $parsed_uri['table'] ?? null;
 // $action = $parsed_uri['action'] ?? null;
 
-$email = 'testUser@email';
-$password = '123';
+// $email = 'testUser@email';
+// $password = '123';
 
-['user' => $user, 'tokens' => $tokens] = $users_ctrl->login($email, $password);
+// ['user' => $user, 'tokens' => $tokens] = $users_ctrl->login($email, $password);
 
-printall($user);
+// printall($user);
 
-// $tokens = ['access_token' => $access, 'refresh_token' => $refresh];
-// $res = $users_ctrl->login('testUser@email', '123');
+// // $tokens = ['access_token' => $access, 'refresh_token' => $refresh];
+// // $res = $users_ctrl->login('testUser@email', '123');
 
-$updatedata = ['id' => 9, 'tokens' => $tokens, 'data' => ['username' => 'playgroundtest']];
-$res = $users_ctrl->update(...$updatedata);
+// $updatedata = ['id' => 9, 'tokens' => $tokens, 'data' => ['username' => 'playgroundtest']];
+// $res = $users_ctrl->update(...$updatedata);
 
-echo '<br>UPDATE';
-printall($res);
+// echo '<br>UPDATE';
+// printall($res);
 
 echo '<br><b>END TEST</b><hr>';
 
@@ -263,7 +282,92 @@ echo '<br><b>END TEST</b><hr>';
 /*******************************/
 
 
+//
 
+
+// function explodetest($a, $b, $c, $d = 5)
+// {
+//     echo "TEST ";
+//     echo $a . $b;
+//     echo " $c $d";
+// }
+
+// // stuff between $a and $c will result in error without destructuring param arg
+// function datatest($a, $z = null, ...$arr)
+// {
+//     echo print_r($arr) . '<br>';
+//     if (!$z)
+//         $z = 'abqwea';
+
+//     return [...func_get_args(), $arr];
+// }
+
+
+// function testz($a, $arr, $z, ...$arr1)
+// {
+//     printall($arr1);
+//     echo $z;
+
+// }
+
+// $arr1 = ['a' => 'a val', 'b' => 'b val', 'c' => 'c val', 'd' => 'd val', 'z' => 'z val'];
+
+// $arr2 = ['asdsadas', 'agweqwtn'];
+
+// // printall([...$arr1, $arr2]);
+
+
+// // testz(...$arr1);
+
+// // Don't invoke one param functions with destructuring
+// function datatest2($arr)
+// {
+//     print_r($arr);
+// }
+
+// function datatest3(...$arr)
+// {
+//     print_r(...$arr);
+// }
+
+// function datatest4($a, $b = null)
+// {
+//     echo $a . ' ' . $b;
+// }
+
+// $arr1 = ['a' => 'a val', 'b' => 'b val', 'c' => 'c val', 'd' => 'd val', 'z' => 'z val'];
+
+
+// $ac = $arr1['z'] ??= 2;
+// echo 'AC ' . $arr1['z'];
+// printall($arr1);
+
+// ['z' = $z, 'a' = $a] = $arr1 ??= ['def'];
+
+
+// $arr2 = datatest(...$arr1);
+// print_r($arr2);
+// // datatest2(...$arr1);
+// datatest3(...$arr1);
+// datatest4(...$arr1);
+
+// function datatest5($email = array('email'))
+// {
+//     echo 'datatest5<br>';
+//     echo $email . '<br><br>';
+// }
+
+// $arr = ['a' => 'asdsadas', 'email' => 'a@a', 'asdasdas' => 'fsafasfa'];
+
+// datatest5($arr);
+
+// function makecoffee($types = array("cappuccino"), $coffeeMaker = NULL)
+// {
+//     $device = is_null($coffeeMaker) ? "hands" : $coffeeMaker;
+//     return "Making a cup of " . join(", ", $types) . " with $device.\n";
+// }
+// echo makecoffee();
+// echo makecoffee(array("cappuccino", "lavazza"), "teapot");
 
 
 
