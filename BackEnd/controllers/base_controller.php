@@ -106,7 +106,7 @@ class BaseController
             return true;
 
         $imploded = implode(', ', array_keys($this->actions));
-        throw new Exception("Innaplicable request action '$action' from '$imploded'.");
+        throw new Exception("Innaplicable request action '$action' from available actions: '$imploded'.");
     }
 
     public function isPrivilegedAction($action)
@@ -193,6 +193,39 @@ class BaseController
     /****************************** CRUDS ******************************/
     /*******************************************************************/
 
+    protected function getOneFrom($table, $column, $value, $included_columns = [], $joined_tables = [])
+    {
+        if (isset(self::$controllers[$table])) {
+            $controller = self::$controllers[$table];
+
+            return $controller->getOne([$column, $value, $included_columns, $joined_tables]);
+        }
+
+        return null;
+    }
+
+    protected function getAllFrom($table, $column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [], $paging = [])
+    {
+        if (isset(self::$controllers[$table])) {
+            $controller = self::$controllers[$table];
+
+            return $controller->getAll([$column, $value, $included_columns, $sorting, $joined_tables, $paging]);
+        }
+
+        return null;
+    }
+
+    protected function getAllMatchingFrom($table, $filters = [], $sorting = [], $included_columns = [], $joined_tables = [], $paging = [])
+    {
+        if (isset(self::$controllers[$table])) {
+            $controller = self::$controllers[$table];
+
+            return $controller->getAllMatching([$filters, $sorting, $included_columns, $joined_tables]);
+        }
+
+        return null;
+    }
+
     public function getOne($data)
     {
         return $this->model->getOne(...$this->setGetterDefaults($data));
@@ -266,57 +299,6 @@ class BaseController
     //     ];
 
     //     return json_encode($response);
-    // }
-
-    // protected function getOne($data, $mandatory_entries = [])
-    // {
-    //     $mandatory_entries = [...$mandatory_entries, 'column', 'value'];
-
-    //     if ($this->validateMandatoryData($mandatory_entries, $data)) {
-    //         [
-    //             'column' => $column,
-    //             'value' => $value,
-    //             'includedColumns' => $included_columns,
-    //             'joinedTables' => $joined_tables
-    //         ] = $data;
-
-    //         return $this->model->getOne($column, $value, $included_columns, $joined_tables);
-    //     }
-
-    //     return null;
-    // }
-
-    // protected function getAll($data, $mandatory_entries = [])
-    // {
-    //     if ($this->validateMandatoryData($data, $mandatory_entries)) {
-    //         [
-    //             'column' => $column,
-    //             'value' => $value,
-    //             'includedColumns' => $included_columns,
-    //             'sorting' => $sorting,
-    //             'joinedTables' => $joined_tables
-    //         ] = $data;
-
-    //         return $this->model->getAll($column, $value, $included_columns, $sorting, $joined_tables);
-    //     }
-
-    //     return null;
-    // }
-
-    // protected function getAllMatching($data, $mandatory_entries = [])
-    // {
-    //     if ($this->validateMandatoryData($data, $mandatory_entries)) {
-    //         [
-    //             'filters' => $filters,
-    //             'sorting' => $sorting,
-    //             'includedColumns' => $included_columns,
-    //             'joinedTables' => $joined_tables
-    //         ] = $data;
-
-    //         return $this->model->getAllMatching($filters, $sorting, $included_columns, $joined_tables);
-    //     }
-
-    //     return null;
     // }
 
     // protected function create($data, $mandatory_entries = [])

@@ -101,17 +101,23 @@ $id = 10;
 
 // $central_controller->parseRequest('users', 'create', ['email' => 'test@test', 'password' => '123']);
 
-$login = ['email' => 'test@test', 'password' => '123'];
-$result = $cc->parseRequest('users', 'login', ['email' => 'test@test', 'password' => '123']);
+// $login = ['email' => 'test@test', 'password' => '123'];
+// $result = $cc->parseRequest('users', 'login', ['email' => 'test@test', 'password' => '123']);
 
-$user = $result['user'];
-$tokens = $result['tokens'];
+// $user = $result['user'];
+// $tokens = $result['tokens'];
+// printall($result);
+
+$result = parse('games', 'getAllMatching', ['filters' => ['id' => 2]]);
+
 printall($result);
 
-$credentials = ['id' => $user['id'], 'tokens' => $tokens];
-echo parse('users', 'logout', $credentials) ? 'success' : 'fail';
+$result = parse('games', '')
 
-// printall($users_ctrl->deleteuser(10));
+// $credentials = ['id' => $user['id'], 'tokens' => $tokens];
+// echo parse('users', 'logout', $credentials) ? 'success' : 'fail';
+
+
 
 
 

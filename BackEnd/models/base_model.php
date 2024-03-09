@@ -2,7 +2,7 @@
 
 class BaseModel
 {
-    public static $print_queries = false;
+    public static $print_errors = false;
 
     protected $pdo;
     public $table;
@@ -42,21 +42,15 @@ class BaseModel
                 $stmt->execute(array_values($params));
             }
 
-            if (self::$print_queries) {
+            return $stmt;
+        } catch (PDOException $e) {
+            if (self::$print_errors) {
                 echo "<h5>{$this->table}</h5><br><pre>";
                 var_dump($stmt);
-                echo '<br>';
                 var_dump($params);
                 echo '</pre><hr>';
             }
 
-            return $stmt;
-        } catch (PDOException $e) {
-            echo '<br>Error<br>';
-            var_dump($stmt);
-            echo '<br>';
-            var_dump($params);
-            echo '<br>';
             throw new Exception("Database query error: " . $e->getMessage());
         }
     }
@@ -71,21 +65,15 @@ class BaseModel
             }
             $stmt->execute();
 
-            if (self::$print_queries) {
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            if (self::$print_errors) {
                 echo "<h5>{$this->table}</h5><br><pre>";
                 var_dump($stmt);
-                echo '<br>';
                 var_dump($params);
                 echo '</pre><hr>';
             }
 
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            echo '<br>Error<br>';
-            var_dump($stmt);
-            echo '<br>';
-            var_dump($params);
-            echo '<br>';
             throw new Exception("Database query error: " . $e->getMessage());
         }
     }
@@ -143,12 +131,6 @@ class BaseModel
     public function delete($id)
     {
         return $this->query("DELETE FROM {$this->table} WHERE id = $id")->rowCount();
-
-        // $stmt = $this->pdo->prepare($sql);
-
-        // $stmt->bindParam(1, $id, PDO::PARAM_INT);
-
-        // return $stmt->execute();
     }
 
     public function formatData($data)
@@ -253,9 +235,6 @@ class BaseModel
                     $table_condition";
 
         $keys_details = $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-        foreach ($keys_details as $key => $values) {
-            // TODO: CHECK IF RELATIONSHIP MULTIPLICITY CAN BE COMPUTED IN THIS QUERY - SEE PARSEJOINEDTABLES
-        }
 
         return $keys_details;
     }

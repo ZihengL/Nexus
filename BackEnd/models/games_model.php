@@ -14,28 +14,28 @@ class GamesModel extends BaseModel
 
     // Other Cruds
 
-    public function create(...$game)
-    {
-        $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE game = ?");
-        $stmt->execute([$game]);
+    // public function create($data)
+    // {
+    //     $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE game = ?");
+    //     $stmt->execute([$data]);
 
-        return $stmt->fetch();
-    }
+    //     return $stmt->fetch();
+    // }
 
-    public function update($id, ...$game)
-    {
-        $formatted_data = $this->formatData($game);
-        $pairs = implode(' = ?, ', array_keys($formatted_data)) . ' = ?';
-        $formatted_data['id'] = $id;
+    // public function update($id, $game)
+    // {
+    //     $formatted_data = $this->formatData($game);
+    //     $pairs = implode(' = ?, ', array_keys($formatted_data)) . ' = ?';
+    //     $formatted_data['id'] = $id;
 
-        $sql = "UPDATE $this->table SET $pairs WHERE id = ?";
+    //     $sql = "UPDATE $this->table SET $pairs WHERE id = ?";
 
-        if ($this->query($sql, $formatted_data)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+    //     if ($this->query($sql, $formatted_data)) {
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // }
 
     // Updates
 

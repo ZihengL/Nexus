@@ -14,7 +14,12 @@ class ReviewsController extends BaseController
     public function __construct($central_controller, $pdo)
     {
         $this->model = new ReviewsModel($pdo);
-        parent::__construct($central_controller);
+        $specific_actions = [
+            'create' => true,
+            'update' => true,
+            'delete' => true,
+        ];
+        parent::__construct($central_controller, $specific_actions);
     }
 
     protected function setGetterDefaults($data)
@@ -29,24 +34,26 @@ class ReviewsController extends BaseController
     /***************************** GETTERS *****************************/
     /*******************************************************************/
 
-    public function getAllMatching(...$data)
-    {
-        // if (empty($sorting)) {
-        //     $sorting = [$this->rating => true];
-        // }
+    // public function getAllMatching(...$data)
+    // {
+    //     // if (empty($sorting)) {
+    //     //     $sorting = [$this->rating => true];
+    //     // }
 
-        return parent::getAllMatching(...$data);
-    }
+    //     return parent::getAllMatching(...$data);
+    // }
 
-    public function create($tokens = null, ...$data)
+    // public function create($tokens = null, ...$data)
+    public function create($data)
     {
+        // [$id, $tokens, $data] = getFromData(['id', 'tokens'], $data, true);
         // echo "<br> create reviews_controller <br>";
         // print_r($data);
         if ($this->validateReview("create", $data)) {
             if (!$this->checkReviewExists($data)) {
                 // echo "create review: ";
                 //create review, remove the tokens and send infos without tokens
-                unset($data['tokens']);
+                // unset($data['tokens']);
                 $data['timestamp'] = date('Y-m-d');
 
                 // echo "proper review  : ", print_r($data, true), "<br>";
@@ -79,8 +86,10 @@ class ReviewsController extends BaseController
         return false;
     }
 
-    public function update($id, $tokens = null, ...$data)
+    // public function update($id, $tokens = null, ...$data)
+    public function update($data)
     {
+        // [$id, $tokens, $data] = getFromData(['id', 'tokens'], $data, true);
         // echo "<br> update reviews_controller <br>";
         // print_r($data);
         // $data['id'] = $id;
@@ -88,7 +97,7 @@ class ReviewsController extends BaseController
             if ($this->model->getOne(column: "id", value: $id)) {
                 // echo "update review: ";
                 //update review, remove the tokens and send infos without tokens
-                unset($data['tokens']);
+                // unset($data['tokens']);
                 // echo "proper review to update : ", print_r($data, true), "<br>";
                 if ($this->model->update($id, $data)) {
                     return $this->updateGameRatingAverage($data["gameID"]);
@@ -125,7 +134,7 @@ class ReviewsController extends BaseController
         $game = $gameController->getOne("id", $gameID);
         // echo "game before update : ", print_r($game, true), "<br>";
         // echo "newAverageRating : ", $newAverageRating, "<br>";
-        $reviews = $this->getAll("gameID", $gameID, null, null);
+        $reviews = $this->model->getAll(column: "gameID", value: $gameID);
         $newAverageRating = $this->calculateAverageRating($reviews);
 
         if ($game) {
