@@ -1,6 +1,6 @@
 <template>
-  <div id="upload_game">
-    <h2>{{ state.pageTitle }}</h2>
+  <div id="pageContainer">
+    <h2>{{ props.mode === 'create' ? 'Create Game Page' : 'Update Game Page' }}</h2>
     <div v-if="state.errorMessage" class="error-message">
       {{ state.errorMessage }}
     </div>
@@ -20,8 +20,21 @@
         id="tags"
         v-model="state.tags"
         placeholder="action, relax, wholesome"
-        @input="updateTagsArray"
       />
+      <btnComp :contenu="'Add Tag'" @clicked-btn="updateTagsArray"></btnComp>
+      <div class="tagList">
+        <div
+          v-for="(tag, index) in state.tagsArray"
+          :key="index"
+          class="tag_element"
+        >
+          {{ tag }}
+          <btnComp
+            :contenu="'X'"
+            @clicked-btn="() => removeItem(index, state.tagsArray)"
+          ></btnComp>
+        </div>
+      </div>
     </div>
     <div>
       <p class="description">Description : *</p>
@@ -35,7 +48,10 @@
       <p id="charCount">{{ charCountText }}</p>
     </div>
     <div>
-      <button @click="openFileBrowser">Select Game File</button>
+      <btnComp
+        :contenu="'Select Game File'"
+        @clicked-btn="openFileBrowser"
+      ></btnComp>
       <div v-if="state.gameFile">
         <p>Selected Game File: {{ state.gameFile.name }}</p>
         <!-- <p>
@@ -44,31 +60,38 @@
             state.gameFile.url
           }}</a>
         </p> -->
-        <p>File Size: {{ (state.gameFile.size / 1024).toFixed(2) }} KB</p>
+        <p>File Size: {{ fileSize }} KB</p>
         <p>File Type: {{ state.gameFile.type }}</p>
       </div>
     </div>
     <div>
-      <button @click="openImageBrowser">
-        Upload Images (Max {{ state.MAX_IMGS }})
-      </button>
-      <div v-if="state.imageFiles.length">
-        <p>Selected Images:</p>
-        <ol>
-          <li v-for="(file, index) in state.imageFiles" :key="index">
-            {{ file.name }}
-            <img :src="file.url" :alt="file.name" style="width: 100px" />
-            <button @click="removeFile(index, state.imageFiles)">X</button>
-          </li>
-        </ol>
+      <btnComp
+        :contenu="'Upload Images (Max ' + state.MAX_IMGS + ')'"
+        @clicked-btn="openImageBrowser"
+      ></btnComp>
+   
+      <div class="imgList" v-if="state.imageFiles.length">
+        <div
+          class="img_element"
+          v-for="(file, index) in state.imageFiles"
+          :key="index"
+        >
+          {{ file.name }}
+          <img :src="file.url" :alt="file.name" />
+          <btnComp
+            :contenu="'X'"
+            @clicked-btn="() => removeItem(index, state.imageFiles)"
+          ></btnComp>
+        </div>
       </div>
     </div>
 
     <div>
-      <button @click="openVideoBrowser">
-        Upload Videos (Max {{ state.MAX_VIDS }})
-      </button>
-      <div v-if="state.videoFiles.length">
+      <btnComp
+        :contenu="'Upload Videos (Max ' + state.MAX_VIDS + ')'"
+        @clicked-btn="openVideoBrowser"
+      />
+      <div class="vidList" v-if="state.videoFiles.length">
         <p>Selected videos:</p>
         <ol>
           <li v-for="(file, index) in state.videoFiles" :key="index">
@@ -79,15 +102,19 @@
               :alt="file.name"
               style="width: 25%"
             ></video>
-            <button @click="removeFile(index, state.videoFiles)">X</button>
+            <btnComp
+              :contenu="'X'"
+              @clicked-btn="() => removeItem(index, state.videoFiles)"
+            ></btnComp>
           </li>
         </ol>
       </div>
     </div>
-    <button @click="submitGame">Submit Game</button>
+    <btnComp :contenu="props.mode === 'create' ? 'Create Game' : 'Update Game'" @clicked-btn="submitGame"></btnComp>
   </div>
 </template>
 <script setup>
+import btnComp from "../components/btnComponent.vue";
 import { reactive, defineProps, computed, onMounted } from "vue";
 import { create, getAllMatching, deleteData } from "../JS/fetchServices.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -95,11 +122,24 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 const props = defineProps({
   developerID: {
     type: Number,
-    default: 5,
+    default: 9,
+  },
+  pageTitle: {
+    type: String,
+    default: "Create Game",
+  },
+  initialData: {
+    type: Object,
+    default: () => ({}),
+  },
+  mode: {
+    type: String,
+    default: 'create', 
   },
 });
 
 const state = reactive({
+  pageTitle: props.pageTitle,
   gameTitle: "",
   tags: "",
   tagsArray: [],
@@ -112,10 +152,14 @@ const state = reactive({
   MAX_VIDS: 2,
   MIN_TAG: 1,
   MIN_DESC_LENGTH: 1,
-  MAX_DESC_LENGTH: 500,
+  MAX_DESC_LENGTH: 250,
   errorMessage: "",
   creation_date: new Date().toISOString().replace("T", " ").substring(0, 16),
   description: "",
+});
+
+const fileSize = computed(() => {
+  return state.gameFile ? (state.gameFile.size / 1024).toFixed(2) : "0.00";
 });
 
 const charCountText = computed(() => {
@@ -205,13 +249,9 @@ const openImageBrowser = () => {
   fileInput.click();
 };
 
-const removeFile = (indexToRemove, fileList) => {
+const removeItem = (indexToRemove, fileList) => {
   URL.revokeObjectURL(fileList[indexToRemove].url);
-  if (fileList === state.imageFiles) {
-    state.imageFiles.splice(indexToRemove, 1);
-  } else if (fileList === state.videoFiles) {
-    state.videoFiles.splice(indexToRemove, 1);
-  }
+  fileList.splice(indexToRemove, 1);
 };
 
 const formatData = () => {
@@ -227,7 +267,7 @@ const formatData = () => {
   } else if (state.description.trim().length < state.MIN_DESC_LENGTH) {
     state.errorMessage = "Description is required.";
     return false;
-  }else {
+  } else {
     state.errorMessage = "";
     console.log("Submitting:", {
       gameTitle: state.gameTitle,
@@ -241,11 +281,12 @@ const formatData = () => {
 };
 
 function updateTagsArray() {
-  state.tagsArray = state.tags
+  let newTags = state.tags
     .split(",")
     .map((tag) => tag.trim())
     .filter(Boolean);
-
+  state.tagsArray = [...state.tagsArray, ...newTags];
+  state.tags = "";
   // console.log("updating tags array : ", state.tagsArray);
 }
 
@@ -342,15 +383,87 @@ const submitGame = async () => {
   }
 };
 
-async function setDefaultValues(){
-  
+async function setDefaultValues() {
+  if (props.mode === 'update' && props.initialData) {
+    state.gameTitle = props.initialData.gameTitle || '';
+    state.tags = props.initialData.tags.join(', ') || '';
+    state.description = props.initialData.description || '';
+    // and so on for other fields...
+  }
 }
 
 onMounted(async () => {
+  try {
+    await setDefaultValues();
+  } catch (error) {
+    console.error("Error setting default values:", error);
+  }
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.tagList {
+  padding: 10%;
+  gap: 5%;
+  display: flex; /* Use Flexbox */
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between; /* Distribute space between items */
+  align-items: center; /* Center items vertically */
+  background: rgba(
+    128,
+    128,
+    128,
+    0.5
+  ); /* Matching background opacity with .tagList */
+  font-size: 1rem;
+}
+
+.tag_element {
+  gap: 5%;
+  display: flex; /* Use Flexbox */
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between; /* Distribute space between items */
+  background: grey;
+  align-items: center;
+  font-size: 1rem;
+}
+
+.imgList {
+  padding: 10%;
+  gap: 5%;
+  display: flex; /* Use Flexbox */
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between; /* Distribute space between items */
+  align-items: center; /* Center items vertically */
+  background: rgba(
+    128,
+    128,
+    128,
+    0.5
+  ); /* Matching background opacity with .tagList */
+  font-size: 1rem;
+}
+
+.img_element {
+  gap: 5%;
+  display: flex; /* Use Flexbox */
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between; /* Distribute space between items */
+  background: grey;
+  align-items: center;
+  font-size: 1rem;
+}
+
+img {
+  width: 50%;
+  object-fit: contain;
+  justify-content: center;
+}
+
 textarea {
   background-color: #555;
   color: white;
@@ -371,17 +484,17 @@ img {
   width: 100px;
 }
 
-#upload_game {
+#pageContainer {
   background-color: #333;
   padding: 20px;
   border-radius: 8px;
 }
 
-#upload_game * {
+#pageContainer * {
   color: white;
 }
 
-#upload_game button {
+#pageContainer button {
   background-color: #0062cc;
   border: none;
   color: white;
@@ -391,11 +504,11 @@ img {
   cursor: pointer;
 }
 
-#upload_game button:hover {
+#pageContainer button:hover {
   background-color: #004da2;
 }
 
-#upload_game input[type="text"] {
+#pageContainer input[type="text"] {
   background-color: #555;
   border: none;
   color: white;
@@ -404,7 +517,7 @@ img {
   border-radius: 5px;
 }
 
-#upload_game input[type="text"]:focus {
+#pageContainer input[type="text"]:focus {
   outline: 2px solid #007bff;
 }
 

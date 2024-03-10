@@ -91,6 +91,21 @@ export const getGameDetails = async (idGame) => {
   return data
 };
 
+const deleteGamesAndrelationships = async (jsonObject) => {
+  const gameId = jsonObject["gameId"];
+  const game = await getOne("games", "id", gameId);
+  if (game) {
+    await deleteData("games", jsonObject);
+    const gamesTags = await getAll("gamesTags", "gameId", gameId);
+    for (const game_tag of gamesTags) {
+      await deleteData("gamesTags", { gameId: game_tag.gameId });
+    }
+    return true
+  }
+  return false
+};
+
+
 // CHANGE HERE FOR GETALLMATCHING
 export const getAllGamesWithDeveloperName = async (column = null, value = null, includedColumns = null, sorting = null) => {
   try {
@@ -148,6 +163,19 @@ export const getGameDetailsWithDeveloperName = async (idGame) => {
 /*******************************************************************/
 /***************************** REVIEWS *****************************/
 /*******************************************************************/
+
+// export const createReview = async (jsonObject) => {
+//   return await create("reviews", jsonObject);
+// };
+
+
+export const createReviews = async (table, createData) => {
+  let body = {
+    createData
+  }
+  let data = await fetchData(table, "create", null, null, null, null, body, "POST");
+  return data;
+};
 
 export const getReviews = async (gameID) => {
   return await getAll("reviews", "gameID", gameID);

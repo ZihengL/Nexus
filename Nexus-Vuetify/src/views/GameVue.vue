@@ -70,7 +70,6 @@
             <Avis class="old "  :idGame="gameInfos.leGame.id" :sort="2"/>
           </div>
         </div>
-
         <myAvis/>
       </div>
       <Avis class="rate glass"  :idGame="gameInfos.leGame.id" :sort="0"/>
