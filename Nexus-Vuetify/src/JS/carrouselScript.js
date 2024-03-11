@@ -67,7 +67,7 @@ export default {
   async mounted() {
     try {
       const filters = { ratingAverage: { gt: 1, lte: 7 } };
-      const sorting = { ratingAverage: true };
+      const sorting = { id: true };
       const includedColumns = ["id", "developerID", "title", "files"];
 
       const jsonBody = { filters, sorting, includedColumns };

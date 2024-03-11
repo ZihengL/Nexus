@@ -20,11 +20,23 @@ import SingleGameComponent from "./SingleGameComponent.vue";
 import  Pagination  from "../PaginationComponent.vue";
 import { reactive, ref, onMounted, watch } from "vue";
 import PaginationManager from "@/JS/pagination";
-
+const nbMax = 6;
 let nbPage = null;
 let paginationNb = 1;
  const getNbPage = () => {
   paginationNb = PaginationManager.getPage()
+  let max = paginationNb * nbMax;
+  let min = max - nbMax;
+  if (props.gameList.length < max){
+    max = props.gameList.length
+  }
+  console.log('min  w2 : ', min);
+  console.log('max  w2 : ', max);
+  console.log('all lent w2  : ', props.gameList.length);
+
+  arrayStore.value = props.gameList.slice(min, max);
+
+  console.log('array  w2 : ', arrayStore.value.length);
   console.log('paginationNb emit : ', paginationNb)
  }
 let arrayStore = ref([]);
@@ -44,24 +56,45 @@ const gameList_data = reactive({
 watch(
   () => props.gameList,
   (newVal, oldVal) => {
-    let max = paginationNb * 9;
-    let min = max - 9;
+    let max = paginationNb * nbMax;
+    let min = max - nbMax;
     if (props.gameList.length < max){
       max = props.gameList.length
     }
+    console.log('min w1 : ', min);
+    console.log('max  w1 : ', max);
+    console.log('all lent w1  : ', props.gameList.length);
 
     arrayStore.value = props.gameList.slice(min, max);
 
-    console.log('array : ', arrayStore.value.length);
+    console.log('array  w1 : ', arrayStore.value.length);
 
-    if (props.gameList.length > 9) {
-      nbPage = props.gameList.length / 9;
+    if (props.gameList.length > nbMax) {
+      nbPage = props.gameList.length / nbMax;
     } else {
       nbPage = 1; // ou une autre valeur si vous préférez
     }
   },
   { deep: true }
 );
+// watch(
+//   () => paginationNb,
+//   (newVal, oldVal) => {
+//     let max = paginationNb * nbMax;
+//     let min = max - nbMax;
+//     if (props.gameList.length < max){
+//       max = props.gameList.length
+//     }
+//     console.log('min  w2 : ', min);
+//     console.log('max  w2 : ', max);
+//     console.log('all lent w2  : ', props.gameList.length);
+
+//     arrayStore.value = props.gameList.slice(min, max);
+
+//     console.log('array  w2 : ', arrayStore.value.length);
+//   },
+//   { deep: true }
+// );
 
 </script>
 
