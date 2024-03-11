@@ -60,7 +60,7 @@ class TagsController extends BaseController
             }
             return $this->getGameTagsController()->create($newData);
         }
-        return $isValid;
+        return $isValidArray['isSuccessful'];
     }
 
 
@@ -89,11 +89,13 @@ class TagsController extends BaseController
                         return $this->createResponse(true, 'tags successfully deleted in gameTags and tags table');
                     }
                 }
-                return $this->createResponse(false, 'tag deletion unsuccessful');
+                // $this->createResponse(false, 'tag deletion unsuccessful');
+                return false;
             }
-            return $this->createResponse(false, 'Cannot delete tag that doesnt exist');
+            // $this->createResponse(false, 'Cannot delete tag that doesnt exist');
+            return false;
         }
-        return $isValid;
+        return $isValidArray['isSuccessful'];
     }
 
 
@@ -116,7 +118,7 @@ class TagsController extends BaseController
             return $this->createResponse(false, 'Failed to update tag');
         }
     } else {
-        return $isValid;
+        return $isValidArray['isSuccessful'];
     }
 }
 

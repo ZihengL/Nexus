@@ -1,35 +1,7 @@
 import { fetchData } from "./fetch.js";
-import { getStorage, ref, listAll, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 const storage = getStorage();
-
-// Assuming 'GameTitle/' is the directory where your image is stored
-// and you're looking to list all files within this directory
-const listRef = ref(storage, 'GameTitle/');
-
-// Find all the prefixes and items under 'GameTitle/'
-listAll(listRef)
-  .then((res) => {
-    
-    
-   console.log( "firebase:"+res)
-    res.items.forEach((itemRef) => {
-      // For each item found, assuming these are your images, get the download URL
-      getDownloadURL(itemRef).then((url) => {
-        // Here, you have the URL of each image, and you can use it as needed
-        // For example, setting it as the src attribute of an <img> element:
-        console.log("Image URL:", url); // Log the URL or handle it as needed
-        // Example: document.querySelector('img').src = url;
-      }).catch((error) => {
-        // Handle any errors in getting the download URL
-        console.error("Error getting image download URL", error);
-      });
-    });
-  }).catch((error) => {
-    // Handle any errors in listing the files
-    console.error("Error listing files:", error);
-  });
-
 
 export default {
   name: "GameCarousel",
@@ -69,9 +41,12 @@ export default {
     async fetchGameImages(games) {
       try {
         const imageFetchPromises = games.map(async (game) => {
-          const files = game.title || `defaultName.jpg`;
-          const imagePath = `GameTitle/${files}.png`;
+          const files = game.id || `defaultName.jpg`;
+          const imagePath = `Games/${files}/media/${files}_0.png`;
+          
+          //console.log('imagePath : ', imagePath);
           const imageRef = ref(storage, imagePath);
+          //console.log('imageRef : ', imageRef);
 
           try {
             const url = await getDownloadURL(imageRef);
@@ -102,7 +77,7 @@ export default {
         if (!Array.isArray(data)) {
           throw new Error("Fetched data is not an array");
         }
-        console.log('data : ' , data)
+        //console.log('data : ' , data)
         return this.fetchGameImages(data.slice(0, 4));
       })
       .then((carouselItemsWithImages) => {

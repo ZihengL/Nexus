@@ -35,7 +35,7 @@ const gameList_data = reactive({
 watch(
   () => gameList_data.gameList_result,
   (newVal, oldVal) => {
-    console.log("gameList_result updated", newVal);
+    //console.log("gameList_result updated", newVal);
   },
   { deep: true }
 );
@@ -50,7 +50,7 @@ onMounted(async () => {
   padding: 0%;
   width: 100%;
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: auto auto auto;
   gap: 2%;
   padding: 2% 2% 5% 2%;
 }

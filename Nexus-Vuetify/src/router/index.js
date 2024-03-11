@@ -41,12 +41,15 @@ const routes = [
       {
         path: '/Game/:idGame',
         name: 'Game',
-        // route level code-splitting
-        // this generates a separate chunk (Home-[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
         component: () => import('@/views/GameVue.vue'),
         props: true, 
+        /*props: (route) => ({
+          idGame: route.params.idGame,
+          // Ajoutez votre deuxième prop ici
+          urlImg: route.params.urlImg, // Remplacez 'Valeur par défaut' par la valeur souhaitée ou calculez-la dynamiquement
+        }),*/
       },
+      
       {
         path: '/Dev/:idDevl',
         name: 'Dev',
@@ -62,7 +65,7 @@ const routes = [
         // route level code-splitting
         // this generates a separate chunk (Home-[hash].js) for this route
         // which is lazy-loaded when the route is visited.
-        component: () => import('@/views/upload.vue'),
+        component: () => import('@/views/UploadGameView.vue'),
         props: true, 
       },
       {
@@ -87,7 +90,15 @@ const routes = [
         // route level code-splitting
         // this generates a separate chunk (Home-[hash].js) for this route
         // which is lazy-loaded when the route is visited.
-        component: () => import('@/views/uploadGameView.vue'),
+        component: () => import('@/views/UploadGameView.vue'),
+      },
+      {
+        path: '/update',
+        name: 'update',
+        // route level code-splitting
+        // this generates a separate chunk (Home-[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () => import('@/views/UpdateGameView.vue'),
       },
     ],
   },

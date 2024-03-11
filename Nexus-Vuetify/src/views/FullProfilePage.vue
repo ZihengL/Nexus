@@ -29,16 +29,13 @@
           <div class="field">
             <input type="password" placeholder="Confirmer le mot de passe" required>
           </div>
-          <div class="fieldBtn">
-            <div class="btn-layer"></div>
-            <v-btn density="default" class="submit glow" @click="toggleProfile">
-              Modifier
-            </v-btn>
-          </div>
+          <btnComp :contenu="'Modifier'" @toggle-btn="toggleLogout"/>
         </form>
   </div>
 </template>
-
+<script>
+  import btnComp from "../components/btnComponent.vue"
+</script>
 <style lang="scss" scoped>
 #fullProfile {
   width: 100%;
@@ -70,6 +67,7 @@
 <script setup>
 import { defineProps, ref, onMounted } from 'vue';
 import { fetchData } from '../JS/fetch';
+import { create, getOne } from "../JS/fetchServices";
 
 const props = defineProps(['IdDev']);
 
@@ -84,6 +82,7 @@ const user = ref(null);
 onMounted(async () => {
     try {
       const dataUser = await fetchData("users", "getOne", "id",  props.IdDev, null, null, null, "GET");
+      //  await getOne("users", "id", props.IdDev)
       user.value = dataUser;
       //console.log('LeGame : ' , LeGame._rawValue.developerID)    
     } catch (error) { 

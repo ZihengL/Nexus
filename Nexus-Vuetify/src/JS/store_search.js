@@ -19,11 +19,26 @@ export const searchOn_titleOrUsername = async titleOrDevName => {
 export const search_AndFilter = async (
   titleOrDevName = null,
   tags = [],
-  sorting = null
+  sortingValue = null
 ) => {
+  console.log('sorting : ', sortingValue)
+
+  let sorting = null;
+
+  // Only proceed if sortingValue is an object and has keys
+  if (sortingValue && typeof sortingValue === 'object' && Object.keys(sortingValue).length > 0) {
+  const keys = Object.keys(sortingValue)
+  const key = keys[0]
+  console.log('key : ', key)
+  sorting = {
+    [key]:sortingValue[key]
+  }
+}
   let games = titleOrDevName
     ? await searchOn_titleOrUsername(titleOrDevName)
-    : await getAllGamesWithDeveloperName();
+    : await getAllGamesWithDeveloperName(null, null, null, sorting)
+
+  console.log('games  : ', games)
 
   if (tags.length > 0) {
     games = games.filter(game =>
@@ -31,29 +46,16 @@ export const search_AndFilter = async (
     );
   }
 
-  if (sorting) {
-    if (sorting === "ratingAverage") {
-      games.sort((a, b) => {
-        if (a[sorting] > b[sorting]) return -1;
-        if (a[sorting] < b[sorting]) return 1;
-        return 0;
-      });
-    } else {
-      games.sort((a, b) => {
-        if (a[sorting] < b[sorting]) return -1;
-        if (a[sorting] > b[sorting]) return 1;
-        return 0;
-      });
-    }
+  if (sortingValue === "devName") {
+    games.sort((a, b) => {
+      const nameA = a[sortingValue].toLowerCase();
+      const nameB = b[sortingValue].toLowerCase();
+  
+      if (nameA < nameB) return -1;
+      if (nameA > nameB) return 1;
+      return 0;
+    });
   }
 
-  return games;
-};
-
-
-
-
-
-
-
-
+  return games
+}

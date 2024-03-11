@@ -1,7 +1,7 @@
 <template>
-    <div class="fieldBtn">
+    <div class="fieldBtn roundBorderSmall">
         <div class="btn-layer"></div>
-        <v-btn density="default" class="submit" @click="toggleBtn">
+        <v-btn density="default" class="submit" @click="clickedBtn">
             {{contenu}}
         </v-btn>
     </div>
@@ -11,13 +11,14 @@
     import { defineProps } from 'vue';
 
     const props = defineProps(['contenu']);
-    console.log(props.contenu);
+    const emit = defineEmits(['toggle-btn'])
+    //console.log(props.contenu);
 
-    const toggleBtn = () => {
+    const clickedBtn = () => {
         // Ajoutez votre logique de bascule (toggle) ici si nécessaire
 
         // Émettez un événement pour informer le parent de la bascule
-        this.emit('toggle-btn');
+        emit('toggle-btn');
     };
 </script>
 
@@ -25,7 +26,6 @@
 .fieldBtn{
     height: 50px;
     width: 100%;
-    border-radius: 5px;
     position: relative;
     overflow: hidden;
 

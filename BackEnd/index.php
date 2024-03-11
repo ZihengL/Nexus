@@ -85,14 +85,14 @@ $decodedData = json_decode($rawData, true);
 // print_r($rawData);
 
 // console.log(" response : ", response.text());
-      // console.log(' response : ', response.text())
+// console.log(' response : ', response.text())
 // Routing
 switch ($method) {
     case 'GET':
         // print_r($explodedURI);
         // echo "<br> crud_action: " . $crud_action;
-        //   echo "<br>  sorting : " . print_r($sorting, true) . "<br>";
-        //   echo "<br>  sorting : " . $sorting["timestamp"] . "<br>";
+        // echo "<br>  sorting : " . print_r($sorting, true) . "<br>";
+        // echo "<br>  sorting : " . $sorting["timestamp"] . "<br>";
         // echo "<br>  includedColumns : " . print_r($includedColumns, true);
         // echo "<br>  value : " . $value ."<br> " ;
        
@@ -226,11 +226,11 @@ function handleLogout($centralController, $decodedData, $controllerName, $crud_a
 
 function handleCreate($centralController, $decodedData, $controllerName, $crud_action)
 {
-    $data = $decodedData['createData'];
+    $createData = $decodedData['createData'];
 
-    // echo "<br> register data : <br>";
-    // print_r($data);
-    return $centralController->$controllerName->$crud_action($data);
+    // echo "<br> handleCreate  createData : ".  print_r($createData, true) ." <br>";
+   
+    return $centralController->$controllerName->$crud_action($createData);
 }
 
 function handleDelete($centralController, $decodedData, $controllerName, $crud_action)

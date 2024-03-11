@@ -17,7 +17,7 @@
         </router-link>
         <v-spacer></v-spacer>
         <router-link to="/Login" class="router glow">
-          <span v-if="connected" class="link-btn" text>Deconnexion</span>
+          <span v-if="connected" class="link-btn" text><v-icon icon="mdi-account-check" /></span>
           <span v-else class="link-btn" text>Connexion</span>
         </router-link>
 
@@ -34,7 +34,7 @@ let logoURL = '/src/assets/logos/Nexus_c5c3c0.png';
 let logo2URL = '/src/assets/logos/Nexus_171d25.png';
 
 const props = defineProps(['connected']);
-
+console.log('conn nav : ',props.connected)
 const changeUrl = () => {
   hover.value = true;
 };

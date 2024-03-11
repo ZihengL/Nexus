@@ -113,7 +113,9 @@ class UsersController extends BaseController
         // echo "login email: " . $email . "<br>";
         $user = $this->model->getOne($this->email, $email);
         // echo "login user: " . print_r($user, true) . "<br>";
-
+        if(!$user){
+            return false;
+        }
         return $this->getTokensController()->generateTokensOnValidation($user, $email, $password);
     }
 

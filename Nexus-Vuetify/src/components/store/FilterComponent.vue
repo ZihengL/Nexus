@@ -1,24 +1,27 @@
 <template>
-  <div class="filter-container roundBorderSmall glass">
+  <div class="filter-container roundBorderSmall">
     <h3>{{ props.filter_title }}</h3>
-    <div class="checkbox-group">
+    <div class="tag">
       <h4>{{ filter_data.tags_container_title }}</h4>
-      <label
-        v-for="genre in filter_data.genres.slice(0, 5)"
-        :key="genre.id"
-        :class="{ 'filter-label': true, glow: true, checked: genre.checked }"
-      >
-        <input
-          @checked="returnFiltersData"
-          type="checkbox"
-          v-model="genre.checked"
-          :name="genre.name"
-          :value="genre.name"
-        />
-        <span>{{ genre.name }}</span>
-      </label>
-
-      <div class="search-container">
+      <div class="checkbox-group">
+        <!--  -->
+        <label
+          v-for="genre in filter_data.genres.slice(0, 6)"
+          :key="genre.id"
+          :class="{ 'filter-label': true, glow: true, checked: genre.checked }"
+          class="roundBorderSmall glass2"
+        >
+          <input
+            @checked="returnFiltersData"
+            type="checkbox"
+            v-model="genre.checked"
+            :name="genre.name"
+            :value="genre.name"
+          />
+          <span>{{ genre.name }}</span>
+        </label>
+      </div>
+      <div class="search-container  roundBorderSmall glass">
         <input
           v-model="filter_data.searchInput"
           type="text"
@@ -31,7 +34,7 @@
 
     <div class="sort-container">
       <h4>{{ filter_data.sort_container_title }}</h4>
-      <select v-model="filter_data.selectedSort">
+      <select v-model="filter_data.selectedSort" class=" roundBorderSmall glass">
         <option disabled value="">Trier par :</option>
         <option
           v-for="sort in filter_data.sortList"
@@ -42,9 +45,12 @@
         </option>
       </select>
     </div>
-    <v-btn elevation="2" variant="tonal" class="" @click="returnFiltersData">
-      Rechercher
-    </v-btn>
+    
+      <!-- <v-btn elevation="2" variant="tonal" class="" @click="returnFiltersData">
+        Rechercher
+      </v-btn> -->
+   
+    <btnComp :contenu="'Rechercher'" @toggle-btn="returnFiltersData"/>
   </div>
 </template>
 
@@ -52,7 +58,7 @@
 import { onMounted, reactive, watch } from "vue";
 // import SearchComponent from "../game/SearchComponent.vue";
 import { getAll, filterSearchedTags } from "../../JS/fetchServices";
-
+import btnComp from "../btnComponent.vue"
 const props = defineProps({
   filter_title: String,
   onFilter: Function,
@@ -74,9 +80,9 @@ const filter_data = reactive({
   sortList: [
     { label: "Trier par : ", value: "" },
     { label: "Développeur", value: "devName" },
-    { label: "Date de sortie", value: "releaseDate" },
-    { label: "Note d'évaluation", value: "ratingAverage" },
-    { label: "Titre", value: "title" },
+    { label: "Date de sortie", value:{releaseDate: false} },
+    { label: "Note d'évaluation", value: {ratingAverage: false} },
+    { label: "Titre", value:{title : true}},
   ],
 });
 
@@ -151,10 +157,22 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
+<style lang="scss">
+.glass2 {
+  display: inline-block;
+}
 .checked {
-  background-color: #0aade8;
-  color: #13aebf;
+  color: var(--light);       
+  text-shadow:
+      0 0 1.5px #ffffffa1,
+      0 0 2.5px #ffffffa1,
+      0 0 5px #ffffffa1,
+      0 0 10px var(--marin-b),
+      0 0 20px var(--marin-b),
+      0 0 25px var(--marin-b),
+      0 0 30px var(--marin-b),
+      0 0 33px var(--marin-b);
+  animation: neonGlow 0.5s ease-in-out infinite alternate;
 }
 input[type="checkbox"]:checked + .filter-label {
   background-color: #0aade8;
@@ -204,11 +222,8 @@ input[type="checkbox"] {
 .filter-container {
   display: flex;
   flex-direction: column;
-  background: rgba(0, 0, 0, 0.8);
   color: #fff;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
   margin: 2% auto;
   width: auto;
   gap: 10px;
@@ -232,10 +247,10 @@ input[type="checkbox"] {
 .sort-container select {
   width: 100%;
   padding: 10px;
-  border-radius: 4px;
-  border: 2px solid #303c3f;
-  background: rgba(68, 108, 137, 0.8);
-  color: #ffffff;
+  color: var(--light-trans);
+}
+.sort-container select option {
+  color: rgba(0, 0, 0, 0.674);
 }
 
 .search-container {
@@ -245,13 +260,12 @@ input[type="checkbox"] {
 #gameSearch {
   width: 100%;
   padding: 10px;
-  border-radius: 4px;
-  border: 2px solid #303c3f;
-  background: rgba(4, 148, 251, 0.256);
-  color: #ffffff;
+  /*border: 2px solid #303c3f;
+  background: rgba(4, 148, 251, 0.256);*/
+  color: var(--light-trans);
 }
 #gameSearch::placeholder {
-  color: #ffffff; /* Custom color for placeholder text */
+  color: var(--light-trans); /* Custom color for placeholder text */
   opacity: 1;
 }
 </style>
