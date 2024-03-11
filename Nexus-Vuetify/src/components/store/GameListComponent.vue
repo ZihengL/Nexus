@@ -25,7 +25,7 @@ let nbPage = null;
 const props = defineProps({
   gameList: {
     type: Array,
-    default: () => {},
+    default: () => ([]),
   },
 });
 
@@ -44,12 +44,19 @@ watch(
 );
 
 
+watch(
+  () => props.gameList,
+  (newVal, oldVal) => {
+    console.log("watch props.gameList : ", props.gameList)
+  },
+  { deep: true }
+);
 
-console.log('nb game div : ', nbPage)
 onMounted(async () => {
 
   // await getGameList();
-  if(props.gameList){
+  console.log("hello")
+  if(props.gameList.length > 0){
     console.log("onMounted props.gameList : ", props.gameList)
   }
 });
