@@ -22,7 +22,7 @@ import { reactive, onMounted, watch } from "vue";
 const props = defineProps({
   gameList: {
     type: Array,
-    default: () => {},
+    default: () => ([]),
   },
 });
 
@@ -40,8 +40,21 @@ watch(
   { deep: true }
 );
 
+
+watch(
+  () => props.gameList,
+  (newVal, oldVal) => {
+    console.log("watch props.gameList : ", props.gameList)
+  },
+  { deep: true }
+);
+
 onMounted(async () => {
   // await getGameList();
+  console.log("hello")
+  if(props.gameList.length > 0){
+    console.log("onMounted props.gameList : ", props.gameList)
+  }
 });
 </script>
 
