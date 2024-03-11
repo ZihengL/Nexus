@@ -115,6 +115,8 @@ onMounted(async () => {
   .img {
     flex: 6;
     position: relative;
+    width: 100%;
+    height: 100%;
 
     img {
       width: 100%;
@@ -122,6 +124,7 @@ onMounted(async () => {
       display: inline-block;
       transition: opacity 0.3s ease;
       opacity: 1;
+      object-fit: fill; 
     }
 
     p {
