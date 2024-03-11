@@ -35,8 +35,4 @@ class TransactionsController extends BaseController
 
         return $link->url;
     }
-
-    public function create($data)
-    {
-    }
 }

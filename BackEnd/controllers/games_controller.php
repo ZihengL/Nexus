@@ -41,6 +41,8 @@ class GamesController extends BaseController
 
     public function getOneAsJoined($data)
     {
+        
+
         $data = $this->setGetterDefaults($data);
         return $this->model->getOneAsJoined(...$data);
     }
