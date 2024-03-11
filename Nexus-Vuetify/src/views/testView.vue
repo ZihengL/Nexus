@@ -373,6 +373,7 @@ export default {
       const filters = {
         ratingAverage: "5",
       };
+
       const sorting = {
         ratingAverage: true,
       };
@@ -394,14 +395,23 @@ export default {
 
     ziGetAllMatching() {
       const filters = {
-        id: 2
+        'title': 'Space Odyssey'
       };
       const sorting = {
         ratingAverage: true,
       };
-      const included_columns = ["id", "developerID", "tags", "ratingAverage"];
+      const included_columns = ["id", 'title', "developerID", "ratingAverage"];
 
-      const preppedData = this.$prepGetAllMatching(filters, sorting, included_columns);
+      // ['paging' => ['limit' => 4, 'offset' => 2], 'joined_tables' => ['users' => ['username']]];
+
+      const paging = { limit: 4, offset: 0 };
+      const joined_tables = {
+        users: new Array('username', 'email', 'password', 'name'),
+        tags: new Array('name'),
+      }
+
+      const preppedData = this.$prepGetAllMatching(filters, sorting, included_columns, joined_tables, paging);
+      console.log(preppedData);
 
       const result = this.$getAllMatching('games', preppedData);
       console.log(result);

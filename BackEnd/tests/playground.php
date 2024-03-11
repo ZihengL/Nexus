@@ -101,23 +101,37 @@ $id = 10;
 
 // $central_controller->parseRequest('users', 'create', ['email' => 'test@test', 'password' => '123']);
 
-$login = ['email' => 'test@test', 'password' => '123'];
-$result = $cc->parseRequest('users', 'login', ['email' => 'test@test', 'password' => '123']);
+// $login = ['email' => 'test@test', 'password' => '123'];
+// $result = $cc->parseRequest('users', 'login', ['email' => 'test@test', 'password' => '123']);
 
-$user = $result['user'];
-$tokens = $result['tokens'];
-printall($result);
+// $user = $result['user'];
+// $tokens = $result['tokens'];
+// printall($result);
 
-$credentials = ['id' => $user['id'], 'tokens' => $tokens];
-$request_data = ['donatorID' => $user['id'], 'donateeID' => 2];
+// $credentials = ['id' => $user['id'], 'tokens' => $tokens];
+// $request_data = ['donatorID' => $user['id'], 'donateeID' => 2];
 
-$result = parse('transactions', 'getLink', ['credentials' => $credentials, 'request_data' => $request_data]);
-
-printall($result);
-
-// $result = parse('games', 'getAllMatching', ['filters' => ['id' => 2]]);
+// $result = parse('transactions', 'getLink', ['credentials' => $credentials, 'request_data' => $request_data]);
 
 // printall($result);
+
+// $data =  ['filters' => ['id' => 2], 'paging' => ['limit' => 3, 'offset' => 2]];
+
+// $result = ['filters' => $filters, 'sorting' => $sorting, 'paging' => $paging] = $data + [[], [], []];
+
+// printall($filters);
+// printall($sorting);
+// printall($paging);
+
+// $result = parse('games', 'getAll', ['paging' => ['limit' => 4, 'offset' => 0], 'joined_tables' => ['users' => ['username', 'id', 'email', 'password']]]);
+
+// $data = ['included_columns' => ['username', 'email'], 'paging' => ['limit' => 4, 'offset' => 0], 'joined_tables' => ['games' => []]];
+// $result = parse('users', 'getAll', $data);
+
+$data = ['included_columns' => ['id', 'title', 'email'], 'paging' => ['limit' => 4, 'offset' => 0], 'joined_tables' => ['users' => ['username', 'password']]];
+$result = parse('games', 'getAll', $data);
+
+printall($result);
 
 // $result = parse('games', '')
 
@@ -131,19 +145,6 @@ $donateeID = 5;
 // $result = parse('transactions', 'getLink', ['donatorID' => 2, 'donateeID' => 5]);
 
 // printall($result);
-
-
-$stripe = new \Stripe\StripeClient($_ENV['STRIPE_KEY']);
-
-$link = $stripe->paymentLinks->create([
-    'line_items' => [['price' => 'price_1OssePBFJdNNb6QWMRcxmeoY', 'quantity' => 1]],
-    'metadata' => [
-        'donatorID' => $donatorID,
-        'donateeID' => $donateeID,
-    ],
-]);
-
-echo $link->url;
 
 
 

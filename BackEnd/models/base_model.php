@@ -151,8 +151,10 @@ class BaseModel
 
     public function getOne($column, $value, $included_columns = [], $joined_tables = [])
     {
-        $sql = $this->buildSelectionLayer($included_columns, $joined_tables);
-        $sql .= " WHERE {$this->table}.$column = ?" . (count($joined_tables) > 0 ? " GROUP BY {$this->table}.id" : '');
+        ['selections' => $selections, 'group' => $group] = $this->buildSelectionLayer($included_columns, $joined_tables);
+
+        // $sql = "$selections WHERE {$this->table}.$column = ?" . (count($joined_tables) > 0 ? " GROUP BY {$this->table}.id" : '');
+        $sql = "$selections WHERE {$this->table}.$column = ? $group";
         // $result = $this->query($sql, [$value]);
 
         return $this->query($sql, [$value])->fetch(PDO::FETCH_ASSOC);
@@ -160,33 +162,35 @@ class BaseModel
 
     public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [], $paging = [])
     {
-        $sql = $this->buildSelectionLayer($included_columns, $joined_tables);
-        $params = [];
+        ['selections' => $selections, 'group' => $group] = $this->buildSelectionLayer($included_columns, $joined_tables);
 
+        $sql = $selections;
+        $params = [];
         if ($column && $value) {
             $sql .= " WHERE {$this->table}.$column = ?";
             $params = [$value];
         }
 
         $sort_layer = $this->applySorting($sorting);
-        $sql .= !empty($joined_tables) ? " GROUP BY {$this->table}.id" : '';
-        $sql .= !empty($sort_layer) ? " ORDER BY $sort_layer" : '';
-        $sql .= $this->getPaging($paging['limit'] ?? -1, $paging['offset'] ?? 0);   // TESTING PAGING
+        // $sql .= !empty($joined_tables) ? " GROUP BY {$this->table}.id" : '';
+        $sql .= $group . (!empty($sort_layer) ? " ORDER BY $sort_layer" : '') . $this->getPaging(...$paging);
+        // $sql .= $this->getPaging($paging['limit'] ?? -1, $paging['offset'] ?? 0);   // TESTING PAGING
 
         return $this->query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [], $paging = [])
     {
-        $sql = $this->buildSelectionLayer($included_columns, $joined_tables) . ' WHERE 1 = 1';
-
+        ['selections' => $selections, 'group' => $group] = $this->buildSelectionLayer($included_columns, $joined_tables);
         ['sql' => $filtering_sql, 'params' => $params] = $this->applyFilters($filters);
-        $sql .= $filtering_sql . (!empty($joined_tables) ? " GROUP BY {$this->table}.id" : '');
+
+        $sql = "$selections WHERE 1 = 1 $filtering_sql $group";
+        // $sql .= $filtering_sql . (!empty($joined_tables) ? " GROUP BY {$this->table}.id" : '');
 
         if ($sorting_layer = $this->applySorting($sorting))
             $sql .= " ORDER BY $sorting_layer";
 
-        $sql .= $this->getPaging($paging['limit'] ?? -1, $paging['offset'] ?? 0);
+        $sql .= $this->getPaging(...$paging);
 
         return $this->bindingQuery($sql, $params);
     }
@@ -242,14 +246,10 @@ class BaseModel
     public function buildSelectionLayer($included_columns = [], $join_keys = [])
     {
         $columns = $this->parseColumns($included_columns);
-        ['selects' => $selects, 'joins' => $joins] = $this->parseJoinedTables($join_keys);
+        ['selects' => $selects, 'joins' => $joins, 'group' => $group] = $this->parseJoinedTables($join_keys);
 
-        return "SELECT 
-                $columns 
-                $selects 
-                FROM 
-                {$this->table} 
-                $joins";
+        $selections = "SELECT $columns $selects FROM {$this->table} $joins";
+        return ['selections' => $selections, 'group' => $group];
     }
 
     public function parseColumns($included_columns = [])
@@ -265,22 +265,22 @@ class BaseModel
     //https://www.w3schools.com/sql/sql_join.asp#:~:text=Different%20Types%20of%20SQL%20JOINs,records%20from%20the%20right%20table
     public function parseJoinedTables($joined_tables = [])
     {
-        $join_layer = ['selects' => '', 'joins' => ''];
+        $selects = '';
+        $joins = '';
 
         foreach ($joined_tables as $ref_tab => $included_columns)
-            if ($keyset = $this->keys[$ref_tab]) {
-                ['INT_COL' => $int_col, 'EXT_COL' => $ext_col] = $keyset;
+            if (isset($this->keys[$ref_tab])) {
+                ['INT_COL' => $int_col, 'EXT_COL' => $ext_col] = $this->keys[$ref_tab];
 
-                // $join_layer['selects'] .= ", $ref_tab.*";
                 foreach ($included_columns as $join_column)
-                    $join_layer['selects'] .= ", GROUP_CONCAT({$ref_tab}.{$join_column} SEPARATOR ', ') AS {$ref_tab}_{$join_column}";
+                    $selects .= ", GROUP_CONCAT({$ref_tab}.{$join_column} SEPARATOR ', ') AS {$ref_tab}_{$join_column}";
 
-                $join_layer['joins'] .= " INNER JOIN $ref_tab ON {$this->table}.{$int_col} = {$ref_tab}.{$ext_col}";
+                $joins .= " INNER JOIN $ref_tab ON {$this->table}.{$int_col} = {$ref_tab}.{$ext_col}";
             }
 
         // $join_layer['selects'] .= !empty($join_layer['selects']) ? " GROUP BY {$this->table}.id" : '';
-
-        return $join_layer;
+        $group = empty($selects) ? " GROUP BY {$this->table}.id" : '';
+        return ['selects' => $selects, 'joins' => $joins, 'group' => $group];
     }
 
 

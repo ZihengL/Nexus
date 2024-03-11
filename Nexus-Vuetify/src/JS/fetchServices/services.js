@@ -218,15 +218,37 @@ const filterNulls = (obj) => {
 };
 
 export function prepGetOne(column, value, included_columns = null, joined_tables = null) {
-  return filterNulls(arguments);
+  return filterNulls({
+    column: column,
+    value: value,
+    included_columns: included_columns,
+    joined_tables: joined_tables
+  });
 }
 
 export function prepGetAll(column = null, value = null, included_columns = null, sorting = null, joined_tables = null, paging = null) {
-  return filterNulls(arguments);
+  return filterNulls({
+    column: column,
+    value: value,
+    included_columns: included_columns,
+    sorting: sorting,
+    joined_tables: joined_tables,
+    paging: paging
+  });
 }
 
 export function prepGetAllMatching(filters = null, sorting = null, included_columns = null, joined_tables = null, paging = null) {
-  return filterNulls(arguments);
+  const res = filterNulls({
+    filters: filters,
+    included_columns: included_columns,
+    sorting: sorting,
+    joined_tables: joined_tables,
+    paging: paging
+  });
+
+  console.log("res", res);
+
+  return res;
 }
 
 export function getOne(table, preppedData) {

@@ -37,9 +37,10 @@ class BaseController
         return $this->model->table;
     }
 
-    public function getTableController($table)
+    protected function getTableController($table)
     {
-        return self::$controllers[$table];
+        if (isset(self::$controllers[$table]))
+            return self::$controllers[$table];
     }
 
     // MANAGERS
@@ -113,9 +114,9 @@ class BaseController
     {
         ['credentials' => $credentials, 'request_data' => $request_data] = $data + [null, null];
 
-        // if ($authenticated_tokens = $this->authenticateUser(...$credentials))
         if ($credentials) {
-            ['id' => $id, 'tokens' => $tokens] = $credentials + [null, null];
+            [$id, $tokens] = getFromData(['id', 'tokens'], $credentials);
+
             if ($this->validateUser($id, $tokens))
                 return $request_data;
         }
@@ -154,14 +155,11 @@ class BaseController
         return $data;
     }
 
-    protected function setGetterDefaults($data)
+    protected function setGetterDefaults($data = [])
     {
-        $data['included_columns'] ??= [];
-        $data['included_columns'] = $this->filterAccess($data['included_columns']);
-
-        $data['joined_tables'] ??= [];
-        $data['joined_tables'] = $this->filterAccessOnJoins($data['joined_tables']);
-
+        $data['included_columns'] = $this->filterAccess($data['included_columns'] ?? []);
+        $data['joined_tables'] = $this->filterAccessOnJoins($data['joined_tables'] ?? []);
+        $data['sorting'] ??= [];
         $data['paging'] ??= ['limit' => -1, 'offset' => 0];
 
         return $data;
@@ -191,10 +189,12 @@ class BaseController
 
     protected function filterAccessOnJoins($joined_tables = [])
     {
-        if (is_array($joined_tables))
-            foreach ($joined_tables as $ext_tab => $included_columns)
-                if ($table_controller = self::$controllers[$ext_tab])
-                    $included_columns = $table_controller->filterAccess($included_columns);
+        foreach ($joined_tables as $table => $included_columns)
+            if (isset(self::$controllers[$table])) {
+                $controller = self::$controllers[$table];
+
+                $joined_tables[$table] = $controller->filterAccess($included_columns);
+            }
 
         return $joined_tables;
     }
@@ -207,9 +207,11 @@ class BaseController
     protected function getOneFrom($table, $column, $value, $included_columns = [], $joined_tables = [])
     {
         if (isset(self::$controllers[$table])) {
-            $controller = self::$controllers[$table];
+            if ($this->model->table === $table)
+                return $this->model->getOne($column, $value, $included_columns, $joined_tables);
 
-            return $controller->getOne([$column, $value, $included_columns, $joined_tables]);
+            $controller = self::$controllers[$table];
+            return $controller->getOneFrom($table, $column, $value, $included_columns, $joined_tables);
         }
 
         return null;
@@ -217,10 +219,12 @@ class BaseController
 
     protected function getAllFrom($table, $column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [], $paging = [])
     {
+        if ($this->model->table === $table)
+            return $this->model->getAllMatching($column, $value, $included_columns, $sorting, $joined_tables, $paging);
+
         if (isset(self::$controllers[$table])) {
             $controller = self::$controllers[$table];
-
-            return $controller->getAll([$column, $value, $included_columns, $sorting, $joined_tables, $paging]);
+            return $controller->getAllFrom($table, $column, $value, $included_columns, $sorting, $joined_tables, $paging);
         }
 
         return null;
@@ -228,10 +232,12 @@ class BaseController
 
     protected function getAllMatchingFrom($table, $filters = [], $sorting = [], $included_columns = [], $joined_tables = [], $paging = [])
     {
+        if ($this->model->table === $table)
+            return $this->model->getAllMatching($filters, $sorting, $included_columns, $joined_tables, $paging);
+
         if (isset(self::$controllers[$table])) {
             $controller = self::$controllers[$table];
-
-            return $controller->getAllMatching([$filters, $sorting, $included_columns, $joined_tables]);
+            return $controller->getAllMatchingFrom($table, $filters, $sorting, $included_columns, $joined_tables, $paging);
         }
 
         return null;
@@ -239,23 +245,24 @@ class BaseController
 
     public function getOne($data)
     {
+        $defaults = ['column' => '', 'value' => '', 'included_columns' => [], 'joined_tables' => []];
+        $data = $this->setGetterDefaults(array_merge($defaults, $data));
+
         [
             'column' => $column,
             'value' => $value,
             'included_columns' => $included_columns,
             'joined_tables' => $joined_tables
-        ] = $data + [
-            null,
-            null,
-            $this->getDefault('included_columns'),
-            $this->getDefault('joined_tables')
-        ];
+        ] = $data;
 
         return $this->model->getOne($column, $value, $included_columns, $joined_tables);
     }
 
     public function getAll($data)
     {
+        $defaults = ['column' => null, 'value' => null, 'included_columns' => [], 'sorting' => [], 'joined_tables' => [], 'paging' => []];
+        $data = $this->setGetterDefaults(array_merge($defaults, $data));
+
         [
             'column' => $column,
             'value' => $value,
@@ -263,33 +270,23 @@ class BaseController
             'sorting' => $sorting,
             'joined_tables' => $joined_tables,
             'paging' => $paging
-        ] = $data + [
-            null,
-            null,
-            $this->getDefault('included_columns'),
-            [],
-            $this->getDefault('joined_tables'),
-            $this->getDefault('paging')
-        ];
+        ] = $data;
 
         return $this->model->getAll($column, $value, $included_columns, $sorting, $joined_tables, $paging);
     }
 
     public function getAllMatching($data)
     {
+        $defaults = ['filters' => [], 'sorting' => [], 'included_columns' => [], 'joined_tables' => [], 'paging' => []];
+        $data = $this->setGetterDefaults(array_merge($defaults, $data));
+
         [
             'filters' => $filters,
             'sorting' => $sorting,
             'included_columns' => $included_columns,
             'joined_tables' => $joined_tables,
             'paging' => $paging
-        ] = $data + [
-            [],
-            [],
-            $this->getDefault('included_columns'),
-            $this->getDefault('joined_tables'),
-            $this->getDefault('paging')
-        ];
+        ] = $data;
 
         return $this->model->getAllMatching($filters, $sorting, $included_columns, $joined_tables, $paging);
     }
@@ -301,7 +298,7 @@ class BaseController
 
     public function update($data)
     {
-        $id = $data['id'];
+        $id = $data['id'] ?? null;
 
         if ($this->model->update($id, $data)) {
             return $this->model->getOne($this->id, $id);
@@ -312,7 +309,7 @@ class BaseController
 
     public function delete($data)
     {
-        $id = $data['id'];
+        $id = $data['id'] ?? null;
 
         return $this->model->delete($id);
     }

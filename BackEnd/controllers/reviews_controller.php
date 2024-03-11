@@ -22,7 +22,7 @@ class ReviewsController extends BaseController
         parent::__construct($central_controller, $specific_actions);
     }
 
-    protected function setGetterDefaults($data)
+    protected function setGetterDefaults($data = [])
     {
         $data['sorting'] ??= [$this->rating => true];
 

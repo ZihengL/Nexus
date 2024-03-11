@@ -78,7 +78,7 @@ class GamestagsModel extends BaseModel
         return $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function buildSelectionLayer($included_columns = [], $join_keys = [])
-    {
-    }
+    // public function buildSelectionLayer($included_columns = [], $join_keys = [])
+    // {
+    // }
 }
