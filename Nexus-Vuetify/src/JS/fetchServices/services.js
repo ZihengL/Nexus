@@ -246,8 +246,6 @@ export function prepGetAllMatching(filters = null, sorting = null, included_colu
     paging: paging
   });
 
-  console.log("res", res);
-
   return res;
 }
 

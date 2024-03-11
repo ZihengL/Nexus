@@ -159,7 +159,6 @@ class BaseController
     {
         $data['included_columns'] = $this->filterAccess($data['included_columns'] ?? []);
         $data['joined_tables'] = $this->filterAccessOnJoins($data['joined_tables'] ?? []);
-        $data['sorting'] ??= [];
         $data['paging'] ??= ['limit' => -1, 'offset' => 0];
 
         return $data;
