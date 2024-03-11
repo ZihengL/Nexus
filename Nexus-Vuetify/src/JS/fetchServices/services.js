@@ -2,8 +2,6 @@
 /************************** LOCAL STORAGE **************************/
 /*******************************************************************/
 
-import Stripe from "stripe";
-
 export function storeData(key, data) {
   localStorage.setItem(key, JSON.stringify(data));
 }
@@ -118,7 +116,7 @@ const options = (body = null) => {
 const parseResponse = (result) => {
   if (Object.prototype.hasOwnProperty.call(result, "ERROR")) {
     console.log("ERROR", result);
-    return false;
+    return result;
   }
 
   return true;
