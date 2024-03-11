@@ -24,12 +24,6 @@ class BaseController
         $this->central_controller = $central_controller;
         $this->actions = array_merge($this->actions, $table_specific_actions);
 
-        // echo '<hr>' . $this->model->table;
-        // foreach ($this->actions as $action => $value) {
-        //     // $this->actions[$action] ??= false;
-        //     echo '<br>' . $action . ' ' . ($value === false ? 'public' : 'private');
-        // }
-
         self::$controllers[$this->model->table] = $this;
     }
 
@@ -117,13 +111,16 @@ class BaseController
     // TODO: CHANGING FROM AUTHENTICATION TO JUST VALIDATION?
     public function verifyCredentials($data)
     {
-        [$id, $tokens, $data] = getFromData(['id', 'tokens'], $data, true);
+        ['credentials' => $credentials, 'request_data' => $request_data] = $data + [null, null];
 
         // if ($authenticated_tokens = $this->authenticateUser(...$credentials))
-        if ($this->validateUser($id, $tokens))
-            return $data;
+        if ($credentials) {
+            ['id' => $id, 'tokens' => $tokens] = $credentials + [null, null];
+            if ($this->validateUser($id, $tokens))
+                return $request_data;
+        }
 
-        return false;
+        throw new Exception("Missing credentials in privileged operation.");
     }
 
     protected function validateUser($id, $tokens)
@@ -141,19 +138,6 @@ class BaseController
     /************************* PROCESSING DATA *************************/
     /*******************************************************************/
 
-    protected function setGetterDefaults($data)
-    {
-        $data['included_columns'] ??= [];
-        $data['included_columns'] = $this->filterAccess($data['included_columns']);
-
-        $data['joined_tables'] ??= [];
-        $data['joined_tables'] = $this->filterAccessOnJoins($data['joined_tables']);
-
-        $data['paging'] ??= ['limit' => -1, 'offset' => 0];
-
-        return $data;
-    }
-
     public function standardizeRequestData($data)
     {
         $client_to_server = [
@@ -168,6 +152,33 @@ class BaseController
             }
 
         return $data;
+    }
+
+    protected function setGetterDefaults($data)
+    {
+        $data['included_columns'] ??= [];
+        $data['included_columns'] = $this->filterAccess($data['included_columns']);
+
+        $data['joined_tables'] ??= [];
+        $data['joined_tables'] = $this->filterAccessOnJoins($data['joined_tables']);
+
+        $data['paging'] ??= ['limit' => -1, 'offset' => 0];
+
+        return $data;
+    }
+
+    protected function getDefault($key, $values = [])
+    {
+        switch ($key) {
+            case 'included_columns':
+                return $this->filterAccess($values);
+            case 'joined_tables':
+                return $this->filterAccessOnJoins($values);
+            case 'paging':
+                return ['limit' => -1, 'offset' => 0];
+            default:
+                return null;
+        }
     }
 
     // Need this to filter out indirect access to restricted columns
@@ -228,17 +239,59 @@ class BaseController
 
     public function getOne($data)
     {
-        return $this->model->getOne(...$this->setGetterDefaults($data));
+        [
+            'column' => $column,
+            'value' => $value,
+            'included_columns' => $included_columns,
+            'joined_tables' => $joined_tables
+        ] = $data + [
+            null,
+            null,
+            $this->getDefault('included_columns'),
+            $this->getDefault('joined_tables')
+        ];
+
+        return $this->model->getOne($column, $value, $included_columns, $joined_tables);
     }
 
     public function getAll($data)
     {
-        return $this->model->getAll(...$this->setGetterDefaults($data));
+        [
+            'column' => $column,
+            'value' => $value,
+            'included_columns' => $included_columns,
+            'sorting' => $sorting,
+            'joined_tables' => $joined_tables,
+            'paging' => $paging
+        ] = $data + [
+            null,
+            null,
+            $this->getDefault('included_columns'),
+            [],
+            $this->getDefault('joined_tables'),
+            $this->getDefault('paging')
+        ];
+
+        return $this->model->getAll($column, $value, $included_columns, $sorting, $joined_tables, $paging);
     }
 
     public function getAllMatching($data)
     {
-        return $this->model->getAllMatching(...$this->setGetterDefaults($data));
+        [
+            'filters' => $filters,
+            'sorting' => $sorting,
+            'included_columns' => $included_columns,
+            'joined_tables' => $joined_tables,
+            'paging' => $paging
+        ] = $data + [
+            [],
+            [],
+            $this->getDefault('included_columns'),
+            $this->getDefault('joined_tables'),
+            $this->getDefault('paging')
+        ];
+
+        return $this->model->getAllMatching($filters, $sorting, $included_columns, $joined_tables, $paging);
     }
 
     public function create($data)
@@ -248,7 +301,7 @@ class BaseController
 
     public function update($data)
     {
-        $id = getOneFromData($this->id, $data);
+        $id = $data['id'];
 
         if ($this->model->update($id, $data)) {
             return $this->model->getOne($this->id, $id);
@@ -259,7 +312,7 @@ class BaseController
 
     public function delete($data)
     {
-        $id = getOneFromData($this->id, $data);
+        $id = $data['id'];
 
         return $this->model->delete($id);
     }

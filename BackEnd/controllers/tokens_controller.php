@@ -107,8 +107,10 @@ class TokensController extends BaseController
     public function generateTokensOnValidation($user, $email, $password)
     {
         if ($this->validateCredentials($user, $email, $password)) {
-            $refresh_jwt = $this->generateRefreshToken($user['id']);
-            $access_jwt = $this->generateAccessToken($user['id']);
+            $id = $user['id'];
+
+            $refresh_jwt = $this->generateRefreshToken($id);
+            $access_jwt = $this->generateAccessToken($id);
 
             return [self::ACCESS => $access_jwt, self::REFRESH => $refresh_jwt];
         }
@@ -128,7 +130,7 @@ class TokensController extends BaseController
 
         if ($user['email'] !== $email || !password_verify($password, $user['password'])) {
             $this->revokeAccess(id: $user['id']);
-            throw new Exception("Provided crendentials mismatch.");
+            throw new Exception("Provided credentials mismatch.");
         }
 
         return true;
@@ -153,16 +155,14 @@ class TokensController extends BaseController
     // Doesn't refresh access; revokes all access from user if not valid
     public function validateTokens($user_id, $jwts)
     {
-        $access_token = $jwts[self::ACCESS] ??= null;
-        $refresh_token = $jwts[self::REFRESH] ??= null;
+        [self::ACCESS =>  $access_token, self::REFRESH => $refresh_token] = $jwts + [null, null];
 
-        if (
-            ($access_token && $this->validateAccessToken($access_token)) ||
+        if (($access_token && $this->validateAccessToken($access_token)) ||
             ($refresh_token && $this->validateRefreshToken($user_id, $refresh_token))
         ) {
-
             return true;
         }
+
         $this->revokeAccess(id: $user_id);
         throw new Exception("Invalid authentication tokens provided for User id '$user_id'.");
     }
@@ -170,8 +170,7 @@ class TokensController extends BaseController
     // Refreshes access
     public function authenticateTokens($user_id, $jwts)
     {
-        $access_token = $jwts[self::ACCESS] ??= null;
-        $refresh_token = $jwts[self::REFRESH] ??= null;
+        [self::ACCESS =>  $access_token, self::REFRESH => $refresh_token] = $jwts + [null, null];
 
         if ($access_token && $this->validateAccessToken($access_token))
             return $jwts;
@@ -200,35 +199,17 @@ class TokensController extends BaseController
 
     public function create($data)
     {
-        // if ($jwt && $decoded) {
-        //     $decoded[self::SHA] = hash($this->hashing_alg, $jwt);
-
-        //     return parent::create($decoded);
-        // }
-
-        return false;
+        throw new Exception('Access restricted.');
     }
 
     public function update($data)
     {
-        // if ($decoded = $this->decodeToken($jwt, true)) {
-        //     $decoded[self::SHA] = hash($this->hashing_alg, $jwt);
-
-        //     return parent::update($id, $decoded);
-        // }
-
-        return false;
+        throw new Exception('Access restricted.');
     }
 
     public function delete($data)
     {
-        // if ($decoded = $this->decodeToken($jwt, true)) {
-        //     $decoded[self::SHA] = hash($this->hashing_alg, $jwt);
-
-        //     return parent::update($id, $decoded);
-        // }
-
-        return false;
+        throw new Exception('Access restricted.');
     }
 
     private function deleteByHash($jwts)

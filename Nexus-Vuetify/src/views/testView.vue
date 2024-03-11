@@ -19,6 +19,7 @@
     <v-btn class="bordered-btn" @click="ziLogin">Login</v-btn>
     <v-btn class="bordered-btn" @click="ziLogout">Logout</v-btn>
     <v-btn class="bordered-btn" @click="updateUser">update user</v-btn>
+    <v-btn class="bordered-btn" @click="stripetest">stripe</v-btn>
   </div>
   <div>
     <ReviewsListComponent :sorting="{ timestamp: false }"></ReviewsListComponent>
@@ -400,7 +401,9 @@ export default {
       };
       const included_columns = ["id", "developerID", "tags", "ratingAverage"];
 
-      const result = this.$fetchData('games', 'getAllMatching', { filters, sorting, included_columns });
+      const preppedData = this.$prepGetAllMatching(filters, sorting, included_columns);
+
+      const result = this.$getAllMatching('games', preppedData);
       console.log(result);
     },
 
@@ -425,15 +428,9 @@ export default {
     },
 
     async ziLogout() {
-      const res = this.$getCredentials();
-      if (res) {
-        console.log(res);
-      }
-      // await this.$logout().then(
-      //   this.isLoggedIn()
-      // );
-
-
+      await this.$logout().then(
+        this.isLoggedIn()
+      );
     },
 
     async updateUser() {
@@ -442,6 +439,18 @@ export default {
       this.$updateUser({ username: 'LOL' });
     },
 
+    async stripetest() {
+      const result = await this.$getDonationLink(2);
+
+      if (result) {
+        console.log(result);
+        // window.location.replace(result);
+      }
+
+      // const res = arr.filter((i) => { i !== null });
+
+      // console.log(res);
+    }
   },
 };
 </script>

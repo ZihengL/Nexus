@@ -25,7 +25,7 @@ class UsersController extends BaseController
         $this->restricted_columns = ['password', 'email', 'phoneNumber', 'isAdmin'];
         $specific_actions = [
             'login' => false,
-            'logout' => false,
+            'logout' => true,
             'update' => true,
             'delete' => true
         ];
@@ -87,7 +87,7 @@ class UsersController extends BaseController
     // Do this if user needs to do a fresh login
     public function login($data)
     {
-        [$email, $password, $data] = getFromData(['email', 'password'], $data, true);
+        ['email' => $email, 'password' => $password] = $data;
 
         $user = $this->model->getOne(column: $this->email, value: $email);
 
@@ -99,14 +99,8 @@ class UsersController extends BaseController
 
     public function logout($data)
     {
-        [$id, $tokens] = getFromData(['id', 'tokens'], $data, false);
+        $tokens = $data['tokens'];
 
-        return $this->validateUser($id, $tokens) &&
-            $this->getTokensController()->revokeAccess(tokens: $tokens);
-    }
-
-    public function deleteuser($id)
-    {
-        return $this->model->delete($id);
+        return $this->getTokensController()->revokeAccess(tokens: $tokens);
     }
 }

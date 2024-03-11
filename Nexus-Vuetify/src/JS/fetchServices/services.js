@@ -2,6 +2,8 @@
 /************************** LOCAL STORAGE **************************/
 /*******************************************************************/
 
+import Stripe from "stripe";
+
 export function storeData(key, data) {
   localStorage.setItem(key, JSON.stringify(data));
 }
@@ -66,10 +68,8 @@ export function getTokens() {
 export function getCredentials() {
   if (isLoggedIn() && hasData("tokens")) {
     return {
-      credentials: {
-        id: getFromUser("id"),
-        tokens: getTokens(),
-      },
+      id: getFromUser("id"),
+      tokens: getTokens(),
     };
   }
 
@@ -115,6 +115,15 @@ const options = (body = null) => {
   };
 };
 
+const parseResponse = (result) => {
+  if (Object.prototype.hasOwnProperty.call(result, "ERROR")) {
+    console.log("ERROR", result);
+    return false;
+  }
+
+  return true;
+};
+
 // BASE FETCH
 
 export async function fetchData(table, action, body = null) {
@@ -134,6 +143,7 @@ export async function fetchData(table, action, body = null) {
 
   if (Object.prototype.hasOwnProperty.call(result, "ERROR")) {
     console.log(result);
+
     return false;
   } else {
     return result;
@@ -168,7 +178,12 @@ export async function login(email, password) {
 
 export async function logout() {
   if (isLoggedIn()) {
-    const result = await fetchData("users", "logout", getCredentials());
+    const credentials = getCredentials();
+
+    const result = await fetchData("users", "logout", {
+      credentials: credentials,
+      request_data: credentials,
+    });
 
     if (result) {
       clearFromStorage();
@@ -184,10 +199,9 @@ export async function updateUser(data) {
   if (isLoggedIn()) {
     const result = await fetchData("users", "update", {
       credentials: getCredentials(),
-      data,
+      request_data: data,
     });
 
-    console.log("UPDATE", result);
     if (result) {
       storeTokens(result.tokens);
     }
@@ -196,14 +210,53 @@ export async function updateUser(data) {
 
 // GENERICS
 
-export function getOne(table, data) {
-  return fetchData(table, "getOne", data);
+const filterNulls = (obj) => {
+  return Object.entries(obj).reduce((filtered, [key, value]) => {
+    if (value !== null) {
+      filtered[key] = value;
+    }
+    return filtered;
+  }, {});
+};
+
+export function prepGetOne(column, value, included_columns = null, joined_tables = null) {
+  return filterNulls(arguments);
 }
 
-export function getAll(table, data) {
-  return fetchData(table, "getAll", data);
+export function prepGetAll(column = null, value = null, included_columns = null, sorting = null, joined_tables = null, paging = null) {
+  return filterNulls(arguments);
 }
 
-export function getAllMatching(table, data) {
-  return fetchData(table, "getAllMatching", data);
+export function prepGetAllMatching(filters = null, sorting = null, included_columns = null, joined_tables = null, paging = null) {
+  return filterNulls(arguments);
+}
+
+export function getOne(table, preppedData) {
+  return fetchData(table, "getOne", preppedData);
+}
+
+export function getAll(table, preppedData) {
+  return fetchData(table, "getAll", preppedData);
+}
+
+export function getAllMatching(table, preppedData) {
+  return fetchData(table, "getAllMatching", preppedData);
+}
+
+/*******************************************************************/
+/***************************** STRIPE ******************************/
+/*******************************************************************/
+
+export async function getDonationLink(developerID) {
+  if (isLoggedIn()) {
+    const credentials = getCredentials();
+
+    return await fetchData("transactions", "getLink", {
+      credentials: credentials,
+      request_data: { 
+        donatorID: credentials.id,
+        donateeID: developerID,
+      }
+    });
+  }
 }

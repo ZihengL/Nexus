@@ -82,6 +82,8 @@ $rt = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwLCJpYXQiOjE3MDk5Mzc0NDcs
 $tks = ['access_token' => $at, 'refresh_token' => $rt];
 $id = 10;
 
+
+
 // $credentials = ['id' => $id, 'tokens' => $tks];
 
 // [$id, $tokens, $data] = getFromData(['id', 'tokens'], $credentials, false);
@@ -97,33 +99,51 @@ $id = 10;
 // printall($data);
 
 
-
-
 // $central_controller->parseRequest('users', 'create', ['email' => 'test@test', 'password' => '123']);
 
-// $login = ['email' => 'test@test', 'password' => '123'];
-// $result = $cc->parseRequest('users', 'login', ['email' => 'test@test', 'password' => '123']);
+$login = ['email' => 'test@test', 'password' => '123'];
+$result = $cc->parseRequest('users', 'login', ['email' => 'test@test', 'password' => '123']);
 
-// $user = $result['user'];
-// $tokens = $result['tokens'];
-// printall($result);
+$user = $result['user'];
+$tokens = $result['tokens'];
+printall($result);
 
-$result = parse('games', 'getAllMatching', ['filters' => ['id' => 2]]);
+$credentials = ['id' => $user['id'], 'tokens' => $tokens];
+$request_data = ['donatorID' => $user['id'], 'donateeID' => 2];
+
+$result = parse('transactions', 'getLink', ['credentials' => $credentials, 'request_data' => $request_data]);
 
 printall($result);
 
-$result = parse('games', '')
+// $result = parse('games', 'getAllMatching', ['filters' => ['id' => 2]]);
+
+// printall($result);
+
+// $result = parse('games', '')
 
 // $credentials = ['id' => $user['id'], 'tokens' => $tokens];
 // echo parse('users', 'logout', $credentials) ? 'success' : 'fail';
 
 
+$donatorID = 2;
+$donateeID = 5;
+
+// $result = parse('transactions', 'getLink', ['donatorID' => 2, 'donateeID' => 5]);
+
+// printall($result);
 
 
+$stripe = new \Stripe\StripeClient($_ENV['STRIPE_KEY']);
 
+$link = $stripe->paymentLinks->create([
+    'line_items' => [['price' => 'price_1OssePBFJdNNb6QWMRcxmeoY', 'quantity' => 1]],
+    'metadata' => [
+        'donatorID' => $donatorID,
+        'donateeID' => $donateeID,
+    ],
+]);
 
-
-
+echo $link->url;
 
 
 

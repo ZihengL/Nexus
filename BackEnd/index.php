@@ -45,6 +45,7 @@ try {
     $data = parseRequestMethod();
 
     $result = $central_controller->parseRequest($table, $action, $data);
+    // $result = $data;
     echo json_encode($result);
 } catch (Exception $e) {
     echo json_encode(['ERROR' => strip_tags($e->getMessage())]);

@@ -5,8 +5,6 @@ class TokensModel extends BaseModel
 {
     public function __construct($pdo)
     {
-        $table = "tokens";
-
         parent::__construct($pdo, "tokens");
     }
 

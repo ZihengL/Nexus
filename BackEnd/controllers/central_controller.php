@@ -8,6 +8,8 @@ require_once "$path/controllers/users_controller.php";
 require_once "$path/controllers/games_controller.php";
 require_once "$path/controllers/reviews_controller.php";
 require_once "$path/controllers/tags_controller.php";
+require_once "$path/controllers/transactions_controller.php";
+
 require_once "$path/controllers/multiplicity/gamestags_controller.php";
 require_once "$path/controllers/multiplicity/users_downloads_controller.php";
 
@@ -30,6 +32,7 @@ class CentralController
     public $games_controller;
     public $reviews_controller;
     public $tags_controller;
+    public $transactions_controller;
 
     // RELATIONAL TABLES
     public $gamestags_controller;
@@ -51,6 +54,7 @@ class CentralController
         $this->games_controller = new GamesController($this, $pdo);
         $this->reviews_controller = new ReviewsController($this, $pdo);
         $this->tags_controller = new TagsController($this, $pdo);
+        $this->transactions_controller = new TransactionsController($this, $pdo);
 
         // Relational tables
         $this->gamestags_controller = new GamestagsController($this, $pdo);
@@ -71,36 +75,26 @@ class CentralController
 
     public function parseRequest($table, $action, $data = null)
     {
-        if ($controller = BaseController::getController($table)) {
+        if ($controller = BaseController::getController($table))
             if ($controller->isValidAction($action)) {
                 try {
-                    return $this->processData($controller, $action, $data);
-                } catch (InvalidArgumentException $e) {
-                    $unwrapped = unwrap($data);
-                    throw new Exception("Error parsing request data from '$unwrapped': {$e->getMessage()}");
+                    return $this->parseData($controller, $action, $data);
+                } catch (Exception $e) {
+                    throw new Exception("Failed to parse request data: {$e->getMessage()}");
                 }
             }
-        }
     }
 
-    private function processData($controller, $action, $data)
+    private function parseData($controller, $action, $data)
     {
         if ($data) {
             if ($controller->isPrivilegedAction($action))
                 $data = $controller->verifyCredentials($data);
-            // $data = $controller->standardizeRequestData($data);
-
-            // if ($controller->isPrivilegedAction($action) && $controller->verifyCredentials($data)) {
-            // [$tokens, $data] = $controller->verifyCredentials($data);
-
-            // $result = $controller->$action($data);
-            // return ['tokens' => $tokens, 'result' => $result];
-            // return $controller->$action($data);
 
             return $controller->$action($data);
-        } else {
-            return $controller->$action();
         }
+
+        return $controller->$action();
     }
 
     // COMMANDS
