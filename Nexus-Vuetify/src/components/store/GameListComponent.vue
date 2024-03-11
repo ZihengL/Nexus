@@ -1,12 +1,14 @@
 <template>
-  <div v-if="props.gameList.length" id="storeComp" class="glass">
-    <SingleGameComponent
-      v-for="game in props.gameList"
-      :key="game.id"
-      :idGame="game.id"
-      class="vuee"
-    >
-    </SingleGameComponent>
+  <div v-if="props.gameList.length > 0 && nbPage != null" class="glass">
+    <div id="storeComp">
+      <SingleGameComponent
+        v-for="game in props.gameList"
+        :key="game.id"
+        :idGame="game.id"
+        class="vuee"
+      />
+    </div>
+    <Pagination :nbPageProps="nbPage" class="pag"/>
   </div>
   <div v-else>
     {{ gameList_data.errorMsg }}
@@ -15,10 +17,11 @@
 
 <script setup>
 import SingleGameComponent from "./SingleGameComponent.vue";
+import  Pagination  from "../PaginationComponent.vue";
 // import { fetchData } from "../../JS/fetch";
 // let listeJeux = ref(null);
 import { reactive, onMounted, watch } from "vue";
-
+let nbPage = null;
 const props = defineProps({
   gameList: {
     type: Array,
@@ -40,8 +43,20 @@ watch(
   { deep: true }
 );
 
+
+
+console.log('nb game div : ', nbPage)
 onMounted(async () => {
-  // await getGameList();
+  if(props.gameList){
+    console.log('nb game liste: ', props.gameList)
+    if(props.gameList.length > 9){
+      nbPage = props.gameList.length / 9;
+    }
+    else {
+      nbPage = 1;
+    }
+  }
+
 });
 </script>
 

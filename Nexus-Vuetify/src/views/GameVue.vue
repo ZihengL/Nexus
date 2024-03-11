@@ -35,6 +35,7 @@
         </div>
 
         <btnComp :contenu="'Telecharger'" @toggle-btn="toggleProfile"/>
+        <btnComp :contenu="'Faire un don'" @toggle-btn="toggleProfile"/>
       </div>
     </div>
 
