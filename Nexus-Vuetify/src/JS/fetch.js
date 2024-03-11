@@ -25,7 +25,7 @@ export function fetchData (
   }
 
   if (sorting && Object.keys(sorting).length) {
-    // console.log("sorting fetch : ", sorting);
+    console.log("sorting fetch : ", sorting);
     const sortingParams = Object.entries(sorting).map(([key, value]) => `${key}:${value}`).join(',');
     queryParams.push(`sorting=${encodeURIComponent(sortingParams)}`);
   }
@@ -50,7 +50,8 @@ export function fetchData (
   return fetch(uri, fetchOptions)
     .then(response => {
       if (!response.ok) { 
-        return Promise.reject(response);
+        // return Promise.reject(response);
+        return response.text().then(errorData => Promise.reject(errorData));
       }
       //  console.log(" response : ", response.text());
 

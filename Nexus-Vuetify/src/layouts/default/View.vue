@@ -1,6 +1,6 @@
 <template>
   <v-main>
-    <router-view @changeCon="changeValeur" :connectedView="connectValue"/>
+    <router-view @changeCon="changeValeur" :connectedView="props.connected"/>
   </v-main>
 </template>
 
@@ -19,6 +19,6 @@ const changeValeur = () => {
 
 watch(() => props.connected, (newValue, oldValue) => {
   console.log('var update view : ', newValue);
-  connectValue.value = props.connected;
+  connectValue.value =  props.connected;
 });
 </script>

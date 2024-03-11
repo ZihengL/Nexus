@@ -1,81 +1,125 @@
 <template>
   <!-- Created By CodingNepal -->
   <div class="wrapper glass roundBorderSmall">
-
     <div class="form-container">
-
       <div class="slide-controls roundBorderSmall">
-        <input type="radio" name="slide" id="login" v-model="isLogin" value="true" checked>
-        <input type="radio" name="slide" id="signup" v-model="isLogin" value="false">
+        <input
+          type="radio"
+          name="slide"
+          id="login"
+          v-model="isLogin"
+          value="true"
+          checked
+        />
+        <input
+          type="radio"
+          name="slide"
+          id="signup"
+          v-model="isLogin"
+          value="false"
+        />
         <label for="login" class="slide login">Connexion</label>
         <label for="signup" class="slide signup">Inscription</label>
         <div class="slider-tab"></div>
       </div>
 
-      <div class="form-inner ">
-
+      <div class="form-inner">
         <form action="#" class="login log">
           <!-- ... Login form content ... -->
           <div class="field">
-            <input type="text" v-model="email" placeholder="Addresse email" required>
+            <input
+              type="text"
+              v-model="email"
+              placeholder="Addresse email"
+              required
+            />
           </div>
           <div class="field">
-            <input type="password" v-model="password" placeholder="Mot de passe" required>
+            <input
+              type="password"
+              v-model="password"
+              placeholder="Mot de passe"
+              required
+            />
           </div>
           <div class="pass-link glow">
             <a href="#">Mot de passe oublier ?</a>
           </div>
-          <btnComp :contenu="'Se connecter'" @toggle-btn="toggleProfileLog"/>
+          <btnComp :contenu="'Se connecter'" @toggle-btn="toggleProfileLog()" />
           <div class="signup-link">
-            Pas encore inscris ? <a style=" cursor: pointer;" class=" glow">S'inscrire</a>
+            Pas encore inscris ?
+            <a style="cursor: pointer" class="glow">S'inscrire</a>
           </div>
         </form>
 
         <form action="#" class="signup sign">
           <!-- ... Signup form content ... -->
           <div class="field field2">
-            <input type="text" v-model="lastnameSign" placeholder="Nom "  required>
-            <input type="text" v-model="firstnameSign" placeholder="Prenom "  required>
+            <input
+              type="text"
+              v-model="lastnameSign"
+              placeholder="Nom "
+              required
+            />
+            <input
+              type="text"
+              v-model="firstnameSign"
+              placeholder="Prenom "
+              required
+            />
           </div>
           <div class="field">
-            <input type="text" v-model="telSign" placeholder="Téléphone">
+            <input type="text" v-model="telSign" placeholder="Téléphone" />
           </div>
           <div class="field">
-            <input type="text" v-model="usernameSign" placeholder="Username *" required>
+            <input
+              type="text"
+              v-model="usernameSign"
+              placeholder="Username *"
+              required
+            />
           </div>
           <div class="field">
-            <input type="text" v-model="email" placeholder="Email *" required>
+            <input type="text" v-model="email" placeholder="Email *" required />
           </div>
           <div class="field">
-            <input type="password" v-model="password" placeholder="Mot de passe *" required>
+            <input
+              type="password"
+              v-model="password"
+              placeholder="Mot de passe *"
+              required
+            />
           </div>
           <div class="field">
-            <input type="password" v-model="passwordConfSign" placeholder="Confirmer le mot de passe *" required>
+            <input
+              type="password"
+              v-model="passwordConfSign"
+              placeholder="Confirmer le mot de passe *"
+              required
+            />
           </div>
-          <btnComp :contenu="'S\'inscrire'" @toggle-btn="toggleProfileSign"/>
+          <btnComp :contenu="'S\'inscrire'" @toggle-btn="toggleProfileSign()" />
         </form>
-
       </div>
-
     </div>
-
   </div>
 </template>
 
 <script setup>
-import loginScript from '../../JS/LoginScript.js';
-import { ref, onMounted, defineEmits } from 'vue';
-import { loginService, registerService } from '../../JS/fetchServices';
-import { fetchData } from '../../JS/fetch';
-import btnComp from "../btnComponent.vue"
+import loginScript from "../../JS/LoginScript.js";
+import storageManager from "../../JS/localStorageManager.js"
+import { ref, onMounted, defineEmits } from "vue";
+import { loginService, registerService, getOne } from "../../JS/fetchServices";
+import { fetchData } from "../../JS/fetch";
+import btnComp from "../btnComponent.vue";
 
 const isLogin = ref(true);
-const emit = defineEmits(['showProfile']);
+const emit = defineEmits(["showProfile"]);
 let loginTokens_access_token;
 let loginTokens_refresh_token;
 let idDev = null;
 
-let email= ref(null);
+let email = ref(null);
 let password = ref(null);
 
 let lastnameSign = ref(null);
@@ -88,56 +132,49 @@ const toggleLogin = () => {
   isLogin.value = true;
   //console.log("c'est true");
   const formInner = document.querySelector(".form-inner");
-  formInner.style.height = '45svh';
+  formInner.style.height = "45svh";
 };
 
 const toggleSignup = () => {
   isLogin.value = false;
   //console.log("c'est false");
   const formInner = document.querySelector(".form-inner");
-  formInner.style.height = '80svh';
+  formInner.style.height = "80svh";
 };
 
 const toggleProfileLog = async () => {
   const login = {
-    email: email .value,
-    password: password .value,
+    email: email.value,
+    password: password.value,
   };
-  //console.log("var : ", email, " var : ", password);
+  console.log("var : ", email.value, " var : ", password.value);
   //const login = { login };
   try {
-    const loginResponse =  await loginService(login)
-    //console.log("Login successful : ", loginResponse);
-    if (loginResponse) {
+    const loginResponse = await loginService(login);
+    const devId = await getOne("users", "email", email.value, ["id"])
+    console.log('loginRegister devId : ', devId.id)
+
+    console.log("Login successful : ", loginResponse);
+    if (devId && (loginResponse !== false)) {
+       // console.log("loginResponse : ", loginResponse);
       loginTokens_access_token = loginResponse.access_token;
       loginTokens_refresh_token = loginResponse.refresh_token;
-      localStorage.setItem("accessToken", loginResponse.access_token);
-      localStorage.setItem("refreshToken", loginResponse.refresh_token);
+      storageManager.setAccessToken(loginResponse.access_token)
+      // localStorage.setItem("accessToken", loginResponse.access_token);
+      storageManager.setRefreshToken(loginResponse.refresh_token)
+      // localStorage.setItem("refreshToken", loginResponse.refresh_token);
 
-      const filters = {
-        email: email .value,
-      }
-      const sorting = {
-        id: false
-      }
-      const includedColumns = ['id']
-      const jsonBody = { filters, sorting, includedColumns }
+      // localStorage.setItem("idDev", devId);
+      storageManager.setIdDev(devId)
 
-      const devId = await fetchData('users', 'getAllMatching', null, null, null, null, jsonBody, 'POST');
-      //console.log('devs : ', devId[0].id)
-      idDev = devId[0].id;
-      localStorage.setItem("idDev", devId[0].id);
-
-      //console.log("id : ", idDev);
-      emit('showProfile');
+      // console.log("devId : ", devId);
+      emit("showProfile", devId);
     }
-
-  }
-  catch (error) {
+  } catch (error) {
     console.error("Login failed: ", error);
   }
 };
-const toggleProfileSign = async () =>{
+const toggleProfileSign = async () => {
   const createData = {
     email: email.value,
     username: usernameSign.value,
@@ -150,30 +187,32 @@ const toggleProfileSign = async () =>{
     username: 'c',
     password: 'c',*/
   };
-  console.log('createData : ' ,createData);
-  console.log('createData.password : ' ,createData.password);
-  console.log('reateData.email  : ' ,createData.email );
+  console.log("createData : ", createData);
+  console.log("createData.password : ", createData.password);
+  console.log("reateData.email  : ", createData.email);
 
-  if( createData.password == passwordConfSign.value ){
+  if (createData.password == passwordConfSign.value) {
     //const createBody = { createData };
     console.log("check");
     let results = await registerService(createData);
-    console.log('retour sign : ' , results);
-    toggleProfileLog()
-  } 
+    console.log("retour sign : ", results);
+    toggleProfileLog();
+  }
   //const createBody = { createData };
   /*console.log("check");
   let results = await registerService(createData);
   console.log('retour sign : ' , results);
   toggleProfileLog()
   */
-
 };
 
 onMounted(() => {
+  // console.log("onMounted  storageManager.getIdDev() : ", storageManager.getIdDev());
+  if (storageManager.getIdDev()) {
+    emit("showProfile")
+  }
   loginScript.init({ toggleLogin, toggleSignup });
 });
 </script>
-
 
 <style src="../../styles/SignRegisterStyle.scss" scoped></style>

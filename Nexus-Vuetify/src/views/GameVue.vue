@@ -33,8 +33,7 @@
         <div class="tags">
           <a href="#" class="glow" v-for="tag in gameInfos.tags" :key="tag.id">{{ tag.name }}</a>
         </div>
-
-        <btnComp :contenu="'Telecharger'" @toggle-btn="toggleProfile"/>
+        <btnComp :contenu="'Telecharger'" @toggle-btn="downloadZipFile()"/>
         <btnComp :contenu="'Faire un don'" @toggle-btn="toggleProfile"/>
       </div>
     </div>
@@ -71,14 +70,14 @@
             <Avis class="old "  :idGame="gameInfos.leGame.id" :sort="2"/>
           </div>
         </div>
-        <myAvis/>
+        <myAvis :gameID="props.idGame"/>
       </div>
       <Avis class="rate glass"  :idGame="gameInfos.leGame.id" :sort="0"/>
     </div>
 
     <div v-else class="avisVide  roundBorderSmall glass">
       <p>Aucun commentaire pour l'instant </p>
-      <myAvis/>
+      <myAvis :gameID="props.idGame"/>
     </div>
   </div>
 </template>
@@ -90,7 +89,7 @@ import Avis from "../components/game/Avis.vue";
 import game from "../components/game/GameCarrousel.vue";
 import { defineProps, onMounted, ref, reactive } from "vue";
 import { getGameDetailsWithDeveloperName, getReviews } from '../JS/fetchServices';
-import { getStorage, ref as firebaseRef, getDownloadURL } from "firebase/storage";
+import { getStorage, ref as firebaseRef, getDownloadURL, uploadBytes} from "firebase/storage";
 
 const storage = getStorage();
 let UrlGameImg = ref(""); // Initialize as an empty string
@@ -108,7 +107,6 @@ const defaultPath = "/src/assets/image/img1.png";
 const props = defineProps({
   idGame: {
     type: Number,
-    default: 4,
   }
 });
 let reviewTemp = ref(null);
@@ -143,6 +141,28 @@ async function fetchGameUrl(gameId) {
     return defaultPath; // Return the default image path on error
   }
 }
+
+
+const downloadZipFile = async () => {
+  const fileName = `${props.idGame}/${gameInfos.leGame.title}.zip`; // Use reactive properties directly
+  console.log(fileName);
+  const fileRef = firebaseRef(storage, `Games/${fileName}`);
+
+  try {
+    const url = await getDownloadURL(fileRef);
+    // Trigger the file download
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName.split('/').pop(); // Use the file's title as the download name
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    console.log(`${fileName} downloaded successfully`);
+  } catch (error) {
+    console.error("Failed to download file:", error);
+  }
+};
 
 onMounted(async () => {
   try {

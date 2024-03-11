@@ -47,16 +47,11 @@ watch(
 
 console.log('nb game div : ', nbPage)
 onMounted(async () => {
-  if(props.gameList){
-    console.log('nb game liste: ', props.gameList)
-    if(props.gameList.length > 9){
-      nbPage = props.gameList.length / 9;
-    }
-    else {
-      nbPage = 1;
-    }
-  }
 
+  // await getGameList();
+  if(props.gameList){
+    console.log("onMounted props.gameList : ", props.gameList)
+  }
 });
 </script>
 

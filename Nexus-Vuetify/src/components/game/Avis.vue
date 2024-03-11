@@ -6,7 +6,7 @@
           <div class="containerStar">
             <div class="containerAvis">
               <div class="containerIMG">
-                <img src="../../assets/Dev_Picture/amazigh.png" alt="user" class="img" />
+                <img :src="avis.profilePic || defaultPic" alt="Profile Picture" class="img" />
                 <p>{{ avis.username }}</p>
                 <!-- <p>UserTOTO {{ userName.value[index]?.username ?? 'Nom d\'utilisateur non disponible' }}</p> -->
               </div>
@@ -27,12 +27,15 @@
 
 <script setup>
   import { defineProps, ref, onMounted, defineEmits } from "vue";
-import { getReviews, getUsername, getReviewsAndUsernames } from '../../JS/fetchServices';
+import { getOne, getReviewsAndUsernames } from '../../JS/fetchServices';
+import storageManager from '../../JS/localStorageManager';
+import defaultProfilePic from '../../assets/Dev_Picture/defaultProfilePic.png';
 //import { forEach } from "core-js/core/array";
 
   const props = defineProps(["idGame", "sort"]);
 
   let review = ref(null);
+  const defaultPic = ref(defaultProfilePic);
 
   onMounted(async () => {
     try {      
@@ -50,6 +53,7 @@ import { getReviews, getUsername, getReviewsAndUsernames } from '../../JS/fetchS
       //let reviewData = await getReviewsAndUsernames(props.idGame)
       review.value = reviewData;
       //console.log('review : ', review.value)
+     
 
     } catch (error) {
       console.error("Error during component mounting:", error);
