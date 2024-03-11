@@ -61,11 +61,11 @@ class TagsController extends BaseController
             }
             return $this->getGamesTagsController()->create($newData);
         }
-        return $isValidArray['isSuccessful'];
+        return false;
     }
 
 
-    public function delete($tokens = null, ...$data)
+    public function delete($data)
     {
         $isValid = $this->validateData("delete", $data);
         $name = $data["name"];
@@ -97,7 +97,8 @@ class TagsController extends BaseController
             throw new Exception('Cannot delete tag that doesnt exist');
             // return $this->createResponse(false, 'Cannot delete tag that doesnt exist');
         }
-        return $isValidArray['isSuccessful'];
+        return true;
+        // return $isValidArray['isSuccessful'];
     }
 
 

@@ -15,7 +15,7 @@ class GamestagsController extends BaseController
         parent::__construct($central_controller, $table_specific_actions);
     }
 
-    public function create($tokens = null, ...$data)
+    public function create($data)
     {
         $tagName = $data["name"];
         $tagWasAdded = $this->getTagsController()->getOne('name', $tagName);

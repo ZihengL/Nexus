@@ -67,11 +67,11 @@ class ReviewsController extends BaseController
         return false;
     }
 
-    public function delete($id, $tokens = null, ...$data)
+    public function delete($data)
     {
         // echo "<br> delete reviews_controller <br>";
         // print_r($data);
-        $data['id'] = $id;
+        $id = $data['id'] ;
         if ($this->validateReview("delete", $data)) {
             if ($this->model->getOne(column: "id", value: $id)) {
                 // echo "delete review: ";
@@ -92,7 +92,7 @@ class ReviewsController extends BaseController
         // [$id, $tokens, $data] = getFromData(['id', 'tokens'], $data, true);
         // echo "<br> update reviews_controller <br>";
         // print_r($data);
-        // $data['id'] = $id;
+        $id = $data['id'] ;
         if ($this->validateReview("update", $data)) {
             if ($this->model->getOne(column: "id", value: $id)) {
                 // echo "update review: ";
