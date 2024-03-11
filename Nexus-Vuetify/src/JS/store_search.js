@@ -21,7 +21,7 @@ export const search_AndFilter = async (
   tags = [],
   sortingValue = null
 ) => {
-  console.log('sorting : ', sortingValue)
+  //console.log('sorting : ', sortingValue)
 
   let sorting = null;
 
@@ -38,7 +38,7 @@ export const search_AndFilter = async (
     ? await searchOn_titleOrUsername(titleOrDevName)
     : await getAllGamesWithDeveloperName(null, null, null, sorting)
 
-  console.log('games  : ', games)
+  //console.log('games  : ', games)
 
   if (tags.length > 0) {
     games = games.filter(game =>

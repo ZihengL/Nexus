@@ -1,12 +1,14 @@
 <template>
-  <div v-if="props.gameList.length" id="storeComp" class="glass">
-    <SingleGameComponent
-      v-for="game in props.gameList"
-      :key="game.id"
-      :idGame="game.id"
-      class="vuee"
-    >
-    </SingleGameComponent>
+  <div v-if="props.gameList.length > 0" class="glass">
+    <div id="storeComp">
+      <SingleGameComponent
+        v-for="game in arrayStore"
+        :key="game.id"
+        :idGame="game.id"
+        class="vuee"
+      />
+    </div>
+    <Pagination :nbPageProps="nbPage" class="pag" @nbPage="getNbPage()"/>
   </div>
   <div v-else>
     {{ gameList_data.errorMsg }}
@@ -15,10 +17,17 @@
 
 <script setup>
 import SingleGameComponent from "./SingleGameComponent.vue";
-// import { fetchData } from "../../JS/fetch";
-// let listeJeux = ref(null);
-import { reactive, onMounted, watch } from "vue";
+import  Pagination  from "../PaginationComponent.vue";
+import { reactive, ref, onMounted, watch } from "vue";
+import PaginationManager from "@/JS/pagination";
 
+let nbPage = null;
+let paginationNb = 1;
+ const getNbPage = () => {
+  paginationNb = PaginationManager.getPage()
+  console.log('paginationNb emit : ', paginationNb)
+ }
+let arrayStore = ref([]);
 const props = defineProps({
   gameList: {
     type: Array,
@@ -26,36 +35,34 @@ const props = defineProps({
   },
 });
 
+
 const gameList_data = reactive({
   listeJeux: [],
   errorMsg: "Error no game in List",
 });
 
-
-watch(
-  () => gameList_data.gameList_result,
-  (newVal, oldVal) => {
-    //console.log("gameList_result updated", newVal);
-  },
-  { deep: true }
-);
-
-
 watch(
   () => props.gameList,
   (newVal, oldVal) => {
-    console.log("watch props.gameList : ", props.gameList)
+    let max = paginationNb * 9;
+    let min = max - 9;
+    if (props.gameList.length < max){
+      max = props.gameList.length
+    }
+
+    arrayStore.value = props.gameList.slice(min, max);
+
+    console.log('array : ', arrayStore.value.length);
+
+    if (props.gameList.length > 9) {
+      nbPage = props.gameList.length / 9;
+    } else {
+      nbPage = 1; // ou une autre valeur si vous préférez
+    }
   },
   { deep: true }
 );
 
-onMounted(async () => {
-  // await getGameList();
-  console.log("hello")
-  if(props.gameList.length > 0){
-    console.log("onMounted props.gameList : ", props.gameList)
-  }
-});
 </script>
 
 <style lang="scss">

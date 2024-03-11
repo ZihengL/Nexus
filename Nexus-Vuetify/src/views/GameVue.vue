@@ -33,8 +33,8 @@
         <div class="tags">
           <a href="#" class="glow" v-for="tag in gameInfos.tags" :key="tag.id">{{ tag.name }}</a>
         </div>
-
         <btnComp :contenu="'Telecharger'" @toggle-btn="downloadZipFile()"/>
+        <btnComp :contenu="'Faire un don'" @toggle-btn="toggleProfile"/>
       </div>
     </div>
 
