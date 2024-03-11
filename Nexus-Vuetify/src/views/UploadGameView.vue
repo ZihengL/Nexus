@@ -118,6 +118,7 @@ import btnComp from "../components/btnComponent.vue";
 import { reactive, defineProps, computed, onMounted } from "vue";
 import { create, getAllMatching, deleteData } from "../JS/fetchServices.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getStorage, ref as firebaseRef, getDownloadURL, uploadBytes} from "firebase/storage";
 
 const props = defineProps({
   developerID: {
@@ -279,6 +280,27 @@ const formatData = () => {
     return true;
   }
 };
+
+
+// Method to upload a file
+const uploadZipFile = async () => {
+  // Example file to upload, you might want to replace this with actual file selection logic
+  const file = new Blob(["This is a test ZIP file content"], { type: 'application/zip' });
+  const fileName = `${props.idGame}/${gameInfos.leGame.title}.zip`; // Example file name, replace as needed
+  console.log(fileName);
+  const fileRef = firebaseRef(storage, `Games/${fileName}`);
+
+  try {
+    await uploadBytes(fileRef, file);
+    console.log(`${fileName} uploaded successfully`);
+  } catch (error) {
+    console.error("Failed to upload file:", error);
+  }
+};
+
+
+
+
 
 function updateTagsArray() {
   let newTags = state.tags

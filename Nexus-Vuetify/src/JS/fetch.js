@@ -25,7 +25,7 @@ export function fetchData (
   }
 
   if (sorting && Object.keys(sorting).length) {
-    // console.log("sorting fetch : ", sorting);
+    console.log("sorting fetch : ", sorting);
     const sortingParams = Object.entries(sorting).map(([key, value]) => `${key}:${value}`).join(',');
     queryParams.push(`sorting=${encodeURIComponent(sortingParams)}`);
   }
@@ -45,12 +45,13 @@ export function fetchData (
   if ((method === 'POST' || method === 'PUT' || method === 'DELETE') && jsonBody) {
     fetchOptions.body = JSON.stringify(jsonBody);
   }
-  //  console.log(`Fetching: ${uri} with options:`, fetchOptions, "query params ", queryParams);
+   console.log(`Fetching: ${uri} with options:`, fetchOptions, "query params ", queryParams);
 
   return fetch(uri, fetchOptions)
     .then(response => {
       if (!response.ok) { 
-        return Promise.reject(response);
+        // return Promise.reject(response);
+        return response.text().then(errorData => Promise.reject(errorData));
       }
       //  console.log(" response : ", response.text());
 

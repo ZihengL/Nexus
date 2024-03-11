@@ -4,7 +4,7 @@
       type="text"
       id="AvisId"
       placeholder="Votre Avis..."
-      :model-value="state.comment"
+      v-model="state.comment"
       class="SaisieText glass roundBorderSmall"
     />
     <div class="starContainer">
@@ -14,18 +14,20 @@
           hover
           :length="5"
           :size="32"
-          :model-value="state.ratingValue"
+          v-model="state.ratingValue"
           active-color="primary"
           class="rat"
+          half-increments
         />
       </div>
     </div>
-    <btnComp :contenu="'Envoyer votre Avis'" @toggle-btn="toggleProfile" />
+    <btnComp :contenu="'Envoyer votre Avis'" @toggle-btn="createReview" />
   </div>
 </template>
 <script setup>
 import btnComp from "../btnComponent.vue";
 import { create, getOne, deleteData } from "../../JS/fetchServices";
+import storageManager from "../../JS/localStorageManager";
 import { reactive, onMounted, watch, defineProps } from "vue";
 
 const props = defineProps({
@@ -41,13 +43,12 @@ const props = defineProps({
 const state = reactive({
   ratingValue: 0,
   timestamp: new Date().toISOString().split("T")[0],
-  comment:"",
+  comment: "",
   errorMessage: "",
 });
 
 const validateData = async () => {
-  // Assuming getOne() checks if a user exists, which doesn't directly relate to validating the input data
-  // So, this part might need adjustment based on actual requirement
+  console.log("storageManager.getIdDev() : ", storageManager.getIdDev());
   let userExist = await getOne("users", "id", props.userID);
   if (!userExist) {
     state.errorMessage = "User does not exist.";
@@ -61,31 +62,33 @@ const validateData = async () => {
     state.errorMessage = "Comment cannot be empty.";
     return false;
   }
-  // Reset error message if validation passes
   state.errorMessage = "";
   return true;
 };
 
 const createReview = async () => {
-  const isValid = await validateData(); // Ensure validation is awaited and checked
+  const isValid = await validateData();
+  console.log("isValid : ", isValid);
+  let userid = storageManager.getIdDev()
+  console.log("props.gameID : ", props.gameID);
   if (isValid) {
-    try {
-      let reviewIsCreated = await create("reviews", {
-        userID: props.userID,
-        gameID: props.gameID,
-        rating: state.ratingValue,
-        comment: state.comment,
-      });
-      // Handle success (e.g., clear form, show success message)
-    } catch (error) {
-      // Handle error (e.g., show error message)
-      console.error("Failed to create review:", error);
+    if (userid) {
+      try {
+        let reviewIsCreated = await create("reviews", {
+          userID: userid,
+          gameID: props.gameID,
+          rating: state.ratingValue,
+          comment: state.comment,
+        });
+        console.log("reviewIsCreated : ", reviewIsCreated)
+      } catch (error) {
+        console.error("Failed to create review:", error);
+      }
     }
   } else {
-    console.log(state.errorMessage); // Log or handle validation error message
+    console.log(state.errorMessage);
   }
 };
-
 </script>
 <style lang="scss">
 .containerFormAvis {

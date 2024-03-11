@@ -80,9 +80,9 @@ const filter_data = reactive({
   sortList: [
     { label: "Trier par : ", value: "" },
     { label: "Développeur", value: "devName" },
-    { label: "Date de sortie", value: "releaseDate" },
-    { label: "Note d'évaluation", value: "ratingAverage" },
-    { label: "Titre", value: "title" },
+    { label: "Date de sortie", value:{releaseDate: false} },
+    { label: "Note d'évaluation", value: {ratingAverage: false} },
+    { label: "Titre", value:{title : true}},
   ],
 });
 

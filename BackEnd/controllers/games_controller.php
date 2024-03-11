@@ -41,7 +41,7 @@ class GamesController extends BaseController
         }
 
         if (empty($sorting)) {
-            $sorting = [$this->ratingAverage => true];
+            $sorting = [$this->ratingAverage => false];
         }
 
         return $this->model->getAll($column, $value, $included_columns, $sorting);

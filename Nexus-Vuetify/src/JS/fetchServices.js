@@ -10,7 +10,7 @@ export const getAll = async (table, column = null, value = null, includedColumns
   return data
 };
 
-export const getAllMatching = async (table, filters, sorting = null, includedColumns = null) => {
+export const getAllMatching = async (table, filters,  includedColumns = null, sorting = null) => {
   let body = {
     filters,
     sorting,
@@ -192,6 +192,7 @@ export const getReviewsAndUsernames = async (gameID, sorting) => {
         const userDetails = await getUsername(review.userID);
         if (userDetails) {
           review.username = userDetails.username;
+          review.profilePic = userDetails.picture;
         }
       }
 
