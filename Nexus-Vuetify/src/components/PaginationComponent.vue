@@ -2,8 +2,8 @@
   <div v-if="ArrayPag.length > 0" class="pagination">
     <div><a  class="glow glass2 roundBorderSmall" href="#"><</a></div>
     <div v-for="pageNb, index in ArrayPag" :key="index" class="liste"  id="group1">
-      <input type="radio" :id="pageNb" name="group1" :checked="pageNb === 0"  @click="giveNb(pageNb)">
-      <label  class="glow roundBorderSmall" :for="pageNb">{{ pageNb + 1 }}</label>
+      <input type="radio" :id="pageNb" name="group1" :checked="pageNb === 0" >
+      <label  class="glow roundBorderSmall" :for="pageNb" @click="giveNb(pageNb)">{{ pageNb + 1 }}</label>
     </div>
     <div><a class="glow glass2 roundBorderSmall" href="#">></a></div>
   </div>
@@ -14,18 +14,39 @@
   import { defineProps, ref} from "vue";
   import PaginationManager from "@/JS/pagination";
 
-  const props = defineProps(["nbPageProps", "type"]);
+  //const props = defineProps(["nbPageProps", "type"]);
+  const props = defineProps({
+    nbPageProps: {
+      type: String,
+      default: "1",
+    },
+    type: {
+      type: String,
+      default: "1",
+    },
+  });
+
   const emit = defineEmits(['nbPage'])
 
-  console.log('type ',props.type)
+
   let leNbPage = 1;
   const giveNb = (id) => {
     leNbPage = id + 1;
-    if(props.nbStorePage == "Store"){
+    if(props.type == "Store"){
       PaginationManager.setStorePage(leNbPage);
+      console.log('type ',props.type.type)
     }
-    else {
-      PaginationManager.setCommPage(leNbPage);
+    else if (props.type == "0") {
+      PaginationManager.setComm0Page(leNbPage);
+      console.log('type ',props.type)
+    }
+    else if (props.type == "1") {
+      PaginationManager.setComm1Page(leNbPage);
+      console.log('type ',props.type)
+    }
+    else if (props.type == "2") {
+      PaginationManager.setComm2Page(leNbPage);
+      console.log('type ',props.type)
     }
     emit("nbPage")
   }
