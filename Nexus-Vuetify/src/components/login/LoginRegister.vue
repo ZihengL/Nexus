@@ -209,8 +209,6 @@ const toggleProfileSign = async () => {
 onMounted(() => {
   // console.log("onMounted  storageManager.getIdDev() : ", storageManager.getIdDev());
   if (storageManager.getIdDev()) {
-    console.log("onMounted  storageManager.getIsConnected() : ", storageManager.getIsConnected());
-    console.log("onMounted  storageManager.getIdDev() : ", storageManager.getIdDev());
     emit("showProfile")
   }
   loginScript.init({ toggleLogin, toggleSignup });

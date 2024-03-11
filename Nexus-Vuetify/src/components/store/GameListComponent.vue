@@ -42,6 +42,9 @@ watch(
 
 onMounted(async () => {
   // await getGameList();
+  if(props.gameList){
+    console.log("onMounted props.gameList : ", props.gameList)
+  }
 });
 </script>
 
