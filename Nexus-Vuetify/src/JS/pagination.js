@@ -1,8 +1,14 @@
 const PaginationManager = {
-    setPage (id) {
+    setStorePage (id) {
         localStorage.setItem('nbPagination', id)
     },
-    getPage () {
+    getStorePage () {
+      return localStorage.getItem('nbPagination')
+    },
+    setCommPage (id) {
+      localStorage.setItem('nbPagination', id)
+    },
+    getCommPage () {
       return localStorage.getItem('nbPagination')
     }
 }

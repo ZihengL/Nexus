@@ -2,7 +2,7 @@
   <div v-if="review" class="Recent roundBorderSmall">
     <div class="absolute" v-if="review.length > 0">
       <ul>
-        <li v-for="(avis, index) in review" :key="index" class="glass roundBorderSmall padding">
+        <li v-for="(avis, index) in arrayComm" :key="index" class="glass roundBorderSmall padding">
           <div class="containerStar">
             <div class="containerAvis">
               <div class="containerIMG">
@@ -20,23 +20,69 @@
           </div>
         </li>
       </ul>
-
+      <Pagination :nbPageProps="nbPage" class="pag" @nbPage="getNbPage()" :type="'Comm'"/>
     </div>
   </div>
 </template>
 
 <script setup>
-  import { defineProps, ref, onMounted, defineEmits } from "vue";
-import { getOne, getReviewsAndUsernames } from '../../JS/fetchServices';
-import storageManager from '../../JS/localStorageManager';
-import defaultProfilePic from '../../assets/Dev_Picture/defaultProfilePic.png';
-//import { forEach } from "core-js/core/array";
+  import { defineProps, ref, onMounted, defineEmits, watch } from "vue";
+  import { getOne, getReviewsAndUsernames } from '../../JS/fetchServices';
+  import storageManager from '../../JS/localStorageManager';
+  import defaultProfilePic from '../../assets/Dev_Picture/defaultProfilePic.png';
+  import  Pagination  from "../PaginationComponent.vue";
+  import PaginationManager from "@/JS/pagination";
 
-  const props = defineProps(["idGame", "sort"]);
-
+  const props = defineProps(["idGame", "sort", "nbMax"]);
   let review = ref(null);
   const defaultPic = ref(defaultProfilePic);
 
+  const nbMax = props.nbMax;
+  let nbPage = null;
+  let paginationNb = 1;
+
+  const getNbPage = () => {
+    paginationNb = PaginationManager.getCommPage()
+    let max = paginationNb * nbMax;
+    let min = max - nbMax;
+    if (review.value.length < max){
+      max = review.value.length
+    }
+    console.log('min  w2 : ', min);
+    console.log('max  w2 : ', max);
+    console.log('all lent w2  : ', review.value.length);
+
+    arrayComm.value = review.value.slice(min, max);
+
+    console.log('array  w2 : ', arrayComm.value.length);
+    console.log('paginationNb emit : ', paginationNb)
+  }
+
+  let arrayComm = ref([]);
+  watch(
+    () => review,
+    (newVal, oldVal) => {
+      let max = paginationNb * nbMax;
+      let min = max - nbMax;
+      if (review.value.length < max){
+        max = review.value.length
+      }
+      console.log('min w1 : ', min);
+      console.log('max  w1 : ', max);
+      console.log('all lent w1  : ', review.value.length);
+
+      arrayComm.value = review.value.slice(min, max);
+
+      console.log('array  w1 : ', arrayComm.value.length);
+
+      if (review.value.length > nbMax) {
+        nbPage = review.value.length / nbMax;
+      } else {
+        nbPage = 1; // ou une autre valeur si vous préférez
+      }
+    },
+    { deep: true }
+  );
   onMounted(async () => {
     try {      
       let sorting = null;

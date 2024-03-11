@@ -66,13 +66,13 @@
             <div class="slider-tab"></div>
           </div>
           <div class="form-inner">
-            <Avis class="recent" :idGame="gameInfos.leGame.id" :sort="1"/>
-            <Avis class="old "  :idGame="gameInfos.leGame.id" :sort="2"/>
+            <Avis class="recent" :idGame="gameInfos.leGame.id" :sort="1" :nbMax="1"/>
+            <Avis class="old "  :idGame="gameInfos.leGame.id" :sort="2" :nbMax="1"/>
           </div>
         </div>
         <myAvis :gameID="props.idGame"/>
       </div>
-      <Avis class="rate glass"  :idGame="gameInfos.leGame.id" :sort="0"/>
+      <Avis class="rate glass"  :idGame="gameInfos.leGame.id" :sort="0" :nbMax="3"/>
     </div>
 
     <div v-else class="avisVide  roundBorderSmall glass">

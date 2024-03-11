@@ -14,12 +14,19 @@
   import { defineProps, ref} from "vue";
   import PaginationManager from "@/JS/pagination";
 
-  const props = defineProps(["nbPageProps"]);
+  const props = defineProps(["nbPageProps", "type"]);
   const emit = defineEmits(['nbPage'])
+
+  console.log('type ',props.type)
   let leNbPage = 1;
   const giveNb = (id) => {
     leNbPage = id + 1;
-    PaginationManager.setPage(leNbPage);
+    if(props.nbStorePage == "Store"){
+      PaginationManager.setStorePage(leNbPage);
+    }
+    else {
+      PaginationManager.setCommPage(leNbPage);
+    }
     emit("nbPage")
   }
 

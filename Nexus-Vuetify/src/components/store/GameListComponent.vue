@@ -8,7 +8,7 @@
         class="vuee"
       />
     </div>
-    <Pagination :nbPageProps="nbPage" class="pag" @nbPage="getNbPage()"/>
+    <Pagination :nbPageProps="nbPage" class="pag" @nbPage="getNbPage()" :type="'Store'"/>
   </div>
   <div v-else>
     {{ gameList_data.errorMsg }}
@@ -20,11 +20,13 @@ import SingleGameComponent from "./SingleGameComponent.vue";
 import  Pagination  from "../PaginationComponent.vue";
 import { reactive, ref, onMounted, watch } from "vue";
 import PaginationManager from "@/JS/pagination";
+
 const nbMax = 6;
 let nbPage = null;
 let paginationNb = 1;
+
  const getNbPage = () => {
-  paginationNb = PaginationManager.getPage()
+  paginationNb = PaginationManager.getStorePage()
   let max = paginationNb * nbMax;
   let min = max - nbMax;
   if (props.gameList.length < max){
@@ -39,7 +41,9 @@ let paginationNb = 1;
   console.log('array  w2 : ', arrayStore.value.length);
   console.log('paginationNb emit : ', paginationNb)
  }
+
 let arrayStore = ref([]);
+
 const props = defineProps({
   gameList: {
     type: Array,
