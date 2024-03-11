@@ -34,7 +34,7 @@ let logoURL = '/src/assets/logos/Nexus_c5c3c0.png';
 let logo2URL = '/src/assets/logos/Nexus_171d25.png';
 
 const props = defineProps(['connected']);
-console.log('conn nav : ',props.connected)
+//console.log('conn nav : ',props.connected)
 const changeUrl = () => {
   hover.value = true;
 };
@@ -44,7 +44,7 @@ const rechangeUrl = () => {
 };
 
 watch(() => props.connected, (newValue, oldValue) => {
-  console.log('var update : ', newValue);
+  //console.log('var update : ', newValue);
 });
 
 </script>

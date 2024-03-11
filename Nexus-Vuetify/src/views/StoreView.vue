@@ -59,7 +59,7 @@ const store_data = reactive({
 
 
 async function handleFilterUpdate(filterData) {
-  console.log("Received filter data:", filterData);
+  //console.log("Received filter data:", filterData);
   let titleOrDevName = store_data.searchQuery ?? null;
   let tags = filterData.tags ?? [];
   let sorting = filterData.sorting ?? null;

@@ -2,7 +2,7 @@
   <div v-if="ArrayPag.length > 0" class="pagination">
     <div><a  class="glow glass2 roundBorderSmall" href="#"><</a></div>
     <div v-for="pageNb, index in ArrayPag" :key="index" class="liste"  id="group1">
-      <input type="radio" :id="pageNb" name="group1" :checked="pageNb === 0">
+      <input type="radio" :id="pageNb" name="group1" :checked="pageNb === 0"  @click="giveNb(pageNb)">
       <label  class="glow roundBorderSmall" :for="pageNb">{{ pageNb + 1 }}</label>
     </div>
     <div><a class="glow glass2 roundBorderSmall" href="#">></a></div>
@@ -12,14 +12,24 @@
 
 <script setup>
   import { defineProps, ref} from "vue";
+  import PaginationManager from "@/JS/pagination";
 
   const props = defineProps(["nbPageProps"]);
+  const emit = defineEmits(['nbPage'])
+  let leNbPage = 1;
+  const giveNb = (id) => {
+    leNbPage = id + 1;
+    PaginationManager.setPage(leNbPage);
+    emit("nbPage")
+  }
+
+
   let ArrayPag = [];
-  console.log('nb page : ',props.nbPageProps)
-    for (let index = 0; index < props.nbPageProps; index++) {
-      ArrayPag.push(index);
-    }
-    console.log('array page : ',ArrayPag)
+ // console.log('nb page : ',props.nbPageProps)
+  for (let index = 0; index < props.nbPageProps; index++) {
+    ArrayPag.push(index);
+  }
+ // console.log('array page : ',ArrayPag)
 
 </script>
 
