@@ -46,11 +46,11 @@
     },
     taille: {
       type: Number,  // Correction ici
-      default: 140,
+      default: 150,
     },
   });
 
-  let nb = 140;
+  let nb = props.taille;
 
   let review = ref(null);
   const defaultPic = ref(defaultProfilePic);
@@ -59,19 +59,26 @@
   let nbPage = null;
   let paginationNb = 1;
 
-  const setHeight = (nb, nb2 ) => {
-    const AvisComposant = document.querySelector(".AvisComp");
 
-    if (AvisComposant) {
-      if(nb2 < 4){
-        AvisComposant.style.overflow = 'hidden';
-        AvisComposant.style.height = nb + "px";
+  const setOverflow = (threshold) => {
+    const avisComposant = document.querySelector(".AvisComp");
+
+
+    if (avisComposant) {
+      if (threshold < 4) {
+        console.log(' yep');
+        avisComposant.style.overflowX = 'hidden';
+        avisComposant.style.overflowY = 'hidden';
+      } else {
+        console.log(' nope');
+        avisComposant.style.overflowX = 'hidden';
+        avisComposant.style.overflowY = "scroll";
       }
-      AvisComposant.style.height = nb + "px";
     } else {
       console.error("Element with class 'AvisComp' not found.");
     }
   };
+  
   onMounted(async () => {
     try {
       let sorting = null;
@@ -94,19 +101,19 @@
 
       if(review.value.length == 1){
         let nbHeight = nb;
-        setHeight(nbHeight, 1);
+        setOverflow(1);
       }
       else if(review.value.length == 2){
         let nbHeight = nb * 2;
-        setHeight(nbHeight, 2);
+        setOverflow(2);
       }
       else if(review.value.length == 3){
         let nbHeight = nb * 3;
-        setHeight(nbHeight, 3);
+        setOverflow(3);
       }
       else {
         let nbHeight = nb * 4;
-        setHeight(nbHeight, 4);
+        setOverflow(4);
       }
 
 
@@ -122,13 +129,8 @@
 //@import "../../styles/settings.scss";
 
 .AvisComp  {
-  //flex-basis: 200%;
-  position: relative;
-  //height: 50%;
-  //height: 550px;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  //border: 2px solid red;
+  //position: relative;
+
 
   .padding {
     padding: 10px;

@@ -73,7 +73,7 @@
           </div>
         <myAvis :gameID="props.idGame"/>
       </div>
-      <Avis class="rate glass"  :idGame="gameInfos.leGame.id" :sort="'0'" :nbMax="5" :taille="400"/>
+      <Avis class="rate glass"  :idGame="gameInfos.leGame.id" :sort="'0'" :nbMax="5"/>
     </div>
 
     <div v-else class="avisVide  roundBorderSmall glass">

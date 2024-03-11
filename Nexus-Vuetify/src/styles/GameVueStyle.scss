@@ -110,14 +110,13 @@
 
                     .recent, .old {
                         width: 50%;
+                        //overflow-y: scroll;
+                        overflow-x: hidden;
+                        height: auto;
+                        max-height: 640px;
+                        scrollbar-width: thin;
+                        scrollbar-color: rgba(255, 255, 255, 0.250) rgba(255, 255, 255, 0.06);
                         transition: all 0.6s cubic-bezier(0.68,-0.55,0.265,1.55);
-                    }
-                    .old {
-                        margin-left: 0%;
-                    }
-                    .recent {
-                        width: 50%;
-                        margin-right: 0%;
                     }
                 }
             }
