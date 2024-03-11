@@ -4,11 +4,18 @@
     Loading...
   </div>
   <div v-else-if="leDevs && gameList && toggleLogin && toggleSignup" class="allP">
-    <div class="containerProfile" :class="isHimself ? 'container1' : 'container2'">
+    <div
+      class="containerProfile"
+      :class="isHimself ? 'container1' : 'container2'"
+    >
       <div class="wrapper2">
         <div class="description glass roundBorderSmall">
           <div :class="isHimself ? 'imgContainerFull' : 'imgContainer'">
-            <img src="../../assets/Rich_Ricasso.png" alt="John" class="imgProfil" />
+            <img
+              src="../../assets/Rich_Ricasso.png"
+              alt="John"
+              class="imgProfil"
+            />
           </div>
           <div class="champUtilisateur">
             <h3>efew4w</h3>
@@ -17,7 +24,10 @@
             <p>description</p>
           </div>
           <div class="button" v-show="isHimself">
-            <router-link :to="{ name: 'Profile', params: { IdDev: props.idDevl } }" class="router glow">
+            <router-link
+              :to="{ name: 'Profile', params: { IdDev: props.idDevl } }"
+              class="router glow"
+            >
               <v-icon icon="mdi-account-circle" />
               <span class="link-btn">Gerer son profil</span>
             </router-link>
@@ -28,37 +38,90 @@
         <div class="wrapper glass roundBorderSmall">
           <div class="form-container">
             <div v-if="isHimself" class="slide-controls roundBorderSmall">
-              <input type="radio" name="slide" id="login" v-model="isLogin" value="true" checked />
-              <input type="radio" name="slide" id="signup" v-model="isLogin" value="false" />
-              <label for="login" class="slide login" @click="toggleLogin()">Acheter</label>
-              <label for="signup" class="slide signup" @click="toggleSignup()">Developper</label>
+              <input
+                type="radio"
+                name="slide"
+                id="login"
+                v-model="isLogin"
+                value="true"
+                checked
+              />
+              <input
+                type="radio"
+                name="slide"
+                id="signup"
+                v-model="isLogin"
+                value="false"
+              />
+              <label for="login" class="slide login" @click="toggleLogin()"
+                >Acheter</label
+              >
+              <label for="signup" class="slide signup" @click="toggleSignup()"
+                >Developper</label
+              >
               <div class="slider-tab"></div>
             </div>
 
             <div v-if="isHimself" class="form-inner">
-              <div v-for="(item, index) in gameList" :key="index" class="login gamesss log">
-                <liste-de-jeu :himself="props.isHimself" :idJeu="item.id" :buy="true" class="game gamess" />
+              <div
+                v-for="(item, index) in gameList"
+                :key="index"
+                class="login gamesss log"
+              >
+                <liste-de-jeu
+                  :himself="props.isHimself"
+                  :idJeu="item.id"
+                  :buy="true"
+                  class="game gamess"
+                />
               </div>
 
-              <div v-for="(item, index) in gameList" :key="index" class="signup sign">
-                <liste-de-jeu :himself="props.isHimself" :idJeu="item.id" :buy="false" class="game" />
+              <div
+                v-for="(item, index) in gameList"
+                :key="index"
+                class="signup sign"
+              >
+                <liste-de-jeu
+                  :himself="props.isHimself"
+                  :idJeu="item.id"
+                  :buy="false"
+                  class="game"
+                />
               </div>
             </div>
-            <div v-else v-for="(item, index) in gameList" :key="index" class="signup sign">
-              <liste-de-jeu :himself="props.isHimself" :idJeu="item.id" :buy="false" class="game" />
+            <div
+              v-else
+              v-for="(item, index) in gameList"
+              :key="index"
+              class="signup sign"
+            >
+              <liste-de-jeu
+                :himself="props.isHimself"
+                :idJeu="item.id"
+                :buy="false"
+                class="game"
+              />
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <router-link class="floating-right-bottom-btn glass" to="/upload" title="upload">
-      <v-icon icon="mdi-upload" class="icon glow" @click="uploadFile" />
+    <router-link
+      class="floating-right-bottom-btn glass"
+      to="/upload"
+      title="upload"
+    >
+      <v-icon icon="mdi-upload" class="icon glow" />
     </router-link>
   </div>
-  <div v-else-if="leDevs == null">
+  <div v-else-if="leDevs == null" >
     <p class="errorMsg">{{ errorMsg }}</p>
-    <btnComp :contenu="'Se deconnecter'" @toggle-btn="toggleLogout" style="align-self: center" />
+    <btnComp
+      :contenu="'Se deconnecter'"
+      @toggle-btn="toggleLogout"
+      style="align-self: center"
+    />
   </div>
 </template>
 
@@ -68,14 +131,11 @@ import ListeDeJeu from "./ListeDeJeu.vue";
 import { logoutService, getOne, getAllMatching } from "../../JS/fetchServices";
 import { defineProps, ref, onMounted, defineEmits } from "vue";
 import btnComp from "../btnComponent.vue";
-import { ref as firebaseRef, getDownloadURL, uploadBytes } from "firebase/storage";
-import { storage } from "@/firebase"; // Import your Firebase storage instance
 //import Amis from './amis.vue';
 
 const props = defineProps(["isHimself", "idDevl"]);
 const emit = defineEmits(["showProfile"]);
-let devId = props.idD
-evl;
+let devId = props.idDevl;
 
 const leDevs = ref(null);
 const errorMsg = ref("Unsuccessful login");
@@ -187,35 +247,9 @@ onMounted(async () => {
   } catch (error) {
     console.error("Error fetching data:", error);
   } finally {
-    isLoading.value = false;
+    isLoading.value = false; 
   }
 });
-
-const uploadFile = async (file, gameId, gameTitle) => {
-  try {
-    const folderPath = `Games/${gameId}`;
-    const fileName = `${gameTitle}.zip`;
-    const filePath = `${folderPath}/${fileName}`;
-
-    const fileRef = firebaseRef(storage, filePath);
-
-    // Upload file
-    await uploadBytes(fileRef, file);
-
-    console.log(`File ${fileName} uploaded successfully to ${folderPath}`);
-
-    // Get download URL
-    const url = await getDownloadURL(fileRef);
-
-    console.log(`File URL: ${url}`);
-
-    return url; // Return the download URL
-  } catch (error) {
-    console.error("Failed to upload file:", error);
-    throw error; // Throw the error for handling in the calling function
-  }
-};
-
 
 onMounted(async () => {
   try {
