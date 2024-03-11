@@ -10,7 +10,7 @@
         <input type="text" :placeholder="user.name || 'Prénom'" v-model="state.name" required />
          
         <span class="title">Nom</span>
-        <input type="text" :placeholder="user.lastName"  v-model="state.lastname" />
+        <input type="text" :placeholder="user.lastName|| 'Nom de Famille'"  v-model="state.lastname" />
       </div>
       <!-- Phone Number -->
       <div class="field">
