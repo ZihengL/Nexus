@@ -1,13 +1,17 @@
 <?php
-
 require_once "$path/controllers/database_manager.php";
-require_once "$path/controllers/games_controller.php";
-require_once "$path/controllers/users_controller.php";
-require_once "$path/controllers/tokens_controller.php";
-require_once "$path/controllers/reviews_controller.php";
-require_once "$path/controllers/gameTags_controller.php";
-require_once "$path/controllers/tags_controller.php";
 // require_once "$path/controllers/google/client_manager.php";
+
+require_once "$path/controllers/base_controller.php";
+require_once "$path/controllers/tokens_controller.php";
+require_once "$path/controllers/users_controller.php";
+require_once "$path/controllers/games_controller.php";
+require_once "$path/controllers/reviews_controller.php";
+require_once "$path/controllers/tags_controller.php";
+require_once "$path/controllers/transactions_controller.php";
+
+require_once "$path/controllers/multiplicity/gamestags_controller.php";
+require_once "$path/controllers/multiplicity/users_downloads_controller.php";
 
 require_once "$path/remote/routines.php";
 
@@ -17,18 +21,22 @@ class CentralController
 {
     private static $instance = null;
 
+    // MANAGERS
     public $database_manager;
+    public $google_client_manager;
+
+    // TABLES
     public $tokens_controller;
     public $routines_controller;
     public $users_controller;
     public $games_controller;
     public $reviews_controller;
-    public $gamestags_contoller;
     public $tags_controller;
+    public $transactions_controller;
 
-    public $google_client_manager;
-
-    // CONSTRUCTOR
+    // RELATIONAL TABLES
+    public $gamestags_controller;
+    public $users_downloads_controller;
 
     private function __construct()
     {
@@ -38,32 +46,55 @@ class CentralController
         $dotenv->load();
 
         $this->database_manager = DatabaseManager::getInstance();
-        $pdo = $this->database_manager->getPDO();
+        // $this->google_client_manager = GoogleClientManager::getInstance($this);
 
+        $pdo = $this->database_manager->getPDO();
         $this->tokens_controller = new TokensController($this, $pdo);
         $this->users_controller = new UsersController($this, $pdo);
         $this->games_controller = new GamesController($this, $pdo);
         $this->reviews_controller = new ReviewsController($this, $pdo);
-        $this->gamestags_contoller = new GameTagsController($this, $pdo);
         $this->tags_controller = new TagsController($this, $pdo);
+        $this->transactions_controller = new TransactionsController($this, $pdo);
 
-        // $this->google_client_manager = GoogleClientManager::getInstance($this);
+        // Relational tables
+        $this->gamestags_controller = new GamestagsController($this, $pdo);
+        $this->users_downloads_controller = new UsersDownloadsController($this, $pdo);
     }
 
     public static function getInstance()
     {
-        if (self::$instance == null) {
+        if (self::$instance == null)
             self::$instance = new CentralController();
-        }
 
         return self::$instance;
     }
 
-    // GETTERS
+    /*******************************************************************/
+    /****************************** GETTERS ****************************/
+    /*******************************************************************/
 
-    public function getAllMatching($controller, $filters = [], $sorting = [], $included_columns = [])
+    public function parseRequest($table, $action, $data = null)
     {
-        return $controller->getAllMatching($filters, $sorting, $included_columns);
+        if ($controller = BaseController::getController($table))
+            if ($controller->isValidAction($action)) {
+                try {
+                    return $this->parseData($controller, $action, $data);
+                } catch (Exception $e) {
+                    throw new Exception("Failed to parse request data: {$e->getMessage()}");
+                }
+            }
+    }
+
+    private function parseData($controller, $action, $data)
+    {
+        if ($data) {
+            if ($controller->isPrivilegedAction($action))
+                $data = $controller->verifyCredentials($data);
+
+            return $controller->$action($data);
+        }
+
+        return $controller->$action();
     }
 
     // COMMANDS

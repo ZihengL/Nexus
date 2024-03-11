@@ -11,15 +11,28 @@
     <v-btn class="bordered-btn" @click="deleteData">delete</v-btn>
     <v-btn class="bordered-btn" @click="updateData">update</v-btn>
     <v-btn class="bordered-btn" @click="createData">create</v-btn>
+
+    <p>Zi tests</p>
+
+    <v-btn class="bordered-btn" @click="ziGetAllMatching">getAllMatching</v-btn>
+    <v-btn class="bordered-btn" @click="isLoggedIn">is Logged in</v-btn>
+    <v-btn class="bordered-btn" @click="ziLogin">Login</v-btn>
+    <v-btn class="bordered-btn" @click="ziLogout">Logout</v-btn>
+    <v-btn class="bordered-btn" @click="updateUser">update user</v-btn>
+    <v-btn class="bordered-btn" @click="stripetest">stripe</v-btn>
   </div>
   <div>
-    <ReviewsListComponent :sorting="{timestamp: false}"></ReviewsListComponent>
+    <ReviewsListComponent :sorting="{ timestamp: false }"></ReviewsListComponent>
   </div>
 </template>
 
 <script>
 import { fetchData } from "../JS/fetch";
 import ReviewsListComponent from "../components/reviewsListComponent.vue";
+
+// ZI TESTS
+// import { fetchData2 } from '../JS/fetchData';
+// import { login, logout } from '../JS/services';
 
 export default {
   components: {
@@ -96,7 +109,7 @@ export default {
       // );
       console.log(results);
     },
-    
+
     logout() {
       const access_token = localStorage.getItem("accessToken");
       const refresh_token = localStorage.getItem("refreshToken");
@@ -360,6 +373,7 @@ export default {
       const filters = {
         ratingAverage: "5",
       };
+
       const sorting = {
         ratingAverage: true,
       };
@@ -378,6 +392,75 @@ export default {
         )
       );
     },
+
+    ziGetAllMatching() {
+      const filters = {
+        'title': 'Space Odyssey'
+      };
+      const sorting = {
+        ratingAverage: true,
+      };
+      const included_columns = ["id", 'title', "developerID", "ratingAverage"];
+
+      // ['paging' => ['limit' => 4, 'offset' => 2], 'joined_tables' => ['users' => ['username']]];
+
+      const paging = { limit: 4, offset: 0 };
+      const joined_tables = {
+        users: new Array('username', 'email', 'password', 'name'),
+        tags: new Array('name'),
+      }
+
+      const preppedData = this.$prepGetAllMatching(filters, sorting, included_columns, joined_tables, paging);
+      console.log(preppedData);
+
+      const result = this.$getAllMatching('games', preppedData);
+      console.log(result);
+    },
+
+    isLoggedIn() {
+
+      if (this.$isLoggedIn()) {
+        console.log('logged in');
+
+        console.log('User logged in', this.$getUser());
+        console.log('User tokens', this.$getTokens());
+      } else {
+        console.log('User not logged in', this.$getUser());
+      }
+    },
+
+    async ziLogin() {
+      const email = 'testUser@email';
+      const password = '123';
+
+      const result = await this.$login(email, password);
+      console.log(result);
+    },
+
+    async ziLogout() {
+      await this.$logout().then(
+        this.isLoggedIn()
+      );
+    },
+
+    async updateUser() {
+
+      // const username = 'nexusfrontendupdatetest';
+      this.$updateUser({ username: 'LOL' });
+    },
+
+    async stripetest() {
+      const result = await this.$getDonationLink(2);
+
+      if (result) {
+        console.log(result);
+        // window.location.replace(result);
+      }
+
+      // const res = arr.filter((i) => { i !== null });
+
+      // console.log(res);
+    }
   },
 };
 </script>
@@ -397,7 +480,11 @@ export default {
 }
 
 .bordered-btn {
-  border: 2px solid #1976d2; /* Example border: 2px solid, using Vuetify's primary color */
-  border-radius: 4px; /* Optional: Adjust border-radius for rounded corners */
+  margin: 15px;
+  border: 2px solid #1976d2;
+  /* Example border: 2px solid, using Vuetify's primary color */
+  border-radius: 4px;
+  /* Optional: Adjust border-radius for rounded corners */
 }
 </style>
+../JS/fetchData

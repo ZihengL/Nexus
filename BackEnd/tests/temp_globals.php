@@ -21,11 +21,9 @@ function printer($content, $title = null)
     return $result . '<br>';
 }
 
-function printall($users)
+function printall($item)
 {
-    echo '<hr><pre>';
-    print_r($users);
-    echo '</pre>';
+    echo '<pre>' . print_r($item, true) . '</pre><hr>';
 }
 
 

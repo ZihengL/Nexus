@@ -1,124 +1,105 @@
 <?php
-
 require_once "$path/controllers/base_controller.php";
-require_once "$path/models/game_model.php";
+require_once "$path/models/games_model.php";
 
 class GamesController extends BaseController
 {
-    protected $id = "id";
-    protected $developerID = "developerID";
-    protected $stripeID = "stripeID";
-    protected $title = "title";
-    protected $files = "files";
-    protected $description = "description";
-    protected $ratingAverage = "ratingAverage";
-    protected $media = "media";
-    protected $releaseDate = "releaseDate";
+    protected $developerID = 'developerID';
+    protected $stripeID = 'stripeID';
+    protected $title = 'title';
+    protected $description = 'description';
+    protected $ratingAverage = 'ratingAverage';
+    protected $files = 'files';
+    protected $media = 'media';
+    protected $releaseDate = 'releaseDate';
 
     public function __construct($central_controller, $pdo)
     {
-        $this->model = new GameModel($pdo);
-        parent::__construct($central_controller);
+        $this->model = new GamesModel($pdo);
+        $specific_actions = [
+            'getOneAsJoined' => false,
+            'getAllAsJoined' => false,
+            'create' => true,
+            'update' => true,
+            'delete' => true
+        ];
+
+        parent::__construct($central_controller, $specific_actions);
     }
 
-    // GETTERS
+    protected function setGetterDefaults($data = [])
+    {
+        $data['sorting'] ??= [$this->ratingAverage => true];
 
-    // public function getAll($included_columns = [], $sorting = [])
+        return parent::setGetterDefaults($data);
+    }
+
+
+    /*******************************************************************/
+    /***************************** GETTERS *****************************/
+    /*******************************************************************/
+
+    public function getOneAsJoined($data)
+    {
+        $data = $this->setGetterDefaults($data);
+        return $this->model->getOneAsJoined(...$data);
+    }
+
+    public function getAllAsJoined($data)
+    {
+        $data = $this->setGetterDefaults($data);
+        return $this->model->getOneAsJoined(...$data);
+    }
+
+
+    /*******************************************************************/
+    /****************************** CRUDS ******************************/
+    /*******************************************************************/
+
+    // public function create($tokens = null, ...$data)
+    // public function create($data)
     // {
-    //     if (empty($sorting)) {
-    //         $sorting = [$this->ratingAverage => true];
+    //     [$credentials, $create_data] = getFromData(['credentials'], $data, true);
+
+    //     if ($authenticated_tokens = $this->authenticateUser(...$credentials)) {
+    //         parent::create($create_data);
+
+    //         return $authenticated_tokens;
     //     }
 
-    //     return $this->model->getAll_games($sorting);
+    //     return false;
     // }
 
-    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [])
-    {
-        // $filters = ['tagId' => ['relatedTable' => 'gamesTags', 'values' => ['1', '3'], 'wantedColumn' => 'gameId']];
-        // $results_1 = $this->centralController->games_controller->getAllMatching($filters, null, null);
-        if (empty($included_columns)) {
-            $included_columns = [];
-        }
-
-        if (empty($sorting)) {
-            $sorting = [$this->ratingAverage => false];
-        }
-
-        return $this->model->getAll($column, $value, $included_columns, $sorting);
-    }
-
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
-    {
-        if (empty($sorting)) {
-            $sorting = [$this->ratingAverage => true];
-        }
-
-        return parent::getAllMatching($filters, $sorting, $included_columns);
-    }
-
-    public function getById($id)
-    {
-        return $this->model->getOne($this->id, $id);
-    }
-
-    public function getByDeveloperID($developerID)
-    {
-        return $this->model->getOne($this->developerID, $developerID);
-    }
-
-    public function getByStripeID($stripeID)
-    {
-        return $this->model->getOne($this->stripeID, $stripeID);
-    }
-
-    public function getByTitle($title)
-    {
-        return $this->model->getOne($this->title, $title);
-    }
-
-    public function getByDescription($description)
-    {
-        return $this->model->getOne($this->description, $description);
-    }
-
-    public function getByMedia($media)
-    {
-        return $this->model->getOne($this->media, $media);
-    }
-
-    // Other CRUDs 
-
-    // TODO: LINK BACK TO USER AUTH
-    public function create($data, $jwts = null)
-    {
-        return $this->model->create($data);
-    }
-
-    public function update($id, $data, $jwts = null)
-    {
-        return $this->model->update($id, $data);
-    }
-
-    public function delete($data, $jwts = null)
-    {
-        $id = $data["id"];
-        return $this->model->delete($id);
-    }
-
-    // public function getAllMatching($filters, $sorting, $includedColumns = null)
+    // public function update($id, $tokens = null, ...$data)
+    // public function update($data)
     // {
+    //     [$credentials, $update_data] = getFromData(['credentials'], $data, true);
 
-    //     if (empty($sorting)) {
-    //         $sorting = [$this->ratingAverage => true];
+    //     if ($authenticated_tokens = $this->authenticateUser(...$credentials)) {
+    //         parent::update($update_data);
+
+    //         return $authenticated_tokens;
     //     }
-    //     return $this->model->getAllMatching($filters, $sorting, $includedColumns);
+
+    //     return false;
     // }
 
-    // ZI
+    // public function delete($id, $tokens = null)
+    // public function delete($data)
+    // {
+    //     [$credentials, $update_data] = getFromData(['credentials'], $data, true);
 
+    //     return $this->model->delete($id);
+    // }
 
+    // Tools
 
-    // REBECCA
+    public function getDeveloper($game_id)
+    {
+        if ($game = $this->model->getOne(column: 'id', value: $game_id, included_columns: ['developerID'])) {
+            return $this->getUsersController()->getOne('id', $game['developerID']);
+        }
 
-
+        return null;
+    }
 }

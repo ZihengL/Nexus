@@ -10,6 +10,7 @@ import App from "./App.vue";
 // Import Firebase functionalities
 import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
+import GlobalFunctionsPlugin from "./JS/fetchServices/globalFunctions";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -30,6 +31,12 @@ const storage = getStorage();
 
 // Create Vue app
 const app = createApp(App);
+
+// global fetch; invoke syntax is 'this.$functionName'
+// Ex: 'this.$fetchData(table, action, data)' or 'this.$login(email, password)'
+// Also contains methods for localStorage for managing user info and tokens
+// LOGIN/LOGOUT already invokes localStorage to store user info, no need to do it manually.
+app.use(GlobalFunctionsPlugin);
 
 // Utilisez app.config.globalProperties pour définir une propriété globale
 //app.config.globalProperties.$isConnected = ref(false);

@@ -1,76 +1,59 @@
 <?php
 
 require_once "$path/controllers/base_controller.php";
-require_once "$path/models/review_model.php"; // Ensure this path is correct
+require_once "$path/models/reviews_model.php"; // Ensure this path is correct
 
 class ReviewsController extends BaseController
 {
-    // protected $model;
-    protected $id = "id";
-    protected $gameID = "gameID";
-    protected $userID = "userID";
-    protected $rating = "rating";
-    protected $timestamp = "timestamp";
-    protected $comment = "comment";
+    protected $gameID = 'gameID';
+    protected $userID = 'userID';
+    protected $rating = 'rating';
+    protected $comment = 'comment';
+    protected $timestamp = 'timestamp';
 
     public function __construct($central_controller, $pdo)
     {
-        $this->model = new ReviewModel($pdo);
-        parent::__construct($central_controller);
+        $this->model = new ReviewsModel($pdo);
+        $specific_actions = [
+            'create' => true,
+            'update' => true,
+            'delete' => true,
+        ];
+        parent::__construct($central_controller, $specific_actions);
     }
 
-    // GETTERS
-
-    public function getById($id)
+    protected function setGetterDefaults($data = [])
     {
-        return $this->model->getOne($this->id, $id);
-    }
+        $data['sorting'] ??= [$this->rating => true];
 
-    public function getByGameId($gameId)
-    {
-        return $this->model->getOne($this->gameID, $gameId);
-    }
-
-    public function getByUserId($userId)
-    {
-        return $this->model->getOne($this->userID, $userId);
-    }
-
-    public function getByComment($comment)
-    {
-        return $this->model->getOne($this->comment, $comment);
-    }
-
-    public function getBytimestampt($timestamp)
-    {
-        return $this->model->getOne($this->timestamp, $timestamp);
+        return parent::setGetterDefaults($data);
     }
 
 
-    // public function getAll_reviews()
+    /*******************************************************************/
+    /***************************** GETTERS *****************************/
+    /*******************************************************************/
+
+    // public function getAllMatching(...$data)
     // {
-    //     return $this->model->getAll();
+    //     // if (empty($sorting)) {
+    //     //     $sorting = [$this->rating => true];
+    //     // }
+
+    //     return parent::getAllMatching(...$data);
     // }
 
-
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
+    // public function create($tokens = null, ...$data)
+    public function create($data)
     {
-        if (empty($sorting)) {
-            $sorting = [$this->rating => true];
-        }
-
-        return parent::getAllMatching($filters, $sorting, $included_columns);
-    }
-
-    public function create($data, $jwts = null)
-    {
+        // [$id, $tokens, $data] = getFromData(['id', 'tokens'], $data, true);
         // echo "<br> create reviews_controller <br>";
         // print_r($data);
         if ($this->validateReview("create", $data)) {
             if (!$this->checkReviewExists($data)) {
                 // echo "create review: ";
                 //create review, remove the tokens and send infos without tokens
-                unset($data['tokens']);
+                // unset($data['tokens']);
                 $data['timestamp'] = date('Y-m-d');
 
                 // echo "proper review  : ", print_r($data, true), "<br>";
@@ -84,17 +67,16 @@ class ReviewsController extends BaseController
         return false;
     }
 
-
-
-    public function delete($data, $jwts = null)
+    public function delete($id, $tokens = null, ...$data)
     {
         // echo "<br> delete reviews_controller <br>";
         // print_r($data);
+        $data['id'] = $id;
         if ($this->validateReview("delete", $data)) {
-            if ($this->getOne("id", $data["id"])) {
+            if ($this->model->getOne(column: "id", value: $id)) {
                 // echo "delete review: ";
                 // echo "proper review  : ", $data["id"], "<br>";
-                if ($this->model->delete($data["id"])) {
+                if ($this->model->delete($id)) {
                     // echo "mlep: ";
                     return $this->updateGameRatingAverage($data["gameID"]);
                 }
@@ -104,16 +86,18 @@ class ReviewsController extends BaseController
         return false;
     }
 
-
-    public function update($id, $data, $jwts = null)
+    // public function update($id, $tokens = null, ...$data)
+    public function update($data)
     {
+        // [$id, $tokens, $data] = getFromData(['id', 'tokens'], $data, true);
         // echo "<br> update reviews_controller <br>";
         // print_r($data);
+        // $data['id'] = $id;
         if ($this->validateReview("update", $data)) {
-            if ($this->getOne("id", $id)) {
+            if ($this->model->getOne(column: "id", value: $id)) {
                 // echo "update review: ";
                 //update review, remove the tokens and send infos without tokens
-                unset($data['tokens']);
+                // unset($data['tokens']);
                 // echo "proper review to update : ", print_r($data, true), "<br>";
                 if ($this->model->update($id, $data)) {
                     return $this->updateGameRatingAverage($data["gameID"]);
@@ -150,7 +134,7 @@ class ReviewsController extends BaseController
         $game = $gameController->getOne("id", $gameID);
         // echo "game before update : ", print_r($game, true), "<br>";
         // echo "newAverageRating : ", $newAverageRating, "<br>";
-        $reviews = $this->getAll("gameID", $gameID, null, null);
+        $reviews = $this->model->getAll(column: "gameID", value: $gameID);
         $newAverageRating = $this->calculateAverageRating($reviews);
 
         if ($game) {
@@ -162,8 +146,9 @@ class ReviewsController extends BaseController
         return false;
     }
 
-    public function calculateAverageRating($reviews){
-       
+    public function calculateAverageRating($reviews)
+    {
+
         // echo "calculateAverageRating : <br>";
         if (!empty($reviews)) {
             $totalRating = 0;

@@ -52,9 +52,9 @@ $central_controller = CentralController::getInstance();
 
 // METHOD & URI
 $method = $_SERVER["REQUEST_METHOD"];
-$uri = $_SERVER["REQUEST_URI"];
-$explodedURI = explode('/', $uri);
-$endURI = end($explodedURI);
+$url = $_SERVER["REQUEST_URI"];
+$exploded_URI = explode('/', $url);
+$endURI = end($exploded_URI);
 
 $result = null;
 
@@ -68,31 +68,31 @@ if ($method === 'GET') {
     }
 } else {
 
-    $rawData = file_get_contents('php://input');
-    $decodedData = json_decode($rawData, true);
+    $raw_data = file_get_contents('php://input');
+    $data = json_decode($raw_data, true);
 
     switch ($endURI) {
         case 'filterGames':
-            $result = $centralController->games_controller->filter($decodedData, []);
+            $result = $centralController->games_controller->filter($data, []);
             break;
         case 'getGame':
-            $result = $centralController->games_controller->getProductById($decodedData);
+            $result = $centralController->games_controller->getProductById($data);
             break;
         case 'getUser':
-            $result = $centralController->usersController->getUserById($decodedData);
+            $result = $centralController->usersController->getUserById($data);
             break;
         case 'updateUser':
             if (json_last_error() === JSON_ERROR_NONE) {
-                $userId = $decodedData['id'];
-                $password = $decodedData['password'];
+                $userId = $data['id'];
+                $password = $data['password'];
 
                 $result = $centralController->usersController->updateUser($userId, ['password' => $password]);
             }
             break;
         case 'login':
             if (json_last_error() === JSON_ERROR_NONE) {
-                $email = $decodedData['email'];
-                $password = $decodedData['password'];
+                $email = $data['email'];
+                $password = $data['password'];
 
                 $result = $centralController->usersController->login($email, $password);
             }
@@ -101,13 +101,13 @@ if ($method === 'GET') {
             $centralController->usersController->logout();
             break;
         case 'register':
-            $result = $centralController->usersController->createUser($decodedData);
+            $result = $centralController->usersController->createUser($data);
             break;
         case 'deleteUser':
-            $result = $centralController->usersController->deleteUsers($decodedData);
+            $result = $centralController->usersController->deleteUsers($data);
             break;
         case 'deleteGame':
-            $result = $centralController->games_controller->deleteProduct($decodedData);
+            $result = $centralController->games_controller->deleteProduct($data);
             break;
             // case 'check':
             //     require_once "$path/transactions/checkout.php";

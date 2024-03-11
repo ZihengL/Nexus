@@ -12,8 +12,6 @@ class DatabaseManager
     private $password;
     private $pdo;
 
-    // CONSTRUCTOR
-
     private function __construct()
     {
         $this->host = $_ENV['DB_HOST'];
@@ -21,7 +19,7 @@ class DatabaseManager
         $this->username = $_ENV['DB_USER'];
         $this->password = $_ENV['DB_PASS'];
 
-        $connection_string = 'mysql:host=' . $this->host . ';dbname=' . $this->database;
+        $connection_string = "mysql:host={$this->host};dbname={$this->database}";
         $this->pdo = new PDO($connection_string, $this->username, $this->password);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }

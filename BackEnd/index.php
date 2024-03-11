@@ -1,14 +1,8 @@
 <?php
-//index.php
 
-function printall($array)
-{
-    echo '<pre>';
-    print_r($array);
-    echo '</pre>';
-}
-
-
+/*******************************************************************/
+/***************************** CONFIG ******************************/
+/*******************************************************************/
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     // Return only the headers and not the content
@@ -20,7 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-
 header('Access-Control-Allow-Origin: *');
 // header('Access-Control-Allow-Origin: http://localhost:3000');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
@@ -31,222 +24,109 @@ header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');
 
 
-// GLOBALS
+/*******************************************************************/
+/***************************** GLOBALS *****************************/
+/*******************************************************************/
+
 global $path;
 global $baseURL;
 $path = $_SERVER['DOCUMENT_ROOT'] . '/Nexus/BackEnd/';
 
-// IMPORTS
-require_once $path . '/controllers/central_controller.php';
+require_once "$path/controllers/central_controller.php";
 $central_controller = CentralController::getInstance();
 
-// METHOD & URI
-$method = $_SERVER["REQUEST_METHOD"];
-$requestUri = $_SERVER['REQUEST_URI'];
 
-// Parse URL to separate the path from the query string
-$urlComponents = parse_url($requestUri);
-$path = $urlComponents['path'];
-$queryString = $urlComponents['query'] ?? '';
+/*******************************************************************/
+/***************************** REQUEST *****************************/
+/*******************************************************************/
 
-// Optionally remove the base path or script name from the path
-$scriptName = $_SERVER['SCRIPT_NAME'];
-$basePath = str_replace('/index.php', '', $scriptName);
-$uriPath = str_replace($basePath, '', $path);
+try {
+    ['table' => $table, 'action' => $action] = parseURL();
+    $data = parseRequestMethod();
 
-$explodedURI = explode('/', trim($uriPath, '/'));
-$table = $explodedURI[0] ?? null;
-$crud_action = $explodedURI[1] ?? null;
-$columName = $explodedURI[2] ?? null;
-$value = $explodedURI[3] ?? null;
-
-$includedColumns = isset($_GET['includedColumns']) ? explode(',', $_GET['includedColumns']) : null;
-// $sorting = isset($_GET['sorting']) ? explode(',', $_GET['sorting']) : null;
-if (isset($_GET['sorting'])) {
-    $sortingParams = explode(',', $_GET['sorting']);
-    $sorting = [];
-
-    foreach ($sortingParams as $param) {
-        list($key, $v) = explode(':', $param);
-        $sorting[$key] = $v === 'true' ? true : false;
-    }
-
-    // Now $sorting is an associative array
-    // echo "<br>Sorting Array: <pre>" . print_r($sorting, true) . "</pre><br>";
-} else {
-    $sorting = null; // Or any default value you wish
+    $result = $central_controller->parseRequest($table, $action, $data);
+    // $result = $data;
+    echo json_encode($result);
+} catch (Exception $e) {
+    echo json_encode(['ERROR' => strip_tags($e->getMessage())]);
 }
 
 
+/*******************************************************************/
+/****************************** TOOLS ******************************/
+/*******************************************************************/
 
-// Read the input data for POST, PUT, DELETE methods
-$rawData = file_get_contents('php://input');
-$decodedData = json_decode($rawData, true);
-// print_r($rawData);
-
-// console.log(" response : ", response.text());
-// console.log(' response : ', response.text())
-// Routing
-switch ($method) {
-    case 'GET':
-        // print_r($explodedURI);
-        // echo "<br> crud_action: " . $crud_action;
-        // echo "<br>  sorting : " . print_r($sorting, true) . "<br>";
-        // echo "<br>  sorting : " . $sorting["timestamp"] . "<br>";
-        // echo "<br>  includedColumns : " . print_r($includedColumns, true);
-        // echo "<br>  value : " . $value ."<br> " ;
-       
-        handleGet($table, $crud_action, $central_controller, $columName, $value, $includedColumns, $sorting);
-        break;
-    case 'POST':
-    case "DELETE":
-    case 'PUT':
-        handlePost($table, $crud_action, $central_controller, $columName, $value, $includedColumns, $sorting, $decodedData);
-        break;
-    default:
-        echo json_encode(['error' => 'Method Not Allowed']);
-        break;
-}
-
-// Function to handle GET requests
-function handleGet($table, $crud_action, $centralController, $columName, $value, $includedColumns, $sorting)
+function parseURL()
 {
-    //Do these if they arent empty
-    $controllerName = $table . '_controller';
-    // $getAllFromTable = 'getAll_' . $table;
-    // $getByColumnName = 'getBy' . $columName;
-    //
+    $uri = $_SERVER['REQUEST_URI'];
 
-    switch ($crud_action) {
-        case 'getAll':
-            // echo "<br>  includedColumns : " . $includedColumns;
-            // echo "<br>  sorting : " . print_r($sorting, true) . "<br>";
-            // echo "<br>  getAllFromTable : " . print_r($includedColumns, true);
-            $result = $centralController->$controllerName->getAll($columName, $value, $includedColumns, $sorting);
-            echo json_encode($result);
-            break;
-        case 'getOne':
-            // echo "<br>  getByColumnName : " . $includedColumns;
-            // print_r($includedColumns) ;
-            $result = $centralController->$controllerName->getOne($columName, $value, $includedColumns);
-            echo json_encode($result);
-            break;
+    if (empty($uri))
+        throw new Exception("Missing table and action parameters in request URI.");
+
+    $split_uri = explode('/', $uri);
+    $end_uri = array_pop($split_uri);
+    parse_str($end_uri, $request_components);
+
+    if (!isset($request_components['table']) || !isset($request_components['action']))
+        throw new Exception("URI format '$end_uri' is innaplicable.");
+
+    return $request_components;
+}
+
+function parseRequestMethod()
+{
+    $request_method = $_SERVER['REQUEST_METHOD'];
+
+    switch ($request_method) {
+        case 'POST':
+            $raw_data = file_get_contents('php://input');
+            return json_decode($raw_data, true);
+        case 'GET':
+            return null;
         default:
-            echo json_encode(['error' => "Table $table Doesn't Exist"]);
-            break;
+            throw new Exception("Unsupported request method type '$request_method'.");
     }
 }
 
-
-// Function to handle POST requests
-function handlePost($table, $crud_action, $central_controller, $columName, $value, $includedColumns, $sorting, $decodedData)
+function getFromData($keys, $data, $unset = true)
 {
-    $controllerName = $table . '_controller';
+    $items = [];
 
-    switch ($crud_action) {
-        case 'logout':
-        case 'create':
-        case 'login':
-        case 'getAllMatching':
-        case 'insert':
-        case 'update':
-        case 'delete':
-            // echo "<br>  getByColumnName : " . $decodedData;
-            // print_r($decodedData);
-            // print_r($decodedData);
-            $result = handleRawData($central_controller, $decodedData, $controllerName, $crud_action);
-            // $result = $centralController->$controllerName->$crud_action($value);
-            echo json_encode($result);
-            break;
-        default:
-            echo json_encode(['error' => "Action $crud_action is unnaplicable"]);
-            break;
-    }
-}
+    foreach ($keys as $key)
+        if (isset($data[$key])) {
+            array_push($items, $data[$key]);
 
-
-function handleRawData($centralController, $decodedData, $controllerName, $crud_action)
-{
-    if (empty($decodedData)) {
-        // echo "No data provided or data is empty.";
-        // return false;
-    } else {
-        if (isset($decodedData['filters'])) {
-            return handle_filterData($centralController, $decodedData, $controllerName, $crud_action);
-        } else if (isset($decodedData['createData'])) {
-            return handleCreate($centralController, $decodedData, $controllerName, $crud_action);
-        } else if (isset($decodedData['deleteData'])) {
-            return handleDelete($centralController, $decodedData, $controllerName, $crud_action);
-        } else if (isset($decodedData['updateData'])) {
-            return handleUpdate($centralController, $decodedData, $controllerName, $crud_action);
-        } else if (isset($decodedData['login'])) {
-            return handleLogin($centralController, $decodedData, $controllerName, $crud_action);
-        } else if (isset($decodedData['logout'])) {
-            return handleLogout($centralController, $decodedData, $controllerName, $crud_action);
+            if ($unset)
+                unset($data[$key]);
         } else {
-            echo "Invalid data structure.";
-            // return false;
+            throw new Exception("Missing $key parameter for request in data: " . unwrap($data));
         }
+
+    return [...$items, $data];
+}
+
+function getOneFromData($key, $data, $unset = false)
+{
+    if (isset($data[$key])) {
+        $item = $data[$key];
+
+        if ($unset) {
+            unset($data[$key]);
+            return [$item, $data];
+        }
+
+        return $item;
     }
+
+    throw new Exception("Missing '$key' parameter for request in data: " . unwrap($data));
 }
 
-
-function handle_filterData($centralController, $decodedData, $controllerName, $crud_action)
+function unwrap($item)
 {
-    $filters = $decodedData['filters'];
-    $sorting = isset($decodedData['sorting']) ? $decodedData['sorting'] : null;
-    $includedColumns = isset($decodedData['includedColumns']) ? $decodedData['includedColumns'] : null;
-    return $centralController->$controllerName->$crud_action($filters, $sorting, $includedColumns);
+    return var_export($item, true) ?? '';
 }
 
-
-function handleLogin($centralController, $decodedData, $controllerName, $crud_action)
+function printall($item)
 {
-    $data = $decodedData['login'];
-    $email = $data["email"];
-    $pwd = $data["password"];
-    // echo "<br>  crud_action : " . $crud_action ."<br>";
-    // echo "Email Address: ", print_r($email, true), "<br>";
-    // echo "Password: ", print_r($pwd, true), "<br>";
-    return $centralController->$controllerName->$crud_action($email, $pwd);
-}
-
-function handleLogout($centralController, $decodedData, $controllerName, $crud_action)
-{
-    $data = $decodedData['logout'];
-    $id =  $data['id'];
-    $tokens = $data['tokens'];
-
-    // echo "<br> logout data : <br>";
-    // // return "logout test";
-    // print_r($tokens);
-    return $centralController->$controllerName->$crud_action($id, $tokens);
-}
-
-
-function handleCreate($centralController, $decodedData, $controllerName, $crud_action)
-{
-    $createData = $decodedData['createData'];
-
-    // echo "<br> handleCreate  createData : ".  print_r($createData, true) ." <br>";
-   
-    return $centralController->$controllerName->$crud_action($createData);
-}
-
-function handleDelete($centralController, $decodedData, $controllerName, $crud_action)
-{
-    $data = $decodedData['deleteData'];
-
-    // echo "<br> delete data : <br>";
-    // print_r($data);
-    return $centralController->$controllerName->$crud_action($data);
-}
-
-function handleUpdate($centralController, $decodedData, $controllerName, $crud_action)
-{
-    $data = $decodedData['updateData'];
-
-    // echo "<br> update data : <br>";
-    // print_r($data);
-    return $centralController->$controllerName->$crud_action($data["id"], $data);
+    echo '<pre>' . print_r($item, true) . '</pre>';
 }

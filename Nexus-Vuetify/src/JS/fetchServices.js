@@ -1,25 +1,53 @@
 import { fetchData } from "./fetch";
+import { fetchData2 } from "./fetchData";
 
-export const getOne = async (table, column, value, includedColumns = null, sorting = null) => {
-  let data = await fetchData(table, "getOne", column, value, includedColumns, sorting, null, "GET");
+export const getOne = async (table, column, value, included_columns = null, sorting = null) => {
+  const body = {
+    column,
+    value,
+    included_columns,
+    sorting
+  }
+
+  // let data = await fetchData(table, "getOne", column, value, included_columns, sorting, null, "GET");
+  let data = await fetchData2(table, 'getOne', body);
   return data;
 };
+
+export const getAll = async (table, column = null, value = null, included_columns = null, sorting = null) => {
+  const body = {
+    column,
+    value,
+    included_columns,
+    sorting
+  }
+
+  // let data = await fetchData(table, "getAll", column, value, included_columns, sorting, null, "GET");
+  let data = await fetchData2(table, 'getAll', body);
 
 export const getAll = async (table, column = null, value = null, includedColumns = null, sorting = null) => {
   let data = await fetchData(table, "getAll", column, value, includedColumns, sorting, null, "GET");
   return data
 };
 
+export const getAllMatching = async (table, filters, sorting = null, included_columns = null) => {
 export const getAllMatching = async (table, filters,  includedColumns = null, sorting = null) => {
   let body = {
     filters,
     sorting,
-    includedColumns
+    included_columns
   }
-  let data = await fetchData(table, "getAllMatching", null, null, null, null, body, "POST");
+
+  // let data = await fetchData(table, "getAllMatching", null, null, null, null, body, "POST");
+  let data = await fetchData2(table, 'getAllMatching', body);
   return data
 };
 
+/*******************************************************************/
+/****************************** USERS ******************************/
+/*******************************************************************/
+
+export const registerService = async (createData) => {
 export const create = async (table, createData) => {
   let body = {
     createData
@@ -38,6 +66,7 @@ export const deleteData = async(table, deleteData) => {
 
 export const updateData = async(table, updateData) => {
   let body = {
+    createData
     updateData
   }
   let data = await fetchData(table, "update", null, null, null, null, body, "POST");
@@ -113,10 +142,12 @@ export const getAllGamesWithDeveloperName = async (column = null, value = null, 
 
     if (gamesArray && gamesArray.length) {
 
+
       const gamesWithDevNames = await Promise.all(gamesArray.map(async (game) => {
         if (game.developerID) {
           const developerDetails = await getUsername(game.developerID);
           if (developerDetails && developerDetails.username) {
+
 
             game.devName = developerDetails.username;
           }
@@ -140,12 +171,15 @@ export const getGameDetailsWithDeveloperName = async (idGame) => {
     // console.log("getGameDetailsWithDeveloperName gameDetails : ", gameDetailsArray);
 
 
+
     if (gameDetailsArray && gameDetailsArray.length > 0) {
+      const gameDetails = gameDetailsArray[0];
       const gameDetails = gameDetailsArray[0];
       // console.log("gameDetails.developerID : ", gameDetails.developerID);
 
       const developerDetails = await getUsername(gameDetails.developerID);
       if (developerDetails && developerDetails.username) {
+
 
         gameDetails.devName = developerDetails.username;
         // console.log("gameDetails.devName : ", gameDetails.devName);
@@ -211,10 +245,13 @@ export const getGameReviewsUsernames = async (gameID, sorting = null) => {
     let results = {};
 
 
+
     if (gameDetailsArray && gameDetailsArray.length > 0) {
       const gameDetails = gameDetailsArray[0];
 
       if (gameDetails && gameDetails.developerID) {
+        results.game = gameDetails;
+
         results.game = gameDetails;
 
         let fullReviews = await getReviewsAndUsernames(gameDetails.id, sorting);
@@ -225,6 +262,7 @@ export const getGameReviewsUsernames = async (gameID, sorting = null) => {
     return results;
   } catch (error) {
     console.error("Error in getGameReviewsUsernames:", error);
+    return { game: {}, reviews: [] };
     return { game: {}, reviews: [] };
   }
 };

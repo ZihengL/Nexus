@@ -1,36 +1,35 @@
 <?php
 
-function parseColumns($columns = [])
-{
-    return empty($columns) ? "*" : implode(', ', $columns);
-}
-
-function getDataType($column)
-{
-    switch ($column) {
-        case is_null($column):
-            return PDO::PARAM_NULL;
-        case is_int($column):
-            return PDO::PARAM_INT;
-        case is_bool($column):
-            return PDO::PARAM_BOOL;
-        default:
-            return PDO::PARAM_STR;
-    }
-}
-
 class BaseModel
 {
+    public static $print_errors = false;
+
     protected $pdo;
     public $table;
     public $columns = [];
+    protected $keys = [];
 
     protected function __construct($pdo, $table, $require_id = false)
     {
         $this->pdo = $pdo;
         $this->table = $table;
         $this->columns = $this->getColumns($require_id);
+        $this->addDeconstructedKeys([...$this->getKeysDetails(false), $this->getKeysDetails(true)]);
     }
+
+    private function addDeconstructedKeys($keys)
+    {
+        if (!empty($keys) && isset($keys['EXT_TAB']))
+            $this->keys[array_pop($keys)] = $keys;
+        else
+            foreach ($keys as $subkeys)
+                $this->addDeconstructedKeys($subkeys);
+    }
+
+
+    /*******************************************************************/
+    /****************************** QUERY ******************************/
+    /*******************************************************************/
 
     protected function query($sql, $params = [])
     {
@@ -42,9 +41,16 @@ class BaseModel
             } else {
                 $stmt->execute(array_values($params));
             }
-            // echo "<br>  query : " . print_r($stmt, true) . "<br>";
+
             return $stmt;
         } catch (PDOException $e) {
+            if (self::$print_errors) {
+                echo "<h5>{$this->table}</h5><br><pre>";
+                var_dump($stmt);
+                var_dump($params);
+                echo '</pre><hr>';
+            }
+
             throw new Exception("Database query error: " . $e->getMessage());
         }
     }
@@ -54,135 +60,22 @@ class BaseModel
         try {
             $stmt = $this->pdo->prepare($sql);
 
-            foreach ($params as $param => $value) {
-                $stmt->bindValue($param, $value);
+            foreach ($params as $column => $value) {
+                $stmt->bindValue($column, $value);
             }
             $stmt->execute();
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         } catch (PDOException $e) {
+            if (self::$print_errors) {
+                echo "<h5>{$this->table}</h5><br><pre>";
+                var_dump($stmt);
+                var_dump($params);
+                echo '</pre><hr>';
+            }
+
             throw new Exception("Database query error: " . $e->getMessage());
         }
-    }
-
-    // GETTERS/READ
-
-    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [])
-    {
-        $sql = "SELECT " . $this->parseColumns($included_columns) . " FROM $this->table";
-        // echo "<br>  sorting  getAll : " . print_r($sorting, true) . "<br>";
-        $params = [];
-        if ($column && $value) {
-            $sql .= " WHERE $column = ?";
-            $params[] = $value;
-        }
-
-        $sortingSql = $this->applySorting($sorting);
-        if (!empty($sortingSql)) {
-            $sql .= " ORDER BY " . $sortingSql;
-        }
-        // echo "<br> getAll sql : " . $sql ;
-        return $this->query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
-    {
-        $sql = "SELECT " . $this->parseColumns($included_columns) . " FROM $this->table WHERE 1 = 1";
-        $filterResults = $this->applyFilters($filters);
-        $sortingResults = $this->applySorting($sorting);
-
-        $sqlWithFilters = $filterResults['sql'];
-        $params = $filterResults['params'];
-
-        $sqlWithFiltersAndSorting = $sortingResults ? $sqlWithFilters . ' ORDER BY ' . $sortingResults : $sqlWithFilters;
-        $sqlWithFiltersAndSorting = $sql . $sqlWithFiltersAndSorting;
-
-        return $this->bindingQuery($sqlWithFiltersAndSorting, $params);
-    }
-
-    //  Explicitement retour d'une seule valeur.
-    public function getOne($column, $value, $included_columns = [])
-    {
-        $sql = "SELECT " . $this->parseColumns($included_columns) . " FROM $this->table WHERE $column = ?";
-
-        return $this->query($sql, [$value])->fetch(PDO::FETCH_ASSOC);
-    }
-
-    // OTHER CRUDS
-
-    public function create($data)
-    {
-        $data = $this->formatData($data);
-        $columns = implode(', ', array_keys($data));
-        $placeholders = substr(str_repeat(",?", count($data)), 1);
-
-        // echo "<br> create base_model <br>";
-        // print_r($placeholders);
-
-        $sql = "INSERT INTO $this->table ($columns) VALUES ($placeholders)";
-
-        if ($this->query($sql, $data)) {
-            return true;
-        } else {
-
-            return false;
-        }
-    }
-
-    public function update($id, $data)
-    {
-        $formattedData = $this->formatData($data);
-        $pairs = implode(' = ?, ', array_keys($formattedData)) . ' = ?';
-        $formattedData['id'] = $id;
-        $sql = "UPDATE $this->table SET $pairs WHERE id = ?";
-
-        if ($this->query($sql, $formattedData)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public function delete($id)
-    {
-        $sql = "DELETE FROM $this->table WHERE id = ?";
-        $stmt = $this->pdo->prepare($sql);
-
-        $stmt->bindParam(1, $id, PDO::PARAM_INT);
-
-        return $stmt->execute();
-    }
-
-    // TOOLS
-
-    function parseColumns($included_columns = [])
-    {
-
-        // return empty($included_columns) ? "*" : implode(', ', ['id', ...$included_columns]);
-        return empty($included_columns) ? "*" : implode(', ', $included_columns);
-    }
-
-    public function getColumns($includeID = false)
-    {
-        $result = $this->query("DESCRIBE $this->table")->fetchAll(PDO::FETCH_COLUMN);
-
-        return $includeID ? $result : array_filter($result, function ($column) {
-            return $column !== 'id';
-        });
-    }
-
-    public function formatData($data)
-    {
-        $formattedData = [];
-
-        foreach ($this->columns as $column) {
-            if (in_array($column, array_keys($data))) {
-                $formattedData[$column] = $data[$column];
-            }
-        }
-
-        return $formattedData;
     }
 
     public function bindParams($data)
@@ -198,34 +91,231 @@ class BaseModel
         return $params;
     }
 
-    //  FILTERS AND SORTING
+
+    /*******************************************************************/
+    /****************************** CRUDS ******************************/
+    /*******************************************************************/
+
+    public function create($data)
+    {
+        $data = $this->formatData($data);
+        $columns = implode(', ', array_keys($data));
+        $placeholders = substr(str_repeat(", ?", count($data)), 1);
+
+        $sql = "INSERT INTO {$this->table} ($columns) VALUES ($placeholders)";
+
+        if ($this->query($sql, $data)) {
+            return true;
+        } else {
+
+            return false;
+        }
+    }
+
+    public function update($id, $data)
+    {
+        $formatted_data = $this->formatData($data);
+
+        if (!empty($formatted_data)) {
+            $pairs = implode(' = ?, ', array_keys($formatted_data)) . ' = ?';
+            $formatted_data['id'] = $id;
+
+            $sql = "UPDATE {$this->table} SET $pairs WHERE id = ?";
+
+            return $this->query($sql, $formatted_data)->fetch();
+        }
+
+        throw new Exception("Update operation failed on {$this->table} for id '$id' with datas: " . unwrap($data));
+    }
+
+    public function delete($id)
+    {
+        return $this->query("DELETE FROM {$this->table} WHERE id = $id")->rowCount();
+    }
+
+    public function formatData($data)
+    {
+        $formatted = [];
+
+        foreach ($this->getColumns(false) as $column) {
+            if (in_array($column, array_keys($data)))
+                $formatted[$column] = $data[$column];
+        }
+        return $formatted;
+    }
+
+
+    /*******************************************************************/
+    /***************************** GETTERS *****************************/
+    /*******************************************************************/
+
+    public function getOne($column, $value, $included_columns = [], $joined_tables = [])
+    {
+        ['selections' => $selections, 'group' => $group] = $this->buildSelectionLayer($included_columns, $joined_tables);
+
+        // $sql = "$selections WHERE {$this->table}.$column = ?" . (count($joined_tables) > 0 ? " GROUP BY {$this->table}.id" : '');
+        $sql = "$selections WHERE {$this->table}.$column = ? $group";
+        // $result = $this->query($sql, [$value]);
+
+        return $this->query($sql, [$value])->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [], $paging = [])
+    {
+        ['selections' => $selections, 'group' => $group] = $this->buildSelectionLayer($included_columns, $joined_tables);
+
+        $sql = $selections;
+        $params = [];
+        if ($column && $value) {
+            $sql .= " WHERE {$this->table}.$column = ?";
+            $params = [$value];
+        }
+
+        $sort_layer = $this->applySorting($sorting);
+        // $sql .= !empty($joined_tables) ? " GROUP BY {$this->table}.id" : '';
+        $sql .= $group . (!empty($sort_layer) ? " ORDER BY $sort_layer" : '') . $this->getPaging(...$paging);
+        // $sql .= $this->getPaging($paging['limit'] ?? -1, $paging['offset'] ?? 0);   // TESTING PAGING
+
+        return $this->query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [], $paging = [])
+    {
+        ['selections' => $selections, 'group' => $group] = $this->buildSelectionLayer($included_columns, $joined_tables);
+        ['sql' => $filtering_sql, 'params' => $params] = $this->applyFilters($filters);
+
+        $sql = "$selections WHERE 1 = 1 $filtering_sql $group";
+        // $sql .= $filtering_sql . (!empty($joined_tables) ? " GROUP BY {$this->table}.id" : '');
+
+        if ($sorting_layer = $this->applySorting($sorting))
+            $sql .= " ORDER BY $sorting_layer";
+
+        $sql .= $this->getPaging(...$paging);
+
+        return $this->bindingQuery($sql, $params);
+    }
+
+
+    /*******************************************************************/
+    /************************* SELECTION LAYER *************************/
+    /*******************************************************************/
+
+    public function getColumns($include_id = false)
+    {
+        $result = $this->query("DESCRIBE {$this->table}")->fetchAll(PDO::FETCH_COLUMN);
+
+        if (!$include_id)
+            array_shift($result);
+
+        return $result;
+    }
+
+    public function getKeysDetails($is_internal_keys = true)
+    {
+        $int_col = "COLUMN_NAME AS 'INT_COL'";
+        $ext_col = "COLUMN_NAME AS 'EXT_COL'";
+        $ext_tab = "TABLE_NAME AS 'EXT_TAB'";
+
+        $table_condition = "TABLE_NAME = '{$this->table}'";
+
+        if ($is_internal_keys) {
+            $ext_col = "REFERENCED_$ext_col";
+            $ext_tab = "REFERENCED_$ext_tab";
+
+            $table_condition = "$table_condition AND REFERENCED_TABLE_NAME IS NOT NULL";
+        } else {
+            $int_col = "REFERENCED_$int_col";
+
+            $table_condition = "REFERENCED_$table_condition";
+        }
+
+        $sql = "SELECT 
+                    $int_col, $ext_col, $ext_tab 
+                FROM 
+                    INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
+                WHERE 
+                    TABLE_SCHEMA = '{$_ENV['DB_NAME']}' 
+                AND 
+                    $table_condition";
+
+        $keys_details = $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+
+        return $keys_details;
+    }
+
+    public function buildSelectionLayer($included_columns = [], $join_keys = [])
+    {
+        $columns = $this->parseColumns($included_columns);
+        ['selects' => $selects, 'joins' => $joins, 'group' => $group] = $this->parseJoinedTables($join_keys);
+
+        $selections = "SELECT $columns $selects FROM {$this->table} $joins";
+        return ['selections' => $selections, 'group' => $group];
+    }
+
+    public function parseColumns($included_columns = [])
+    {
+        if (empty($included_columns))
+            return "{$this->table}.*";
+
+        return "{$this->table}." . implode(", {$this->table}.", $included_columns);
+    }
+
+
+    // TODO: IF MULTIPLICITY CAN BE COMPUTED, CHANGE THE JOIN TYPE HERE
+    //https://www.w3schools.com/sql/sql_join.asp#:~:text=Different%20Types%20of%20SQL%20JOINs,records%20from%20the%20right%20table
+    public function parseJoinedTables($joined_tables = [])
+    {
+        $selects = '';
+        $joins = '';
+
+        foreach ($joined_tables as $ref_tab => $included_columns)
+            if (isset($this->keys[$ref_tab])) {
+                ['INT_COL' => $int_col, 'EXT_COL' => $ext_col] = $this->keys[$ref_tab];
+
+                foreach ($included_columns as $join_column)
+                    $selects .= ", GROUP_CONCAT({$ref_tab}.{$join_column} SEPARATOR ', ') AS {$ref_tab}_{$join_column}";
+
+                $joins .= " INNER JOIN $ref_tab ON {$this->table}.{$int_col} = {$ref_tab}.{$ext_col}";
+            }
+
+        // $join_layer['selects'] .= !empty($join_layer['selects']) ? " GROUP BY {$this->table}.id" : '';
+        $group = empty($selects) ? " GROUP BY {$this->table}.id" : '';
+        return ['selects' => $selects, 'joins' => $joins, 'group' => $group];
+    }
+
+
+    /*******************************************************************/
+    /************************** SIEVING LAYER **************************/
+    /*******************************************************************/
+
+    public function getPaging($limit = -1, $offset = 0)
+    {
+        if ($limit !== -1)
+            return " LIMIT $limit OFFSET $offset";
+
+        return '';
+    }
 
     public function applyFilters($filters, $included_columns = [])
     {
         $sql_filters = "";
         $params = [];
 
-        foreach ($filters as $filterKey => $filterValue) {
-            if (is_array($filterValue)) { // Corrected check to use $filterValue
-                if (isset($filterValue['relatedTable'], $filterValue['values'], $filterValue['wantedColumn'])) {
-
-                    $result = $this->executeRelatedTableFilterAndGetIds($filterKey, $filterValue); // Adjusted to pass current filter info
-                    // echo "<br> applyFilters result : $result  <br>\n";
-                    // print_r($result);
-                    // echo "<br><br>";
+        foreach ($filters as $key => $value) {
+            if (is_array($value)) {
+                if (isset($value['relatedTable'], $value['values'], $value['wantedColumn'])) {
+                    // Adjusted to pass current filter info
+                    $result = $this->executeRelatedTableFilterAndGetIds($key, $value);
                     $sql_filters .= ' AND ' . $result;
                 } else {
-                    $result = $this->handleRangeCondition($filterKey, $filterValue); // Assuming range conditions are structured as arrays
+                    // Assuming range conditions are structured as arrays
+                    $result = $this->handleRangeCondition($key, $value);
                     $sql_filters .= ' AND ' . $result['sql'];
                     $params = array_merge($params, $result['params']);
                 }
-                // echo "<br> applyFilters - sql_filters :  $sql_filters <br>\n";
-                // print_r($$result['sql_filters']);
-                // echo "<br>";
             } else {
-                // Handling for non-array values, assuming direct equality check
-                $sql_filters .= " AND $filterKey = :$filterKey";
-                $params[":$filterKey"] = $filterValue;
+                $sql_filters .= " AND $key = :$key";
+                $params[":$key"] = $value;
             }
         }
 
@@ -266,18 +356,23 @@ class BaseModel
 
     protected function executeRelatedTableFilterAndGetIds($filterKey, $filterValue)
     {
-        $relatedTable = $filterValue['relatedTable'];
-        $filterValues = $filterValue['values'];
-        $wantedColumn = $filterValue['wantedColumn'];
+        ['relatedTable' => $related_table, 'values' => $filter_values, 'wantedColumn' => $included_columns] = $filterValue;
+        // $relatedTable = $filterValue['relatedTable'];
+        // $filter_values = $filterValue['values'];
+        // $included_columns = $filterValue['wantedColumn'];
 
         // Your existing SQL construction
-        $placeholders = implode(', ', array_fill(0, count($filterValues), '?'));
-        $sql = "SELECT {$wantedColumn} FROM {$relatedTable}  WHERE {$filterKey} IN ($placeholders)";
+        $placeholders = implode(', ', array_fill(0, count($filter_values), '?'));
+        $sql = "SELECT {$included_columns} 
+                FROM {$related_table}  
+                WHERE {$filterKey} 
+                IN ($placeholders)";
 
         // Prepare and execute the query
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($filterValues);
-        $ids = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+        // $stmt = $this->pdo->prepare($sql);
+        // $stmt->execute($filter_values);
+        // Was executing it outside of the query with catch
+        $ids = $this->query($sql, $filter_values)->fetchAll(PDO::FETCH_COLUMN, 0);
 
         // Build the 'IN' clause for the main query using fetched IDs
         if (!empty($ids)) {
@@ -286,7 +381,6 @@ class BaseModel
                 return intval($id);
             }, $ids)); // Ensuring IDs are integers
             return " {$this->table}.id IN ($inList)";
-
         }
 
         return '';
@@ -300,8 +394,6 @@ class BaseModel
         }
 
         $validEntries = array_intersect(array_keys($sorting), $this->getColumns(true));
-        // echo "<br> applySorting  validEntries : " . print_r($validEntries, true) . "<br>";
-        // echo "<br> applySorting  this->getColumns(true) : " . print_r($this->getColumns(true), true) . "<br>";
         if (empty($validEntries)) {
             return '';
         }
@@ -312,7 +404,6 @@ class BaseModel
             $result .= $column . ' ' . $direction . ', ';
         }
         $result = rtrim($result, ', ');
-        //  echo "<br> applySorting  result : " . print_r($result, true) . "<br>";
 
         return $result;
     }

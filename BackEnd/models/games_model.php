@@ -1,69 +1,59 @@
 <?php
 require_once "$path/models/base_model.php";
 
-class GameModel extends BaseModel
+class GamesModel extends BaseModel
 {
-    protected $tableName = "games";
-
     public function __construct($pdo)
     {
-        parent::__construct($pdo, $this->tableName);
+        parent::__construct($pdo, "games");
+
+        // $res = $this->query("SELECT games.*, gamestags.* FROM `games` INNER JOIN gamestags ON games.id = gamestags.gameId WHERE games.title = 'Space Odyssey'");
+
+        // printall($res->fetchAll(PDO::FETCH_ASSOC));
     }
 
+    // Other Cruds
 
-    //Other Cruds
-
-
-
-    public function update($id, $Game)
-    {
-        $formattedData = $this->formatData($Game);
-        $pairs = implode(' = ?, ', array_keys($formattedData)) . ' = ?';
-        $formattedData['id'] = $id;
-
-        $sql = "UPDATE $this->table SET $pairs WHERE id = ?";
-        // print_r($sql);
-        if ($this->query($sql, $formattedData)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    // public function delete($id)
+    // public function create($data)
     // {
-    //     return $this->delete($id);
-    //     // $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE id = ?");
-    //     // $stmt->execute([$id]);
+    //     $stmt = $this->pdo->prepare("SELECT * FROM $this->table WHERE game = ?");
+    //     $stmt->execute([$data]);
 
-    //     // return $stmt->fetch();
+    //     return $stmt->fetch();
     // }
 
+    // public function update($id, $game)
+    // {
+    //     $formatted_data = $this->formatData($game);
+    //     $pairs = implode(' = ?, ', array_keys($formatted_data)) . ' = ?';
+    //     $formatted_data['id'] = $id;
 
-    // ZI
+    //     $sql = "UPDATE $this->table SET $pairs WHERE id = ?";
 
+    //     if ($this->query($sql, $formatted_data)) {
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // }
 
+    // Updates
 
-    // REBECCA
-
-
-
-    //Updates
-    function updateGameTags($pdo, $gameId, array $newTagIds)
+    public function updateGameTags($pdo, $game_id, array $new_tags_ids)
     {
         // Begin a transaction
         $pdo->beginTransaction();
 
         try {
             // Remove existing tags for the game
-            $stmt = $pdo->prepare('DELETE FROM game_tags WHERE game_id = :game_id');
-            $stmt->execute([':game_id' => $gameId]);
+            $stmt = $pdo->prepare('DELETE FROM gamestags WHERE gameID = :game_id');
+            $stmt->execute([':game_id' => $game_id]);
 
             // Insert new tags
-            $sql = 'INSERT INTO game_tags (game_id, tag_id) VALUES (:game_id, :tag_id)';
+            $sql = 'INSERT INTO gamestags (gameID, tagID) VALUES (:game_id, :tag_id)';
             $stmt = $pdo->prepare($sql);
-            foreach ($newTagIds as $tagId) {
-                $stmt->execute([':game_id' => $gameId, ':tag_id' => $tagId]);
+            foreach ($new_tags_ids as $tagId) {
+                $stmt->execute([':game_id' => $game_id, ':tag_id' => $tagId]);
             }
 
             // Commit the transaction
@@ -75,29 +65,10 @@ class GameModel extends BaseModel
         }
     }
 
+    // Getters
 
-    //Getters 
-
-
-    public function getOne($column = null, $value = null, $included_columns = [])
+    public function getAllAsJoined($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [], ...$data)
     {
-        // echo "<br>  includedColumns : " . print_r($included_columns, true);
-        if (in_array('tags', $included_columns)) {
-            $key = array_search('tags', $included_columns);
-            if ($key !== false) {
-                unset($included_columns[$key]);
-            }
-            $results = $this->joinGamesAndTags($column, $value, $included_columns);
-            return $this->appendTagsToGames($results);
-        }
-        $results = $this->joinGamesAndTags($column, $value, $included_columns);
-        return $this->appendTagsToGames($results);
-    }
-
-    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [])
-    {
-        // echo "<br>  includedColumns : " . print_r($included_columns, true);
-
         if (in_array('tags', $included_columns)) {
             $key = array_search('tags', $included_columns);
             if ($key !== false) {
@@ -110,26 +81,23 @@ class GameModel extends BaseModel
         return $this->appendTagsToGames($results);
     }
 
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [])
+    public function getOneAsJoined($column = null, $value = null, $included_columns = [], $joined_tables = [], ...$data)
     {
-        // echo "<br>  includedColumns : " . print_r($included_columns, true);
-
         if (in_array('tags', $included_columns)) {
             $key = array_search('tags', $included_columns);
             if ($key !== false) {
                 unset($included_columns[$key]);
             }
-            $results = $this->joinTagsAndGetAllMatching($filters, $sorting, $included_columns);
-            return $results;
+            $results = $this->joinGamesAndTags($column, $value, $included_columns);
+            return $this->appendTagsToGames($results);
         }
-        $results = $this->joinTagsAndGetAllMatching($filters, $sorting, $included_columns);
-        return $results;
+        $results = $this->joinGamesAndTags($column, $value, $included_columns);
+        return $this->appendTagsToGames($results);
     }
 
+    // Tools
 
-
-    //Tools
-    function appendTagsToGames($results)
+    public function appendTagsToGames($results)
     {
         // Organize games and their tags
         $games = [];
@@ -160,8 +128,6 @@ class GameModel extends BaseModel
         // Return array values to reset indices
         return array_values($games);
     }
-
-
 
     public function formatIncludedColumns($included_columns = [])
     {

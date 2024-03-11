@@ -1,67 +1,85 @@
-export function fetchData (
+export function fetchData(
   table,
   crud_action,
   columnName = null,
   value = null,
   includedColumns = null,
   sorting = null,
+  // joinedTables = null,
   jsonBody = null,
   method
 ) {
-  const baseURL = 'http://localhost:4208/Nexus/Backend/';
+  const baseURL = "http://localhost:4208/Nexus/Backend/";
   let uri = `${baseURL}${table}/${crud_action}`;
 
   const queryParams = [];
-  
+
   // Check and append columnName and value
   if (columnName && value !== null) {
     uri += `/${columnName}/${value}`;
     // console.log("value fetch : ", value);
   }
-  
+
   // Handle includedColumns
   if (includedColumns && includedColumns.length) {
-    queryParams.push(`includedColumns=${includedColumns.join(',')}`);
+    queryParams.push(`includedColumns=${includedColumns.join(",")}`);
   }
 
   if (sorting && Object.keys(sorting).length) {
-    console.log("sorting fetch : ", sorting);
-    const sortingParams = Object.entries(sorting).map(([key, value]) => `${key}:${value}`).join(',');
+    // console.log("sorting fetch : ", sorting);
+    const sortingParams = Object.entries(sorting)
+      .map(([key, value]) => `${key}:${value}`)
+      .join(",");
     queryParams.push(`sorting=${encodeURIComponent(sortingParams)}`);
   }
-  
+
+  // Joined tables handling
+  // Array w multiple sets of keys and values = in body instead?
+  // if (joinedTables) {
+  //   let result = ``;
+
+  //   for (const [table, includedColumns] of Object.entries(joinedTables)) {
+  //     result += `${table}:${includedColumns.join(",")}`;
+  //   }
+  //   result = result.substring(1);
+
+  //   queryParams.push(`joinedTables=${result}`);
+  // }
+
   // Append query parameters to URI
   if (queryParams.length > 0) {
-    uri += `?${queryParams.join('&')}`;
+    uri += `?${queryParams.join("&")}`;
   }
 
   const fetchOptions = {
     method: method,
     headers: {
-      'Content-Type': 'application/json'
-    }
+      "Content-Type": "application/json",
+    },
   };
 
-  if ((method === 'POST' || method === 'PUT' || method === 'DELETE') && jsonBody) {
+  if (
+    (method === "POST" || method === "PUT" || method === "DELETE") &&
+    jsonBody
+  ) {
     fetchOptions.body = JSON.stringify(jsonBody);
   }
   //  console.log(`Fetching: ${uri} with options:`, fetchOptions, "query params ", queryParams);
 
   return fetch(uri, fetchOptions)
-    .then(response => {
-      if (!response.ok) { 
-        // return Promise.reject(response);
-        return response.text().then(errorData => Promise.reject(errorData));
+    .then((response) => {
+      if (!response.ok) {
+        return Promise.reject(response);
       }
       //  console.log(" response : ", response.text());
 
       return response.json();
     })
-    .then(data => {
+    .then((data) => {
       return data;
     })
-    .catch(error => {
-      console.log('Fetch error:', error);
+    .catch((error) => {
+      console.log("Fetch error:", error);
       throw error;
     });
 }
