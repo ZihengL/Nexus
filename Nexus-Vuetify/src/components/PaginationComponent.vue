@@ -21,8 +21,8 @@
 
   const props = defineProps({
     nbPageProps: {
-      type: String,
-      default: "1",
+      type: Number,
+      default: 1,
     },
     type: {
       type: String,

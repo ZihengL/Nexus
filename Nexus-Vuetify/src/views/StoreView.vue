@@ -56,13 +56,13 @@ const store_data = reactive({
 
 async function handleFilterUpdate(filterData) {
   //console.log("Received filter data:", filterData);
-  let titleOrDevName = store_data.searchQuery ?? null;
-  let tags = filterData.tags ?? [];
-  let sorting = filterData.sorting ?? null;
+  // let titleOrDevName = store_data.searchQuery ?? null;
+  // let tags = filterData.tags ?? [];
+  // let sorting = filterData.sorting ?? null;
 
-  let filteredGames = await search_AndFilter(titleOrDevName, tags, sorting);
-  //console.log("filteredGames : ", filteredGames);
-  store_data.gameList_result = filteredGames
+  // let filteredGames = await search_AndFilter(titleOrDevName, tags, sorting);
+  // //console.log("filteredGames : ", filteredGames);
+  // store_data.gameList_result = filteredGames
   //console.log(" store_data.gameList_result: ", store_data.gameList_result);
 }
 
@@ -76,7 +76,11 @@ const handleSearch = async (query) => {
 };
 
 onMounted(async () => {
-  store_data.gameList_result = await getAllGamesWithDeveloperName();
+
+  if(store_data.gameList_result.length === 0){
+    store_data.gameList_result = await getAllGamesWithDeveloperName();
+  }
+ 
 
 });
 </script>

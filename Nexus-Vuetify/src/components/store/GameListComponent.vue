@@ -35,7 +35,7 @@ let paginationNb = 1;
   // console.log('min  w2 : ', min);
   // console.log('max  w2 : ', max);
   // console.log('all lent w2  : ', props.gameList.length);
-
+console.log("props.gameList : ", props.gameList)
   arrayStore.value = props.gameList.slice(min, max);
 
   // console.log('array  w2 : ', arrayStore.value.length);
@@ -54,7 +54,7 @@ const props = defineProps({
 
 const gameList_data = reactive({
   listeJeux: [],
-  errorMsg: "Error no game in List",
+  errorMsg: "Erreur Aucuns Jeux Dans La Liste",
 });
 
 watch(
@@ -67,8 +67,8 @@ watch(
     }
 
     arrayStore.value = props.gameList.slice(min, max);
-
-
+    console.log("props.gameList : ", props.gameList)
+    
     if (props.gameList.length > nbMax) {
       nbPage = props.gameList.length / nbMax;
     } else {

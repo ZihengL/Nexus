@@ -174,36 +174,53 @@ const toggleProfileLog = async () => {
     console.error("Login failed: ", error);
   }
 };
-const toggleProfileSign = async () => {
-  const createData = {
-    email: email.value,
-    username: usernameSign.value,
-    password: password.value,
 
-    lastname: !lastnameSign.value ? lastnameSign.value : null,
-    firstname: !firstnameSign.value ? firstnameSign.value : null,
-    tel: !telSign.value ? telSign.value : null,
-    /*email: 'c',
-    username: 'c',
-    password: 'c',*/
-  };
-  console.log("createData : ", createData);
-  console.log("createData.password : ", createData.password);
-  console.log("reateData.email  : ", createData.email);
 
-  if (createData.password == passwordConfSign.value) {
-    //const createBody = { createData };
-    console.log("check");
-    let results = await registerService(createData);
-    console.log("retour sign : ", results);
-    toggleProfileLog();
+const validateSignupData = () => {
+  let errors = [];
+
+  // Check for empty required fields
+  if (!email.value) errors.push("Email is required.");
+  if (!usernameSign.value) errors.push("Username is required.");
+  if (!password.value) errors.push("Password is required.");
+  if (!passwordConfSign.value) errors.push("Password confirmation is required.");
+
+  if (password.value !== passwordConfSign.value) errors.push("Passwords do not match.");
+
+  if (errors.length > 0) {
+    console.error("Validation errors:", errors.join("\n"));
+    return false;
   }
-  //const createBody = { createData };
-  /*console.log("check");
-  let results = await registerService(createData);
-  console.log('retour sign : ' , results);
-  toggleProfileLog()
-  */
+  return true;
+};
+
+const toggleProfileSign = async () => {
+  if (validateSignupData()) {
+    const createData = {
+      email: email.value,
+      username: usernameSign.value,
+      password: password.value,
+      lastname: lastnameSign.value ? lastnameSign.value : null,
+      firstname: firstnameSign.value ? firstnameSign.value : null,
+      tel: telSign.value ? telSign.value : null,
+    };
+
+    console.log("createData:", createData);
+
+    try {
+      let isRegistered = await registerService(createData);
+      console.log("isRegistered :", isRegistered);
+      if(isRegistered){
+        // toggleProfileLog()
+      }
+      toggleProfileLog();
+    } catch (error) {
+      console.error("Sign up failed:", error);
+      // Optionally, display this error to the user using the UI
+    }
+  } else {
+    console.error("Validation failed, sign up not processed.");
+  }
 };
 
 onMounted(() => {

@@ -110,20 +110,29 @@ const deleteGamesAndrelationships = async (jsonObject) => {
 export const getAllGamesWithDeveloperName = async (column = null, value = null, includedColumns = null, sorting = null) => {
   try {
     const gamesArray = await getAll("games", column, value, includedColumns, sorting);
+    // console.log("gamesArray : ", gamesArray);
+
+    // Hold developer names in a Map for quick access
+    const devNameMap = new Map();
 
     if (gamesArray && gamesArray.length) {
-
-      const gamesWithDevNames = await Promise.all(gamesArray.map(async (game) => {
-        if (game.developerID) {
+      // Fetch developer names and store in the Map
+      await Promise.all(gamesArray.map(async (game) => {
+        if (game.developerID && !devNameMap.has(game.developerID)) { // Check to avoid fetching the same developer name multiple times
+          // console.log("game : ", game);
           const developerDetails = await getUsername(game.developerID);
           if (developerDetails && developerDetails.username) {
-
-            game.devName = developerDetails.username;
+            devNameMap.set(game.developerID, developerDetails.username);
           }
         }
-        return game;
       }));
 
+      // console.log("devNameMap : ", devNameMap)
+      const gamesWithDevNames = gamesArray.map(game => {
+        const devName = game.developerID ? devNameMap.get(game.developerID) : undefined;
+        return {...game, devName}; // Create a new enriched game object
+      });
+      // console.log("gamesWithDevNames : ", gamesWithDevNames)
       return gamesWithDevNames;
     }
 
