@@ -108,6 +108,7 @@
     </div>
 
     <router-link
+      v-if="isHimself"
       class="floating-right-bottom-btn glass"
       to="/upload"
       title="upload"

@@ -40,39 +40,40 @@
 
     <div v-if="reviewTemp > 0" class="Avis ">
       <div class="Pagin wrapper roundBorderSmall glass">
-        <div class="form-container">
-          <div class="slide-controls roundBorderSmall">
-            <input
-              type="radio"
-              name="slide"
-              id="login"
-              v-model="isLogin"
-              value="true"
-              checked
-            />
-            <input
-              type="radio"
-              name="slide"
-              id="signup"
-              v-model="isLogin"
-              value="false"
-            />
-            <label for="login" class="slide login" @click="toggleLogin()"
-              >Nouveau</label
-            >
-            <label for="signup" class="slide signup" @click="toggleSignup()"
-              >Anciens</label
-            >
-            <div class="slider-tab"></div>
+        
+          <div class="form-container">
+            <div class="slide-controls roundBorderSmall">
+              <input
+                type="radio"
+                name="slide"
+                id="login"
+                v-model="isLogin"
+                value="true"
+                checked
+              />
+              <input
+                type="radio"
+                name="slide"
+                id="signup"
+                v-model="isLogin"
+                value="false"
+              />
+              <label for="login" class="slide login" @click="toggleLogin()"
+                >Nouveau</label
+              >
+              <label for="signup" class="slide signup" @click="toggleSignup()"
+                >Anciens</label
+              >
+              <div class="slider-tab"></div>
+            </div>
+            <div class="form-inner">
+              <Avis class="recent" :idGame="gameInfos.leGame.id" :sort="'1'" :nbMax="1" />
+              <Avis class="old "  :idGame="gameInfos.leGame.id" :sort="'2'" :nbMax="1" />
+            </div>
           </div>
-          <div class="form-inner">
-            <Avis class="recent" :idGame="gameInfos.leGame.id" :sort="1"/>
-            <Avis class="old "  :idGame="gameInfos.leGame.id" :sort="2"/>
-          </div>
-        </div>
         <myAvis :gameID="props.idGame"/>
       </div>
-      <Avis class="rate glass"  :idGame="gameInfos.leGame.id" :sort="0"/>
+      <Avis class="rate glass"  :idGame="gameInfos.leGame.id" :sort="'0'" :nbMax="5"/>
     </div>
 
     <div v-else class="avisVide  roundBorderSmall glass">

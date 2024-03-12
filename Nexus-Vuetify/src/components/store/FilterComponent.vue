@@ -9,7 +9,7 @@
           v-for="genre in filter_data.genres.slice(0, 6)"
           :key="genre.id"
           :class="{ 'filter-label': true, glow: true, checked: genre.checked }"
-          class="roundBorderSmall glass2"
+          class="roundBorderSmall label"
         >
           <input
             @checked="returnFiltersData"
@@ -46,10 +46,6 @@
       </select>
     </div>
     
-      <!-- <v-btn elevation="2" variant="tonal" class="" @click="returnFiltersData">
-        Rechercher
-      </v-btn> -->
-   
     <btnComp :contenu="'Rechercher'" @toggle-btn="returnFiltersData"/>
   </div>
 </template>
@@ -98,12 +94,6 @@ function returnFiltersData() {
   let selectedGenres = filter_data.genres
     .filter((genre) => genre.checked)
     .map((genre) => genre.name);
-
-  // const trimmedSearchInput = filter_data.searchInput.trim();
-
-  // if (trimmedSearchInput) {
-  //   selectedGenres.push(trimmedSearchInput);
-  // }
 
   let data = {
     tags: selectedGenres,
@@ -158,8 +148,23 @@ onMounted(async () => {
 </script>
 
 <style lang="scss">
-.glass2 {
-  display: inline-block;
+.label {
+    /* From https://css.glass */
+    background: rgba(255, 255, 255, 0.06);
+  //border-radius: 0px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  border: 1px solid rgba(255, 255, 255, 0);
+}
+.label:hover, .checked {
+    /* From https://css.glass */
+    background: rgba(255, 255, 255, 0.250);
+  //border-radius: 0px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  border: 1px solid rgba(255, 255, 255, 0);
 }
 .checked {
   color: var(--light);       
@@ -189,10 +194,10 @@ input[type="checkbox"]:checked + .filter-label:before {
 
 input[type="checkbox"] {
   display: none;
+
 }
 
 .filter-label {
-  background: rgba(77, 77, 77, 0.8);
   padding: 5px 10px;
   border-radius: 4px;
   display: flex;
@@ -200,22 +205,6 @@ input[type="checkbox"] {
   justify-content: start;
   position: relative;
   cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.filter-label:hover {
-  background: rgba(102, 192, 244, 0.2);
-}
-
-.filter-label:before {
-  content: "";
-  width: 20px;
-  height: 20px;
-  margin-right: 10px;
-  background-color: #ccc;
-  border-radius: 3px;
-  position: relative;
-  display: inline-block;
 }
 
 /*  */
