@@ -4,7 +4,7 @@
     <div class="navbar">
       <ul id="liste">
         <input type="radio" name="liste" id="Team" v-model="selectedTab" value="Team" checked><label for="Team"
-          class="glow team">Team</label>
+          class="glow team">Équipe</label>
         <li><input type="radio" name="liste" id="zi" v-model="selectedTab" value="Zi"><label for="zi" class="glow">Zi Heng
             Liu</label></li>
         <li><input type="radio" name="liste" id="Rebecca" v-model="selectedTab" value="Rebecca"><label for="Rebecca"
