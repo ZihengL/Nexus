@@ -1,34 +1,28 @@
 <template>
   <!-- <div v-for="activity in activities" :key="activity.id" class="activities">-->
-  <div v-if="LeGame" class="container glass3 glow  roundBorderSmall">
-    <div class="img">
-      <img src="../../assets//img/apex.png" alt="image jeu" class=" roundBorderSmall">
-    </div>
-    <div class="jeu">
-      <span v-if="props.himself && !props.buy">{{ LeGame}} : televerser le 17/04/2022 </span>
-      <span v-if="props.himself && props.buy">Joué à {{ LeGame}} le 17/04/2022</span>
-      <span v-else>{{ LeGame }}</span>
-      <br />
-      <div class="fieldBtn">
-        <div class="btn-layer"></div>
-        <v-btn :to="{ name: 'Game', params: { idGame: props.idJeu } }" density="default" class="submit glow">
-          Voir plus
-        </v-btn>
-        <!-- <btnComp :contenu="'Enlever Jeu'"  /> -->
+  <div v-if="LeGame" class="container glass2 roundBorderSmall">
+    <div class="up">
+      <div class="img">
+        <img src="../../assets//img/apex.png" alt="image jeu" class=" roundBorderSmall">
+      </div>
+      <div class="jeu">
+        <span v-if="props.himself && !props.buy">{{ LeGame}} : televerser le 17/04/2022 </span>
+        <span v-if="props.himself && props.buy">Joué à {{ LeGame}} le 17/04/2022</span>
+        <span v-else>{{ LeGame }}</span>
+        <br />
       </div>
     </div>
+    <div class="listeBtn">
+        <div class="fieldBtn">
+          <div class="btn-layer"></div>
+          <v-btn :to="{ name: 'Game', params: { idGame: props.idJeu } }" density="default" class="submit glow">
+            Voir plus
+          </v-btn>
+        </div>
+        <btnComp v-if="props.himself"  :contenu="'Supprimmer'" @toggle-btn="'methode'" />
+        <btnComp v-if="props.himself" :contenu="'Mettre a jour'" @toggle-btn="'methode'" />
+      </div>
   </div>
-  <!--
-  <div class="pagination">
-    <a href="#" class="prev">&laquo; Previous</a>
-    <a href="#" class="active">1</a>
-    <a href="#">2</a>
-    <a href="#">3</a>
-    <a href="#">4</a>
-    <a href="#">5</a>
-    <a href="#" class="next">Next &raquo;</a>
-  </div>
-  -->
 
 </template>
 
@@ -52,37 +46,40 @@ onMounted(async () => {
 </script>
 
 <style lang="scss">
-.pagin {
-  margin-top: 20%;
-  border: 1px solid red;
-}
-
 .container {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   border: 1px solid rgba(0, 0, 0, 0.132);
-  padding: 20px;
   margin-top: 1.5%;
-  gap: 40%;
 
-}
+  .up {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 
-.img {
-  flex: 3;
-  align-self: flex-start;
-  width: 10%;
+    .img {
+      flex: 2;
+      
 
-  img {
-    width: 100%;
-    //display: none;
-    //width: 1rem;
+      img {
+        width: 100%;
+      }
+    }
+
+    .jeu {
+      flex: 5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0%;
+    }
+  }
+  .listeBtn {
+    display: flex;
+    flex-direction: row;
+    gap: 3%;
+    padding: 0% 1% 2% 1%;
   }
 }
 
-.jeu {
-  flex: 4;
-  margin-left: 40px;
-  align-self: flex-end;
-  justify-content: space-around;
-}
 </style>

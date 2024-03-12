@@ -40,29 +40,35 @@
             <div v-if="isHimself" class="slide-controls roundBorderSmall">
               <input type="radio" name="slide" id="login" v-model="isLogin" value="true" checked />
               <input type="radio" name="slide" id="signup" v-model="isLogin" value="false" />
-              <label for="login" class="slide login" @click="toggleLogin()">Télécharger</label>
-              <label for="signup" class="slide signup" @click="toggleSignup()">Développer</label>
+              <label for="login" class="slide login" @click="toggleLogin()">Developper</label>
+              <label for="signup" class="slide signup" @click="toggleSignup()">Telecharger</label>
               <div class="slider-tab"></div>
             </div>
 
             <div v-if="isHimself" class="form-inner">
-              <div
-                v-for="(item, index) in gameList"
-                :key="index"
-                class="login gamesss log"
-              >
-                <liste-de-jeu
-                  :himself="props.isHimself"
-                  :idJeu="item.id"
-                  :buy="true"
-                  class="game gamess"
-                />
+              <div class="login log gamesss">
+                <div
+                  v-for="(item, index) in gameList"
+                  :key="index"
+                  class="gamess">
+                  <liste-de-jeu
+                    :himself="props.isHimself"
+                    :idJeu="item.id"
+                    :buy="true"
+                    class="game gamess"
+                  />
+                </div>
               </div>
 
+              <div class=" sign glass roundBorderSmall">
+                <p>Comming soon ...</p>
+              </div>
+            </div>
+
+            <div v-else class="signup">
               <div
                 v-for="(item, index) in gameList"
                 :key="index"
-                class="signup sign"
               >
                 <liste-de-jeu
                   :himself="props.isHimself"
@@ -71,19 +77,6 @@
                   class="game"
                 />
               </div>
-            </div>
-            <div
-              v-else
-              v-for="(item, index) in gameList"
-              :key="index"
-              class="signup sign"
-            >
-              <liste-de-jeu
-                :himself="props.isHimself"
-                :idJeu="item.id"
-                :buy="false"
-                class="game"
-              />
             </div>
           </div>
         </div>
