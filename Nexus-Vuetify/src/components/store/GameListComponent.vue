@@ -20,7 +20,7 @@ import SingleGameComponent from "./SingleGameComponent.vue";
 import  Pagination  from "../PaginationComponent.vue";
 import { reactive, ref, onMounted, watch } from "vue";
 import PaginationManager from "@/JS/pagination";
-const nbMax = 6;
+const nbMax = 3;
 let nbPage = null;
 let paginationNb = 1;
  const getNbPage = () => {
