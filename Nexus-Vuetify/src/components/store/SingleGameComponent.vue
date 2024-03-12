@@ -55,6 +55,7 @@ const singleGame_data = reactive({
 });
 
 const limitedTags = computed(() => {
+  console.log('tags : ', singleGame_data.tags);
   if (singleGame_data.tags.length > 3){
     return singleGame_data.tags.slice(0, 3);
   }

@@ -59,10 +59,10 @@
                 value="false"
               />
               <label for="login" class="slide login" @click="toggleLogin()"
-                >Nouveau</label
+                >Les plus récents</label
               >
               <label for="signup" class="slide signup" @click="toggleSignup()"
-                >Anciens</label
+                >Les plus anciens</label
               >
               <div class="slider-tab"></div>
             </div>
