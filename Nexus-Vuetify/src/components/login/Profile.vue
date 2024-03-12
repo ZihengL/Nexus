@@ -12,14 +12,14 @@
         <div class="description glass roundBorderSmall">
           <div :class="isHimself ? 'imgContainerFull' : 'imgContainer'">
             <img
-              src="../../assets/Rich_Ricasso.png"
-              alt="John"
+              :src="leDevs.picture || defaultProfilePic"
+              alt="Photo de Profile"
               class="imgProfil"
             />
           </div>
           <div class="champUtilisateur">
-            <h3>efew4w</h3>
-            <!--<h3>{{ leDevs.value.username }}</h3>-->
+            <!-- <h3>efew4w</h3> -->
+            <h3>{{ leDevs.username }}</h3>
             <br />
             <p>description</p>
           </div>
@@ -132,6 +132,7 @@ import ListeDeJeu from "./ListeDeJeu.vue";
 import { logoutService, getOne, getAllMatching } from "../../JS/fetchServices";
 import { defineProps, ref, onMounted, defineEmits } from "vue";
 import btnComp from "../btnComponent.vue";
+import defaultProfilePic from '@/assets/Dev_Picture/defaultProfilePic.png';
 //import Amis from './amis.vue';
 
 const props = defineProps(["isHimself", "idDevl"]);

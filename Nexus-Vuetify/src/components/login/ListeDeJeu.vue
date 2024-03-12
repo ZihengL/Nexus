@@ -14,6 +14,7 @@
         <v-btn :to="{ name: 'Game', params: { idGame: props.idJeu } }" density="default" class="submit glow">
           Voir plus
         </v-btn>
+        <!-- <btnComp :contenu="'Enlever Jeu'"  /> -->
       </div>
     </div>
   </div>
@@ -32,6 +33,7 @@
 </template>
 
 <script setup>
+import btnComp from "../btnComponent.vue";
 import { defineProps, onMounted, ref } from 'vue';
 import { fetchData } from '../../JS/fetch';
 const props = defineProps(['himself', 'idJeu', 'buy']);

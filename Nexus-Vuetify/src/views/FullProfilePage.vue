@@ -2,7 +2,7 @@
   <div v-if="user != null" :key="user.value" id="fullProfile">
     <form action="#" class="glass">
       <v-avatar size="10rem">
-        <img :src="state.imagePath" alt="Profile Picture" class="img" />
+        <img :src="user.picture || defaultProfilePic" alt="Profile Picture" class="img" />
       </v-avatar>
       <!-- ... Signup form content ... -->
       <div class="field field2">
@@ -55,14 +55,9 @@ import defaultProfilePic from '@/assets/Dev_Picture/defaultProfilePic.png';
 import { fetchData } from "../JS/fetch";
 import { updateData, getOne } from "../JS/fetchServices";
 
-const props = defineProps(["IdDev", "user"]);
+const props = defineProps(["IdDev"]);
 let user = ref(null);
-const username = ref(null);
-const email = ref(null);
-const bio = ref(null);
-const isUsernameValid = true;
-const isEmailValid = true;
-const isBioValid = true;
+
 
 const state = reactive({
   name:"",
@@ -72,24 +67,19 @@ const state = reactive({
   phoneNumber:"",
   firstPassword:"",
   secondPassword:"",
-  imagePath: defaultProfilePic,
   erroMsg:"",
 });
 
 const getUserInfos = async () => {
   try {
     const dataUser = await getOne("users", "id", storageManager.getIdDev());
-    user.value = dataUser;
 
-    if (user.value && user.value.picture) {
-      state.imagePath = user.value.picture;
-    } else {
-      state.imagePath = defaultProfilePic; 
+    if (dataUser) {
+      user.value = dataUser;
     }
-    console.log(" state.imagePath : ",  state.imagePath);
+    console.log(" dataUser : ",  dataUser);
   } catch (error) {
     console.error("Error fetching user data:", error);
-    state.imagePath = defaultProfilePic;
   }
 };
 
