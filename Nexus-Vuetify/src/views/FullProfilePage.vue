@@ -7,26 +7,32 @@
       <!-- ... Signup form content ... -->
       <div class="field field2">
         <span class="title">Prénom</span>
-        <input type="text" :placeholder="user.name || 'Prénom'" v-model="state.name" required />
+        <input :class="{'notEmptyInput': user.name }" type="text" :placeholder="user.name || 'Prénom'" v-model="state.name" required />
          
         <span class="title">Nom</span>
-        <input type="text" :placeholder="user.lastName|| 'Nom de Famille'"  v-model="state.lastName" />
+        <input  :class="{'notEmptyInput': user.lastName }" type="text" :placeholder="user.lastName|| 'Nom'"  v-model="state.lastName" />
       </div>
       <!-- Phone Number -->
       <div class="field">
         <span class="title">Téléphone</span>
-        <input type="tel"  :placeholder="user.phoneNumber || 'Téléphone'"  v-model="state.phoneNumber" />
+
+        <input type="tel"  placeholder="Numero de Téléphone"  v-model="state.phoneNumber" />
       </div>
       <!-- Username -->
       <div class="field">
         <span class="title">Nom Utilisateur</span>
-        <input type="text"  :placeholder="user.username || 'Nom Utilisateur'"  v-model="state.username"  />
+        <input :class="{'notEmptyInput': user.username }" type="text"  :placeholder="user.username || 'Nom Utilisateur'"  v-model="state.username"  />
       </div>
       <!-- Email -->
       <!-- <div class="field">
         <span class="title">Email</span>
         <input type="text"  :placeholder="user.email || 'Email'" required />
       </div> -->
+ <!-- Description-->
+      <div class="field">
+        <span class="description">Description</span>
+        <textarea :class="{'notEmptyInput': user.description }" type="text" :placeholder="user.description || 'Description...'" v-model="state.description" />
+      </div>
       <!-- Password -->
       <div class="field">
         <span class="title">Mot de Passe</span>
@@ -67,7 +73,9 @@ const state = reactive({
   phoneNumber:"",
   firstPassword:"",
   secondPassword:"",
+  description:"",
   erroMsg:"",
+  MAX_DESC_LENGTH:250,
 });
 
 const getUserInfos = async () => {
@@ -84,23 +92,6 @@ const getUserInfos = async () => {
 };
 
 
-const validateData = async () => {
-  if (!user.value) {
-    state.errorMessage = "User does not exist.";
-    return false;
-  }
-  if (!state.username.trim()) {
-    state.errorMessage = "username cannot be empty.";
-    return false;
-  }
-  if (state.firstPassword.trim() != state.secondPassword.trim() && (!state.firstPassword.trim() && !state.secondPassword.trim())) {
-    state.errorMessage = "Passwords not equal or not given.";
-    return false;
-  }
-  state.errorMessage = "";
-  return true;
-};
-
 const updateUserInfos = async () => {
   const originalUser = await getOne("users", "id", storageManager.getIdDev());
   console.log("Original user info:", originalUser.id);
@@ -111,7 +102,7 @@ const updateUserInfos = async () => {
     };
 
     // List of fields to potentially update
-    const fields = ['name', 'lastName', 'phoneNumber', 'username'];
+    const fields = ['name', 'lastName', 'phoneNumber', 'username', "description"];
 
     // Check each field for changes and non-null values, then add to updatedUser
     fields.forEach(field => {
@@ -127,12 +118,18 @@ const updateUserInfos = async () => {
         updatedUser.password = state.firstPassword;
       } else {
         console.error("Les mots de passe ne correspondent pas.");
-        return; // Exit the function if passwords do not match
+        return; 
       }
     }
 
-  
-
+    // Handle decription 
+    if (state.description && state.description.trim().length > 0 && state.description.trim().length <= state.MAX_DESC_LENGTH) {
+        updatedUser.description = state.description;
+      } else {
+        console.error("Mauvaise longueur de description");
+        return; 
+      }
+    
     const isUpdatedUserEmpty = Object.keys(updatedUser).length <= 1; 
     if (!isUpdatedUserEmpty) {
       try {
@@ -244,6 +241,20 @@ onMounted(async () => {
       gap: 3%;
     }
   }
+}
+
+input {
+  background-color:  rgb(64, 86, 119);
+}
+
+textarea {
+  background-color: rgb(64, 86, 119);
+}
+
+
+.notEmptyInput {
+  border: 8px solid #4CAF50 !important; 
+  // background-color: antiquewhite !important;
 }
 </style>
 
