@@ -45,7 +45,11 @@
         </option>
       </select>
     </div>
-    
+
+      <!-- <v-btn elevation="2" variant="tonal" class="" @click="returnFiltersData">
+        Rechercher
+      </v-btn> -->
+
     <btnComp :contenu="'Rechercher'" @toggle-btn="returnFiltersData"/>
   </div>
 </template>
@@ -74,7 +78,7 @@ const filter_data = reactive({
   sort_container_title: "Trier Par :",
 
   sortList: [
-    { label: "Trier par : ", value: "" },
+    //{ label: "Trier par : ", value: "" },
     { label: "Développeur", value: "devName" },
     { label: "Date de sortie", value:{releaseDate: false} },
     { label: "Note d'évaluation", value: {ratingAverage: false} },
@@ -167,7 +171,7 @@ onMounted(async () => {
   border: 1px solid rgba(255, 255, 255, 0);
 }
 .checked {
-  color: var(--light);       
+  color: var(--light);
   text-shadow:
       0 0 1.5px #ffffffa1,
       0 0 2.5px #ffffffa1,

@@ -29,36 +29,19 @@
               class="router glow"
             >
               <v-icon icon="mdi-account-circle" />
-              <span class="link-btn">Gerer son profil</span>
+              <span class="link-btn">Gérer son profil</span>
             </router-link>
 
-            <btnComp :contenu="'Se deconnecter'" @toggle-btn="toggleLogout" />
+            <btnComp :contenu="'Se déconnecter'" @toggle-btn="toggleLogout" />
           </div>
         </div>
         <div class="wrapper glass roundBorderSmall">
           <div class="form-container">
             <div v-if="isHimself" class="slide-controls roundBorderSmall">
-              <input
-                type="radio"
-                name="slide"
-                id="login"
-                v-model="isLogin"
-                value="true"
-                checked
-              />
-              <input
-                type="radio"
-                name="slide"
-                id="signup"
-                v-model="isLogin"
-                value="false"
-              />
-              <label for="login" class="slide login" @click="toggleLogin()"
-                >Acheter</label
-              >
-              <label for="signup" class="slide signup" @click="toggleSignup()"
-                >Developper</label
-              >
+              <input type="radio" name="slide" id="login" v-model="isLogin" value="true" checked />
+              <input type="radio" name="slide" id="signup" v-model="isLogin" value="false" />
+              <label for="login" class="slide login" @click="toggleLogin()">Télécharger</label>
+              <label for="signup" class="slide signup" @click="toggleSignup()">Développer</label>
               <div class="slider-tab"></div>
             </div>
 
@@ -118,11 +101,7 @@
   </div>
   <div v-else-if="leDevs == null" >
     <p class="errorMsg">{{ errorMsg }}</p>
-    <btnComp
-      :contenu="'Se deconnecter'"
-      @toggle-btn="toggleLogout"
-      style="align-self: center"
-    />
+    <btnComp :contenu="'Se déconnecter'" @toggle-btn="toggleLogout" style="align-self: center" />
   </div>
 </template>
 
@@ -249,7 +228,7 @@ onMounted(async () => {
   } catch (error) {
     console.error("Error fetching data:", error);
   } finally {
-    isLoading.value = false; 
+    isLoading.value = false;
   }
 });
 

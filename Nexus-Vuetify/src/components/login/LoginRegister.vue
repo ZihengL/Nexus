@@ -43,7 +43,7 @@
             />
           </div>
           <div class="pass-link glow">
-            <a href="#">Mot de passe oublier ?</a>
+           <!-- <a href="#">Mot de passe oublier ?</a>-->
           </div>
           <btnComp :contenu="'Se connecter'" @toggle-btn="toggleProfileLog()" />
           <div class="signup-link">
