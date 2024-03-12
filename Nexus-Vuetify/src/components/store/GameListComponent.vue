@@ -1,12 +1,14 @@
 <template>
-  <div v-if="props.gameList.length" id="storeComp" class="glass">
-    <SingleGameComponent
-      v-for="game in props.gameList"
-      :key="game.id"
-      :idGame="game.id"
-      class="vuee"
-    >
-    </SingleGameComponent>
+  <div v-if="props.gameList.length > 0" class="glass">
+    <div id="storeComp">
+      <SingleGameComponent
+        v-for="game in arrayStore"
+        :key="game.id"
+        :idGame="game.id"
+        class="vuee"
+      />
+    </div>
+    <Pagination :nbPageProps="nbPage" class="pag" @nbPage="getNbPage()"/>
   </div>
   <div v-else>
     {{ gameList_data.errorMsg }}
@@ -15,34 +17,85 @@
 
 <script setup>
 import SingleGameComponent from "./SingleGameComponent.vue";
-// import { fetchData } from "../../JS/fetch";
-// let listeJeux = ref(null);
-import { reactive, onMounted, watch } from "vue";
+import  Pagination  from "../PaginationComponent.vue";
+import { reactive, ref, onMounted, watch } from "vue";
+import PaginationManager from "@/JS/pagination";
+const nbMax = 6;
+let nbPage = null;
+let paginationNb = 1;
+ const getNbPage = () => {
+  paginationNb = PaginationManager.getPage()
+  let max = paginationNb * nbMax;
+  let min = max - nbMax;
+  if (props.gameList.length < max){
+    max = props.gameList.length
+  }
+  console.log('min  w2 : ', min);
+  console.log('max  w2 : ', max);
+  console.log('all lent w2  : ', props.gameList.length);
 
+  arrayStore.value = props.gameList.slice(min, max);
+
+  console.log('array  w2 : ', arrayStore.value.length);
+  console.log('paginationNb emit : ', paginationNb)
+ }
+let arrayStore = ref([]);
 const props = defineProps({
   gameList: {
     type: Array,
-    default: () => {},
+    default: () => ([]),
   },
 });
+
 
 const gameList_data = reactive({
   listeJeux: [],
   errorMsg: "Error no game in List",
 });
 
-
 watch(
-  () => gameList_data.gameList_result,
+  () => props.gameList,
   (newVal, oldVal) => {
-    console.log("gameList_result updated", newVal);
+    let max = paginationNb * nbMax;
+    let min = max - nbMax;
+    if (props.gameList.length < max){
+      max = props.gameList.length
+    }
+    console.log('min w1 : ', min);
+    console.log('max  w1 : ', max);
+    console.log('all lent w1  : ', props.gameList.length);
+
+    arrayStore.value = props.gameList.slice(min, max);
+
+    console.log('array  w1 : ', arrayStore.value.length);
+
+    if (props.gameList.length > nbMax) {
+      nbPage = props.gameList.length / nbMax;
+    } else {
+      nbPage = 1; // ou une autre valeur si vous préférez
+    }
   },
   { deep: true }
 );
+// watch(
+//   () => paginationNb,
+//   (newVal, oldVal) => {
+//     let max = paginationNb * nbMax;
+//     let min = max - nbMax;
+//     if (props.gameList.length < max){
+//       max = props.gameList.length
+//     }
+//     console.log('min  w2 : ', min);
+//     console.log('max  w2 : ', max);
+//     console.log('all lent w2  : ', props.gameList.length);
 
-onMounted(async () => {
-  // await getGameList();
-});
+//     arrayStore.value = props.gameList.slice(min, max);
+
+//     console.log('array  w2 : ', arrayStore.value.length);
+//   },
+//   { deep: true }
+// );
+
 </script>
 
 <style lang="scss">
@@ -50,7 +103,7 @@ onMounted(async () => {
   padding: 0%;
   width: 100%;
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: auto auto auto;
   gap: 2%;
   padding: 2% 2% 5% 2%;
 }

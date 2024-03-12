@@ -1,6 +1,9 @@
 <template>
   <!-- Created By CodingNepal -->
-  <div v-if="leDevs && gameList && toggleLogin && toggleSignup" class="allP">
+  <div v-if="isLoading" class="loading-state">
+    Loading...
+  </div>
+  <div v-else-if="leDevs && gameList && toggleLogin && toggleSignup" class="allP">
     <div
       class="containerProfile"
       :class="isHimself ? 'container1' : 'container2'"
@@ -29,16 +32,7 @@
               <span class="link-btn">Gerer son profil</span>
             </router-link>
 
-            <div class="fieldBtn">
-              <div class="btn-layer"></div>
-              <v-btn
-                density="default"
-                class="submit glow"
-                @click="toggleLogout()"
-              >
-                Se deconnecter
-              </v-btn>
-            </div>
+            <btnComp :contenu="'Se deconnecter'" @toggle-btn="toggleLogout" />
           </div>
         </div>
         <div class="wrapper glass roundBorderSmall">
@@ -121,12 +115,22 @@
       <v-icon icon="mdi-upload" class="icon glow" />
     </router-link>
   </div>
+  <div v-else-if="leDevs == null" >
+    <p class="errorMsg">{{ errorMsg }}</p>
+    <btnComp
+      :contenu="'Se deconnecter'"
+      @toggle-btn="toggleLogout"
+      style="align-self: center"
+    />
+  </div>
 </template>
 
 <script setup>
+import storageManager from "../../JS/localStorageManager";
 import ListeDeJeu from "./ListeDeJeu.vue";
 import { logoutService, getOne, getAllMatching } from "../../JS/fetchServices";
 import { defineProps, ref, onMounted, defineEmits } from "vue";
+import btnComp from "../btnComponent.vue";
 //import Amis from './amis.vue';
 
 const props = defineProps(["isHimself", "idDevl"]);
@@ -134,8 +138,10 @@ const emit = defineEmits(["showProfile"]);
 let devId = props.idDevl;
 
 const leDevs = ref(null);
+const errorMsg = ref("Unsuccessful login");
 const gameList = ref(null);
 const isLogin = ref(true);
+const isLoading = ref(true);
 
 let loginTokens_access_token;
 let loginTokens_refresh_token;
@@ -161,56 +167,68 @@ const toggleSignup = () => {
 };
 
 const toggleLogout = async () => {
-  loginTokens_access_token = localStorage.getItem("accessToken");
-  loginTokens_refresh_token = localStorage.getItem("refreshToken");
+  // loginTokens_access_token = storageManager.getAccessToken();
+  console.log("loginTokens_access_token  : ", loginTokens_access_token);
+  // localStorage.getItem("accessToken");
+  // loginTokens_refresh_token = storageManager.getRefreshToken();
+  console.log("loginTokens_refresh_token : ", loginTokens_refresh_token);
+  // localStorage.getItem("refreshToken");
 
   const logout = {
-    id: devId,
+    id: props.idDevl,
     tokens: {
       access_token: loginTokens_access_token,
       refresh_token: loginTokens_refresh_token,
     },
   };
 
-  loginTokens_access_token = "";
-  loginTokens_refresh_token = "";
+  let results = await logoutService(logout);
+  if (results !== false) {
+    loginTokens_access_token = "";
+    loginTokens_refresh_token = "";
 
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
-  localStorage.removeItem("idDev");
-
-  const body = { logout };
-
-  let results = await logoutService(body);
+    // localStorage.removeItem("accessToken");
+    storageManager.clearAccessToken();
+    // localStorage.removeItem("refreshToken");
+    storageManager.clearRefreshToken();
+    // localStorage.removeItem("idDev");
+    storageManager.clearIdDev();
+  }
   console.log(results);
   emit("showLogin");
 };
 
 async function getUserInfos() {
   try {
-    const userData = await getOne("users", "id", devId);
-    console.log("userData : ", userData);
+    console.log("Profile.vue props.idDevl : ", props.idDevl);
+    if (props.idDevl) {
+      const userData = await getOne("users", "id", props.idDevl);
 
-    leDevs.value = userData;
-    console.log("leDevs : ", leDevs.value);
+      console.log("userData : ", userData);
 
-    if (leDevs.value) {
-      const filters = {
-        developerID: devId,
-      };
-      const sorting = {
-        id: false,
-      };
-      const includedColumns = ["id", "title"];
-      const dataDevs = await getAllMatching(
-        "games",
-        filters,
-        sorting,
-        includedColumns
-      );
-      console.log("dataDevs ", dataDevs);
-      gameList.value = dataDevs;
-      console.log("gameList ", gameList);
+      leDevs.value = userData;
+      console.log("leDevs : ", leDevs.value);
+
+      if (leDevs.value) {
+        console.log("hi");
+        storageManager.setIsConnected(true);
+        const filters = {
+          developerID: props.idDevl,
+        };
+        const sorting = {
+          id: false,
+        };
+        const includedColumns = ["id", "title", "tags"];
+        const dataDevs = await getAllMatching(
+          "games",
+          filters,
+          includedColumns,
+          sorting
+        );
+        console.log("dataDevs ", dataDevs);
+        gameList.value = dataDevs;
+        console.log("gameList ", gameList);
+      }
     }
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -220,6 +238,28 @@ async function getUserInfos() {
 onMounted(async () => {
   try {
     await getUserInfos();
+    loginTokens_access_token = storageManager.getAccessToken();
+    console.log("loginTokens_access_token  : ", loginTokens_access_token);
+    // localStorage.getItem("accessToken");
+    loginTokens_refresh_token = storageManager.getRefreshToken();
+    console.log("loginTokens_refresh_token : ", loginTokens_refresh_token);
+    // localStorage.getItem("refreshToken");
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  } finally {
+    isLoading.value = false; 
+  }
+});
+
+onMounted(async () => {
+  try {
+    await getUserInfos();
+    loginTokens_access_token = storageManager.getAccessToken();
+    console.log("loginTokens_access_token  : ", loginTokens_access_token);
+    // localStorage.getItem("accessToken");
+    loginTokens_refresh_token = storageManager.getRefreshToken();
+    console.log("loginTokens_refresh_token : ", loginTokens_refresh_token);
+    // localStorage.getItem("refreshToken");
   } catch (error) {
     console.error("Error fetching data:", error);
   }

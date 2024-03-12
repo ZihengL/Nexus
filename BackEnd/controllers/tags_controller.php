@@ -61,11 +61,11 @@ class TagsController extends BaseController
             }
             return $this->getGamesTagsController()->create($newData);
         }
-        return $isValid;
+        return false;
     }
 
 
-    public function delete($tokens = null, ...$data)
+    public function delete($data)
     {
         $isValid = $this->validateData("delete", $data);
         $name = $data["name"];
@@ -97,7 +97,8 @@ class TagsController extends BaseController
             throw new Exception('Cannot delete tag that doesnt exist');
             // return $this->createResponse(false, 'Cannot delete tag that doesnt exist');
         }
-        return $isValid;
+        return true;
+        // return $isValidArray['isSuccessful'];
     }
 
 
@@ -109,25 +110,24 @@ class TagsController extends BaseController
         $isValidArray = json_decode($isValid, true);
         $id = $data['id'];
 
-        if ($isValidArray['isSuccessful']) {
-            $newName = $data["newName"];
-            $similarTagExist = $this->model->getOne("name", $newName);
-            if ($similarTagExist) {
-                throw new Exception('There is already a tag with that same name');
-                // return $this->createResponse(false, 'There is already a tag with that same name');
-            }
-            $newData = ['id' => $id, 'name' => $newName];
-            if ($this->model->update($id, $newData)) {
-                return true;
-                // return $this->createResponse(true, 'Tag has been updated');
-            } else {
-                throw new Exception('Failed to update tag');
-                // return $this->createResponse(false, 'Failed to update tag');
-            }
-        } else {
-            return $isValid;
+    if ($isValidArray['isSuccessful']) {
+        $newName = $data["newName"];
+        $similarTagExist = $this->getOne("name", $newName);
+        if ($similarTagExist) {
+            return $this->createResponse(false, 'There is already a tag with that same name');
         }
+        $newData = ['id' => $id, 'name' => $newName];
+        if ($this->model->update($id, $newData)) {
+            return $this->createResponse(true, 'Tag has been updated');
+        } else {
+            return $this->createResponse(false, 'Failed to update tag');
+        }
+    } else {
+        return $isValid;
     }
+}
+
+
 
     public function validateData($action, $data)
     {

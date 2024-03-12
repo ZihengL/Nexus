@@ -67,11 +67,11 @@ class ReviewsController extends BaseController
         return false;
     }
 
-    public function delete($id, $tokens = null, ...$data)
+    public function delete($data)
     {
         // echo "<br> delete reviews_controller <br>";
         // print_r($data);
-        $data['id'] = $id;
+        $id = $data['id'] ;
         if ($this->validateReview("delete", $data)) {
             if ($this->model->getOne(column: "id", value: $id)) {
                 // echo "delete review: ";
@@ -92,7 +92,7 @@ class ReviewsController extends BaseController
         // [$id, $tokens, $data] = getFromData(['id', 'tokens'], $data, true);
         // echo "<br> update reviews_controller <br>";
         // print_r($data);
-        // $data['id'] = $id;
+        $id = $data['id'] ;
         if ($this->validateReview("update", $data)) {
             if ($this->model->getOne(column: "id", value: $id)) {
                 // echo "update review: ";
@@ -186,9 +186,12 @@ class ReviewsController extends BaseController
         // echo "refreshToken: " . $refreshToken . "<br>";
 
 
-        $isEmptyData_forCreate = empty($userID) || empty($gameID) || empty($rating) || empty($comment) || empty($accessToken) || empty($refreshToken);
-        $isEmptyData_forUpdate = empty($id) || empty($userID) || empty($gameID) || empty($rating) || empty($comment) || empty($accessToken) || empty($refreshToken);
-        $isEmptyData_forDelete = empty($id) || empty($userID) || empty($gameID) || empty($accessToken) || empty($refreshToken);
+        $isEmptyData_forCreate = empty($userID) || empty($gameID) || empty($rating) || empty($comment);
+        // $isEmptyData_forCreate = empty($userID) || empty($gameID) || empty($rating) || empty($comment) || empty($accessToken) || empty($refreshToken);
+        $isEmptyData_forUpdate = empty($id) || empty($userID) || empty($gameID) || empty($rating) || empty($comment);
+        // $isEmptyData_forUpdate = empty($id) || empty($userID) || empty($gameID) || empty($rating) || empty($comment) || empty($accessToken) || empty($refreshToken);
+        $isEmptyData_forDelete = empty($id) || empty($userID) || empty($gameID);
+        // $isEmptyData_forDelete = empty($id) || empty($userID) || empty($gameID) || empty($accessToken) || empty($refreshToken);
         $gameExists = $this->getGamesController()->getOne("id", $gameID, null);
         $userExists = $this->getUsersController()->getOne("id", $userID, null);
         // $areValidTokens = $this->getTokensController()->validateTokens($userID, $tokens);
@@ -198,7 +201,6 @@ class ReviewsController extends BaseController
 
         switch ($action) {
             case 'create':
-                // echo ": hi <br>";
                 if ($isEmptyData_forCreate || !$gameExists || !$userExists) {
                     return false;
                 } else {

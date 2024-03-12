@@ -1,73 +1,84 @@
 <template>
   <div class="loginProfile">
-    <LoginRegister v-if="!isConnected" @showProfile="toggleProfileForm" />
+    <LoginRegister
+      v-if="!props.connectedView"
+      @showProfile="toggleProfileForm"
+    />
     <Profile
-      v-else
+      v-else-if="idDev"
+      :key="idDev.value"
       @showLogin="toggleLoginForm"
       :isHimself="true"
-      :idDevl="devId"
+      :idDevl="idDev"
     />
   </div>
 </template>
 
 <script setup>
 import LoginRegister from "../components/login/LoginRegister.vue";
+import storageManager from "../JS/localStorageManager.js";
 import Profile from "../components/login/Profile.vue";
 import { defineProps, ref, watch, onMounted } from "vue";
 
-/*const props = defineProps({
+const props = defineProps({
   connectedView: {
     type: Boolean,
     default: false,
   },
-  idDev: {
-    type: Number,
-    default: 0, 
-  },
-});*/
+  // idDev: {
+  //   type: Number,
+  //  }
+});
 
+let idDev = ref(null);
+const emit = defineEmits(["changeCon","showProfile"]);
 
-let devId;
-const props = defineProps(['connectedView', 'idDev']); // Supprimez le `: devId`
-
-
-// Accessing `localStorage` within the setup function to set `idDev` if not provided
-//const idDev = ref(props.idDev || Number(localStorage.getItem("idDev") || 0));
-let isConnected = ref(false);
-
-isConnected.value = props.connectedView;
-
-const emit = defineEmits(["changeCon"]);
-const changeConnexion = () => {
-  emit("changeCon");
-};
-
-//const devsId = 3;
+onMounted(() => {
+  console.log("onMounted  props.connectedView : ", props.connectedView);
+  console.log("onMounted  storageManager.getIdDev() : ", storageManager.getIdDev());
+  console.log("storageManager.getIsConnected() : ", storageManager.getIsConnected());
+  if (storageManager.getIdDev()) {
+    idDev.value = storageManager.getIdDev()
+    console.log("onMounted  storageManager.getIdDev() : ", storageManager.getIdDev());
+    emit("showProfile")
+  }
+});
 
 watch(
   () => props.connectedView,
-  (newValue, oldValue) => {
-    isConnected.value = props.connectedView;
-    //console.log("var update : ", newValue);
+  (newValue) => {
+    console.log("watch props.connectedView : ", newValue);
   }
 );
 
-onMounted(async () => {
-  if (props.idDev == null){
-    devId = localStorage.getItem("idDev");
-  }
-  else{
-    devId = props.idDev;
-  }
-
+watch(idDev, (newValue, oldValue) => {
+  console.log("idDev.value changed from", oldValue, "to", newValue);
 });
 
+const changeConnexion = () => {
+  console.log("login-Profile changeConnexion idDev.value : ", idDev.value);
+  if (idDev.value) {
+    emit("changeCon");
+    // Save isConnected state to localStorage
+    //localStorage.setItem('isConnected', isConnected.value);
+  }
+};
 
-const toggleProfileForm = () => {
-  changeConnexion();
+const toggleProfileForm = (devId) => {
+  if (devId && devId.id) {
+    storageManager.clearIdDev()
+    idDev.value = devId.id;
+    storageManager.setIdDev(idDev.value);
+    console.log("login-Profile toggleProfileForm idDev.value : ", idDev.value);
+    console.log("login-Profile toggleProfileForm storageManager.getIdDev() : ", storageManager.getIdDev());
+    changeConnexion();
+  } else {
+    console.log("toggleProfileForm called with invalid idDev:", devId);
+  }
 };
 
 const toggleLoginForm = () => {
+  //isConnected.value = !isConnected.value;
   changeConnexion();
 };
 </script>

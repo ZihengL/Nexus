@@ -11,6 +11,7 @@
   "dependencies": {
     "@mdi/font": "7.0.96",
     "@mdi/js": "^7.4.47",
+    "bad-words": "^3.0.4",
     "core-js": "^3.29.0",
     "firebase": "^10.8.0",
     "roboto-fontface": "*",
@@ -27,6 +28,8 @@
     "sass": "^1.60.0",
     "unplugin-fonts": "^1.0.3",
     "vite": "^4.5.2",
-    "vite-plugin-vuetify": "^1.0.0"
+    "vite-plugin-vuetify": "^1.0.0",
+    "webpack": "^5.90.3",
+    "webpack-cli": "^5.1.4"
   }
 }
