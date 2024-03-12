@@ -98,6 +98,8 @@ async function getGameInfos() {
     if (singleGame_data.leGame) {
       const image = await fetchGameImages(singleGame_data.leGame.id)
       singleGame_data.image = image
+      singleGame_data.tags = singleGame_data.leGame.tags
+      console.log("singleGame_data.tags : ", singleGame_data.tags);
     }
     //console.log('url : ', singleGame_data.image.image)
     // singleGame_data.leGame = singleGame_data.leGame.image;
