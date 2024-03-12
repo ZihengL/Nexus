@@ -41,7 +41,7 @@ onMounted(async () => {
   try {
     const dataGame = await fetchData("games", "getOne", "id", props.idJeu,null, null, null, "GET");
     LeGame.value = dataGame[0].title;
-    console.log('leDevs : ', LeGame.value)
+    console.log('leDevs : ', dataGame)
 
   } catch (error) {
     console.error('Error fetching data:', error);

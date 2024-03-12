@@ -2,7 +2,7 @@
   <div v-if="user != null" :key="user.value" id="fullProfile">
     <form action="#" class="glass">
       <v-avatar size="10rem">
-        <img :src="defaultPic" alt="Profile Picture" class="img" />
+        <img :src="state.imagePath" alt="Profile Picture" class="img" />
       </v-avatar>
       <!-- ... Signup form content ... -->
       <div class="field field2">
@@ -10,12 +10,12 @@
         <input type="text" :placeholder="user.name || 'Prénom'" v-model="state.name" required />
          
         <span class="title">Nom</span>
-        <input type="text" :placeholder="user.lastName|| 'Nom de Famille'"  v-model="state.lastname" />
+        <input type="text" :placeholder="user.lastName|| 'Nom de Famille'"  v-model="state.lastName" />
       </div>
       <!-- Phone Number -->
       <div class="field">
         <span class="title">Téléphone</span>
-        <input type="text"  :placeholder="user.phoneNumber || 'Téléphone'"  v-model="state.phoneNumber" />
+        <input type="tel"  :placeholder="user.phoneNumber || 'Téléphone'"  v-model="state.phoneNumber" />
       </div>
       <!-- Username -->
       <div class="field">
@@ -49,15 +49,14 @@
 
 <script setup>
 import btnComp from "../components/btnComponent.vue";
-import defaultProfilePic from '../assets/Dev_Picture/defaultProfilePic.png';
 import { defineProps, ref, onMounted, watch, reactive } from "vue";
 import storageManager from "../JS/localStorageManager.js";
+import defaultProfilePic from '@/assets/Dev_Picture/defaultProfilePic.png';
 import { fetchData } from "../JS/fetch";
 import { updateData, getOne } from "../JS/fetchServices";
 
 const props = defineProps(["IdDev", "user"]);
 let user = ref(null);
-const defaultPic = ref(defaultProfilePic);
 const username = ref(null);
 const email = ref(null);
 const bio = ref(null);
@@ -67,20 +66,32 @@ const isBioValid = true;
 
 const state = reactive({
   name:"",
-  lastname:"",
+  lastName:"",
   email:"",
   username:"",
   phoneNumber:"",
   firstPassword:"",
   secondPassword:"",
+  imagePath: defaultProfilePic,
+  erroMsg:"",
 });
 
 const getUserInfos = async () => {
-  const dataUser = await getOne("users", "id", storageManager.getIdDev())
-  console.log("dataUser :", dataUser);
-  user.value = dataUser;
-  console.log(" user.value :",  user.value);
-}
+  try {
+    const dataUser = await getOne("users", "id", storageManager.getIdDev());
+    user.value = dataUser;
+
+    if (user.value && user.value.picture) {
+      state.imagePath = user.value.picture;
+    } else {
+      state.imagePath = defaultProfilePic; 
+    }
+    console.log(" state.imagePath : ",  state.imagePath);
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    state.imagePath = defaultProfilePic;
+  }
+};
 
 
 const validateData = async () => {
@@ -100,46 +111,86 @@ const validateData = async () => {
   return true;
 };
 
-
 const updateUserInfos = async () => {
-  // First, validate the input data
-  // const isValid = await validateData();
-  // if (!isValid) {
-  //   alert(state.errorMessage);
-  //   return;
-  // }
-  const user = await getOne("users", "id", storageManager.getIdDev())
-  console.log("updateUserInfos user :" , user)
-  if(user){
- // Prepare the payload with only the fields that have been changed
- const updatedUser = {
-    ...(state.name && { name: state.name }),
-    ...(state.lastname && { lastName: state.lastname }),
-    ...(state.phoneNumber && { phoneNumber: state.phoneNumber }),
-    ...(state.username && { username: state.username }),
-    ...(state.firstPassword && state.secondPassword && { password: state.firstPassword }),
-  };
+  const originalUser = await getOne("users", "id", storageManager.getIdDev());
+  console.log("Original user info:", originalUser.id);
+  if (originalUser) {
+    // Initialize updatedUser with the user ID
+    const updatedUser = {
+      id: originalUser.id, // Always include the user ID
+    };
 
-  try {
-    // let userIsUpdated = await updateData("users", user.value.id, updatedUser);
+    // List of fields to potentially update
+    const fields = ['name', 'lastName', 'phoneNumber', 'username'];
 
-    // if (userIsUpdated) {
-    //   alert("User information updated successfully.");
-    // } else {
-    //   alert("Failed to update user information.");
-    // }
-  } catch (error) {
-    console.error("Error updating user information:", error);
+    // Check each field for changes and non-null values, then add to updatedUser
+    fields.forEach(field => {
+      const newValue = state[field];
+      if (newValue && newValue !== originalUser[field]) {
+        updatedUser[field] = newValue;
+      }
+    });
+
+    // Handle password validation and updating
+    if (state.firstPassword && state.secondPassword) {
+      if (state.firstPassword === state.secondPassword) {
+        updatedUser.password = state.firstPassword;
+      } else {
+        console.error("Les mots de passe ne correspondent pas.");
+        return; // Exit the function if passwords do not match
+      }
+    }
+
+  
+
+    const isUpdatedUserEmpty = Object.keys(updatedUser).length <= 1; 
+    if (!isUpdatedUserEmpty) {
+      try {
+        console.log("Updating user information...");
+        updatedUser.tokens ={
+          access_token : storageManager.getAccessToken(),
+          refresh_token : storageManager.getRefreshToken()
+        }
+        console.log("updatedUser payload:", updatedUser);
+        let userIsUpdated = await updateData("users",  updatedUser);
+        if(userIsUpdated != false){
+          console.log("SUCCESSFULLY UPDATED USER")
+          storageManager.setAccessToken(userIsUpdated["access_token"])
+          // console.log("storageManager.getAccessToken() : ", storageManager.getAccessToken())
+          storageManager.setRefreshToken(userIsUpdated["refresh_token"])
+          // console.log("storageManager.getRefreshToken() : ", storageManager.getRefreshToken())
+        }else{
+          console.log("FAILED TO UPDATE USER")
+          
+        }
+        console.log("userIsUpdated : ", userIsUpdated)
+      } catch (error) {
+        console.error( error);
+      }
+    } else {
+      console.log("No changes detected besides ID. Skipping update.");
+    }
+  } else {
+    console.error("User does not exist.");
   }
-  }
- 
 };
+
+function resetState() {
+  state.name = "";
+  state.lastName = "";
+  state.email = ""; 
+  state.username = "";
+  state.phoneNumber = "";
+  state.firstPassword = ""; 
+  state.secondPassword = "";
+  state.erroMsg = "";
+}
 
 
 // watch(
-//   () => user,
+//   () =>  state.imagePath,
 //   (newVal, oldVal) => {
-//     console.log("watch user : ", newVal.value)
+//     console.log("watch  state.imagePath : ", newVal)
 //   },
 //   { deep: true }
 // );
