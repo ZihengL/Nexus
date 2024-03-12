@@ -23,7 +23,6 @@
       </div>
     </div>
     <div class="pagin">
-      <!-- Pagination could be added here -->
     </div>
   </div>
 </template>
@@ -31,9 +30,6 @@
 <script setup>
 import { reactive, onMounted } from "vue";
 import FilterComponent from "../components/store/FilterComponent.vue";
-// Ensure Pagination is imported when you're ready to use it
-// import Pagination from '../components/Pagination.vue';
-// import SearchComponent from "../components/game/SearchComponent.vue";
 import Search from "../components/game/Search.vue";
 import {
   searchOn_titleOrUsername,
@@ -81,10 +77,7 @@ const handleSearch = async (query) => {
 
 onMounted(async () => {
   store_data.gameList_result = await getAllGamesWithDeveloperName();
-  /*console.log(
-    " store_data.gameList_result:  onMounted ",
-    store_data.gameList_result
-  );*/
+
 });
 </script>
 

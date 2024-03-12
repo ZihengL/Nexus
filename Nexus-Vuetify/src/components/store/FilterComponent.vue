@@ -46,10 +46,6 @@
       </select>
     </div>
     
-      <!-- <v-btn elevation="2" variant="tonal" class="" @click="returnFiltersData">
-        Rechercher
-      </v-btn> -->
-   
     <btnComp :contenu="'Rechercher'" @toggle-btn="returnFiltersData"/>
   </div>
 </template>
@@ -98,12 +94,6 @@ function returnFiltersData() {
   let selectedGenres = filter_data.genres
     .filter((genre) => genre.checked)
     .map((genre) => genre.name);
-
-  // const trimmedSearchInput = filter_data.searchInput.trim();
-
-  // if (trimmedSearchInput) {
-  //   selectedGenres.push(trimmedSearchInput);
-  // }
 
   let data = {
     tags: selectedGenres,

@@ -1,15 +1,15 @@
 <template>
   <div v-if="ArrayPag.length > 0" class="pagination">
     <div>
-      <a class="glow glass2 roundBorderSmall" href="#" @click="previousPage">
+      <a class="glow glass2 roundBorderSmall" href="#" @click="previousPage()">
         < </a>
     </div>
     <div v-for="pageNb, index in ArrayPag" :key="index" class="liste" id="group1">
-      <input type="radio" :id="pageNb" name="group1" :checked="pageNb === leNbPage" @click="giveNb(pageNb)">
+      <input type="radio" :id="pageNb" name="group1" :checked="pageNb === nbPageCheck" @click="giveNb(pageNb + 1)">
       <label class="glow roundBorderSmall" :for="pageNb">{{ pageNb + 1 }}</label>
     </div>
     <div>
-      <a class="glow glass2 roundBorderSmall" href="#" @click="nextPage">
+      <a class="glow glass2 roundBorderSmall" href="#" @click="nextPage()">
         >
       </a>
     </div>
@@ -33,12 +33,18 @@
   const emit = defineEmits(['nbPage'])
 
   let leNbPage = 1;
+  let nbPageCheck = 0;
   let ArrayPag = [];
 
   const giveNb = (id) => {
-    leNbPage = id + 1;
+    leNbPage = id;
+    nbPageCheck = leNbPage - 1;
+    const radioInputs = document.querySelectorAll('input[name="group1"]');
+    radioInputs.forEach((input, index) => {
+      input.checked = index === nbPageCheck ;
+      });
+    //console.log('le nb p : ', nbPageCheck);
     PaginationManager.setStorePage(leNbPage);
-    console.log('type ',props.type.type)
     emit("nbPage")
   }
 
@@ -49,8 +55,8 @@
   const nextPage = () => {
     if (leNbPage < ArrayPag.length) {
       leNbPage++;
-      PaginationManager.setPage(leNbPage);
-      emit("nbPage");
+      //console.log('le nb + : ', leNbPage);
+      giveNb(leNbPage)
 
     }
   }
@@ -58,8 +64,8 @@
   const previousPage = () => {
     if (leNbPage > 1) {
       leNbPage--;
-      PaginationManager.setPage(leNbPage);
-      emit("nbPage");
+      //console.log('le nb - : ', leNbPage);
+      giveNb(leNbPage)
     }
   }
 </script>

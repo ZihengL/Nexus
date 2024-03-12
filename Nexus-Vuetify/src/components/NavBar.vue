@@ -17,7 +17,7 @@
         </router-link>
         <v-spacer></v-spacer>
         <router-link to="/Login" class="router glow">
-          <span v-if="connected" class="link-btn" text><v-icon icon="mdi-account-check" /></span>
+          <span v-if="connected" class="link-btn" text><v-icon icon="mdi-account-check"  class="iconLog"/></span>
           <span v-else class="link-btn" text>Connexion</span>
         </router-link>
 
