@@ -70,9 +70,9 @@ export function fetchData(
       if (!response.ok) {
         return Promise.reject(response);
       }
-      //  console.log(" response : ", response.text());
+      console.log(" response : ", response.text());
 
-      return response.json();
+      //return response.json();
     })
     .then((data) => {
       return data;

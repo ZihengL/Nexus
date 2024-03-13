@@ -1,4 +1,4 @@
-import { fetchData } from "./fetch.js";
+import { getGamesForCarousel } from "./fetchServices.js";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 const storage = getStorage();
@@ -66,26 +66,28 @@ export default {
   },
   async mounted() {
     try {
-      const filters = { ratingAverage: { gt: 1, lte: 7 } };
-      const sorting = { id: true };
-      const includedColumns = ["id", "developerID", "title", "files"];
+      // const filters = { ratingAverage: { gt: 1, lte: 7 } };
+      // const sorting = { id: true };
+      // const includedColumns = ["id", "developerID", "title", "files"];
 
-      const jsonBody = { filters, sorting, includedColumns };
+      // const jsonBody = { filters, sorting, includedColumns };
 
-    fetchData("games", "getAllMatching", null, null, null, null,jsonBody, "POST")
-      .then((data) => {
-        if (!Array.isArray(data)) {
-          throw new Error("Fetched data is not an array");
-        }
-        //console.log('data : ' , data)
-        return this.fetchGameImages(data.slice(0, 4));
-      })
-      .then((carouselItemsWithImages) => {
-        this.carouselItems = carouselItemsWithImages;
-        this.runNextAuto = setTimeout(() => {
-          this.showSlider("next");
-        }, this.timeAutoNext);
-      })
+      
+    //fetchData("games", "getAllMatching", null, null, null, null,jsonBody, "POST")
+      let data = await getGamesForCarousel();
+      
+        // if (!Array.isArray(data)) {
+        //   throw new Error("Fetched data is not an array");
+        // }
+        console.log('data : ' , data)
+        //return this.fetchGameImages(data);
+      //
+      // .then((carouselItemsWithImages) => {
+      //   this.carouselItems = carouselItemsWithImages;
+      //   this.runNextAuto = setTimeout(() => {
+      //     this.showSlider("next");
+      //   }, this.timeAutoNext);
+      // })
       .catch((error) => {
         console.error("Error:", error);
       });
