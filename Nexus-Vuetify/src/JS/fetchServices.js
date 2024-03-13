@@ -196,16 +196,6 @@ export const getReviewsAndUsernamesNEW = async (gameID, sorting, paging = null) 
   return await getAll("reviews", "gameID", gameID, null, sorting, joined_tables, paging);
 }
 
-export const createReviewsNEW = async (table, createData) => {
-  return await services.fetchData(table, 'create', {
-    credentials: {
-      id: StorageManager.getIdDev,
-      tokens: StorageManager.getTokens
-    },
-    request_data: createData
-  });
-};
-
 export const getGamesForCarousel = async () => {
   const filters = { ratingAverage: {gt: 1, lte: 7}};
   const sorting = { id: true };
@@ -218,6 +208,19 @@ export const getGamesForCarousel = async () => {
 
   return await getAllMatching('games', filters, included_columns, sorting, joined_tables, paging);
 }
+
+
+/*********/
+
+export const createReviewsNEW = async (table, createData) => {
+  return await services.fetchData(table, 'create', {
+    credentials: {
+      id: StorageManager.getIdDev,
+      tokens: StorageManager.getTokens
+    },
+    request_data: createData
+  });
+};
 
 
 /***************************************************/
