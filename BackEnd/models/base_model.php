@@ -3,7 +3,7 @@
 class BaseModel
 {
     public static $database;
-    public static $print_errors = false;
+    public static $print_errors = true;
 
     protected static $models = [];
 
@@ -270,8 +270,8 @@ class BaseModel
         $columns = $this->parseColumns($included_columns);
         ['selects' => $selects, 'joins' => $joins, 'group' => $group] = $this->parseJoinedTables($joined_tables);
 
+        // -- (SELECT COUNT(DISTINCT {$this->table}.id) OVER() AS 'total', 
         $selections = "SELECT 
-                            -- (SELECT COUNT(DISTINCT {$this->table}.id) OVER() AS 'total', 
                             $columns $selects 
                         FROM {$this->table} $joins";
         return ['selections' => $selections, 'group' => $group];

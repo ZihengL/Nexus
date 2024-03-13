@@ -31,7 +31,7 @@
 <script>
 import { fetchData } from "../JS/fetch";
 import * as services from "../JS/fetchServices";
-import ReviewsListComponent from "../components/reviewsListComponent.vue";
+// import ReviewsListComponent from "../components/reviewsListComponent.vue";
 
 // ZI TESTS
 // import { fetchData2 } from '../JS/fetchData';
@@ -39,7 +39,7 @@ import ReviewsListComponent from "../components/reviewsListComponent.vue";
 
 export default {
   components: {
-    ReviewsListComponent,
+    // ReviewsListComponent,
   },
   data() {
     return {

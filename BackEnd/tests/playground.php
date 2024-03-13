@@ -165,6 +165,17 @@ $data = [
 $result = parse('users', 'getAll', $data);
 printall($result);
 
+echo "<hr><h4>GAME WITH DEVELOPER, REVIEWS, AND TAGS</h4>";
+$data = [
+    // 'paging' => ['limit' => 4, 'offset' => 0],
+    'column' => 'id',
+    'value' => 2,
+    'joined_tables' => ['users' => ['id', 'username'], 'reviews' => [], 'tags' => []]
+];
+
+$result = parse('games', 'getOne', $data);
+printall($result);
+
 // printall($gamestags_ctrl->getGamesWith(['users' => true, 'tags' => true]));
 
 

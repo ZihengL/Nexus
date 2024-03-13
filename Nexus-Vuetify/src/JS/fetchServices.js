@@ -2,19 +2,68 @@ import { fetchData } from "./fetch";
 import * as services from "./fetchServices/services";
 import StorageManager from "./localStorageManager";
 
+// NEXT 2 FUNCTIONS BELOW ARE FOR PARSING JOINS
+// CUZ THE DATA IS CONCATENATED INTO A STRING
+
+// SEPARATOR FOR ROWS = '|'
+// SEPARATOR FOR COLUMNS = ';'
+// SEPARATOR BETWEEN COLUMN NAME AND DATA = ':'
+export const parseDetails = (details) => {
+  const rows = details.split('|');
+
+  return rows.map(row => {
+    const columns = row.split(';');
+
+    const object = columns.reduce((acc, curr) => {
+      const [key, value] = curr.split(':');
+      acc[key.trim()] = value.trim();
+
+      return acc;
+    }, {});
+    
+    return object;
+  });
+}
+
+export const parseJoins = (result, keys) => {
+  for (var key in keys) {
+    const resultKey = key + "_details";
+
+    for (var index in result) {
+      const obj = result[index];
+      obj[key] = parseDetails(obj[resultKey]);
+      delete obj[resultKey];
+    }
+  }
+
+  return result;
+}
+
 
 export const getOne = async (table, column, value, includedColumns = null, sorting = null, joined_tables = null) => {
   // let data = await fetchData(table, "getOne", column, value, includedColumns, sorting, null, "GET");
 
   const preppedBody = services.prepGetOne(column, value, includedColumns, joined_tables);
-  return await services.getOne(table, preppedBody);
+  let result = await services.getOne(table, preppedBody);
+
+  if (result) {
+    return joined_tables ? parseJoins(result, joined_tables) : result;
+  }
+
+  return null;
 };
 
 export const getAll = async (table, column = null, value = null, includedColumns = null, sorting = null, joined_tables = null, paging = null) => {
   // let data = await fetchData(table, "getAll", column, value, includedColumns, sorting, null, "GET");
 
   const preppedBody = services.prepGetAll(column, value, includedColumns, sorting, joined_tables, paging);
-  return await services.getAll(table, preppedBody);
+  let result = await services.getAll(table, preppedBody);
+
+  if (result) {
+    return joined_tables ? parseJoins(result, joined_tables) : result;
+  }
+
+  return null;
 };
 
 export const getAllMatching = async (table, filters,  includedColumns = null, sorting = null, joined_tables = null, paging = null) => {
@@ -28,7 +77,13 @@ export const getAllMatching = async (table, filters,  includedColumns = null, so
   // return data
 
   const preppedBody = services.prepGetAllMatching(filters, includedColumns, sorting, joined_tables, paging);
-  return await services.getAllMatching(table, preppedBody);
+  let result = await services.getAllMatching(table, preppedBody);
+
+  if (result) {
+    return joined_tables ? parseJoins(result, joined_tables) : result;
+  }
+
+  return null;
 };
 
 export const create = async (table, createData) => {
@@ -104,11 +159,6 @@ export const getUsername = async (userID) => {
 /****************************** GAMES ******************************/
 /*******************************************************************/
 
-export const getGameDetails = async (idGame) => {
-  let data = await getAll("games", "id", idGame);
-  return data
-};
-
 const deleteGamesAndrelationships = async (jsonObject) => {
   const gameId = jsonObject["gameId"];
   const game = await getOne("games", "id", gameId);
@@ -123,67 +173,61 @@ const deleteGamesAndrelationships = async (jsonObject) => {
   return false
 };
 
-// NEXT 2 FUNCTIONS BELOW ARE FOR PARSING JOINS
-// CUZ THE DATA IS CONCATENATED INTO A STRING
-
-// SEPARATOR FOR ROWS = '|'
-// SEPARATOR FOR COLUMNS = ';'
-// SEPARATOR BETWEEN COLUMN NAME AND DATA = ':'
-export const parseDetails = (details) => {
-  const rows = details.split('|');
-
-  return rows.map(row => {
-    const columns = row.split(';');
-
-    const object = columns.reduce((acc, curr) => {
-      const [key, value] = curr.split(':');
-      acc[key.trim()] = value.trim();
-
-      return acc;
-    }, {});
-    
-    return object;
-  });
-}
-
-export const parseJoins = (result, keys) => {
-  for (var key in keys) {
-    const resultKey = key + "_details";
-
-    for (var index in result) {
-      const obj = result[index];
-      obj[key] = parseDetails(obj[resultKey]);
-      delete obj[resultKey];
-    }
-  }
-
-  return result;
-}
+export const getGameDetails = async (idGame) => {
+  let data = await getAll("games", "id", idGame);
+  return data
+};
 
 export const getAllGamesWithDeveloperNameNEW = async (column = null, value = null, includedColumns = null, sorting = null, paging = null) => {
-  const joined_tables = { users: ['id', 'username', 'picture', 'isOnline']};
+  const joined_tables = { users: ['id', 'username', 'picture', 'isOnline'] };
 
-  let result = await getAll('games', column, value, includedColumns, sorting, joined_tables, paging);
-  if (result) {
-    return parseJoins(result, joined_tables);
-  }
-
-  return null;
+  return await getAll('games', column, value, includedColumns, sorting, joined_tables, paging);
 }
 
 export const getGameDetailsWithDeveloperNameNEW = async (gameID) => {
-  const joined_tables = { sers: ['id', 'username', 'picture', 'isOnline']};
+  const joined_tables = { users: ['id', 'username', 'picture', 'isOnline'] };
   
-  let result = await getOne('games', 'id', gameID, null, null, joined_tables);
-  if (result) {
-    return parseJoins(result, joined_tables);
-  }
-
-  return null;
+  return await getOne('games', 'id', gameID, null, null, joined_tables);
 }
 
+export const getReviewsAndUsernamesNEW = async (gameID, sorting, paging = null) => {
+  const joined_tables = {users: ['id', 'username', 'picture', 'isOnline']};
 
-// CHANGE HERE FOR GETALLMATCHING
+  return await getAll("reviews", "gameID", gameID, null, sorting, joined_tables, paging);
+}
+
+export const createReviewsNEW = async (table, createData) => {
+  return await services.fetchData(table, 'create', {
+    credentials: {
+      id: StorageManager.getIdDev,
+      tokens: StorageManager.getTokens
+    },
+    request_data: createData
+  });
+};
+
+// export const getGameWithAllDetails = async (gameID) => {
+//   const joined_tables = { 
+//     users: ['id', 'username', 'picture', 'isOnline'],
+//     reviews:
+//   };
+// }
+
+export const getGamesForCarousel = async () => {
+  const filters = { ratingAverage: {gt: 1, lte: 7}};
+  const sorting = { id: true };
+  const included_columns = ['id', 'developerID', 'title', 'files'];
+  const joined_tables = {
+      users: ['id', 'username', 'picture', 'isOnline'],
+      tags: ['id', 'name']
+    };
+  const paging = { limit: 4, offset: 0};
+
+  return await getAllMatching('games', filters, included_columns, sorting, joined_tables, paging);
+}
+
+/***************************************************/
+
 export const getAllGamesWithDeveloperName = async (column = null, value = null, includedColumns = null, sorting = null, joined_tables = null, paging = null) => {
   try {
     const gamesArray = await getAll("games", column, value, includedColumns, sorting);
@@ -259,14 +303,7 @@ export const createReviews = async (table, createData) => {
   let body = {
     createData
   }
-  // let data = await fetchData(table, "create", null, null, null, null, body, "POST");
-  const data = await services.fetchData(table, 'create', {
-    credentials: {
-      id: StorageManager.getIdDev,
-      tokens: StorageManager.getTokens
-    },
-    request_data: createData
-  })
+  let data = await fetchData(table, "create", null, null, null, null, body, "POST");
   return data;
 };
 
@@ -278,27 +315,23 @@ export const getReviewsAndUsernames = async (gameID, sorting) => {
   // console.log(" getReviewsAndUsernames sorting : ", sorting)
   // console.log(" getReviewsAndUsernames gameID : ", gameID)
 
-  const joined_tables = {users: ['id', 'username', 'picture', 'isOnline']};
+  if (reviews && reviews.length) {
+    const reviewsWithUsernames = await Promise.all(reviews.map(async (review) => {
+      if (review.userID) {
+        const userDetails = await getUsername(review.userID);
+        if (userDetails) {
+          review.username = userDetails.username;
+          review.profilePic = userDetails.picture;
+        }
+      }
 
-  const reviews = await getAll("reviews", "gameID", gameID, null, sorting, null);
+      return review;
+    }));
 
-  // if (reviews && reviews.length) {
-  //   const reviewsWithUsernames = await Promise.all(reviews.map(async (review) => {
-  //     if (review.userID) {
-  //       const userDetails = await getUsername(review.userID);
-  //       if (userDetails) {
-  //         review.username = userDetails.username;
-  //         review.profilePic = userDetails.picture;
-  //       }
-  //     }
+    return reviewsWithUsernames;
+  }
 
-  //     return review;
-  //   }));
-
-  //   return reviewsWithUsernames;
-  // }
-
-  // return reviews;
+  return reviews;
 };
 
 export const getGameReviewsUsernames = async (gameID, sorting = null) => {
