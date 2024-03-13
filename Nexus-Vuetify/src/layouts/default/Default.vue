@@ -18,6 +18,9 @@ import DefaultView from './View.vue';
 import { ref, onMounted } from 'vue';
 
 let connect = ref(false);
+
+//storageManager.setIsConnected(connect.value)
+
 const initializeConnect = () => {
   // storageManager.setIsConnected(false)
   const storedIsConnected = storageManager.getIsConnected()
