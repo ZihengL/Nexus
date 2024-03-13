@@ -1,6 +1,6 @@
 <template>
   <router-link
-    v-if="singleGame_data.leGame"
+    v-if="singleGame_data"
     :to="{ name: 'Game', params: { idGame: props.idGame, urlImg:  singleGame_data.image.image} }"
     class="single glass2 roundBorderSmall"
   >
@@ -11,11 +11,11 @@
         class="roundBorderSmall gameImg"
       />
       <p class="roundBorderSmall">
-        {{ singleGame_data.leGame.description }}
+        {{ singleGame_data.description }}
       </p>
     </div>
-    <h3>{{ singleGame_data.leGame.title }}</h3>
-    <h4>{{ singleGame_data.leGame.devName }}</h4>
+    <h3>{{ singleGame_data.title }}</h3>
+    <h4>{{ singleGame_data.devName }}</h4>
     <div class="ratings">
       <v-rating
         hover
@@ -23,7 +23,7 @@
         half-increments
         :length="5"
         :size="32"
-        :model-value="singleGame_data.leGame.ratingAverage"
+        :model-value="singleGame_data.ratingAverage"
         active-color="rgba(3,33,76,1)"
         class="rat"
       />
@@ -43,77 +43,79 @@ import defaultImage from '@/assets/imgJeuxLogo/noImg.jpg';
 
 const storage = getStorage();
 
-const props = defineProps({
-  idGame: Number,
-});
+const props = defineProps(['gameList', 'idGame']);
 
-const singleGame_data = reactive({
-  leGame: {},
-  tags :[],
-  DEFAULT_IMAGE_PATH : defaultImage,
-  image: String,
-});
+let singleGame_data = props.gameList[props.idGame];
+console.log('one id ', props.idGame);
+//console.log('one all ', props.gameList);
+console.log('one object', singleGame_data);
+// const singleGame_data = reactive({
+//   leGame: {},
+//   tags :[],
+//   DEFAULT_IMAGE_PATH : defaultImage,
+//   image: String,
+// });
 
-const limitedTags = computed(() => {
-  // console.log('tags : ', singleGame_data.tags);
-  if (singleGame_data.tags.length > 3){
-    return singleGame_data.tags.slice(0, 3);
-  }
-  else {
-    return singleGame_data.tags;
-  }
+// const limitedTags = computed(() => {
+//   // console.log('tags : ', singleGame_data.tags);
+//   if (singleGame_data.tags.length > 3){
+//     return singleGame_data.tags.slice(0, 3);
+//   }
+//   else {
+//     return singleGame_data.tags;
+//   }
  
-});
+// });
 
-async function fetchGameImages(gameId) {
-  try {
-    const imagePath = `Games/${gameId}/media/${gameId}_Store.png`;
-    //console.log('imagePath : ', imagePath);
-    const imageRef = ref(storage, imagePath);
+// async function fetchGameImages(gameId) {
+//   try {
+//     const imagePath = `Games/${gameId}/media/${gameId}_Store.png`;
+//     //console.log('imagePath : ', imagePath);
+//     const imageRef = ref(storage, imagePath);
 
-    try {
-      const url = await getDownloadURL(imageRef);
-      return { id: gameId, image: url }; // Corrected the return statement
-    } catch (error) {
-      console.error(`Error fetching image for ${gameId}:`, error);
-      return { id: gameId, image: singleGame_data.DEFAULT_IMAGE_PATH };// Fallback image
-    }
-  } catch (error) {
-    console.error("Error fetching game images:", error);
-    throw error; // Re-throw the error to handle it at a higher level if needed
-  }
-}
+//     try {
+//       const url = await getDownloadURL(imageRef);
+//       return { id: gameId, image: url }; // Corrected the return statement
+//     } catch (error) {
+//       console.error(`Error fetching image for ${gameId}:`, error);
+//       return { id: gameId, image: singleGame_data.DEFAULT_IMAGE_PATH };// Fallback image
+//     }
+//   } catch (error) {
+//     console.error("Error fetching game images:", error);
+//     throw error; // Re-throw the error to handle it at a higher level if needed
+//   }
+// }
 
 
-async function getGameInfos() {
-  try {
-    // console.log("props.idGame : ", props.idGame);
-    // console.log("singleGame props.idGame :", props.idGame);
-    singleGame_data.leGame = await getGameDetailsWithDeveloperName(
-      props.idGame
-    );
-    // console.log(
-    //   "typeOf singleGame_data.leGame:",
-    //   typeof singleGame_data.leGame
-    // );
-    if (singleGame_data.leGame) {
-      const image = await fetchGameImages(singleGame_data.leGame.id)
-      singleGame_data.image = image
-      // singleGame_data.tags = singleGame_data.leGame.tags
-      // console.log("singleGame_data.tags : ", singleGame_data.tags);
-    }
-    //console.log('url : ', singleGame_data.image.image)
-    // singleGame_data.leGame = singleGame_data.leGame.image;
-    // console.log("singleGame data :", data);
-    // singleGame_data.leGame = await data;
-    // console.log("singleGame leGame :", singleGame_data.leGame);
-  } catch (error) {
-    console.error("Error fetching game details:", error);
-  }
-}
-onMounted(async () => {
-  await getGameInfos();
-});
+// async function getGameInfos() {
+//   try {
+//     // console.log("props.idGame : ", props.idGame);
+//     // console.log("singleGame props.idGame :", props.idGame);
+//     singleGame_data.leGame = await getGameDetailsWithDeveloperName(
+//       props.idGame
+//     );
+//     // console.log(
+//     //   "typeOf singleGame_data.leGame:",
+//     //   typeof singleGame_data.leGame
+//     // );
+//     if (singleGame_data.leGame) {
+//       const image = await fetchGameImages(singleGame_data.leGame.id)
+//       singleGame_data.image = image
+//       // singleGame_data.tags = singleGame_data.leGame.tags
+//       // console.log("singleGame_data.tags : ", singleGame_data.tags);
+//     }
+//     //console.log('url : ', singleGame_data.image.image)
+//     // singleGame_data.leGame = singleGame_data.leGame.image;
+//     // console.log("singleGame data :", data);
+//     // singleGame_data.leGame = await data;
+//     // console.log("singleGame leGame :", singleGame_data.leGame);
+//   } catch (error) {
+//     console.error("Error fetching game details:", error);
+//   }
+// }
+// onMounted(async () => {
+//   await getGameInfos();
+// });
 </script>
 
 <style lang="scss">

@@ -4,6 +4,7 @@
       <SingleGameComponent
         v-for="game in arrayStore"
         :key="game.id"
+        :gameList="props.gameList"
         :idGame="game.id"
         class="vuee"
       />

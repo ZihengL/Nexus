@@ -2,6 +2,7 @@ import { fetchData } from "./fetch";
 import * as services from "./fetchServices/services";
 import StorageManager from "./localStorageManager";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import defaultImage from '@/assets/imgJeuxLogo/noImg.jpg';
 const storage = getStorage();
 
 // NEXT 2 FUNCTIONS BELOW ARE FOR PARSING JOINS
@@ -188,8 +189,8 @@ export const getAllGamesWithDeveloperNameNEW = async (column = null, value = nul
 
 export const getGameDetailsWithDeveloperNameNEW = async (gameID) => {
   const joined_tables = { users: ['id', 'username', 'picture', 'isOnline'], tags: ['id', 'name'] };
-  
-  return await getOne('games', 'id', gameID, null, null, joined_tables);
+  let data = await getOne('games', 'id', gameID, null, null, joined_tables);
+  return fetchGameImages(data);
 }
 
 export const getReviewsAndUsernamesNEW = async (gameID, sorting, paging = null) => {
@@ -236,6 +237,25 @@ export const fetchGameImages  = async (games) => {
   } catch (error) {
     console.error("Error fetching game images:", error);
     return []; // Return an empty array in case of error
+  }
+}
+
+export const fetchOneGameImages  = async (gameId) => {
+  try {
+    const imagePath = `Games/${gameId}/media/${gameId}_Store.png`;
+    //console.log('imagePath : ', imagePath);
+    const imageRef = ref(storage, imagePath);
+
+    try {
+      const url = await getDownloadURL(imageRef);
+      return { id: gameId, image: url }; // Corrected the return statement
+    } catch (error) {
+      console.error(`Error fetching image for ${gameId}:`, error);
+      return { id: gameId, image: singleGame_data.DEFAULT_IMAGE_PATH };// Fallback image
+    }
+  } catch (error) {
+    console.error("Error fetching game images:", error);
+    throw error; // Re-throw the error to handle it at a higher level if needed
   }
 }
 
