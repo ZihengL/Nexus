@@ -181,13 +181,13 @@ export const getGameDetails = async (idGame) => {
 };
 
 export const getAllGamesWithDeveloperNameNEW = async (column = null, value = null, includedColumns = null, sorting = null, paging = null) => {
-  const joined_tables = { users: ['id', 'username', 'picture', 'isOnline'] };
+  const joined_tables = { users: ['id', 'username', 'picture', 'isOnline'], tags: ['id', 'name'] };
 
   return await getAll('games', column, value, includedColumns, sorting, joined_tables, paging);
 }
 
 export const getGameDetailsWithDeveloperNameNEW = async (gameID) => {
-  const joined_tables = { users: ['id', 'username', 'picture', 'isOnline'] };
+  const joined_tables = { users: ['id', 'username', 'picture', 'isOnline'], tags: ['id', 'name'] };
   
   return await getOne('games', 'id', gameID, null, null, joined_tables);
 }
@@ -197,16 +197,6 @@ export const getReviewsAndUsernamesNEW = async (gameID, sorting, paging = null) 
 
   return await getAll("reviews", "gameID", gameID, null, sorting, joined_tables, paging);
 }
-
-export const createReviewsNEW = async (table, createData) => {
-  return await services.fetchData(table, 'create', {
-    credentials: {
-      id: StorageManager.getIdDev,
-      tokens: StorageManager.getTokens
-    },
-    request_data: createData
-  });
-};
 
 export const getGamesForCarousel = async () => {
   const filters = { ratingAverage: {gt: 1, lte: 7}};
@@ -248,6 +238,7 @@ export const fetchGameImages  = async (games) => {
     return []; // Return an empty array in case of error
   }
 }
+
 /***************************************************/
 
 export const getAllGamesWithDeveloperName = async (column = null, value = null, includedColumns = null, sorting = null, joined_tables = null, paging = null) => {
