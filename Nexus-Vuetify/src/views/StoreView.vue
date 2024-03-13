@@ -23,7 +23,6 @@
       </div>
     </div>
     <div class="pagin">
-      <!-- Pagination could be added here -->
     </div>
   </div>
 </template>
@@ -31,9 +30,6 @@
 <script setup>
 import { reactive, onMounted } from "vue";
 import FilterComponent from "../components/store/FilterComponent.vue";
-// Ensure Pagination is imported when you're ready to use it
-// import Pagination from '../components/Pagination.vue';
-// import SearchComponent from "../components/game/SearchComponent.vue";
 import Search from "../components/game/Search.vue";
 import {
   searchOn_titleOrUsername,
@@ -59,7 +55,7 @@ const store_data = reactive({
 
 
 async function handleFilterUpdate(filterData) {
-  //console.log("Received filter data:", filterData);
+  console.log("Received filter data:", filterData);
   let titleOrDevName = store_data.searchQuery ?? null;
   let tags = filterData.tags ?? [];
   let sorting = filterData.sorting ?? null;
@@ -67,7 +63,7 @@ async function handleFilterUpdate(filterData) {
   let filteredGames = await search_AndFilter(titleOrDevName, tags, sorting);
   //console.log("filteredGames : ", filteredGames);
   store_data.gameList_result = filteredGames
-  //console.log(" store_data.gameList_result: ", store_data.gameList_result);
+  console.log(" store_data.gameList_result: ", store_data.gameList_result);
 }
 
 const handleSearch = async (query) => {
@@ -80,11 +76,15 @@ const handleSearch = async (query) => {
 };
 
 onMounted(async () => {
-  store_data.gameList_result = await getAllGamesWithDeveloperName();
-  /*console.log(
-    " store_data.gameList_result:  onMounted ",
-    store_data.gameList_result
-  );*/
+
+  if(store_data.gameList_result.length === 0){
+    let sorting ={
+      id:true
+    }
+    store_data.gameList_result = await getAllGamesWithDeveloperName(null, null, null, sorting);
+  }
+ 
+
 });
 </script>
 

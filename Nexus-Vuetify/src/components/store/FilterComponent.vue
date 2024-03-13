@@ -9,10 +9,10 @@
           v-for="genre in filter_data.genres.slice(0, 6)"
           :key="genre.id"
           :class="{ 'filter-label': true, glow: true, checked: genre.checked }"
-          class="roundBorderSmall glass2"
+          class="roundBorderSmall label"
         >
           <input
-            @checked="returnFiltersData"
+            @change="handleUserInteraction"
             type="checkbox"
             v-model="genre.checked"
             :name="genre.name"
@@ -21,7 +21,7 @@
           <span>{{ genre.name }}</span>
         </label>
       </div>
-      <div class="search-container  roundBorderSmall glass">
+      <div class="search-container roundBorderSmall glass">
         <input
           v-model="filter_data.searchInput"
           type="text"
@@ -34,7 +34,7 @@
 
     <div class="sort-container">
       <h4>{{ filter_data.sort_container_title }}</h4>
-      <select v-model="filter_data.selectedSort" class=" roundBorderSmall glass">
+      <select v-model="filter_data.selectedSort" class="roundBorderSmall glass">
         <option disabled value="">Trier par :</option>
         <option
           v-for="sort in filter_data.sortList"
@@ -45,12 +45,12 @@
         </option>
       </select>
     </div>
-    
-      <!-- <v-btn elevation="2" variant="tonal" class="" @click="returnFiltersData">
+
+    <!-- <v-btn elevation="2" variant="tonal" class="" @click="returnFiltersData">
         Rechercher
       </v-btn> -->
-   
-    <btnComp :contenu="'Rechercher'" @toggle-btn="returnFiltersData"/>
+
+    <btnComp :contenu="'Rechercher'" @toggle-btn="handleUserInteraction" />
   </div>
 </template>
 
@@ -58,7 +58,7 @@
 import { onMounted, reactive, watch } from "vue";
 // import SearchComponent from "../game/SearchComponent.vue";
 import { getAll, filterSearchedTags } from "../../JS/fetchServices";
-import btnComp from "../btnComponent.vue"
+import btnComp from "../btnComponent.vue";
 const props = defineProps({
   filter_title: String,
   onFilter: Function,
@@ -76,15 +76,22 @@ const filter_data = reactive({
   filter_results: Object,
   tags_container_title: "Genres",
   sort_container_title: "Trier Par :",
+  userInteracted: false,
 
   sortList: [
-    { label: "Trier par : ", value: "" },
+    //{ label: "Trier par : ", value: "" },
     { label: "Développeur", value: "devName" },
-    { label: "Date de sortie", value:{releaseDate: false} },
-    { label: "Note d'évaluation", value: {ratingAverage: false} },
-    { label: "Titre", value:{title : true}},
+    { label: "Date de sortie", value: { releaseDate: false } },
+    { label: "Note d'évaluation", value: { ratingAverage: false } },
+    { label: "Titre", value: { title: true } },
   ],
 });
+
+function handleUserInteraction() {
+  filter_data.userInteracted = true;
+  returnFiltersData();
+}
+
 
 async function getTags() {
   const fetchedGenres = await getAll("tags");
@@ -99,18 +106,13 @@ function returnFiltersData() {
     .filter((genre) => genre.checked)
     .map((genre) => genre.name);
 
-  // const trimmedSearchInput = filter_data.searchInput.trim();
-
-  // if (trimmedSearchInput) {
-  //   selectedGenres.push(trimmedSearchInput);
-  // }
-
   let data = {
     tags: selectedGenres,
     sorting: filter_data.selectedSort,
   };
 
-  emit("update:filters", data);
+    emit("update:filters", data);
+  
 }
 
 watch(
@@ -144,10 +146,11 @@ watch(
 watch(
   () => filter_data.genres.map((genre) => genre.checked),
   (newVal, oldVal) => {
-    // change the game list once any of the tags have been checked
+    if (filter_data.userInteracted) { // change the game list once any of the tags have been checked
     if (newVal.some((checked, index) => checked !== oldVal[index])) {
       returnFiltersData();
-    }
+    }}
+   
   },
   { deep: true }
 );
@@ -158,20 +161,30 @@ onMounted(async () => {
 </script>
 
 <style lang="scss">
-.glass2 {
-  display: inline-block;
+.label {
+  /* From https://css.glass */
+  background: rgba(255, 255, 255, 0.06);
+  //border-radius: 0px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  border: 1px solid rgba(255, 255, 255, 0);
+}
+.label:hover,
+.checked {
+  /* From https://css.glass */
+  background: rgba(255, 255, 255, 0.25);
+  //border-radius: 0px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  border: 1px solid rgba(255, 255, 255, 0);
 }
 .checked {
-  color: var(--light);       
-  text-shadow:
-      0 0 1.5px #ffffffa1,
-      0 0 2.5px #ffffffa1,
-      0 0 5px #ffffffa1,
-      0 0 10px var(--marin-b),
-      0 0 20px var(--marin-b),
-      0 0 25px var(--marin-b),
-      0 0 30px var(--marin-b),
-      0 0 33px var(--marin-b);
+  color: var(--light);
+  text-shadow: 0 0 1.5px #ffffffa1, 0 0 2.5px #ffffffa1, 0 0 5px #ffffffa1,
+    0 0 10px var(--marin-b), 0 0 20px var(--marin-b), 0 0 25px var(--marin-b),
+    0 0 30px var(--marin-b), 0 0 33px var(--marin-b);
   animation: neonGlow 0.5s ease-in-out infinite alternate;
 }
 input[type="checkbox"]:checked + .filter-label {
@@ -192,7 +205,6 @@ input[type="checkbox"] {
 }
 
 .filter-label {
-  background: rgba(77, 77, 77, 0.8);
   padding: 5px 10px;
   border-radius: 4px;
   display: flex;
@@ -200,22 +212,6 @@ input[type="checkbox"] {
   justify-content: start;
   position: relative;
   cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.filter-label:hover {
-  background: rgba(102, 192, 244, 0.2);
-}
-
-.filter-label:before {
-  content: "";
-  width: 20px;
-  height: 20px;
-  margin-right: 10px;
-  background-color: #ccc;
-  border-radius: 3px;
-  position: relative;
-  display: inline-block;
 }
 
 /*  */

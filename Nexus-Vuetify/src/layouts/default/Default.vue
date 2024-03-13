@@ -19,21 +19,16 @@ import { ref, onMounted } from 'vue';
 
 let connect = ref(false);
 
+//storageManager.setIsConnected(connect.value)
+
 const initializeConnect = () => {
-  // localStorage.setItem('isConnected', false)
   // storageManager.setIsConnected(false)
   const storedIsConnected = storageManager.getIsConnected()
-  //const storedIsConnected =  localStorage.getItem('isConnected');
   if (storedIsConnected !== null) {
     connect.value = storedIsConnected;
-    // console.log("Default.vue  storageManager.getIsConnected() : ", storageManager.getIsConnected());
-    // console.log("Default.vue connect.value", connect.value)
   } else {
-    // localStorage.setItem('isConnected', connect.value);
     storageManager.setIsConnected(connect.value)
-    // console.log("Default.vue  storageManager.getIsConnected()NULL : ", storageManager.getIsConnected());
   }
- 
 };
 
 onMounted(() => {

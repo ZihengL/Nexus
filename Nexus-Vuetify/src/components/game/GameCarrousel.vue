@@ -20,7 +20,12 @@ import { getStorage, ref as firebaseRef, getDownloadURL } from "firebase/storage
 
 const storage = getStorage();
 
-const props = defineProps(['idJeux']);
+const props = defineProps({
+  idJeux: {
+    type:Number,
+  },
+})
+
 const defaultPath = "/src/assets/image/img1.png";
 const tabImgGame = vueRef([]);
 const sliderList = vueRef(null);

@@ -12,14 +12,14 @@
         <div class="description glass roundBorderSmall">
           <div :class="isHimself ? 'imgContainerFull' : 'imgContainer'">
             <img
-              src="../../assets/Rich_Ricasso.png"
-              alt="John"
+              :src="leDevs.picture || defaultProfilePic"
+              alt="Photo de Profile"
               class="imgProfil"
             />
           </div>
           <div class="champUtilisateur">
-            <h3>efew4w</h3>
-            <!--<h3>{{ leDevs.value.username }}</h3>-->
+            <!-- <h3>efew4w</h3> -->
+            <h3>{{ leDevs.username }}</h3>
             <br />
             <p>description</p>
           </div>
@@ -29,57 +29,46 @@
               class="router glow"
             >
               <v-icon icon="mdi-account-circle" />
-              <span class="link-btn">Gerer son profil</span>
+              <span class="link-btn">Gérer son profil</span>
             </router-link>
 
-            <btnComp :contenu="'Se deconnecter'" @toggle-btn="toggleLogout" />
+            <btnComp :contenu="'Se déconnecter'" @toggle-btn="toggleLogout" />
           </div>
         </div>
         <div class="wrapper glass roundBorderSmall">
           <div class="form-container">
             <div v-if="isHimself" class="slide-controls roundBorderSmall">
-              <input
-                type="radio"
-                name="slide"
-                id="login"
-                v-model="isLogin"
-                value="true"
-                checked
-              />
-              <input
-                type="radio"
-                name="slide"
-                id="signup"
-                v-model="isLogin"
-                value="false"
-              />
-              <label for="login" class="slide login" @click="toggleLogin()"
-                >Acheter</label
-              >
-              <label for="signup" class="slide signup" @click="toggleSignup()"
-                >Developper</label
-              >
+              <input type="radio" name="slide" id="login" v-model="isLogin" value="true" checked />
+              <input type="radio" name="slide" id="signup" v-model="isLogin" value="false" />
+              <label for="login" class="slide login" @click="toggleLogin()">Développer</label>
+              <label for="signup" class="slide signup" @click="toggleSignup()">Télécharger</label>
               <div class="slider-tab"></div>
             </div>
 
             <div v-if="isHimself" class="form-inner">
-              <div
-                v-for="(item, index) in gameList"
-                :key="index"
-                class="login gamesss log"
-              >
-                <liste-de-jeu
-                  :himself="props.isHimself"
-                  :idJeu="item.id"
-                  :buy="true"
-                  class="game gamess"
-                />
+              <div class="login log gamesss">
+                <div
+                  v-for="(item, index) in gameList"
+                  :key="index"
+                  class="gamess">
+                  <liste-de-jeu
+                    :himself="props.isHimself"
+                    :idJeu="item.id"
+                    :buy="true"
+                    class="game gamess"
+                  />
+                </div>
               </div>
 
+              <div class=" sign glass roundBorderSmall">
+                <p>Comming soon ...</p>
+              </div>
+            </div>
+
+            <div v-else class="signup">
               <div
                 v-for="(item, index) in gameList"
                 :key="index"
-                class="signup sign"
               >
                 <liste-de-jeu
                   :himself="props.isHimself"
@@ -89,25 +78,13 @@
                 />
               </div>
             </div>
-            <div
-              v-else
-              v-for="(item, index) in gameList"
-              :key="index"
-              class="signup sign"
-            >
-              <liste-de-jeu
-                :himself="props.isHimself"
-                :idJeu="item.id"
-                :buy="false"
-                class="game"
-              />
-            </div>
           </div>
         </div>
       </div>
     </div>
 
     <router-link
+      v-if="isHimself"
       class="floating-right-bottom-btn glass"
       to="/upload"
       title="upload"
@@ -117,11 +94,7 @@
   </div>
   <div v-else-if="leDevs == null" >
     <p class="errorMsg">{{ errorMsg }}</p>
-    <btnComp
-      :contenu="'Se deconnecter'"
-      @toggle-btn="toggleLogout"
-      style="align-self: center"
-    />
+    <btnComp :contenu="'Se déconnecter'" @toggle-btn="toggleLogout" style="align-self: center" />
   </div>
 </template>
 
@@ -131,6 +104,7 @@ import ListeDeJeu from "./ListeDeJeu.vue";
 import { logoutService, getOne, getAllMatching } from "../../JS/fetchServices";
 import { defineProps, ref, onMounted, defineEmits } from "vue";
 import btnComp from "../btnComponent.vue";
+import defaultProfilePic from '@/assets/Dev_Picture/defaultProfilePic.png';
 //import Amis from './amis.vue';
 
 const props = defineProps(["isHimself", "idDevl"]);
@@ -168,10 +142,10 @@ const toggleSignup = () => {
 
 const toggleLogout = async () => {
   // loginTokens_access_token = storageManager.getAccessToken();
-  console.log("loginTokens_access_token  : ", loginTokens_access_token);
+  // console.log("loginTokens_access_token  : ", loginTokens_access_token);
   // localStorage.getItem("accessToken");
   // loginTokens_refresh_token = storageManager.getRefreshToken();
-  console.log("loginTokens_refresh_token : ", loginTokens_refresh_token);
+  // console.log("loginTokens_refresh_token : ", loginTokens_refresh_token);
   // localStorage.getItem("refreshToken");
 
   const logout = {
@@ -200,7 +174,7 @@ const toggleLogout = async () => {
 
 async function getUserInfos() {
   try {
-    console.log("Profile.vue props.idDevl : ", props.idDevl);
+    // console.log("Profile.vue props.idDevl : ", props.idDevl);
     if (props.idDevl) {
       const userData = await getOne("users", "id", props.idDevl);
 
@@ -210,7 +184,7 @@ async function getUserInfos() {
       console.log("leDevs : ", leDevs.value);
 
       if (leDevs.value) {
-        console.log("hi");
+        
         storageManager.setIsConnected(true);
         const filters = {
           developerID: props.idDevl,
@@ -225,9 +199,9 @@ async function getUserInfos() {
           includedColumns,
           sorting
         );
-        console.log("dataDevs ", dataDevs);
+        // console.log("dataDevs ", dataDevs);
         gameList.value = dataDevs;
-        console.log("gameList ", gameList);
+        // console.log("gameList ", gameList);
       }
     }
   } catch (error) {
@@ -239,31 +213,19 @@ onMounted(async () => {
   try {
     await getUserInfos();
     loginTokens_access_token = storageManager.getAccessToken();
-    console.log("loginTokens_access_token  : ", loginTokens_access_token);
+    // console.log("loginTokens_access_token  : ", loginTokens_access_token);
     // localStorage.getItem("accessToken");
     loginTokens_refresh_token = storageManager.getRefreshToken();
-    console.log("loginTokens_refresh_token : ", loginTokens_refresh_token);
+    // console.log("loginTokens_refresh_token : ", loginTokens_refresh_token);
     // localStorage.getItem("refreshToken");
   } catch (error) {
     console.error("Error fetching data:", error);
   } finally {
-    isLoading.value = false; 
+    isLoading.value = false;
   }
 });
 
-onMounted(async () => {
-  try {
-    await getUserInfos();
-    loginTokens_access_token = storageManager.getAccessToken();
-    console.log("loginTokens_access_token  : ", loginTokens_access_token);
-    // localStorage.getItem("accessToken");
-    loginTokens_refresh_token = storageManager.getRefreshToken();
-    console.log("loginTokens_refresh_token : ", loginTokens_refresh_token);
-    // localStorage.getItem("refreshToken");
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-});
+
 </script>
 
 <style src="../../styles/ProfileStyle.scss"></style>

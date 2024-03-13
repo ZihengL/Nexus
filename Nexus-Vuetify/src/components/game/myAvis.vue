@@ -69,18 +69,27 @@ const validateData = async () => {
 const createReview = async () => {
   const isValid = await validateData();
   console.log("isValid : ", isValid);
-  let userid = storageManager.getIdDev()
+  let userid = storageManager.getIdDev();
   console.log("props.gameID : ", props.gameID);
   if (isValid) {
-    if (userid) {
+    if (userid &&
+    storageManager.getAccessToken() &&
+    storageManager.getRefreshToken()) {
       try {
         let reviewIsCreated = await create("reviews", {
           userID: userid,
           gameID: props.gameID,
           rating: state.ratingValue,
           comment: state.comment,
+          tokens: {
+            access_token: storageManager.getAccessToken(),
+            refresh_token: storageManager.getRefreshToken(),
+          },
         });
-        console.log("reviewIsCreated : ", reviewIsCreated)
+        if(reviewIsCreated == true){
+          window.location.reload();
+        }
+        console.log("reviewIsCreated : ", reviewIsCreated);
       } catch (error) {
         console.error("Failed to create review:", error);
       }

@@ -29,14 +29,14 @@
       />
     </div>
     <div class="tags">
-      <ul class="glow" v-for="tag in singleGame_data.tags" :key="tag.id">{{ tag.name }}</ul>
+      <ul class="glow" v-for="tag in limitedTags" :key="tag.id">{{ tag.name }}</ul>
     </div>
   </router-link>
 </template>
 
 <script setup>
 // import { fetchData } from "../../JS/fetch";
-import { reactive, onMounted } from "vue";
+import { reactive, onMounted, computed } from "vue";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { getGameDetailsWithDeveloperName } from "../../JS/fetchServices";
 import defaultImage from '@/assets/imgJeuxLogo/noImg.jpg';
@@ -54,6 +54,16 @@ const singleGame_data = reactive({
   image: String,
 });
 
+const limitedTags = computed(() => {
+  // console.log('tags : ', singleGame_data.tags);
+  if (singleGame_data.tags.length > 3){
+    return singleGame_data.tags.slice(0, 3);
+  }
+  else {
+    return singleGame_data.tags;
+  }
+ 
+});
 
 async function fetchGameImages(gameId) {
   try {
@@ -89,6 +99,8 @@ async function getGameInfos() {
     if (singleGame_data.leGame) {
       const image = await fetchGameImages(singleGame_data.leGame.id)
       singleGame_data.image = image
+      // singleGame_data.tags = singleGame_data.leGame.tags
+      // console.log("singleGame_data.tags : ", singleGame_data.tags);
     }
     //console.log('url : ', singleGame_data.image.image)
     // singleGame_data.leGame = singleGame_data.leGame.image;
@@ -108,10 +120,11 @@ onMounted(async () => {
 .single  {
   text-decoration: none;
   color: var(--light-trans-2);
-  padding-bottom: 2%;
+  padding-bottom: 5%;
   display: flex;
   flex-direction: column;
   height: 20rem;
+  // padding: 5%;
   .img {
     flex: 6;
     position: relative;
