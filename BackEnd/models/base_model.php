@@ -81,6 +81,7 @@ class BaseModel
         return $keys_details;
     }
 
+    // WHEN REFERENCED TABLE ISN'T DIRECTLY WITHIN SELF OR REFFED TABLE (MANY 2 MANY)
     public function getCompositeModel($ref_table)
     {
         foreach (self::$models as $model)
@@ -108,9 +109,6 @@ class BaseModel
             } else {
                 $stmt->execute(array_values($params));
             }
-
-            // if ($this->table === 'games')
-            //     printall($sql);
 
             return $stmt;
         } catch (PDOException $e) {
@@ -282,7 +280,7 @@ class BaseModel
         return "{$this->table}." . implode(", {$this->table}.", $included_columns);
     }
 
-    // COMPOSITE STUFF FOR SELECTS (MANY-TO-MANY)
+    // COMPOSITE SELECT (MANY-TO-MANY)
 
     public function getCompositeSelections($table, $included_columns = [])
     {
@@ -301,6 +299,7 @@ class BaseModel
         return $selections;
     }
 
+    //TODO: IF HAS TIME, RESERVE THOSE 3 CHARS WHEN USERS TRY TO USE IT FOR INPUTS
     // SEPARATOR FOR ROWS = '|'
     // SEPARATOR FOR COLUMNS = ','
     // SEPARATOR BETWEEN COLUMN NAME AND DATA = ':'
