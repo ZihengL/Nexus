@@ -25,7 +25,7 @@ export function fetchData (
   }
 
   if (sorting && Object.keys(sorting).length) {
-    console.log("sorting fetch : ", sorting);
+    // console.log("sorting fetch : ", sorting);
     const sortingParams = Object.entries(sorting).map(([key, value]) => `${key}:${value}`).join(',');
     queryParams.push(`sorting=${encodeURIComponent(sortingParams)}`);
   }

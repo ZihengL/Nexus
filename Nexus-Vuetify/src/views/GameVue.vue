@@ -93,7 +93,7 @@ import { getGameDetailsWithDeveloperName, getReviews } from '../JS/fetchServices
 import { getStorage, ref as firebaseRef, getDownloadURL, uploadBytes} from "firebase/storage";
 
 const storage = getStorage();
-let UrlGameImg = ref(""); // Initialize as an empty string
+let UrlGameImg = ref(""); 
 const gameInfos = reactive({
   leGame: {}, 
   devName: "error", 

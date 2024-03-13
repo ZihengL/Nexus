@@ -74,9 +74,13 @@
 .pagination {
   display: flex;
   justify-content: center;
+  margin-top: 10%;
+  padding-bottom: 5%;
 
   div {
-    padding: 0%;
+    // padding-top: 10%;
+    // padding-bottom: 5%;
+    // padding: 0%;
   }
 
   .liste {

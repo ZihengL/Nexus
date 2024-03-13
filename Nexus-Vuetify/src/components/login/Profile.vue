@@ -142,10 +142,10 @@ const toggleSignup = () => {
 
 const toggleLogout = async () => {
   // loginTokens_access_token = storageManager.getAccessToken();
-  console.log("loginTokens_access_token  : ", loginTokens_access_token);
+  // console.log("loginTokens_access_token  : ", loginTokens_access_token);
   // localStorage.getItem("accessToken");
   // loginTokens_refresh_token = storageManager.getRefreshToken();
-  console.log("loginTokens_refresh_token : ", loginTokens_refresh_token);
+  // console.log("loginTokens_refresh_token : ", loginTokens_refresh_token);
   // localStorage.getItem("refreshToken");
 
   const logout = {
@@ -174,7 +174,7 @@ const toggleLogout = async () => {
 
 async function getUserInfos() {
   try {
-    console.log("Profile.vue props.idDevl : ", props.idDevl);
+    // console.log("Profile.vue props.idDevl : ", props.idDevl);
     if (props.idDevl) {
       const userData = await getOne("users", "id", props.idDevl);
 
@@ -184,7 +184,7 @@ async function getUserInfos() {
       console.log("leDevs : ", leDevs.value);
 
       if (leDevs.value) {
-        console.log("hi");
+        
         storageManager.setIsConnected(true);
         const filters = {
           developerID: props.idDevl,
@@ -199,9 +199,9 @@ async function getUserInfos() {
           includedColumns,
           sorting
         );
-        console.log("dataDevs ", dataDevs);
+        // console.log("dataDevs ", dataDevs);
         gameList.value = dataDevs;
-        console.log("gameList ", gameList);
+        // console.log("gameList ", gameList);
       }
     }
   } catch (error) {
@@ -213,10 +213,10 @@ onMounted(async () => {
   try {
     await getUserInfos();
     loginTokens_access_token = storageManager.getAccessToken();
-    console.log("loginTokens_access_token  : ", loginTokens_access_token);
+    // console.log("loginTokens_access_token  : ", loginTokens_access_token);
     // localStorage.getItem("accessToken");
     loginTokens_refresh_token = storageManager.getRefreshToken();
-    console.log("loginTokens_refresh_token : ", loginTokens_refresh_token);
+    // console.log("loginTokens_refresh_token : ", loginTokens_refresh_token);
     // localStorage.getItem("refreshToken");
   } catch (error) {
     console.error("Error fetching data:", error);
