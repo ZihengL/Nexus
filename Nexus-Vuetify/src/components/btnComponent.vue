@@ -1,16 +1,24 @@
 <template>
-    <div class="fieldBtn roundBorderSmall">
+    <div :class="[props.propClass, 'roundBorderSmall']">
         <div class="btn-layer"></div>
         <v-btn density="default" class="submit" @click="clickedBtn">
-            {{contenu}}
+            {{ props.contenu }}
         </v-btn>
     </div>
 </template>
 
 <script setup>
-    import { defineProps } from 'vue';
+    import { defineProps, onMounted } from 'vue';
 
-    const props = defineProps(['contenu']);
+    const props = defineProps({
+  contenu: {
+    type:String,
+  },
+  propClass: {
+    type:String,
+    default:"fieldBtn"
+  },
+})
     const emit = defineEmits(['toggle-btn'])
     //console.log(props.contenu);
 
@@ -20,7 +28,13 @@
         // Émettez un événement pour informer le parent de la bascule
         emit('toggle-btn');
     };
+
+    
+onMounted(() => {
+    // console.log("fullProfile propClass : ", props.propClass)
+});
 </script>
+
 
 <style lang="scss">
 .fieldBtn{

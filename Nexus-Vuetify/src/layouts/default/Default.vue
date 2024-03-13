@@ -19,13 +19,13 @@ import { ref, onMounted } from 'vue';
 
 let connect = ref(false);
 const initializeConnect = () => {
+  // storageManager.setIsConnected(false)
   const storedIsConnected = storageManager.getIsConnected()
   if (storedIsConnected !== null) {
     connect.value = storedIsConnected;
   } else {
     storageManager.setIsConnected(connect.value)
   }
- 
 };
 
 onMounted(() => {

@@ -232,19 +232,7 @@ onMounted(async () => {
   }
 });
 
-onMounted(async () => {
-  try {
-    await getUserInfos();
-    loginTokens_access_token = storageManager.getAccessToken();
-    console.log("loginTokens_access_token  : ", loginTokens_access_token);
-    // localStorage.getItem("accessToken");
-    loginTokens_refresh_token = storageManager.getRefreshToken();
-    console.log("loginTokens_refresh_token : ", loginTokens_refresh_token);
-    // localStorage.getItem("refreshToken");
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-});
+
 </script>
 
 <style src="../../styles/ProfileStyle.scss"></style>
