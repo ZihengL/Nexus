@@ -40,8 +40,8 @@
             <div v-if="isHimself" class="slide-controls roundBorderSmall">
               <input type="radio" name="slide" id="login" v-model="isLogin" value="true" checked />
               <input type="radio" name="slide" id="signup" v-model="isLogin" value="false" />
-              <label for="login" class="slide login" @click="toggleLogin()">Developper</label>
-              <label for="signup" class="slide signup" @click="toggleSignup()">Telecharger</label>
+              <label for="login" class="slide login" @click="toggleLogin()">Développer</label>
+              <label for="signup" class="slide signup" @click="toggleSignup()">Télécharger</label>
               <div class="slider-tab"></div>
             </div>
 
