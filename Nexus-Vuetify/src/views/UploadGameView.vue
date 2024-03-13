@@ -1,6 +1,8 @@
 <template>
   <div id="pageContainer">
-    <h2>{{ props.mode === 'create' ? 'Create Game Page' : 'Update Game Page' }}</h2>
+    <h2>
+      {{ props.mode === "create" ? "Create Game Page" : "Update Game Page" }}
+    </h2>
     <div v-if="state.errorMessage" class="error-message">
       {{ state.errorMessage }}
     </div>
@@ -10,42 +12,48 @@
         type="text"
         id="title"
         v-model="state.gameTitle"
-        placeholder="Enter game title"
+        placeholder="Entrer le titre du jeu..."
       />
     </div>
+    <label for="tags">Tags:*</label>
     <div class="tags-input-container">
-      <label for="tags">Tags:*</label>
       <input
         type="text"
         id="tags"
         v-model="state.tags"
-        placeholder="action, relax, wholesome"
+        placeholder="action, sport, solo..."
       />
       <btnComp :contenu="'Add Tag'" @toggle-btn="updateTagsArray"></btnComp>
       <div class="tags-display-container">
-        <div class="tags-from-db">
+        <div class="tags-from-db-container">
           <p>Available Tags:</p>
-          <div
-            v-for="tag in state.tagsFromDatabase"
-            :key="tag.id"
-            class="tag_element"
-          >
-            {{ tag.name }}
+
+          <div class="tags-from-db">
+            <div
+              v-for="tag in state.tagsFromDatabase"
+              :key="tag.id"
+              class="tag_element"
+            >
+              {{ tag.name }}
+            </div>
           </div>
         </div>
-        <div class="user-added-tags">
+
+        <div class="user-added-tags-container">
           <p>Added Tags:</p>
-          <div
-            v-for="(tag, index) in state.tagsArray"
-            :key="`user-${index}`"
-            class="tag_element"
-          >
-            {{ tag }}
-            <btnComp
-              :propClass="'newbtnClass'"
-              :contenu="'X'"
-              @toggle-btn="() => removeItem(index, state.tagsArray)"
-            ></btnComp>
+          <div class="user-added-tags">
+            <div
+              v-for="(tag, index) in state.tagsArray"
+              :key="`user-${index}`"
+              class="tag_element"
+            >
+              {{ tag }}
+              <btnComp
+                :propClass="'newbtnClass'"
+                :contenu="'X'"
+                @toggle-btn="() => removeItem(index, state.tagsArray)"
+              ></btnComp>
+            </div>
           </div>
         </div>
       </div>
@@ -55,7 +63,7 @@
       <textarea
         class="description"
         name="description"
-        placeholder="Enter a description..."
+        placeholder="Mon jeu est super cool ;) parce que..."
         v-on:input="validateDescriptionLength"
         v-model="state.description"
       ></textarea>
@@ -116,15 +124,22 @@
         </ol>
       </div>
     </div>
-    <btnComp :contenu="props.mode === 'create' ? 'Create Game' : 'Update Game'" @toggle-btn="submitGame"></btnComp>
+    <btnComp
+      :contenu="props.mode === 'create' ? 'Create Game' : 'Update Game'"
+      @toggle-btn="submitGame"
+    ></btnComp>
   </div>
 </template>
-
 
 <script setup>
 import btnComp from "../components/btnComponent.vue";
 import { reactive, defineProps, computed, onMounted } from "vue";
-import { create, getAllMatching, deleteData, getAll } from "../JS/fetchServices.js";
+import {
+  create,
+  getAllMatching,
+  deleteData,
+  getAll,
+} from "../JS/fetchServices.js";
 // import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 // import { getStorage, ref as firebaseRef, getDownloadURL, uploadBytes} from "firebase/storage";
 
@@ -143,7 +158,7 @@ const props = defineProps({
   },
   mode: {
     type: String,
-    default: 'create', 
+    default: "create",
   },
 });
 
@@ -168,11 +183,10 @@ const state = reactive({
   tagsFromDatabase: [],
 });
 
-
 const getTagsFrom_DB = async () => {
   try {
     let data = await getAll("tags");
-    state.tagsFromDatabase = data; 
+    state.tagsFromDatabase = data;
     console.log("Tags from DB:", data);
   } catch (error) {
     console.error("Error fetching tags from database:", error);
@@ -195,7 +209,7 @@ function validateDescriptionLength() {
 }
 
 const openFileBrowser = () => {
-  console.log("selected game file")
+  console.log("selected game file");
   const fileInput = document.createElement("input");
   fileInput.type = "file";
   fileInput.onchange = (e) => {
@@ -247,7 +261,7 @@ const openVideoBrowser = () => {
 };
 
 const openImageBrowser = () => {
-  console.log("hi")
+  console.log("hi");
   const fileInput = document.createElement("input");
   fileInput.type = "file";
   fileInput.multiple = true;
@@ -303,7 +317,6 @@ const formatData = () => {
   }
 };
 
-
 // // Method to upload a file
 // const uploadZipFile = async () => {
 //   // Example file to upload, you might want to replace this with actual file selection logic
@@ -319,10 +332,6 @@ const formatData = () => {
 //     console.error("Failed to upload file:", error);
 //   }
 // };
-
-
-
-
 
 function updateTagsArray() {
   let newTags = state.tags
@@ -428,10 +437,10 @@ const submitGame = async () => {
 };
 
 async function setDefaultValues() {
-  if (props.mode === 'update' && props.initialData) {
-    state.gameTitle = props.initialData.gameTitle || '';
-    state.tags = props.initialData.tags.join(', ') || '';
-    state.description = props.initialData.description || '';
+  if (props.mode === "update" && props.initialData) {
+    state.gameTitle = props.initialData.gameTitle || "";
+    state.tags = props.initialData.tags.join(", ") || "";
+    state.description = props.initialData.description || "";
     // and so on for other fields...
   }
 }
@@ -447,16 +456,22 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-
 #pageContainer {
-  background-color: #333;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  background-color: rgb(64, 86, 119, 0.2);
   padding: 2rem;
   border-radius: 0.5rem;
   color: white;
+  width: 60%;
+  margin-top: 5%;
+  margin-bottom: 5%;
 }
 
-input[type="text"], textarea {
-  background-color: #555;
+input[type="text"],
+textarea {
+  background-color: rgb(64, 86, 119);
   border: none;
   color: white;
   padding: 0.5rem;
@@ -465,7 +480,8 @@ input[type="text"], textarea {
   width: 100%; // Ensures input fields stretch to container width
 }
 
-input[type="text"]:focus, textarea:focus {
+input[type="text"]:focus,
+textarea:focus {
   outline: 2px solid #007bff;
 }
 
@@ -478,18 +494,57 @@ input[type="text"]:focus, textarea:focus {
   border: 1px solid #ff3860;
 }
 
-.tags-input-container, .tags-display-container, .tags-from-db, .user-added-tags, .imgList, .vidList {
+.tags-input-container,
+.imgList,
+.vidList {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
 
-.tags-display-container {
-  justify-content: space-between;
-  margin-top: 1rem;
+.tags-from-db {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  flex-direction: row;
 }
 
-.tag_element, .img_element {
+.tags-from-db-container {
+  display: flex;
+  align-items: center;
+  // flex-wrap: wrap;
+  gap: 0.5rem;
+  flex-direction: column;
+}
+
+.user-added-tags {
+  display: flex;
+  align-items: center;
+  // flex-wrap: wrap;
+  gap: 0.5rem;
+  flex-direction: row;
+}
+
+.user-added-tags-container {
+  display: flex;
+  align-items: center;
+  // flex-wrap: wrap;
+  gap: 0.5rem;
+  flex-direction: column;
+}
+
+.tags-display-container {
+  flex-direction: column;
+  justify-items: center;
+  // justify-content: space-between;
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tag_element,
+.img_element {
   background: grey;
   padding: 0.5rem;
   border-radius: 0.5rem;
@@ -538,8 +593,9 @@ textarea {
     width: 100%; // Ensures video is not wider than the screen on smaller devices
   }
 }
+</style>
 
-
+<style>
 .newbtnClass {
   height: 100%;
   width: 50%;
@@ -552,14 +608,14 @@ textarea {
     position: absolute;
     margin: auto;
     left: -100%;
-    // background: -webkit-linear-gradient(right, var(--purple), pink, yellow);
-    background: -webkit-linear-gradient(
+    background: -webkit-linear-gradient(right, var(--purple), pink, yellow);
+    /* background: -webkit-linear-gradient(
       right,
       var(--purple),
       var(--dark-blue),
       var(--purple),
       var(--dark-blue)
-    );
+    ); */
     border-radius: 5%;
     transition: all 0.4s ease;
   }
@@ -588,8 +644,4 @@ textarea {
     animation: neonGlow 1.5s ease-in-out infinite alternate;
   }
 }
-</style>
-
-<style>
-
 </style>
