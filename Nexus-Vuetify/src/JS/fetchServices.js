@@ -1,6 +1,8 @@
 import { fetchData } from "./fetch";
 import * as services from "./fetchServices/services";
 import StorageManager from "./localStorageManager";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
+const storage = getStorage();
 
 // NEXT 2 FUNCTIONS BELOW ARE FOR PARSING JOINS
 // CUZ THE DATA IS CONCATENATED INTO A STRING
@@ -223,9 +225,36 @@ export const getGamesForCarousel = async () => {
     };
   const paging = { limit: 4, offset: 0};
 
-  return await getAllMatching('games', filters, included_columns, sorting, joined_tables, paging);
+  let data = await getAllMatching('games', filters, included_columns, sorting, joined_tables, paging);
+  //console.log('data : ' , data)
+  return data;
 }
 
+export const fetchGameImages  = async (games) => {
+  try {
+    const imageFetchPromises = games.map(async (game) => {
+      const files = game.id || `defaultName.jpg`;
+      const imagePath = `Games/${files}/media/${files}_0.png`;
+      
+      //console.log('imagePath : ', imagePath);
+      const imageRef = ref(storage, imagePath);
+      //console.log('imageRef : ', imageRef);
+
+      try {
+        const url = await getDownloadURL(imageRef);
+        return { ...game, image: url };
+      } catch (error) {
+        console.error(`Error fetching image for ${game.title}:`, error);
+        return { ...game, image: "../assets/imgJeuxLogo/Mario.png" }; // Fallback image
+      }
+    });
+
+    return Promise.all(imageFetchPromises);
+  } catch (error) {
+    console.error("Error fetching game images:", error);
+    return []; // Return an empty array in case of error
+  }
+}
 /***************************************************/
 
 export const getAllGamesWithDeveloperName = async (column = null, value = null, includedColumns = null, sorting = null, joined_tables = null, paging = null) => {
