@@ -24,6 +24,21 @@ class BaseModel
         self::$models[$this->table] = $this;
     }
 
+    public function getColumns($include_id = false)
+    {
+        $result = $this->query("DESCRIBE {$this->table}")->fetchAll(PDO::FETCH_COLUMN);
+
+        if (!$include_id)
+            array_shift($result);
+
+        return $result;
+    }
+
+
+    /*******************************************************************/
+    /*************************** RELATIONSHIPS *************************/
+    /*******************************************************************/
+
     private function addDeconstructedKeys($keys)
     {
         if (!empty($keys) && isset($keys['table']))
@@ -31,6 +46,51 @@ class BaseModel
         else
             foreach ($keys as $subkeys)
                 $this->addDeconstructedKeys($subkeys);
+    }
+
+    public function getKeysDetails($is_internal_keys = true)
+    {
+        $database = self::$database;
+
+        $table = "TABLE_NAME AS 'table'";
+        $external = "COLUMN_NAME AS 'external'";
+        $internal = "COLUMN_NAME AS 'internal'";
+
+        $table_condition = "TABLE_NAME = '{$this->table}'";
+
+        if ($is_internal_keys) {
+            $table = "REFERENCED_$table";
+            $external = "REFERENCED_$external";
+            $table_condition = "$table_condition AND REFERENCED_TABLE_NAME IS NOT NULL";
+        } else {
+            $internal = "REFERENCED_$internal";
+            $table_condition = "REFERENCED_$table_condition";
+        }
+
+        $sql = "SELECT 
+                    $table, $external, $internal
+                FROM 
+                    INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
+                WHERE 
+                    TABLE_SCHEMA = '$database' 
+                AND 
+                    $table_condition";
+
+        $keys_details = $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+
+        return $keys_details;
+    }
+
+    public function getCompositeModel($ref_table)
+    {
+        foreach (self::$models as $model)
+            if (
+                isset($model->keys[$this->table]) &&
+                isset($model->keys[$ref_table])
+            )
+                return $model;
+
+        return null;
     }
 
 
@@ -205,92 +265,6 @@ class BaseModel
     /************************* SELECTION LAYER *************************/
     /*******************************************************************/
 
-    public function getColumns($include_id = false)
-    {
-        $result = $this->query("DESCRIBE {$this->table}")->fetchAll(PDO::FETCH_COLUMN);
-
-        if (!$include_id)
-            array_shift($result);
-
-        return $result;
-    }
-
-
-    // if ($is_internal_keys) {
-    //     $sql =  "SELECT 
-    //                 kcu.TABLE_NAME AS 'table',
-    //                 kcu.COLUMN_NAME AS 'external', 
-    //                 kcu.REFERENCED_COLUMN_NAME AS 'internal', 
-    //                 (SELECT COUNT(*)
-    //                     FROM 
-    //                         INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-    //                     WHERE 
-    //                         CONSTRAINT_NAME = kcu.CONSTRAINT_NAME 
-    //                         AND TABLE_SCHEMA = '$database'
-    //                         AND TABLE_NAME = kcu.TABLE_NAME) AS 'composition'
-    //             FROM 
-    //                 INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS kcu
-    //             WHERE 
-    //                 kcu.TABLE_SCHEMA = '$database' 
-    //                 AND kcu.REFERENCED_TABLE_NAME = '{$this->table}'";
-    // } else {
-    //     $sql = "SELECT 
-    //                 kcu.REFERENCED_TABLE_NAME AS 'table',
-    //                 kcu.REFERENCED_COLUMN_NAME AS 'external', 
-    //                 kcu.COLUMN_NAME AS 'internal', 
-    //                 (SELECT COUNT(*)
-    //                     FROM 
-    //                         INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS inner_kcu
-    //                     JOIN 
-    //                         INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS tc 
-    //                         ON inner_kcu.CONSTRAINT_NAME = tc.CONSTRAINT_NAME
-    //                         AND inner_kcu.TABLE_SCHEMA = tc.TABLE_SCHEMA 
-    //                         AND inner_kcu.TABLE_NAME = tc.TABLE_NAME
-    //                     WHERE 
-    //                         tc.TABLE_SCHEMA = '$database' 
-    //                         AND tc.TABLE_NAME = '{$this->table}' 
-    //                         AND tc.CONSTRAINT_TYPE = 'PRIMARY KEY') AS 'composition'
-    //             FROM 
-    //                 INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS kcu
-    //             WHERE 
-    //                 kcu.TABLE_SCHEMA = '$database' 
-    //                 AND kcu.TABLE_NAME = '{$this->table}' 
-    //                 AND kcu.REFERENCED_TABLE_NAME IS NOT NULL";
-    // }
-
-    public function getKeysDetails($is_internal_keys = true)
-    {
-        $database = self::$database;
-
-        $table = "TABLE_NAME AS 'table'";
-        $external = "COLUMN_NAME AS 'external'";
-        $internal = "COLUMN_NAME AS 'internal'";
-
-        $table_condition = "TABLE_NAME = '{$this->table}'";
-
-        if ($is_internal_keys) {
-            $table = "REFERENCED_$table";
-            $external = "REFERENCED_$external";
-            $table_condition = "$table_condition AND REFERENCED_TABLE_NAME IS NOT NULL";
-        } else {
-            $internal = "REFERENCED_$internal";
-            $table_condition = "REFERENCED_$table_condition";
-        }
-
-        $sql = "SELECT 
-                    $table, $external, $internal
-                FROM 
-                    INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
-                WHERE 
-                    TABLE_SCHEMA = '$database' 
-                AND 
-                    $table_condition";
-
-        $keys_details = $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-
-        return $keys_details;
-    }
-
     public function buildSelectionLayer($included_columns = [], $join_keys = [])
     {
         $columns = $this->parseColumns($included_columns);
@@ -309,18 +283,6 @@ class BaseModel
     }
 
     // COMPOSITE STUFF FOR SELECTS (MANY-TO-MANY)
-
-    public function getCompositeModel($ref_table)
-    {
-        foreach (self::$models as $model)
-            if (
-                isset($model->keys[$this->table]) &&
-                isset($model->keys[$ref_table])
-            )
-                return $model;
-
-        return null;
-    }
 
     public function getCompositeSelections($table, $included_columns = [])
     {
