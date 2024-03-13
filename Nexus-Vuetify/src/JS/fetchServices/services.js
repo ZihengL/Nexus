@@ -80,24 +80,24 @@ export function getCredentials() {
 
 // Local functions
 
-const standardizeData = (data) => {
-  const keymap = {
-    columnName: "column",
-    includedColumns: "included_columns",
-    joinedTables: "joined_tables",
-  };
+// const standardizeData = (data) => {
+//   const keymap = {
+//     columnName: "column",
+//     includedColumns: "included_columns",
+//     joinedTables: "joined_tables",
+//   };
 
-  Object.keys(keymap).forEach((key) => {
-    if (Object.prototype.hasOwnProperty.call(data, key)) {
-      const newKey = keymap[key];
+//   Object.keys(keymap).forEach((key) => {
+//     if (Object.prototype.hasOwnProperty.call(data, key)) {
+//       const newKey = keymap[key];
 
-      data[newKey] = data[key];
-      delete data[key];
-    }
-  });
+//       data[newKey] = data[key];
+//       delete data[key];
+//     }
+//   });
 
-  return data;
-};
+//   return data;
+// };
 
 const uri = (table, action) => {
   return `http://localhost:4208/Nexus/Backend/table=${table}&action=${action}`;
@@ -109,17 +109,8 @@ const options = (body = null) => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(standardizeData(body)) ?? null,
+    body: JSON.stringify(body) ?? null,
   };
-};
-
-const parseResponse = (result) => {
-  if (Object.prototype.hasOwnProperty.call(result, "ERROR")) {
-    console.log("ERROR", result);
-    return result;
-  }
-
-  return true;
 };
 
 // BASE FETCH
@@ -140,7 +131,7 @@ export async function fetchData(table, action, body = null) {
     });
 
   if (Object.prototype.hasOwnProperty.call(result, "ERROR")) {
-    console.log(result);
+    console.log("ERROR", result);
 
     return false;
   } else {
@@ -151,6 +142,17 @@ export async function fetchData(table, action, body = null) {
 /*******************************************************************/
 /*************************** OTHER FETCH ***************************/
 /*******************************************************************/
+
+export const refreshInterval = 55 * 60 * 1000; // 55 mins
+export const tokenRefreshInterval = setInterval(refreshToken, refreshInterval);
+
+export async function refreshToken() {
+  console.log("refreshing token");
+
+  const result = await fetchData("users", "authenticate", {
+    access_token: null 
+  });
+}
 
 // USER OPERATIONS
 

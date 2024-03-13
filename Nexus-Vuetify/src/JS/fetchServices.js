@@ -12,7 +12,7 @@ export const getOne = async (table, column, value, includedColumns = null, sorti
 export const getAll = async (table, column = null, value = null, includedColumns = null, sorting = null, joined_tables = null, paging = null) => {
   // let data = await fetchData(table, "getAll", column, value, includedColumns, sorting, null, "GET");
 
-  const preppedBody = services.prepGetAll(column, value, includedColumns, joined_tables, paging);
+  const preppedBody = services.prepGetAll(column, value, includedColumns, sorting, joined_tables, paging);
   return await services.getAll(table, preppedBody);
 };
 
@@ -35,8 +35,7 @@ export const create = async (table, createData) => {
     createData
   }
   // let data = await fetchData(table, "create", null, null, null, null, body, "POST");
-
-
+  const data = await services.fetchData(table, "create", createData);
   return data;
 };
 
@@ -44,7 +43,8 @@ export const deleteData = async(table, deleteData) => {
   let body = {
     deleteData
   }
-  let data = await fetchData(table, "delete", null, null, null, null, body, "POST");
+  // let data = await fetchData(table, "delete", null, null, null, null, body, "POST");
+  const data = await services.fetchData(table, "delete", deleteData);
   return data;
 };
 
@@ -52,7 +52,8 @@ export const updateData = async(table, updateData) => {
   let body = {
     updateData
   }
-  let data = await fetchData(table, "update", null, null, null, null, body, "POST");
+  // let data = await fetchData(table, "update", null, null, null, null, body, "POST");
+  const data = await services.fetchData(table, "update", deleteData);
   return data;
 };
 
@@ -63,8 +64,7 @@ export const updateData = async(table, updateData) => {
 export const registerService = async (createData) => {
   console.log('registerService createData : ' ,createData);
 
-  let data = await create("users", createData)
-
+  let data = await create("users", createData);
   return data
 };
 
@@ -117,6 +117,65 @@ const deleteGamesAndrelationships = async (jsonObject) => {
   }
   return false
 };
+
+// SEPARATOR FOR ROWS = '|'
+// SEPARATOR FOR COLUMNS = ','
+// SEPARATOR BETWEEN COLUMN NAME AND DATA = ':'
+export const parseDetails = (details) => {
+  const rows = details.split('|');
+
+  return rows.map(row => {
+    const columns = row.split(';');
+
+    const object = columns.reduce((acc, curr) => {
+      const [key, value] = curr.split(':');
+      acc[key.trim()] = value.trim();
+
+      return acc;
+    }, {});
+    
+    return object;
+  });
+}
+
+export const parseJoins = (result, keys) => {
+  for (var key in keys) {
+    const resultKey = key + "_details";
+
+    for (var index in result) {
+      const obj = result[index];
+      obj[key] = parseDetails(obj[resultKey]);
+      delete obj[resultKey];
+    }
+  }
+
+  return result;
+}
+
+    // SEPARATOR FOR ROWS = '|'
+    // SEPARATOR FOR COLUMNS = ','
+    // SEPARATOR BETWEEN COLUMN NAME AND DATA = ':'
+export const getAllGamesWithDeveloperNameNEW = async (column = null, value = null, includedColumns = null, sorting = null, paging = null) => {
+  const joined_tables = { users: ['id', 'username'] };
+
+  let result = await getAll('games', column, value, includedColumns, sorting, joined_tables, paging);
+  if (result) {
+    return parseJoins(result, joined_tables);
+  }
+
+  return null;
+}
+
+export const getGameDetailsWithDeveloperNameNEW = async (gameID) => {
+  const joined_tables = { users: ['id', 'username'] };
+
+  let result = await getOne('games', 'id', gameID, null, null, joined_tables);
+  if (result) {
+    return parseJoins(result, joined_tables);
+  }
+
+  return null;
+}
 
 
 // CHANGE HERE FOR GETALLMATCHING

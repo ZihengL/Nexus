@@ -95,6 +95,8 @@ class UsersController extends BaseController
         if ($tokens = $tokens_controller->generateTokensOnValidation($user, $email, $password)) {
             return ['user' => $user, 'tokens' => $tokens];
         }
+
+        return false;
     }
 
     public function logout($data)

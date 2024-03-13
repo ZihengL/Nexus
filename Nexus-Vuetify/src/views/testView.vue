@@ -21,6 +21,7 @@
     <v-btn class="bordered-btn" @click="ziLogout">Logout</v-btn>
     <v-btn class="bordered-btn" @click="updateUser">update user</v-btn>
     <v-btn class="bordered-btn" @click="stripetest">stripe</v-btn>
+    <v-btn class="bordered-btn" @click="testFetchJoins">test joins</v-btn>
   </div>
   <div>
     <ReviewsListComponent :sorting="{ timestamp: false }"></ReviewsListComponent>
@@ -433,7 +434,7 @@ export default {
       const getOneResult = await services.getOne('games', column, value, included_columns, null, joined_tables, paging);
       console.log('GETONE UPDATED', getOneResult);
 
-      const getAllResult = await services.getAll('users', null, null, ['username', 'email', 'password', 'id'], {'games': ['title']}, null);
+      const getAllResult = await services.getAll('users', null, null, ['username', 'email', 'password', 'id'], { 'games': ['title'] }, null);
       console.log('GETALL UPDATED', getAllResult);
     },
 
@@ -480,6 +481,12 @@ export default {
       // const res = arr.filter((i) => { i !== null });
 
       // console.log(res);
+    },
+
+    async testFetchJoins() {
+      const result = await services.getAllGamesWithDeveloperNameNEW();
+
+      console.log(result);
     }
   },
 };
