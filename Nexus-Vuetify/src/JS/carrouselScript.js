@@ -82,15 +82,10 @@ export default {
         console.log('data : ' , data)
         //return this.fetchGameImages(data);
       //
-      // .then((carouselItemsWithImages) => {
-      //   this.carouselItems = carouselItemsWithImages;
-      //   this.runNextAuto = setTimeout(() => {
-      //     this.showSlider("next");
-      //   }, this.timeAutoNext);
-      // })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+        this.carouselItems = data;
+        this.runNextAuto = setTimeout(() => {
+          this.showSlider("next");
+        }, this.timeAutoNext);
     } catch (error) {
       console.error("Error fetching game images:", error);
       //return []; // Return an empty array in case of error

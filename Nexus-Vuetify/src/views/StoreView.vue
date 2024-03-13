@@ -82,6 +82,7 @@ onMounted(async () => {
       id:true
     }
     store_data.gameList_result = await getAllGamesWithDeveloperNameNEW(null, null, null, sorting);
+    console.log('liste jeux ', store_data.gameList_result);
   }
  
 

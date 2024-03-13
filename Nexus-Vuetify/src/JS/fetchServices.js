@@ -209,8 +209,8 @@ export const getGamesForCarousel = async () => {
   const paging = { limit: 4, offset: 0};
 
   let data = await getAllMatching('games', filters, included_columns, sorting, joined_tables, paging);
-  //console.log('data : ' , data)
-  return data;
+  
+  return fetchGameImages(data);
 }
 
 export const getGameReviews = async (gameID) => {
