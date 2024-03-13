@@ -141,7 +141,7 @@ $id = 10;
 echo "<hr><h4>GAMES WITH THEIR TAGS N USERS</h4>";
 $data = [
     // 'paging' => ['limit' => 4, 'offset' => 0],
-    'joined_tables' => ['tags' => ['id', 'name'], 'users' => []]
+    'joined_tables' => ['tags' => ['id', 'name'], 'users' => ['id', 'username']]
 ];
 
 $result = parse('games', 'getAll', $data);

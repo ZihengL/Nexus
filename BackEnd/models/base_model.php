@@ -49,6 +49,9 @@ class BaseModel
                 $stmt->execute(array_values($params));
             }
 
+            // if ($this->table === 'games')
+            //     printall($sql);
+
             return $stmt;
         } catch (PDOException $e) {
             if (self::$print_errors) {
@@ -160,9 +163,7 @@ class BaseModel
     {
         ['selections' => $selections, 'group' => $group] = $this->buildSelectionLayer($included_columns, $joined_tables);
 
-        // $sql = "$selections WHERE {$this->table}.$column = ?" . (count($joined_tables) > 0 ? " GROUP BY {$this->table}.id" : '');
         $sql = "$selections WHERE {$this->table}.$column = ? $group";
-        // $result = $this->query($sql, [$value]);
 
         return $this->query($sql, [$value])->fetch(PDO::FETCH_ASSOC);
     }
@@ -179,9 +180,7 @@ class BaseModel
         }
 
         $sort_layer = $this->applySorting($sorting);
-        // $sql .= !empty($joined_tables) ? " GROUP BY {$this->table}.id" : '';
         $sql .= $group . (!empty($sort_layer) ? " ORDER BY $sort_layer" : '') . $this->getPaging(...$paging);
-        // $sql .= $this->getPaging($paging['limit'] ?? -1, $paging['offset'] ?? 0);   // TESTING PAGING
 
         return $this->query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -323,45 +322,47 @@ class BaseModel
         return null;
     }
 
-    public function getCompositeSelections($from, $with, $included_columns = [])
+    public function getCompositeSelections($table, $included_columns = [])
     {
-        $selection = '';
-        foreach ($included_columns as $column)
-            $selection .= ", GROUP_CONCAT({$with}.{$column} SEPARATOR ', ') AS {$with}_{$column}";
+        ['internal' => $internal, 'external' => $external] = $this->keys[$table];
 
-        ['external' => $from_ext_id, 'internal' => $from_int_id] = $this->keys[$from];
-        $join = " JOIN {$this->table} ON {$from}.{$from_ext_id} = {$this->table}.{$from_int_id}";
+        $column_pairs = array_map(function ($column) use ($table) {
+            return "CONCAT('$column:', $table.$column)";
+        }, $included_columns);
+        $columns = implode(",';',", $column_pairs);
 
-        ['external' => $with_ext_id, 'internal' => $with_int_id] = $this->keys[$with];
-        $join .= " JOIN {$with} ON {$this->table}.{$with_int_id} = {$with}.{$with_ext_id}";
+        $selections = ", (SELECT GROUP_CONCAT(DISTINCT $columns ORDER BY {$table}.{$external} SEPARATOR '|')
+                        FROM $table
+                        JOIN {$this->table} ON {$this->table}.{$internal} = {$table}.{$external}
+                        WHERE {$this->table}.{$internal} = {$table}.{$external}) AS {$table}_details";
 
-        return [$selection, $join];
+        return $selections;
     }
 
+    // SEPARATOR FOR ROWS = '|'
+    // SEPARATOR FOR COLUMNS = ','
+    // SEPARATOR BETWEEN COLUMN NAME AND DATA = ':'
     public function parseJoinedTables($joined_tables = [])
     {
         $selects = '';
         $joins = '';
 
-        foreach ($joined_tables as $table => $included_columns) {
-            if ($composite_model = $this->getCompositeModel($table)) {
-                [$selection, $join] = $composite_model->getCompositeSelections($this->table, $table, $included_columns);
+        foreach ($joined_tables as $table => $included_columns)
+            if (isset($this->keys[$table])) {
+                ['internal' => $internal, 'external' => $external] = $this->keys[$table];
 
-                $selects .= $selection;
-                $joins .= $join;
+                $column_pairs = array_map(function ($column) use ($table) {
+                    return "'$column:', $table.$column";
+                }, $included_columns);
+                $columns = count($column_pairs) > 1 ? implode(",';',", $column_pairs) : implode("", $column_pairs);
+
+                $selects .= ", GROUP_CONCAT(DISTINCT CONCAT($columns) ORDER BY {$table}.{$external} SEPARATOR '|') AS {$table}_details";
+                $joins .= " JOIN $table ON {$this->table}.{$internal} = {$table}.{$external}";
             } else {
-                if (isset($this->keys[$table])) {
-                    ['internal' => $internal, 'external' => $external] = $this->keys[$table];
-
-                    foreach ($included_columns as $column)
-                        $selects .= ", {$table}.{$column} AS {$table}_{$column}";
-
-                    $joins .= " JOIN $table ON {$this->table}.{$internal} = {$table}.{$external}";
-                }
+                if ($composite_model = $this->getCompositeModel($table))
+                    $selects .= $composite_model->getCompositeSelections($table, $included_columns);
             }
-        }
 
-        // $join_layer['selects'] .= !empty($join_layer['selects']) ? " GROUP BY {$this->table}.id" : '';
         $group = !empty($selects) ? " GROUP BY {$this->table}.id" : '';
         return ['selects' => $selects, 'joins' => $joins, 'group' => $group];
     }

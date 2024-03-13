@@ -26,11 +26,6 @@ class BaseController
         self::$controllers[$this->model->table] = $this;
     }
 
-    public function isCompWith($ref_table)
-    {
-        return $this->model->isCompositeWith($ref_table);
-    }
-
 
     /*******************************************************************/
     /****************************** GETTERS ****************************/
