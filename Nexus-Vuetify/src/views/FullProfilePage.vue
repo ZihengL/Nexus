@@ -134,7 +134,6 @@ import btnComp from "../components/btnComponent.vue";
 import { defineProps, ref, onMounted, watch, reactive } from "vue";
 import storageManager from "../JS/localStorageManager.js";
 import defaultProfilePic from "@/assets/Dev_Picture/defaultProfilePic.png";
-import { fetchData } from "../JS/fetch";
 import { updateData, getOne } from "../JS/fetchServices";
 
 const props = defineProps(["IdDev"]);
@@ -423,6 +422,7 @@ img {
       flex-grow: 1; // Allow input and textarea to fill available space
       margin-right: 2%;
       background-color: rgb(64, 86, 119);
+      font-size: 1.5rem;
     }
     .notEmptyInput {
       // border: 2px solid #4caf50 !important;

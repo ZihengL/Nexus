@@ -21,7 +21,7 @@
         v-model="state.tags"
         placeholder="action, relax, wholesome"
       />
-      <btnComp :contenu="'Add Tag'" @clicked-btn="updateTagsArray"></btnComp>
+      <btnComp :contenu="'Add Tag'" @toggle-btn="updateTagsArray"></btnComp>
       <div class="tagList">
         <div
           v-for="(tag, index) in state.tagsArray"
@@ -31,7 +31,7 @@
           {{ tag }}
           <btnComp
             :contenu="'X'"
-            @clicked-btn="() => removeItem(index, state.tagsArray)"
+            @toggle-btn="() => removeItem(index, state.tagsArray)"
           ></btnComp>
         </div>
       </div>
@@ -50,7 +50,7 @@
     <div>
       <btnComp
         :contenu="'Select Game File'"
-        @clicked-btn="openFileBrowser"
+        @toggle-btn="openFileBrowser"
       ></btnComp>
       <div v-if="state.gameFile">
         <p>Selected Game File: {{ state.gameFile.name }}</p>
@@ -67,7 +67,7 @@
     <div>
       <btnComp
         :contenu="'Upload Images (Max ' + state.MAX_IMGS + ')'"
-        @clicked-btn="openImageBrowser"
+        @toggle-btn="openImageBrowser"
       ></btnComp>
    
       <div class="imgList" v-if="state.imageFiles.length">
@@ -80,7 +80,7 @@
           <img :src="file.url" :alt="file.name" />
           <btnComp
             :contenu="'X'"
-            @clicked-btn="() => removeItem(index, state.imageFiles)"
+            @toggle-btn="() => removeItem(index, state.imageFiles)"
           ></btnComp>
         </div>
       </div>
@@ -89,7 +89,7 @@
     <div>
       <btnComp
         :contenu="'Upload Videos (Max ' + state.MAX_VIDS + ')'"
-        @clicked-btn="openVideoBrowser"
+        @toggle-btn="openVideoBrowser"
       />
       <div class="vidList" v-if="state.videoFiles.length">
         <p>Selected videos:</p>
@@ -104,19 +104,19 @@
             ></video>
             <btnComp
               :contenu="'X'"
-              @clicked-btn="() => removeItem(index, state.videoFiles)"
+              @toggle-btn="() => removeItem(index, state.videoFiles)"
             ></btnComp>
           </li>
         </ol>
       </div>
     </div>
-    <btnComp :contenu="props.mode === 'create' ? 'Create Game' : 'Update Game'" @clicked-btn="submitGame"></btnComp>
+    <btnComp :contenu="props.mode === 'create' ? 'Create Game' : 'Update Game'" @toggle-btn="submitGame"></btnComp>
   </div>
 </template>
 <script setup>
 import btnComp from "../components/btnComponent.vue";
 import { reactive, defineProps, computed, onMounted } from "vue";
-import { create, getAllMatching, deleteData } from "../JS/fetchServices.js";
+import { create, getAllMatching, deleteData, getAll } from "../JS/fetchServices.js";
 // import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 // import { getStorage, ref as firebaseRef, getDownloadURL, uploadBytes} from "firebase/storage";
 
@@ -157,7 +157,14 @@ const state = reactive({
   errorMessage: "",
   creation_date: new Date().toISOString().replace("T", " ").substring(0, 16),
   description: "",
+  tagsFromDatabase: [],
 });
+
+
+const getTagsFrom_DB = async () => {
+  let data = await getAll("tags")
+  console.log(" Tags from DB : ", data)
+}
 
 const fileSize = computed(() => {
   return state.gameFile ? (state.gameFile.size / 1024).toFixed(2) : "0.00";
@@ -175,6 +182,7 @@ function validateDescriptionLength() {
 }
 
 const openFileBrowser = () => {
+  console.log("selected game file")
   const fileInput = document.createElement("input");
   fileInput.type = "file";
   fileInput.onchange = (e) => {
@@ -418,6 +426,7 @@ async function setDefaultValues() {
 onMounted(async () => {
   try {
     await setDefaultValues();
+    await getTagsFrom_DB();
   } catch (error) {
     console.error("Error setting default values:", error);
   }
