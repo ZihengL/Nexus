@@ -13,7 +13,7 @@
         placeholder="Enter game title"
       />
     </div>
-    <div>
+    <div class="tags-input-container">
       <label for="tags">Tags:*</label>
       <input
         type="text"
@@ -22,17 +22,31 @@
         placeholder="action, relax, wholesome"
       />
       <btnComp :contenu="'Add Tag'" @toggle-btn="updateTagsArray"></btnComp>
-      <div class="tagList">
-        <div
-          v-for="(tag, index) in state.tagsArray"
-          :key="index"
-          class="tag_element"
-        >
-          {{ tag }}
-          <btnComp
-            :contenu="'X'"
-            @toggle-btn="() => removeItem(index, state.tagsArray)"
-          ></btnComp>
+      <div class="tags-display-container">
+        <div class="tags-from-db">
+          <p>Available Tags:</p>
+          <div
+            v-for="tag in state.tagsFromDatabase"
+            :key="tag.id"
+            class="tag_element"
+          >
+            {{ tag.name }}
+          </div>
+        </div>
+        <div class="user-added-tags">
+          <p>Added Tags:</p>
+          <div
+            v-for="(tag, index) in state.tagsArray"
+            :key="`user-${index}`"
+            class="tag_element"
+          >
+            {{ tag }}
+            <btnComp
+              :propClass="'newbtnClass'"
+              :contenu="'X'"
+              @toggle-btn="() => removeItem(index, state.tagsArray)"
+            ></btnComp>
+          </div>
         </div>
       </div>
     </div>
@@ -54,12 +68,6 @@
       ></btnComp>
       <div v-if="state.gameFile">
         <p>Selected Game File: {{ state.gameFile.name }}</p>
-        <!-- <p>
-          File URL:
-          <a :href="state.gameFile.url" target="_blank">{{
-            state.gameFile.url
-          }}</a>
-        </p> -->
         <p>File Size: {{ fileSize }} KB</p>
         <p>File Type: {{ state.gameFile.type }}</p>
       </div>
@@ -69,7 +77,6 @@
         :contenu="'Upload Images (Max ' + state.MAX_IMGS + ')'"
         @toggle-btn="openImageBrowser"
       ></btnComp>
-   
       <div class="imgList" v-if="state.imageFiles.length">
         <div
           class="img_element"
@@ -85,12 +92,11 @@
         </div>
       </div>
     </div>
-
     <div>
       <btnComp
         :contenu="'Upload Videos (Max ' + state.MAX_VIDS + ')'"
         @toggle-btn="openVideoBrowser"
-      />
+      ></btnComp>
       <div class="vidList" v-if="state.videoFiles.length">
         <p>Selected videos:</p>
         <ol>
@@ -113,6 +119,8 @@
     <btnComp :contenu="props.mode === 'create' ? 'Create Game' : 'Update Game'" @toggle-btn="submitGame"></btnComp>
   </div>
 </template>
+
+
 <script setup>
 import btnComp from "../components/btnComponent.vue";
 import { reactive, defineProps, computed, onMounted } from "vue";
@@ -162,9 +170,14 @@ const state = reactive({
 
 
 const getTagsFrom_DB = async () => {
-  let data = await getAll("tags")
-  console.log(" Tags from DB : ", data)
-}
+  try {
+    let data = await getAll("tags");
+    state.tagsFromDatabase = data; 
+    console.log("Tags from DB:", data);
+  } catch (error) {
+    console.error("Error fetching tags from database:", error);
+  }
+};
 
 const fileSize = computed(() => {
   return state.gameFile ? (state.gameFile.size / 1024).toFixed(2) : "0.00";
@@ -434,131 +447,149 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.tagList {
-  padding: 10%;
-  gap: 5%;
-  display: flex; /* Use Flexbox */
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between; /* Distribute space between items */
-  align-items: center; /* Center items vertically */
-  background: rgba(
-    128,
-    128,
-    128,
-    0.5
-  ); /* Matching background opacity with .tagList */
-  font-size: 1rem;
-}
-
-.tag_element {
-  gap: 5%;
-  display: flex; /* Use Flexbox */
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between; /* Distribute space between items */
-  background: grey;
-  align-items: center;
-  font-size: 1rem;
-}
-
-.imgList {
-  padding: 10%;
-  gap: 5%;
-  display: flex; /* Use Flexbox */
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between; /* Distribute space between items */
-  align-items: center; /* Center items vertically */
-  background: rgba(
-    128,
-    128,
-    128,
-    0.5
-  ); /* Matching background opacity with .tagList */
-  font-size: 1rem;
-}
-
-.img_element {
-  gap: 5%;
-  display: flex; /* Use Flexbox */
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between; /* Distribute space between items */
-  background: grey;
-  align-items: center;
-  font-size: 1rem;
-}
-
-img {
-  width: 50%;
-  object-fit: contain;
-  justify-content: center;
-}
-
-textarea {
-  background-color: #555;
-  color: white;
-  padding: 10px;
-  border: 2px solid #777;
-  border-radius: 5px;
-  width: 50%;
-  box-sizing: border-box;
-  margin: 5px 0;
-}
-
-textarea:focus {
-  outline: none;
-  border-color: #007bff;
-}
-
-img {
-  width: 100px;
-}
 
 #pageContainer {
   background-color: #333;
-  padding: 20px;
-  border-radius: 8px;
-}
-
-#pageContainer * {
+  padding: 2rem;
+  border-radius: 0.5rem;
   color: white;
 }
 
-#pageContainer button {
-  background-color: #0062cc;
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  margin: 5px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-#pageContainer button:hover {
-  background-color: #004da2;
-}
-
-#pageContainer input[type="text"] {
+input[type="text"], textarea {
   background-color: #555;
   border: none;
   color: white;
-  padding: 10px;
-  margin: 5px 0;
-  border-radius: 5px;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0.5rem;
+  width: 100%; // Ensures input fields stretch to container width
 }
 
-#pageContainer input[type="text"]:focus {
+input[type="text"]:focus, textarea:focus {
   outline: 2px solid #007bff;
 }
 
 .error-message {
   color: #ff3860;
   background-color: #ffe5e7;
-  padding: 10px;
-  margin-bottom: 20px;
-  border-radius: 5px;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
   border: 1px solid #ff3860;
 }
+
+.tags-input-container, .tags-display-container, .tags-from-db, .user-added-tags, .imgList, .vidList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tags-display-container {
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.tag_element, .img_element {
+  background: grey;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+img {
+  width: auto; // Allows the image to maintain aspect ratio
+  height: 5rem; // Adjust based on your needs
+  object-fit: cover;
+}
+
+video {
+  width: 100%; // Adapts to the width of its container
+  max-width: 20rem; // Limits video width while allowing it to be responsive
+  height: auto; // Maintain aspect ratio
+}
+
+textarea {
+  min-height: 10rem; // Adjust based on your needs
+}
+
+// Buttons
+.btnComp {
+  background-color: #0062cc;
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.btnComp:hover {
+  background-color: #004da2;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .tags-display-container {
+    flex-direction: column;
+  }
+
+  video {
+    width: 100%; // Ensures video is not wider than the screen on smaller devices
+  }
+}
+
+
+.newbtnClass {
+  height: 100%;
+  width: 50%;
+  position: relative;
+  overflow: hidden;
+
+  .btn-layer {
+    height: 100%;
+    width: 300%;
+    position: absolute;
+    margin: auto;
+    left: -100%;
+    // background: -webkit-linear-gradient(right, var(--purple), pink, yellow);
+    background: -webkit-linear-gradient(
+      right,
+      var(--purple),
+      var(--dark-blue),
+      var(--purple),
+      var(--dark-blue)
+    );
+    border-radius: 5%;
+    transition: all 0.4s ease;
+  }
+  .submit {
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    position: relative;
+    background: none;
+    border: none;
+    color: var(--light);
+    padding-left: 0;
+    border-radius: 5px;
+    font-size: 1em;
+    font-weight: 500;
+    cursor: pointer;
+  }
+}
+.fieldBtn:hover {
+  .btn-layer {
+    left: 0;
+  }
+  .submit {
+    text-shadow: 0 0 7px #fff, 0 0 10px #fff, 0 0 21px #fff, 0 0 42px #0fa,
+      0 0 82px #0fa, 0 0 92px #0fa, 0 0 102px #0fa, 0 0 151px #0fa;
+    animation: neonGlow 1.5s ease-in-out infinite alternate;
+  }
+}
+</style>
+
+<style>
+
 </style>
