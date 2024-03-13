@@ -181,13 +181,13 @@ export const getGameDetails = async (idGame) => {
 };
 
 export const getAllGamesWithDeveloperNameNEW = async (column = null, value = null, includedColumns = null, sorting = null, paging = null) => {
-  const joined_tables = { users: ['id', 'username', 'picture', 'isOnline'] };
+  const joined_tables = { users: ['id', 'username', 'picture', 'isOnline'], tags: ['id', 'name'] };
 
   return await getAll('games', column, value, includedColumns, sorting, joined_tables, paging);
 }
 
 export const getGameDetailsWithDeveloperNameNEW = async (gameID) => {
-  const joined_tables = { users: ['id', 'username', 'picture', 'isOnline'] };
+  const joined_tables = { users: ['id', 'username', 'picture', 'isOnline'], tags: ['id', 'name'] };
   
   return await getOne('games', 'id', gameID, null, null, joined_tables);
 }
@@ -238,22 +238,6 @@ export const fetchGameImages  = async (games) => {
     return []; // Return an empty array in case of error
   }
 }
-  return await getAllMatching('games', filters, included_columns, sorting, joined_tables, paging);
-}
-
-
-/*********/
-
-export const createReviewsNEW = async (table, createData) => {
-  return await services.fetchData(table, 'create', {
-    credentials: {
-      id: StorageManager.getIdDev,
-      tokens: StorageManager.getTokens
-    },
-    request_data: createData
-  });
-};
-
 
 /***************************************************/
 
