@@ -1,57 +1,42 @@
 import { fetchData } from "./fetch";
+import * as services from "./fetchServices/services";
 
-export const getOne = async (table, column, value, included_columns = null, sorting = null) => {
-  const body = {
-    column,
-    value,
-    included_columns,
-    sorting
-  }
 
-  // let data = await fetchData(table, "getOne", column, value, included_columns, sorting, null, "GET");
-  let data = await fetchData2(table, 'getOne', body);
-  return data;
+export const getOne = async (table, column, value, includedColumns = null, sorting = null, joined_tables = null) => {
+  // let data = await fetchData(table, "getOne", column, value, includedColumns, sorting, null, "GET");
+
+  const preppedBody = services.prepGetOne(column, value, includedColumns, joined_tables);
+  return await services.getOne(table, preppedBody);
 };
 
-export const getAll = async (table, column = null, value = null, included_columns = null, sorting = null) => {
-  const body = {
-    column,
-    value,
-    included_columns,
-    sorting
-  }
+export const getAll = async (table, column = null, value = null, includedColumns = null, sorting = null, joined_tables = null, paging = null) => {
+  // let data = await fetchData(table, "getAll", column, value, includedColumns, sorting, null, "GET");
 
-  // let data = await fetchData(table, "getAll", column, value, included_columns, sorting, null, "GET");
-  let data = await fetchData2(table, 'getAll', body);
-
-export const getAll = async (table, column = null, value = null, includedColumns = null, sorting = null) => {
-  let data = await fetchData(table, "getAll", column, value, includedColumns, sorting, null, "GET");
-  return data
+  const preppedBody = services.prepGetAll(column, value, includedColumns, joined_tables, paging);
+  return await services.getAll(table, preppedBody);
 };
 
-export const getAllMatching = async (table, filters, sorting = null, included_columns = null) => {
-export const getAllMatching = async (table, filters,  includedColumns = null, sorting = null) => {
-  let body = {
-    filters,
-    sorting,
-    included_columns
-  }
+export const getAllMatching = async (table, filters,  includedColumns = null, sorting = null, joined_tables = null, paging = null) => {
+  // let body = {
+  //   filters,
+  //   sorting,
+  //   includedColumns
+  // }
 
   // let data = await fetchData(table, "getAllMatching", null, null, null, null, body, "POST");
-  let data = await fetchData2(table, 'getAllMatching', body);
-  return data
+  // return data
+
+  const preppedBody = services.prepGetAllMatching(filters, includedColumns, sorting, joined_tables, paging);
+  return await services.getAllMatching(table, preppedBody);
 };
 
-/*******************************************************************/
-/****************************** USERS ******************************/
-/*******************************************************************/
-
-export const registerService = async (createData) => {
 export const create = async (table, createData) => {
   let body = {
     createData
   }
-  let data = await fetchData(table, "create", null, null, null, null, body, "POST");
+  // let data = await fetchData(table, "create", null, null, null, null, body, "POST");
+
+
   return data;
 };
 
@@ -65,7 +50,6 @@ export const deleteData = async(table, deleteData) => {
 
 export const updateData = async(table, updateData) => {
   let body = {
-    createData
     updateData
   }
   let data = await fetchData(table, "update", null, null, null, null, body, "POST");
@@ -80,6 +64,7 @@ export const registerService = async (createData) => {
   console.log('registerService createData : ' ,createData);
 
   let data = await create("users", createData)
+
   return data
 };
 
@@ -135,25 +120,32 @@ const deleteGamesAndrelationships = async (jsonObject) => {
 
 
 // CHANGE HERE FOR GETALLMATCHING
-export const getAllGamesWithDeveloperName = async (column = null, value = null, includedColumns = null, sorting = null) => {
+export const getAllGamesWithDeveloperName = async (column = null, value = null, includedColumns = null, sorting = null, joined_tables = null, paging = null) => {
   try {
     const gamesArray = await getAll("games", column, value, includedColumns, sorting);
+    // console.log("gamesArray : ", gamesArray);
+
+    // Hold developer names in a Map for quick access
+    const devNameMap = new Map();
 
     if (gamesArray && gamesArray.length) {
-
-
-      const gamesWithDevNames = await Promise.all(gamesArray.map(async (game) => {
-        if (game.developerID) {
+      // Fetch developer names and store in the Map
+      await Promise.all(gamesArray.map(async (game) => {
+        if (game.developerID && !devNameMap.has(game.developerID)) { // Check to avoid fetching the same developer name multiple times
+          // console.log("game : ", game);
           const developerDetails = await getUsername(game.developerID);
           if (developerDetails && developerDetails.username) {
-
-
-            game.devName = developerDetails.username;
+            devNameMap.set(game.developerID, developerDetails.username);
           }
         }
-        return game;
       }));
 
+      // console.log("devNameMap : ", devNameMap)
+      const gamesWithDevNames = gamesArray.map(game => {
+        const devName = game.developerID ? devNameMap.get(game.developerID) : undefined;
+        return {...game, devName}; // Create a new enriched game object
+      });
+      // console.log("gamesWithDevNames : ", gamesWithDevNames)
       return gamesWithDevNames;
     }
 
@@ -170,15 +162,12 @@ export const getGameDetailsWithDeveloperName = async (idGame) => {
     // console.log("getGameDetailsWithDeveloperName gameDetails : ", gameDetailsArray);
 
 
-
     if (gameDetailsArray && gameDetailsArray.length > 0) {
-      const gameDetails = gameDetailsArray[0];
       const gameDetails = gameDetailsArray[0];
       // console.log("gameDetails.developerID : ", gameDetails.developerID);
 
       const developerDetails = await getUsername(gameDetails.developerID);
       if (developerDetails && developerDetails.username) {
-
 
         gameDetails.devName = developerDetails.username;
         // console.log("gameDetails.devName : ", gameDetails.devName);
@@ -244,13 +233,10 @@ export const getGameReviewsUsernames = async (gameID, sorting = null) => {
     let results = {};
 
 
-
     if (gameDetailsArray && gameDetailsArray.length > 0) {
       const gameDetails = gameDetailsArray[0];
 
       if (gameDetails && gameDetails.developerID) {
-        results.game = gameDetails;
-
         results.game = gameDetails;
 
         let fullReviews = await getReviewsAndUsernames(gameDetails.id, sorting);
@@ -261,7 +247,6 @@ export const getGameReviewsUsernames = async (gameID, sorting = null) => {
     return results;
   } catch (error) {
     console.error("Error in getGameReviewsUsernames:", error);
-    return { game: {}, reviews: [] };
     return { game: {}, reviews: [] };
   }
 };

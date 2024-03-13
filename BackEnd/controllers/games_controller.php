@@ -41,16 +41,33 @@ class GamesController extends BaseController
 
     public function getOneAsJoined($data)
     {
-        
+        $defaults = ['column' => '', 'value' => '', 'included_columns' => [], 'joined_tables' => []];
+        $data = $this->setGetterDefaults(array_merge($defaults, $data));
 
-        $data = $this->setGetterDefaults($data);
-        return $this->model->getOneAsJoined(...$data);
+        [
+            'column' => $column,
+            'value' => $value,
+            'included_columns' => $included_columns,
+        ] = $data;
+
+        return $this->model->getOneAsJoined($column, $value, $included_columns);
     }
 
     public function getAllAsJoined($data)
     {
-        $data = $this->setGetterDefaults($data);
-        return $this->model->getOneAsJoined(...$data);
+        $defaults = ['column' => null, 'value' => null, 'included_columns' => [], 'sorting' => [], 'joined_tables' => [], 'paging' => []];
+        $data = $this->setGetterDefaults(array_merge($defaults, $data));
+
+        [
+            'column' => $column,
+            'value' => $value,
+            'included_columns' => $included_columns,
+            'sorting' => $sorting,
+            'joined_tables' => $joined_tables,
+            'paging' => $paging
+        ] = $data;
+        
+        return $this->model->getAllAsJoined($column, $value, $included_columns, $sorting = []);
     }
 
 

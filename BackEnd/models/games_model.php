@@ -10,6 +10,7 @@ class GamesModel extends BaseModel
         // $res = $this->query("SELECT games.*, gamestags.* FROM `games` INNER JOIN gamestags ON games.id = gamestags.gameId WHERE games.title = 'Space Odyssey'");
 
         // printall($res->fetchAll(PDO::FETCH_ASSOC));
+        // printall($this->keys);
     }
 
     // Other Cruds
@@ -67,20 +68,6 @@ class GamesModel extends BaseModel
 
     // Getters
 
-    public function getAllAsJoined($column = null, $value = null, $included_columns = [], $sorting = [])
-    {
-        if (in_array('tags', $included_columns)) {
-            $key = array_search('tags', $included_columns);
-            if ($key !== false) {
-                unset($included_columns[$key]);
-            }
-            $results = $this->joinGamesAndTags($column, $value, $included_columns, $sorting);
-            return $this->appendTagsToGames($results);
-        }
-        $results = $this->joinGamesAndTags($column, $value, $included_columns, $sorting);
-        return $this->appendTagsToGames($results);
-    }
-
     public function getOneAsJoined($column = null, $value = null, $included_columns = [])
     {
         if (in_array('tags', $included_columns)) {
@@ -92,6 +79,20 @@ class GamesModel extends BaseModel
             return $this->appendTagsToGames($results);
         }
         $results = $this->joinGamesAndTags($column, $value, $included_columns);
+        return $this->appendTagsToGames($results);
+    }
+
+    public function getAllAsJoined($column = null, $value = null, $included_columns = [], $sorting = [])
+    {
+        if (in_array('tags', $included_columns)) {
+            $key = array_search('tags', $included_columns);
+            if ($key !== false) {
+                unset($included_columns[$key]);
+            }
+            $results = $this->joinGamesAndTags($column, $value, $included_columns, $sorting);
+            return $this->appendTagsToGames($results);
+        }
+        $results = $this->joinGamesAndTags($column, $value, $included_columns, $sorting);
         return $this->appendTagsToGames($results);
     }
 

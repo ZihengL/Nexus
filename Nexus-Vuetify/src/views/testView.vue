@@ -15,6 +15,7 @@
     <p>Zi tests</p>
 
     <v-btn class="bordered-btn" @click="ziGetAllMatching">getAllMatching</v-btn>
+    <v-btn class="bordered-btn" @click="getTests">TEST ALL GETS</v-btn>
     <v-btn class="bordered-btn" @click="isLoggedIn">is Logged in</v-btn>
     <v-btn class="bordered-btn" @click="ziLogin">Login</v-btn>
     <v-btn class="bordered-btn" @click="ziLogout">Logout</v-btn>
@@ -28,6 +29,7 @@
 
 <script>
 import { fetchData } from "../JS/fetch";
+import * as services from "../JS/fetchServices";
 import ReviewsListComponent from "../components/reviewsListComponent.vue";
 
 // ZI TESTS
@@ -415,6 +417,24 @@ export default {
 
       const result = this.$getAllMatching('games', preppedData);
       console.log(result);
+    },
+
+    async getTests() {
+      const column = 'title';
+      const value = 'doggo fights';
+      const included_columns = ["id", 'title', "developerID", "ratingAverage"];
+
+      const paging = { limit: 2, offset: 0 };
+      const joined_tables = {
+        users: new Array('username', 'email', 'password', 'name'),
+        tags: new Array('name'),
+      }
+
+      const getOneResult = await services.getOne('games', column, value, included_columns, null, joined_tables, paging);
+      console.log('GETONE UPDATED', getOneResult);
+
+      const getAllResult = await services.getAll('users', null, null, ['username', 'email', 'password', 'id'], {'games': ['title']}, null);
+      console.log('GETALL UPDATED', getAllResult);
     },
 
     isLoggedIn() {

@@ -1,5 +1,4 @@
 <?php
-
 class BaseController
 {
     protected static $controllers = [];
@@ -25,6 +24,11 @@ class BaseController
         $this->actions = array_merge($this->actions, $table_specific_actions);
 
         self::$controllers[$this->model->table] = $this;
+    }
+
+    public function isCompWith($ref_table)
+    {
+        return $this->model->isCompositeWith($ref_table);
     }
 
 

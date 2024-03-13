@@ -121,6 +121,15 @@ function getOneFromData($key, $data, $unset = false)
     throw new Exception("Missing '$key' parameter for request in data: " . unwrap($data));
 }
 
+function areSet($array, $keys)
+{
+    foreach ($keys as $key)
+        if (!isset($array[$key]))
+            return false;
+
+    return true;
+}
+
 function unwrap($item)
 {
     return var_export($item, true) ?? '';

@@ -1,4 +1,5 @@
 <?php
+require_once "$path/models/base_model.php";
 
 class DatabaseManager
 {
@@ -22,6 +23,8 @@ class DatabaseManager
         $connection_string = "mysql:host={$this->host};dbname={$this->database}";
         $this->pdo = new PDO($connection_string, $this->username, $this->password);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        BaseModel::$database = $this->database;
     }
 
     public static function getInstance()

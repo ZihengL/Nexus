@@ -2,7 +2,10 @@
 
 class BaseModel
 {
+    public static $database;
     public static $print_errors = false;
+
+    protected static $models = [];
 
     protected $pdo;
     public $table;
@@ -14,13 +17,17 @@ class BaseModel
         $this->pdo = $pdo;
         $this->table = $table;
         $this->columns = $this->getColumns($require_id);
-        $this->addDeconstructedKeys([...$this->getKeysDetails(false), $this->getKeysDetails(true)]);
+
+        foreach ([...$this->getKeysDetails(false), ...$this->getKeysDetails(true)] as $key)
+            $this->keys[array_shift($key)] = $key;
+
+        self::$models[$this->table] = $this;
     }
 
     private function addDeconstructedKeys($keys)
     {
-        if (!empty($keys) && isset($keys['EXT_TAB']))
-            $this->keys[array_pop($keys)] = $keys;
+        if (!empty($keys) && isset($keys['table']))
+            $this->keys[array_shift($keys)] = $keys;
         else
             foreach ($keys as $subkeys)
                 $this->addDeconstructedKeys($subkeys);
@@ -185,7 +192,6 @@ class BaseModel
         ['sql' => $filtering_sql, 'params' => $params] = $this->applyFilters($filters);
 
         $sql = "$selections WHERE 1 = 1 $filtering_sql $group";
-        // $sql .= $filtering_sql . (!empty($joined_tables) ? " GROUP BY {$this->table}.id" : '');
 
         if ($sorting_layer = $this->applySorting($sorting))
             $sql .= " ORDER BY $sorting_layer";
@@ -210,31 +216,74 @@ class BaseModel
         return $result;
     }
 
+
+    // if ($is_internal_keys) {
+    //     $sql =  "SELECT 
+    //                 kcu.TABLE_NAME AS 'table',
+    //                 kcu.COLUMN_NAME AS 'external', 
+    //                 kcu.REFERENCED_COLUMN_NAME AS 'internal', 
+    //                 (SELECT COUNT(*)
+    //                     FROM 
+    //                         INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+    //                     WHERE 
+    //                         CONSTRAINT_NAME = kcu.CONSTRAINT_NAME 
+    //                         AND TABLE_SCHEMA = '$database'
+    //                         AND TABLE_NAME = kcu.TABLE_NAME) AS 'composition'
+    //             FROM 
+    //                 INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS kcu
+    //             WHERE 
+    //                 kcu.TABLE_SCHEMA = '$database' 
+    //                 AND kcu.REFERENCED_TABLE_NAME = '{$this->table}'";
+    // } else {
+    //     $sql = "SELECT 
+    //                 kcu.REFERENCED_TABLE_NAME AS 'table',
+    //                 kcu.REFERENCED_COLUMN_NAME AS 'external', 
+    //                 kcu.COLUMN_NAME AS 'internal', 
+    //                 (SELECT COUNT(*)
+    //                     FROM 
+    //                         INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS inner_kcu
+    //                     JOIN 
+    //                         INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS tc 
+    //                         ON inner_kcu.CONSTRAINT_NAME = tc.CONSTRAINT_NAME
+    //                         AND inner_kcu.TABLE_SCHEMA = tc.TABLE_SCHEMA 
+    //                         AND inner_kcu.TABLE_NAME = tc.TABLE_NAME
+    //                     WHERE 
+    //                         tc.TABLE_SCHEMA = '$database' 
+    //                         AND tc.TABLE_NAME = '{$this->table}' 
+    //                         AND tc.CONSTRAINT_TYPE = 'PRIMARY KEY') AS 'composition'
+    //             FROM 
+    //                 INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS kcu
+    //             WHERE 
+    //                 kcu.TABLE_SCHEMA = '$database' 
+    //                 AND kcu.TABLE_NAME = '{$this->table}' 
+    //                 AND kcu.REFERENCED_TABLE_NAME IS NOT NULL";
+    // }
+
     public function getKeysDetails($is_internal_keys = true)
     {
-        $int_col = "COLUMN_NAME AS 'INT_COL'";
-        $ext_col = "COLUMN_NAME AS 'EXT_COL'";
-        $ext_tab = "TABLE_NAME AS 'EXT_TAB'";
+        $database = self::$database;
+
+        $table = "TABLE_NAME AS 'table'";
+        $external = "COLUMN_NAME AS 'external'";
+        $internal = "COLUMN_NAME AS 'internal'";
 
         $table_condition = "TABLE_NAME = '{$this->table}'";
 
         if ($is_internal_keys) {
-            $ext_col = "REFERENCED_$ext_col";
-            $ext_tab = "REFERENCED_$ext_tab";
-
+            $table = "REFERENCED_$table";
+            $external = "REFERENCED_$external";
             $table_condition = "$table_condition AND REFERENCED_TABLE_NAME IS NOT NULL";
         } else {
-            $int_col = "REFERENCED_$int_col";
-
+            $internal = "REFERENCED_$internal";
             $table_condition = "REFERENCED_$table_condition";
         }
 
         $sql = "SELECT 
-                    $int_col, $ext_col, $ext_tab 
+                    $table, $external, $internal
                 FROM 
                     INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
                 WHERE 
-                    TABLE_SCHEMA = '{$_ENV['DB_NAME']}' 
+                    TABLE_SCHEMA = '$database' 
                 AND 
                     $table_condition";
 
@@ -260,26 +309,60 @@ class BaseModel
         return "{$this->table}." . implode(", {$this->table}.", $included_columns);
     }
 
+    // COMPOSITE STUFF FOR SELECTS (MANY-TO-MANY)
 
-    // TODO: IF MULTIPLICITY CAN BE COMPUTED, CHANGE THE JOIN TYPE HERE
-    //https://www.w3schools.com/sql/sql_join.asp#:~:text=Different%20Types%20of%20SQL%20JOINs,records%20from%20the%20right%20table
+    public function getCompositeModel($ref_table)
+    {
+        foreach (self::$models as $model)
+            if (
+                isset($model->keys[$this->table]) &&
+                isset($model->keys[$ref_table])
+            )
+                return $model;
+
+        return null;
+    }
+
+    public function getCompositeSelections($from, $with, $included_columns = [])
+    {
+        $selection = '';
+        foreach ($included_columns as $column)
+            $selection .= ", GROUP_CONCAT({$with}.{$column} SEPARATOR ', ') AS {$with}_{$column}";
+
+        ['external' => $from_ext_id, 'internal' => $from_int_id] = $this->keys[$from];
+        $join = " JOIN {$this->table} ON {$from}.{$from_ext_id} = {$this->table}.{$from_int_id}";
+
+        ['external' => $with_ext_id, 'internal' => $with_int_id] = $this->keys[$with];
+        $join .= " JOIN {$with} ON {$this->table}.{$with_int_id} = {$with}.{$with_ext_id}";
+
+        return [$selection, $join];
+    }
+
     public function parseJoinedTables($joined_tables = [])
     {
         $selects = '';
         $joins = '';
 
-        foreach ($joined_tables as $ref_tab => $included_columns)
-            if (isset($this->keys[$ref_tab])) {
-                ['INT_COL' => $int_col, 'EXT_COL' => $ext_col] = $this->keys[$ref_tab];
+        foreach ($joined_tables as $table => $included_columns) {
+            if ($composite_model = $this->getCompositeModel($table)) {
+                [$selection, $join] = $composite_model->getCompositeSelections($this->table, $table, $included_columns);
 
-                foreach ($included_columns as $join_column)
-                    $selects .= ", GROUP_CONCAT({$ref_tab}.{$join_column} SEPARATOR ', ') AS {$ref_tab}_{$join_column}";
+                $selects .= $selection;
+                $joins .= $join;
+            } else {
+                if (isset($this->keys[$table])) {
+                    ['internal' => $internal, 'external' => $external] = $this->keys[$table];
 
-                $joins .= " INNER JOIN $ref_tab ON {$this->table}.{$int_col} = {$ref_tab}.{$ext_col}";
+                    foreach ($included_columns as $column)
+                        $selects .= ", {$table}.{$column} AS {$table}_{$column}";
+
+                    $joins .= " JOIN $table ON {$this->table}.{$internal} = {$table}.{$external}";
+                }
             }
+        }
 
         // $join_layer['selects'] .= !empty($join_layer['selects']) ? " GROUP BY {$this->table}.id" : '';
-        $group = empty($selects) ? " GROUP BY {$this->table}.id" : '';
+        $group = !empty($selects) ? " GROUP BY {$this->table}.id" : '';
         return ['selects' => $selects, 'joins' => $joins, 'group' => $group];
     }
 
@@ -290,10 +373,7 @@ class BaseModel
 
     public function getPaging($limit = -1, $offset = 0)
     {
-        if ($limit !== -1)
-            return " LIMIT $limit OFFSET $offset";
-
-        return '';
+        return $limit !== -1 ? " LIMIT $limit OFFSET $offset" : '';
     }
 
     public function applyFilters($filters, $included_columns = [])
@@ -357,21 +437,13 @@ class BaseModel
     protected function executeRelatedTableFilterAndGetIds($filterKey, $filterValue)
     {
         ['relatedTable' => $related_table, 'values' => $filter_values, 'wantedColumn' => $included_columns] = $filterValue;
-        // $relatedTable = $filterValue['relatedTable'];
-        // $filter_values = $filterValue['values'];
-        // $included_columns = $filterValue['wantedColumn'];
 
-        // Your existing SQL construction
         $placeholders = implode(', ', array_fill(0, count($filter_values), '?'));
         $sql = "SELECT {$included_columns} 
                 FROM {$related_table}  
                 WHERE {$filterKey} 
                 IN ($placeholders)";
 
-        // Prepare and execute the query
-        // $stmt = $this->pdo->prepare($sql);
-        // $stmt->execute($filter_values);
-        // Was executing it outside of the query with catch
         $ids = $this->query($sql, $filter_values)->fetchAll(PDO::FETCH_COLUMN, 0);
 
         // Build the 'IN' clause for the main query using fetched IDs

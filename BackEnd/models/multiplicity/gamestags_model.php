@@ -6,6 +6,9 @@ class GamestagsModel extends BaseModel
     public function __construct($pdo)
     {
         parent::__construct($pdo, "gamestags");
+        $this->multiplicity = ['tags' => true, 'games' => false];
+
+        // printall($this->keys);
     }
 
 
@@ -64,7 +67,8 @@ class GamestagsModel extends BaseModel
 
         if ($tags) {
             $selections .= "GROUP_CONCAT(tags.name SEPARATOR ', ') AS tags, ";
-            $joins .= "LEFT JOIN tags ON games.developerID = users.id ";
+
+            $joins .= "INNER JOIN gamestags ON gamestags.tagId = tags.id ";
         }
 
         $sql = "SELECT $selections games.* 
@@ -72,10 +76,20 @@ class GamestagsModel extends BaseModel
                 $joins 
                 LEFT JOIN
                 gamestags ON games.id = gamestags.gameId 
-                GROUP BY games.id
-                LIMIT 3 OFFSET 2";
+                GROUP BY games.id";
+
+        printall($sql);
 
         return $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getJoinSelectionsWith($table, $included_columns)
+    {
+        $result = '';
+
+        if ($table === 'tags') {
+            $selections = '';
+        }
     }
 
     // public function buildSelectionLayer($included_columns = [], $join_keys = [])

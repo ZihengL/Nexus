@@ -15,7 +15,7 @@ class TagsController extends BaseController
             'update' => true,
             'delete' => true,
         ];
-        parent::__construct($central_controller);
+        parent::__construct($central_controller, $specific_actions);
     }
 
     // GETTERS
@@ -31,8 +31,6 @@ class TagsController extends BaseController
     }
 
     // Other CRUDs 
-
-
 
     //REBECCA
 
@@ -110,22 +108,22 @@ class TagsController extends BaseController
         $isValidArray = json_decode($isValid, true);
         $id = $data['id'];
 
-    if ($isValidArray['isSuccessful']) {
-        $newName = $data["newName"];
-        $similarTagExist = $this->getOne("name", $newName);
-        if ($similarTagExist) {
-            return $this->createResponse(false, 'There is already a tag with that same name');
-        }
-        $newData = ['id' => $id, 'name' => $newName];
-        if ($this->model->update($id, $newData)) {
-            return $this->createResponse(true, 'Tag has been updated');
+        if ($isValidArray['isSuccessful']) {
+            $newName = $data["newName"];
+            $similarTagExist = $this->model->getOne("name", $newName);
+            if ($similarTagExist) {
+                return $this->createResponse(false, 'There is already a tag with that same name');
+            }
+            $newData = ['id' => $id, 'name' => $newName];
+            if ($this->model->update($id, $newData)) {
+                return $this->createResponse(true, 'Tag has been updated');
+            } else {
+                return $this->createResponse(false, 'Failed to update tag');
+            }
         } else {
-            return $this->createResponse(false, 'Failed to update tag');
+            return $isValid;
         }
-    } else {
-        return $isValid;
     }
-}
 
 
 

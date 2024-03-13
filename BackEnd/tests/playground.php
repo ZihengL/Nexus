@@ -45,6 +45,15 @@ function printall($item)
     echo '<pre>' . print_r($item, true) . '</pre>';
 }
 
+function areSet($array, $keys)
+{
+    foreach ($keys as $key)
+        if (!isset($array[$key]))
+            return false;
+
+    return true;
+}
+
 
 
 /*******************************/
@@ -61,6 +70,7 @@ $users_ctrl = $central_controller->users_controller;
 $games_ctrl = $central_controller->games_controller;
 $gamestags_ctrl = $central_controller->gamestags_controller;
 $tokens_ctrl = $central_controller->tokens_controller;
+$tags_ctrl = $central_controller->tags_controller;
 
 $cc = $central_controller;
 
@@ -128,10 +138,53 @@ $id = 10;
 // $data = ['included_columns' => ['username', 'email'], 'paging' => ['limit' => 4, 'offset' => 0], 'joined_tables' => ['games' => []]];
 // $result = parse('users', 'getAll', $data);
 
-$data = ['included_columns' => ['id', 'title', 'email'], 'paging' => ['limit' => 4, 'offset' => 0], 'joined_tables' => ['users' => ['username', 'password']]];
-$result = parse('games', 'getAll', $data);
+echo "<hr><h4>GAMES WITH THEIR TAGS N USERS</h4>";
+$data = [
+    // 'paging' => ['limit' => 4, 'offset' => 0],
+    'joined_tables' => ['tags' => ['id', 'name'], 'users' => []]
+];
 
+$result = parse('games', 'getAll', $data);
 printall($result);
+
+echo "<hr><h4>USERS WITH THEIR GAMES</h4>";
+$data = [
+    // 'paging' => ['limit' => 4, 'offset' => 0],
+    'joined_tables' => ['games' => ['id', 'title', 'ratingAverage']]
+];
+
+$result = parse('users', 'getAll', $data);
+printall($result);
+
+echo "<hr><h4>USERS WITH THEIR GAMES N TAGS</h4>";
+$data = [
+    // 'paging' => ['limit' => 4, 'offset' => 0],
+    'joined_tables' => ['games' => ['id', 'title', 'ratingAverage'], 'tags' => []]
+];
+
+$result = parse('users', 'getAll', $data);
+printall($result);
+
+// printall($gamestags_ctrl->getGamesWith(['users' => true, 'tags' => true]));
+
+
+
+// $data = [
+//     'included_columns' => ['id', 'username'],
+//     // 'paging' => ['limit' => 4, 'offset' => 0],
+//     'joined_tables' => ['games' => ['id', 'title']]
+// ];
+// $result = parse('', 'getAll', $data);
+
+// printall($result);
+
+// if ($games_ctrl->isCompWith('tags'))
+//     echo 'composite with tags';
+// else
+//     echo 'not comp';
+
+// if ($tags_ctrl->create(['name' => 'testtag2', 'gameId' => 3]))
+//     echo 'created';
 
 // $result = parse('games', '')
 

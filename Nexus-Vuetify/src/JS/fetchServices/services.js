@@ -261,6 +261,8 @@ export function getAllMatching(table, preppedData) {
   return fetchData(table, "getAllMatching", preppedData);
 }
 
+// OTHER CRUDS
+
 /*******************************************************************/
 /***************************** STRIPE ******************************/
 /*******************************************************************/

@@ -11,22 +11,25 @@ class GamestagsController extends BaseController
     {
         $this->model = new GamestagsModel($pdo);
 
-        $table_specific_actions = ['getGamesWith'];
-        parent::__construct($central_controller, $table_specific_actions);
+        $specific_actions = ['getGamesWith' => false];
+        parent::__construct($central_controller, $specific_actions);
     }
 
     public function create($data)
     {
         $tagName = $data["name"];
-        $tagWasAdded = $this->getTagsController()->getOne('name', $tagName);
+        $tagWasAdded = $this->getOneFrom('tags', 'name', $tagName);
 
         if ($tagWasAdded) {
             if ($this->model->create($data)) {
-                return $this->createResponse(true, "Tag {$tagName} was created successfully. Updated game_Tags table as needed.");
+                return true;
+                // return $this->createResponse(true, "Tag {$tagName} was created successfully. Updated game_Tags table as needed.");
             }
-            return $this->createResponse(false, 'Failed to create game_tags new relation');
+            throw new Exception('Failed to create game_tags new relation');
+            // return $this->createResponse(false, 'Failed to create game_tags new relation');
         }
-        return $this->createResponse(false, 'Failed to create tag');
+        throw new Exception('Failed to create tag');
+        // return $this->createResponse(false, 'Failed to create tag');
     }
 
     // public function getOne($column, $value, $included_columns = [], $joined_tables = [])
@@ -51,8 +54,10 @@ class GamestagsController extends BaseController
     // }
 
     // GET REQUEST
-    public function getGamesWith($users = true, $tags = false)
+    // public function getGamesWith($users = true, $tags = false)
+    public function getGamesWith($data)
     {
-        return $this->model->getGamesWith($users, $tags);
+        ['users' => $include_users, 'tags' => $include_tags] = $data;
+        return $this->model->getGamesWith($include_users, $include_tags);
     }
 }
