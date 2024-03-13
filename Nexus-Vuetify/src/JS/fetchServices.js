@@ -213,6 +213,12 @@ export const getGamesForCarousel = async () => {
   return data;
 }
 
+export const getGameReviews = async (gameID) => {
+  const joined_tables = {users: ['id', 'username', 'picture']};
+
+  return await getAll('reviews', 'gameID', gameID, null, null, joined_tables);
+}
+
 export const fetchGameImages  = async (games) => {
   try {
     const imageFetchPromises = games.map(async (game) => {
