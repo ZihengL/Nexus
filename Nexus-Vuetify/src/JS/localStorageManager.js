@@ -25,6 +25,12 @@ const StorageManager = {
   getRefreshToken () {
     return localStorage.getItem(StorageKeys.REFRESH_TOKEN)
   },
+  getTokens() {
+    return {
+      access_token: this.getAccessToken(),
+      refresh_token: this.getRefreshToken()
+    }
+  },
   setIsConnected (isConnected) {
     localStorage.setItem(
       StorageKeys.IS_CONNECTED,

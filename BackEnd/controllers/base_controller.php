@@ -138,21 +138,21 @@ class BaseController
     /************************* PROCESSING DATA *************************/
     /*******************************************************************/
 
-    public function standardizeRequestData($data)
-    {
-        $client_to_server = [
-            'columnName' => 'column',
-            'includedColumns' => 'included_columns'
-        ];
+    // public function standardizeRequestData($data)
+    // {
+    //     $client_to_server = [
+    //         'columnName' => 'column',
+    //         'includedColumns' => 'included_columns'
+    //     ];
 
-        foreach ($client_to_server as $client_value => $server_value)
-            if (array_key_exists($client_value, $data)) {
-                $data[$server_value] = $data[$client_value];
-                unset($data[$client_value]);
-            }
+    //     foreach ($client_to_server as $client_value => $server_value)
+    //         if (array_key_exists($client_value, $data)) {
+    //             $data[$server_value] = $data[$client_value];
+    //             unset($data[$client_value]);
+    //         }
 
-        return $data;
-    }
+    //     return $data;
+    // }
 
     protected function setGetterDefaults($data = [])
     {

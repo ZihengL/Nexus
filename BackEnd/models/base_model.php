@@ -50,12 +50,9 @@ class BaseModel
 
     public function getKeysDetails($is_internal_keys = true)
     {
-        $database = self::$database;
-
         $table = "TABLE_NAME AS 'table'";
         $external = "COLUMN_NAME AS 'external'";
         $internal = "COLUMN_NAME AS 'internal'";
-
         $table_condition = "TABLE_NAME = '{$this->table}'";
 
         if ($is_internal_keys) {
@@ -67,6 +64,7 @@ class BaseModel
             $table_condition = "REFERENCED_$table_condition";
         }
 
+        $database = self::$database;
         $sql = "SELECT 
                     $table, $external, $internal
                 FROM 
@@ -258,17 +256,24 @@ class BaseModel
         return $this->bindingQuery($sql, $params);
     }
 
+    public function getCount()
+    {
+    }
+
 
     /*******************************************************************/
     /************************* SELECTION LAYER *************************/
     /*******************************************************************/
 
-    public function buildSelectionLayer($included_columns = [], $join_keys = [])
+    public function buildSelectionLayer($included_columns = [], $joined_tables = [])
     {
         $columns = $this->parseColumns($included_columns);
-        ['selects' => $selects, 'joins' => $joins, 'group' => $group] = $this->parseJoinedTables($join_keys);
+        ['selects' => $selects, 'joins' => $joins, 'group' => $group] = $this->parseJoinedTables($joined_tables);
 
-        $selections = "SELECT $columns $selects FROM {$this->table} $joins";
+        $selections = "SELECT 
+                            -- (SELECT COUNT(DISTINCT {$this->table}.id) OVER() AS 'total', 
+                            $columns $selects 
+                        FROM {$this->table} $joins";
         return ['selections' => $selections, 'group' => $group];
     }
 

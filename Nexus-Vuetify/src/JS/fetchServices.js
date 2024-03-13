@@ -1,5 +1,6 @@
 import { fetchData } from "./fetch";
 import * as services from "./fetchServices/services";
+import StorageManager from "./localStorageManager";
 
 
 export const getOne = async (table, column, value, includedColumns = null, sorting = null, joined_tables = null) => {
@@ -73,8 +74,11 @@ export const loginService = async (login) => {
   let body = {
     login
   }
+  const email = login.email.value;
+  const password = login.password.value
   //console.log(body)
-  let data = await fetchData("users", "login", null, null, null, null, body, "POST");
+  // let data = await fetchData("users", "login", null, null, null, null, body, "POST");
+  const data = await services.login(email, password);
   return data
 };
 
@@ -82,7 +86,8 @@ export const logoutService = async (logout) => {
   let body = {
     logout
   }
-  let data = await fetchData("users", "logout", null, null, null, null, body, "POST");
+  // let data = await fetchData("users", "logout", null, null, null, null, body, "POST");
+  const data = await services.logout();
   return data
 };
 
@@ -118,8 +123,11 @@ const deleteGamesAndrelationships = async (jsonObject) => {
   return false
 };
 
+// NEXT 2 FUNCTIONS BELOW ARE FOR PARSING JOINS
+// CUZ THE DATA IS CONCATENATED INTO A STRING
+
 // SEPARATOR FOR ROWS = '|'
-// SEPARATOR FOR COLUMNS = ','
+// SEPARATOR FOR COLUMNS = ';'
 // SEPARATOR BETWEEN COLUMN NAME AND DATA = ':'
 export const parseDetails = (details) => {
   const rows = details.split('|');
@@ -152,11 +160,8 @@ export const parseJoins = (result, keys) => {
   return result;
 }
 
-    // SEPARATOR FOR ROWS = '|'
-    // SEPARATOR FOR COLUMNS = ','
-    // SEPARATOR BETWEEN COLUMN NAME AND DATA = ':'
 export const getAllGamesWithDeveloperNameNEW = async (column = null, value = null, includedColumns = null, sorting = null, paging = null) => {
-  const joined_tables = { users: ['id', 'username'] };
+  const joined_tables = { users: ['id', 'username', 'picture', 'isOnline']};
 
   let result = await getAll('games', column, value, includedColumns, sorting, joined_tables, paging);
   if (result) {
@@ -167,8 +172,8 @@ export const getAllGamesWithDeveloperNameNEW = async (column = null, value = nul
 }
 
 export const getGameDetailsWithDeveloperNameNEW = async (gameID) => {
-  const joined_tables = { users: ['id', 'username'] };
-
+  const joined_tables = { sers: ['id', 'username', 'picture', 'isOnline']};
+  
   let result = await getOne('games', 'id', gameID, null, null, joined_tables);
   if (result) {
     return parseJoins(result, joined_tables);
@@ -254,7 +259,14 @@ export const createReviews = async (table, createData) => {
   let body = {
     createData
   }
-  let data = await fetchData(table, "create", null, null, null, null, body, "POST");
+  // let data = await fetchData(table, "create", null, null, null, null, body, "POST");
+  const data = await services.fetchData(table, 'create', {
+    credentials: {
+      id: StorageManager.getIdDev,
+      tokens: StorageManager.getTokens
+    },
+    request_data: createData
+  })
   return data;
 };
 
@@ -265,25 +277,28 @@ export const getReviews = async (gameID) => {
 export const getReviewsAndUsernames = async (gameID, sorting) => {
   // console.log(" getReviewsAndUsernames sorting : ", sorting)
   // console.log(" getReviewsAndUsernames gameID : ", gameID)
+
+  const joined_tables = {users: ['id', 'username', 'picture', 'isOnline']};
+
   const reviews = await getAll("reviews", "gameID", gameID, null, sorting, null);
 
-  if (reviews && reviews.length) {
-    const reviewsWithUsernames = await Promise.all(reviews.map(async (review) => {
-      if (review.userID) {
-        const userDetails = await getUsername(review.userID);
-        if (userDetails) {
-          review.username = userDetails.username;
-          review.profilePic = userDetails.picture;
-        }
-      }
+  // if (reviews && reviews.length) {
+  //   const reviewsWithUsernames = await Promise.all(reviews.map(async (review) => {
+  //     if (review.userID) {
+  //       const userDetails = await getUsername(review.userID);
+  //       if (userDetails) {
+  //         review.username = userDetails.username;
+  //         review.profilePic = userDetails.picture;
+  //       }
+  //     }
 
-      return review;
-    }));
+  //     return review;
+  //   }));
 
-    return reviewsWithUsernames;
-  }
+  //   return reviewsWithUsernames;
+  // }
 
-  return reviews;
+  // return reviews;
 };
 
 export const getGameReviewsUsernames = async (gameID, sorting = null) => {
