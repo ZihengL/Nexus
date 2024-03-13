@@ -39,8 +39,7 @@ export const parseJoins = (result, keys) => {
   return result;
 }
 
-
-export const getOne = async (table, column, value, includedColumns = null, sorting = null, joined_tables = null) => {
+export const getOne = async (table, column, value, includedColumns = null, joined_tables = null) => {
   // let data = await fetchData(table, "getOne", column, value, includedColumns, sorting, null, "GET");
 
   const preppedBody = services.prepGetOne(column, value, includedColumns, joined_tables);
@@ -119,8 +118,9 @@ export const updateData = async(table, updateData) => {
 
 export const registerService = async (createData) => {
   console.log('registerService createData : ' ,createData);
+  // let data = await create("users", createData);
 
-  let data = await create("users", createData);
+  let data = await services.create("users", createData);
   return data
 };
 
@@ -206,17 +206,10 @@ export const createReviewsNEW = async (table, createData) => {
   });
 };
 
-// export const getGameWithAllDetails = async (gameID) => {
-//   const joined_tables = { 
-//     users: ['id', 'username', 'picture', 'isOnline'],
-//     reviews:
-//   };
-// }
-
 export const getGamesForCarousel = async () => {
   const filters = { ratingAverage: {gt: 1, lte: 7}};
   const sorting = { id: true };
-  const included_columns = ['id', 'developerID', 'title', 'files'];
+  const included_columns = ['id', 'developerID', 'title', 'files', ''];
   const joined_tables = {
       users: ['id', 'username', 'picture', 'isOnline'],
       tags: ['id', 'name']
@@ -225,6 +218,7 @@ export const getGamesForCarousel = async () => {
 
   return await getAllMatching('games', filters, included_columns, sorting, joined_tables, paging);
 }
+
 
 /***************************************************/
 
