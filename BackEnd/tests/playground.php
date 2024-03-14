@@ -176,6 +176,25 @@ $data = [
 $result = parse('games', 'getOne', $data);
 printall($result);
 
+echo "<hr><h4>GAME WITH DEVELOPER, REVIEWS, AND TAGS</h4>";
+$data = [
+    // 'paging' => ['limit' => 4, 'offset' => 0],
+    'column' => 'id',
+    'value' => 2,
+    'joined_tables' => ['users' => ['id', 'username'], 'reviews' => [], 'tags' => []]
+];
+
+$result = parse('games', 'getAllMatching', $data);
+printall($result);
+
+echo "<hr>count test<br>";
+
+$result = parse('users', 'countAll', ['column' => 'isOnline', 'value' => false]);
+printall($result);
+
+$result = parse('users', 'countAllMatching', ['filters' => ['isOnline', 'value' => false]]);
+printall($result);
+
 // printall($gamestags_ctrl->getGamesWith(['users' => true, 'tags' => true]));
 
 

@@ -79,7 +79,7 @@ class BaseModel
         return $keys_details;
     }
 
-    // WHEN REFERENCED TABLE ISN'T DIRECTLY WITHIN SELF OR REFFED TABLE (MANY 2 MANY)
+    // WHEN REFERENCING MULTIPLE ROWS INDIRECTLY (MANY 2 MANY)
     public function getCompositeModel($ref_table)
     {
         foreach (self::$models as $model)
@@ -224,7 +224,7 @@ class BaseModel
         return $this->query($sql, [$value])->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [], $paging = [])
+    public function getAll($column = null, $value = null, $included_columns = [], $sorting = [], $joined_tables = [], $paging = [], $count = false)
     {
         ['selections' => $selections, 'group' => $group] = $this->buildSelectionLayer($included_columns, $joined_tables);
 
@@ -241,7 +241,7 @@ class BaseModel
         return $this->query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [], $paging = [])
+    public function getAllMatching($filters = [], $sorting = [], $included_columns = [], $joined_tables = [], $paging = [], $count = false)
     {
         ['selections' => $selections, 'group' => $group] = $this->buildSelectionLayer($included_columns, $joined_tables);
         ['sql' => $filtering_sql, 'params' => $params] = $this->applyFilters($filters);
@@ -256,8 +256,19 @@ class BaseModel
         return $this->bindingQuery($sql, $params);
     }
 
-    public function getCount()
+    public function countAll($column, $value)
     {
+        $sql = "SELECT COUNT(*) FROM {$this->table} WHERE $column = ?";
+
+        return $this->query($sql, [$value])->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countAllMatching($filters = [])
+    {
+        ['sql' => $filtering_sql, 'params' => $params] = $this->applyFilters($filters);
+        $sql = "SELECT COUNT(*) FROM {$this->table} WHERE 1 = 1 $filtering_sql";
+
+        return $this->bindingQuery($sql, $params);
     }
 
 
@@ -270,7 +281,6 @@ class BaseModel
         $columns = $this->parseColumns($included_columns);
         ['selects' => $selects, 'joins' => $joins, 'group' => $group] = $this->parseJoinedTables($joined_tables);
 
-        // -- (SELECT COUNT(DISTINCT {$this->table}.id) OVER() AS 'total', 
         $selections = "SELECT 
                             $columns $selects 
                         FROM {$this->table} $joins";
@@ -286,7 +296,6 @@ class BaseModel
     }
 
     // COMPOSITE SELECT (MANY-TO-MANY)
-
     public function getCompositeSelections($table, $included_columns = [])
     {
         ['internal' => $internal, 'external' => $external] = $this->keys[$table];
@@ -304,7 +313,6 @@ class BaseModel
         return $selections;
     }
 
-    //TODO: IF HAS TIME, RESERVE THOSE 3 CHARS WHEN USERS TRY TO USE IT FOR INPUTS
     // SEPARATOR FOR ROWS = '|'
     // SEPARATOR FOR COLUMNS = ','
     // SEPARATOR BETWEEN COLUMN NAME AND DATA = ':'

@@ -34,15 +34,6 @@ class ReviewsController extends BaseController
     /***************************** GETTERS *****************************/
     /*******************************************************************/
 
-    // public function getAllMatching(...$data)
-    // {
-    //     // if (empty($sorting)) {
-    //     //     $sorting = [$this->rating => true];
-    //     // }
-
-    //     return parent::getAllMatching(...$data);
-    // }
-
     // public function create($tokens = null, ...$data)
     public function create($data)
     {

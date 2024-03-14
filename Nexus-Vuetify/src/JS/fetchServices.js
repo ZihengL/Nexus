@@ -202,7 +202,7 @@ export const getReviewsAndUsernamesNEW = async (gameID, sorting, paging = null) 
 export const getGamesForCarousel = async () => {
   const filters = { ratingAverage: {gt: 1, lte: 7}};
   const sorting = { id: true };
-  const included_columns = ['id', 'developerID', 'title', 'files', ''];
+  const included_columns = ['id', 'developerID', 'title', 'releaseDate', 'ratingAverage'];
   const joined_tables = {
       users: ['id', 'username', 'picture', 'isOnline'],
       tags: ['id', 'name']
@@ -210,7 +210,6 @@ export const getGamesForCarousel = async () => {
   const paging = { limit: 4, offset: 0};
 
   let data = await getAllMatching('games', filters, included_columns, sorting, joined_tables, paging);
-  
   return fetchGameImages(data);
 }
 

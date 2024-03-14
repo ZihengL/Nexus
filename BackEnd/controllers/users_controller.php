@@ -24,6 +24,7 @@ class UsersController extends BaseController
         $this->model = new UsersModel($pdo);
         $this->restricted_columns = ['password', 'email', 'phoneNumber', 'isAdmin'];
         $specific_actions = [
+            'authenticate' => false,
             'login' => false,
             'logout' => true,
             'update' => true,
@@ -44,45 +45,16 @@ class UsersController extends BaseController
         return $this->model->getOne(column: $this->email, value: $email);
     }
 
-    // OTHER CRUDS
-
-    // Returns tokens to log the user in
-    // TODO: CREATE USER FOLDER
-    // public function create($data)
-    // {
-    //     if ($this->model->create($data)) {
-    //         $user = $this->model->getOne($this->email, $data[$this->email]);
-
-    //         if ($user) {
-
-    //             return true;
-    //         }
-    //     }
-
-    //     return false;
-    // }
-
-    // public function update($id, $tokens = null, ...$data)
-    // {
-
-    //     if ($validated_tokens = $this->authenticateUser($id, $tokens)) {
-    //         $this->model->update(id: $id, data: $data);
-
-    //         return $validated_tokens;
-    //     }
-
-    //     return false;
-    // }
-
-    // public function delete($id, $tokens = null, ...$data)
-    // public function delete($data)
-    // {
-    //     [$tokens, $data] = getOneFromData('tokens', $data, true);
-
-    //     return $this->validateUser($id, $tokens) && $this->model->delete($id);
-    // }
-
     //  ACCESS & SECURITY
+
+    public function authenticate($data)
+    {
+        ['id' => $id, 'tokens' => $tokens] = $data;
+
+        if ($authenticated_tokens = $this->authenticateUser($id, $tokens)) {
+            return $authenticated_tokens;
+        }
+    }
 
     // Do this if user needs to do a fresh login
     public function login($data)
@@ -93,6 +65,8 @@ class UsersController extends BaseController
 
         $tokens_controller = $this->getTokensController();
         if ($tokens = $tokens_controller->generateTokensOnValidation($user, $email, $password)) {
+            $this->model->update($user['id'], ['isOnline' => true]);
+
             return ['user' => $user, 'tokens' => $tokens];
         }
 
@@ -101,8 +75,9 @@ class UsersController extends BaseController
 
     public function logout($data)
     {
-        $tokens = $data['tokens'];
+        ['id' => $id, 'tokens' => $tokens] = $data;
 
-        return $this->getTokensController()->revokeAccess(tokens: $tokens);
+        return $this->getTokensController()->revokeAccess(tokens: $tokens) &&
+            $this->model->update($id, ['isOnline' => false]);
     }
 }
