@@ -219,7 +219,7 @@ const filterNulls = (obj) => {
   }, {});
 };
 
-export function prepGetOne(column, value, included_columns = null, joined_tables = null) {
+export function prepGetOne(column, value, included_columns = [], joined_tables = []) {
   return filterNulls({
     column: column,
     value: value,
@@ -228,7 +228,7 @@ export function prepGetOne(column, value, included_columns = null, joined_tables
   });
 }
 
-export function prepGetAll(column = null, value = null, included_columns = null, sorting = null, joined_tables = null, paging = null) {
+export function prepGetAll(column = null, value = null, included_columns = [], sorting = [], joined_tables = [], paging = []) {
   return filterNulls({
     column: column,
     value: value,
@@ -239,7 +239,7 @@ export function prepGetAll(column = null, value = null, included_columns = null,
   });
 }
 
-export function prepGetAllMatching(filters = null, sorting = null, included_columns = null, joined_tables = null, paging = null) {
+export function prepGetAllMatching(filters = [], sorting = [], included_columns = [], joined_tables = [], paging = []) {
   const res = filterNulls({
     filters: filters,
     included_columns: included_columns,

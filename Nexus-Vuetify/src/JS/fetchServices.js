@@ -56,7 +56,7 @@ export const getOne = async (table, column, value, includedColumns = null, joine
   return null;
 };
 
-export const getAll = async (table, column = null, value = null, includedColumns = [], sorting = [], joined_tables = [], paging = []) => {
+export const getAll = async (table, column = null, value = null, includedColumns = null, sorting = null, joined_tables = null, paging = null) => {
   // let data = await fetchData(table, "getAll", column, value, includedColumns, sorting, null, "GET");
 
   const preppedBody = services.prepGetAll(column, value, includedColumns, sorting, joined_tables, paging);
@@ -64,13 +64,13 @@ export const getAll = async (table, column = null, value = null, includedColumns
   let result = await services.getAll(table, preppedBody);
 
   if (result) {
-    return joined_tables && joined_tables.length > 0 ? parseJoins(result, joined_tables) : result;
+    return joined_tables ? parseJoins(result, joined_tables) : result;
   }
 
   return null;
 };
 
-export const getAllMatching = async (table, filters,  includedColumns = [], sorting = [], joined_tables = [], paging = []) => {
+export const getAllMatching = async (table, filters,  includedColumns = null, sorting = null, joined_tables = null, paging = null) => {
   // let body = {
   //   filters,
   //   sorting,
@@ -84,7 +84,7 @@ export const getAllMatching = async (table, filters,  includedColumns = [], sort
   let result = await services.getAllMatching(table, preppedBody);
 
   if (result) {
-    return joined_tables && joined_tables.length > 0 ? parseJoins(result, joined_tables) : result;
+    return joined_tables ? parseJoins(result, joined_tables) : result;
   }
 
   return null;
@@ -193,12 +193,14 @@ export const getTags = async () => {
   return data
 };
 
+// GetAll
 export const getAllGamesWithDeveloperNameNEW = async (column = null, value = null, includedColumns = null, sorting = null, paging = null) => {
   const joined_tables = { users: ['id', 'username', 'picture', 'isOnline'], tags: ['id', 'name'] };
   let data = await getAll('games', column, value, includedColumns, sorting, joined_tables, paging);
   return fetchGameImages(data);
 }
 
+// GetOne
 export const getGameDetailsWithDeveloperNameNEW = async (gameID) => {
   const joined_tables = { users: ['id', 'username', 'picture', 'isOnline'], tags: ['id', 'name'] };
   let data = await getOne('games', 'id', gameID, null, null, joined_tables);
