@@ -50,8 +50,6 @@ export const parseJoins = (result, keys) => {
 }
 
 export const getOne = async (table, column, value, includedColumns = null, joined_tables = null) => {
-  // let data = await fetchData(table, "getOne", column, value, includedColumns, sorting, null, "GET");
-
   const preppedBody = services.prepGetOne(column, value, includedColumns, joined_tables);
   let result = await services.getOne(table, preppedBody);
 
@@ -78,15 +76,6 @@ export const getAll = async (table, column = null, value = null, includedColumns
 };
 
 export const getAllMatching = async (table, filters,  includedColumns = null, sorting = null, joined_tables = null, paging = null) => {
-  // let body = {
-  //   filters,
-  //   sorting,
-  //   includedColumns
-  // }
-
-  // let data = await fetchData(table, "getAllMatching", null, null, null, null, body, "POST");
-  // return data
-
   const preppedBody = services.prepGetAllMatching(filters, includedColumns, sorting, joined_tables, paging);
   let result = await services.getAllMatching(table, preppedBody);
 
@@ -98,29 +87,18 @@ export const getAllMatching = async (table, filters,  includedColumns = null, so
 };
 
 export const create = async (table, createData) => {
-  let body = {
-    createData
-  }
-  // let data = await fetchData(table, "create", null, null, null, null, body, "POST");
   const data = await services.fetchData(table, "create", createData);
   return data;
 };
 
 export const deleteData = async(table, deleteData) => {
-  let body = {
-    deleteData
-  }
-  // let data = await fetchData(table, "delete", null, null, null, null, body, "POST");
   const data = await services.fetchData(table, "delete", deleteData);
   return data;
 };
 
 export const updateData = async(table, updateData) => {
-  let body = {
-    updateData
-  }
-  // let data = await fetchData(table, "update", null, null, null, null, body, "POST");
-  const data = await services.fetchData(table, "update", deleteData);
+
+  const data = await services.fetchData(table, "update", updateData);
   return data;
 };
 
@@ -137,9 +115,6 @@ export const registerService = async (createData) => {
 };
 
 export const loginService = async (login) => {
-  // const email = login.email;
-  // const password = login.password;
-
   const data = await services.fetchData('users', 'login', login);
   if (data) {
     StorageManager.setIdDev(data.user.id);
@@ -151,13 +126,7 @@ export const loginService = async (login) => {
 };
 
 export const logoutService = async (logout) => {
-  let body = {
-    logout
-  }
-  // let data = await fetchData("users", "logout", null, null, null, null, body, "POST");
-  const data = await services.fetchData('users', 'logout', {
-
-  });
+  const data = await services.fetchData('users', 'logout', services.getAuthentificationCredentials());
 
   return data
 };
@@ -183,20 +152,6 @@ export const getPaging = (maxPerPage, currentPage) => {
 /*******************************************************************/
 /****************************** GAMES ******************************/
 /*******************************************************************/
-
-const deleteGamesAndrelationships = async (jsonObject) => {
-  const gameId = jsonObject["gameId"];
-  const game = await getOne("games", "id", gameId);
-  if (game) {
-    await deleteData("games", jsonObject);
-    const gamesTags = await getAll("gamesTags", "gameId", gameId);
-    for (const game_tag of gamesTags) {
-      await deleteData("gamesTags", { gameId: game_tag.gameId });
-    }
-    return true
-  }
-  return false
-};
 
 export const getGameDetails = async (idGame) => {
   let data = await getAll("games", "id", idGame);
@@ -278,7 +233,7 @@ export const fetchGameImages  = async (games) => {
   }
 }
 
-export const fetchOneGameImages  = async (data) => {
+export const fetchOneGameImages = async (data) => {
   let gameId = data.id;
   try {
     const imagePath = `Games/${gameId}/media/${gameId}_Store.png`;
@@ -309,6 +264,20 @@ export const countAllMatching = async (table, filters = []) => {
 }
 
 /***************************************************/
+
+const deleteGamesAndrelationships = async (jsonObject) => {
+  const gameId = jsonObject["gameId"];
+  const game = await getOne("games", "id", gameId);
+  if (game) {
+    await deleteData("games", jsonObject);
+    const gamesTags = await getAll("gamesTags", "gameId", gameId);
+    for (const game_tag of gamesTags) {
+      await deleteData("gamesTags", { gameId: game_tag.gameId });
+    }
+    return true
+  }
+  return false
+};
 
 export const getAllGamesWithDeveloperName = async (column = null, value = null, includedColumns = null, sorting = null, joined_tables = null, paging = null) => {
   try {

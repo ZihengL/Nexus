@@ -490,8 +490,8 @@ export default {
       // const result2 = await services.getGamesForCarousel();
       // console.log("CAROUSEL", result2);
       
-      // const result3 = await services.getReviewsAndUsernamesNEW();
-      // console.log("REVIEWS", result3);
+      const result3 = await services.getReviewsAndUsernamesNEW();
+      console.log("REVIEWS", result3);
 
       // const tags = await services.getAll('tags');
       // console.log('tags', tags);
