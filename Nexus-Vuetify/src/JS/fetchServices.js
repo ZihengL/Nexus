@@ -264,6 +264,16 @@ export const fetchOneGameImages  = async (gameId) => {
   }
 }
 
+/*** COUNT ***/
+
+export const countAll = async (table, column = null, value = null) => {
+  return await services.fetchData(table, 'countAll', {column: column, value: value});
+}
+
+export const countAllMatching = async (table, filters = []) => {
+  return await services.fetchData(table, 'countAllMatching', {filters: filters});
+}
+
 /***************************************************/
 
 export const getAllGamesWithDeveloperName = async (column = null, value = null, includedColumns = null, sorting = null, joined_tables = null, paging = null) => {

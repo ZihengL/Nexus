@@ -3,7 +3,7 @@
 class BaseModel
 {
     public static $database;
-    public static $print_errors = true;
+    public static $print_errors = false;
 
     protected static $models = [];
 

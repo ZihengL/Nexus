@@ -300,7 +300,7 @@ class BaseController
 
     public function countAllMatching($data)
     {
-        $filters = getFromData(['filters'], $data);
+        $filters = $this->getDefault('filters', getFromData(['filters'], $data));
 
         return $this->model->countAllMatching($filters);
     }

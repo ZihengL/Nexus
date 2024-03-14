@@ -96,26 +96,19 @@ function getFromData($keys, $data)
         if (isset($data[$key])) {
             array_push($items, $data[$key]);
         } else {
-            throw new Exception("Missing '$key' parameter in request data.");
+            throw new Exception("Mandatory parameter '$key' is missing in request data.");
         }
 
     return [...$items];
 }
 
-function getOneFromData($key, $data, $unset = false)
+function getOneFromData($key, $data)
 {
-    if (isset($data[$key])) {
-        $item = $data[$key];
+    if (isset($data[$key]))
+        return $data[$key];
 
-        if ($unset) {
-            unset($data[$key]);
-            return [$item, $data];
-        }
 
-        return $item;
-    }
-
-    throw new Exception("Missing '$key' parameter for request in data: " . unwrap($data));
+    throw new Exception("Mandatory parameter '$key' is missing in request data.");
 }
 
 function areSet($array, $keys)
