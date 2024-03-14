@@ -49,10 +49,10 @@ class UsersController extends BaseController
 
     public function authenticate($data)
     {
-        ['id' => $id, 'tokens' => $tokens] = $data;
+        ['id' => $id, 'refresh_token' => $refresh_token] = $data;
 
-        if ($authenticated_tokens = $this->authenticateUser($id, $tokens)) {
-            return $authenticated_tokens;
+        if ($access_token = $this->authenticateUser($id, $refresh_token)) {
+            return $access_token;
         }
     }
 
@@ -75,9 +75,9 @@ class UsersController extends BaseController
 
     public function logout($data)
     {
-        ['id' => $id, 'tokens' => $tokens] = $data;
+        ['id' => $id, 'refresh_token' => $refresh_token] = $data;
 
-        return $this->getTokensController()->revokeAccess(tokens: $tokens) &&
+        return $this->getTokensController()->revokeRefreshToken($refresh_token) &&
             $this->model->update($id, ['isOnline' => false]);
     }
 }

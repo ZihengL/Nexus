@@ -155,7 +155,10 @@ export const logoutService = async (logout) => {
     logout
   }
   // let data = await fetchData("users", "logout", null, null, null, null, body, "POST");
-  const data = await services.logout();
+  const data = await services.fetchData('users', 'logout', {
+
+  });
+
   return data
 };
 
@@ -238,7 +241,6 @@ export const getGamesForCarousel = async () => {
     };
 
   let paging = { limit: 4, offset: 0};
-  
 
   let data = await getAllMatching('games', filters, included_columns, sorting, joined_tables, paging);
   return fetchGameImages(data);
@@ -276,7 +278,6 @@ export const fetchGameImages  = async (games) => {
     return []; // Return an empty array in case of error
   }
 }
-
 
 export const fetchOneGameImages  = async (data) => {
   let gameId = data.id;

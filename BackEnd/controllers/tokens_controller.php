@@ -96,9 +96,9 @@ class TokensController extends BaseController
         return JWT::encode($payload, $this->access_key, $this->encoding_alg);
     }
 
-    private function refreshAccessToken($refresh_jwt)
+    protected function refreshAccessToken($refresh_token)
     {
-        if ($decoded = $this->decodeToken($refresh_jwt, true))
+        if ($decoded = $this->decodeToken($refresh_token, true))
             return $this->generateAccessToken($decoded[self::SUB]);
 
         return null;
@@ -153,36 +153,47 @@ class TokensController extends BaseController
     }
 
     // Doesn't refresh access; revokes all access from user if not valid
-    public function validateTokens($user_id, $jwts)
-    {
-        [self::ACCESS =>  $access_token, self::REFRESH => $refresh_token] = $jwts + [null, null];
+    // public function validateTokens($user_id, $jwts)
+    // {
+    //     [self::ACCESS =>  $access_token, self::REFRESH => $refresh_token] = $jwts + [null, null];
 
-        if (($access_token && $this->validateAccessToken($access_token)) ||
-            ($refresh_token && $this->validateRefreshToken($user_id, $refresh_token))
-        ) {
-            return true;
-        }
+    //     if (($access_token && $this->validateAccessToken($access_token)) ||
+    //         ($refresh_token && $this->validateRefreshToken($user_id, $refresh_token))
+    //     ) {
+    //         return true;
+    //     }
 
-        $this->revokeAccess(id: $user_id);
-        throw new Exception("Invalid authentication tokens provided for User id '$user_id'.");
-    }
+    //     $this->revokeAccess(id: $user_id);
+    //     throw new Exception("Invalid authentication tokens provided for User id '$user_id'.");
+    // }
+
+    // public function validateAccess($user_id, $access_token)
+    // {
+    //     if ($this->validateAccessToken($access_token)) {
+    //         return true;
+    //     }
+
+    //     throw new Exception("Invalid authentication tokens provided for User id '$user_id'.");
+    // }
 
     // Refreshes access
-    public function authenticateTokens($user_id, $jwts)
-    {
-        [self::ACCESS =>  $access_token, self::REFRESH => $refresh_token] = $jwts + [null, null];
+    // public function authenticateTokens($user_id, $refresh_token)
+    // {
+    //     // [self::ACCESS =>  $access_token, self::REFRESH => $refresh_token] = $jwts + [null, null];
 
-        if ($access_token && $this->validateAccessToken($access_token))
-            return $jwts;
 
-        if ($refresh_token && $this->validateRefreshToken($user_id, $refresh_token)) {
-            $jwts[self::ACCESS] = $this->refreshAccessToken($refresh_token);
-            return $jwts;
-        }
+    //     // if ($access_token && $this->validateAccessToken($access_token))
+    //     //     return $jwts;
 
-        $this->revokeAccess(id: $user_id);
-        throw new Exception("Invalid authentication tokens provided for User id '$user_id'.");
-    }
+    //     if ($refresh_token && $this->validateRefreshToken($user_id, $refresh_token)) {
+    //         return $this->refreshAccessToken($refresh_token);
+    //         // $jwts[self::ACCESS] = $this->refreshAccessToken($refresh_token);
+    //         // return $jwts;
+    //     }
+
+    //     $this->getUsersController()->logout(['id' => $user_id, 'refresh_token' => $refresh_token]);
+    //     throw new Exception("Invalid authentication tokens provided for User id '$user_id'.");
+    // }
 
     public function revokeAccess($id = null, $tokens = null)
     {
@@ -190,6 +201,18 @@ class TokensController extends BaseController
 
         return ($tokens && $this->deleteByHash($tokens)) ||
             ($id && $this->deleteAllFromUser($id));
+    }
+
+    public function revokeAllAccess($user_id) {
+        return $this->deleteAllFromUser($user_id);
+    }
+
+    protected function revokeRefreshToken($refresh_token) {
+        if ($stored = $this->getBySha($refresh_token)) {
+            return $this->model->delete($stored['id']);
+        }
+
+        throw new Exception("Refresh token not found.");
     }
 
 
