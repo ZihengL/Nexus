@@ -157,18 +157,18 @@ const toggleLogout = async () => {
   // };
 
   let results = await logoutService();
-  if (results !== false) {
-    loginTokens_access_token = "";
-    loginTokens_refresh_token = "";
+  // if (results !== false) {
+  //   loginTokens_access_token = "";
+  //   loginTokens_refresh_token = "";
 
-    // localStorage.removeItem("accessToken");
-    storageManager.clearAccessToken();
-    // localStorage.removeItem("refreshToken");
-    storageManager.clearRefreshToken();
-    // localStorage.removeItem("idDev");
-    storageManager.clearIdDev();
-  }
-  console.log(results);
+  //   // localStorage.removeItem("accessToken");
+  //   storageManager.clearAccessToken();
+  //   // localStorage.removeItem("refreshToken");
+  //   storageManager.clearRefreshToken();
+  //   // localStorage.removeItem("idDev");
+  //   storageManager.clearIdDev();
+  // }
+  // console.log(results);
   emit("showLogin");
 };
 
