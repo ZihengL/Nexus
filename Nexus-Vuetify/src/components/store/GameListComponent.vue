@@ -59,14 +59,15 @@ const gameList_data = reactive({
 watch(
   () => props.gameList,
   (newVal, oldVal) => {
-    console.log('game liste get : ', newVal)
+    console.log('game liste get w : ', newVal)
+    //window.location.reload();
   },
   { deep: true }
 );
 
 onMounted(async () => {
   
-  console.log('game liste get : ', props.gameList)
+  console.log('game liste get m : ', props.gameList)
 });
 </script>
 

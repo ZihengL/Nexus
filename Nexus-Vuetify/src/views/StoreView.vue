@@ -87,35 +87,43 @@ const getNbPage = () => {
   //emit('pageNb');
   paginationNb = PaginationManager.getStorePage();
   
-  console.log('newww ', paginationNb);
-  let max = paginationNb * nbMax;
-  if (count < nbMax) {
-    max = count;
-  }
-  let min = max - nbMax;
-  let paging = {limit: nbMax, offset: min};
+  // console.log('newww ', paginationNb);
+  // let max = paginationNb * nbMax;
+  // if (count < nbMax) {
+  //   max = count;
+  // }
+  // let min = max - nbMax;
+  // let paging = {limit: nbMax, offset: min};
   
-  console.log('min ', min);
-  console.log('max ', max);
-  store_data.gameList_result = getAllGamesWithDeveloperNameNEW(null, null, null, sorting, paging);
+  // console.log('min ', min);
+  // console.log('max ', max);
+  // store_data.gameList_result = getAllGamesWithDeveloperNameNEW(null, null, null, sorting, paging);
     
-    console.log('liste jeux new ', store_data.gameList_result);
+  console.log('liste jeux new ', store_data.gameList_result);
+  //window.location.reload();
  }
 
-// watch(
-//   () => paginationNb,
-//   (newVal, oldVal) => {
-//     let max = newVal * nbMax;
-//     let paging = {limit: nbMax, offset: max};
-//     store_data.gameList_result = getAllGamesWithDeveloperNameNEW(null, null, null, sorting, paging);
-    
-//     console.log('liste jeux new ', store_data.gameList_result);
-//   },
-//   { deep: true }
-// );
+ watch(
+  () => paginationNb,
+  async (newVal, oldVal) => {
+    // Récupérer la nouvelle valeur de paginationNb de manière asynchrone
+    console.log('pg new: ', paginationNb)
+
+    // Calculer le paging en fonction de nbMax et paginationNb
+    let paging = getPaging(nbMax, paginationNb);
+
+    // Appeler getAllGamesWithDeveloperNameNEW avec la nouvelle pagination
+    store_data.gameList_result = await getAllGamesWithDeveloperNameNEW(null, null, null, sorting, paging);
+
+    // Afficher le résultat
+    console.log('liste jeux new ', store_data.gameList_result);
+  },
+  { deep: true }
+);
+
 
 onMounted(async () => {
-
+  //paginationNb = PaginationManager.getStorePage();
   if(store_data.gameList_result.length === 0){
     sorting ={
       id:true
