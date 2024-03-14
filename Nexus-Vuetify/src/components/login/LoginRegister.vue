@@ -97,6 +97,7 @@
               placeholder="Confirmer le mot de passe *"
               required
             />
+            
           </div>
           <btnComp :contenu="'S\'inscrire'" @toggle-btn="toggleProfileSign()" />
         </form>
