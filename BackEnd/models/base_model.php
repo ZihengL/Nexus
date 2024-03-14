@@ -326,11 +326,7 @@ class BaseModel
         $joins = '';
 
         $column_pairs = array_map(function ($column) use ($table) {
-            // if (isset($this->keys[$column])) {
-
-            // } else {
             return "'$column:', $table.$column";
-            // }
         }, $included_columns);
         $columns = count($column_pairs) > 1 ? implode(",';',", $column_pairs) : implode("", $column_pairs);
 

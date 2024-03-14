@@ -12,7 +12,7 @@ const storage = getStorage();
 // SEPARATOR FOR ROWS = '|'
 // SEPARATOR FOR COLUMNS = ';'
 // SEPARATOR BETWEEN COLUMN NAME AND DATA = ':'
-export const parseDetails = (details) => {
+function parseDetails(details) {
   const rows = details.split('|');
 
   return rows.map(row => {
@@ -29,24 +29,22 @@ export const parseDetails = (details) => {
   });
 }
 
-export const parseJoins = (result, keys) => {
-  console.log('result', result);
-  console.log('keys', keys);
+function parseJoins(result, keys) {
+  for (var i in keys) {
+    const details = keys[i] + "_details";
+    
+    for (var j in result) {
+      const raw = result[j][details];
 
-  for (var key in keys) {
-    const detailsKey = key + "_details";
-
-    if (result.length > 1)
-      for (var index in result) {
-        const obj = result[index];
-
-        obj[key] = parseDetails(obj[detailsKey]);
-        delete obj[detailsKey];
+      if (raw) {
+        result[keys[i]] = parseDetails(raw);
+        delete result[j][details];
       }
-    else {
-      result[key] = parseDetails(result[detailsKey]);
-      delete result[detailsKey];
     }
+  // } else {
+  //   result[key] = parseDetails(result[details]);
+  //   delete result[details];
+  // }
   }
 
   return result;
@@ -54,25 +52,31 @@ export const parseJoins = (result, keys) => {
 
 export const getOne = async (table, column, value, includedColumns = null, joined_tables = null) => {
   const preppedBody = services.prepGetOne(column, value, includedColumns, joined_tables);
-  let result = await services.getOne(table, preppedBody);
+  let result = await services.fetchData(table, 'getOne', preppedBody);
 
   if (result) {
-    return joined_tables ? parseJoins(result, joined_tables) : result;
-
+    if (joined_tables) {
+      result = parseJoins(result, joined_tables);
+    }
+    
+    return result;
   }
 
   return null;
 };
 
 export const getAll = async (table, column = null, value = null, includedColumns = null, sorting = null, joined_tables = null, paging = null) => {
-  // let data = await fetchData(table, "getAll", column, value, includedColumns, sorting, null, "GET");
-
   const preppedBody = services.prepGetAll(column, value, includedColumns, sorting, joined_tables, paging);
-  console.log('body', preppedBody);
-  let result = await services.getAll(table, preppedBody);
+
+  let result = await services.fetchData(table, 'getAll', preppedBody);
+  console.log("BEFORE", result);
 
   if (result) {
-    return joined_tables ? parseJoins(result, joined_tables) : result;
+    if (joined_tables) {
+      result = parseJoins(result, Object.keys(joined_tables));
+    }
+    
+    return result;
   }
 
   return null;
@@ -83,7 +87,11 @@ export const getAllMatching = async (table, filters,  includedColumns = null, so
   let result = await services.getAllMatching(table, preppedBody);
 
   if (result) {
-    return joined_tables ? parseJoins(result, joined_tables) : result;
+    if (joined_tables) {
+      result = parseJoins(result, joined_tables);
+    }
+
+    return result;
   }
 
   return null;
@@ -139,7 +147,6 @@ export const logoutService = async () => {
 export const getUser = async (developerID) => {
   const joined_tables = {games: ['id', 'title', 'releaseDate', 'ratingAverage']};
   let data = await getOne("users", "id", developerID, null, joined_tables);
-  console.log('data ', data)
   return fetchGameImagesByDev(data);
 };
 

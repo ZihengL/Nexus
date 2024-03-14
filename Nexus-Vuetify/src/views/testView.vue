@@ -484,8 +484,8 @@ export default {
     },
 
     async testFetchJoins() {
-      const result = await services.getAllGamesWithDeveloperNameNEW();
-      console.log("GAMES W USERNAME", result);
+      // const result = await services.getAllGamesWithDeveloperNameNEW();
+      // console.log("GAMES W USERNAME", result);
 
       // const result2 = await services.getGamesForCarousel();
       // console.log("CAROUSEL", result2);
@@ -507,6 +507,12 @@ export default {
       // console.log(carousel);
 
       // const login = await services.login({})
+
+
+
+      const store = await services.getAllGamesWithDeveloperNameNEW(null, null, null, null, null);
+
+      console.log(store);
     }
   },
 };
