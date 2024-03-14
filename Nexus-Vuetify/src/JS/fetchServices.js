@@ -38,8 +38,11 @@ function parseJoins(result, keys) {
 
       if (raw !== null) {
         result[j][keys[i]] = parseDetails(raw);
-        delete result[j][detailsKey];
+      } else {
+        result[j][keys[i]] = [];
       }
+
+      delete result[j][detailsKey];
     }
   // } else {
   //   result[key] = parseDetails(result[details]);

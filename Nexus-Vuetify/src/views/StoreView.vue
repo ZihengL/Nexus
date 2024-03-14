@@ -102,7 +102,7 @@ const getNbPage = async () => {
 
 onMounted(async () => {
   //paginationNb = PaginationManager.getStorePage();
-  if(store_data.gameList_result.length === 0){
+  if (store_data.gameList_result.length === 0) {
     sorting ={
       id:true
     }
@@ -127,6 +127,7 @@ onMounted(async () => {
     store_data.gameList_result = await getAllGamesWithDeveloperNameNEW(null, null, null, sorting, paging);
     //let donne = await getAllGamesWithDeveloperNameNEW(null, null, null, sorting, paging);
     console.log('liste jeux old', store_data.gameList_result);
+
   }
 });
 </script>
