@@ -130,6 +130,9 @@ export const loginService = async (login) => {
 
 export const logoutService = async () => {
   const data = await services.fetchData('users', 'logout', services.getAuthentificationCredentials());
+  if (data) {
+    StorageManager.clearAll();
+  }
 
   return data;
 };
