@@ -31,14 +31,14 @@ function parseDetails(details) {
 
 function parseJoins(result, keys) {
   for (var i in keys) {
-    const details = keys[i] + "_details";
+    const detailsKey = keys[i] + "_details";
     
     for (var j in result) {
-      const raw = result[j][details];
+      const raw = result[j][detailsKey];
 
-      if (raw) {
-        result[keys[i]] = parseDetails(raw);
-        delete result[j][details];
+      if (raw !== null) {
+        result[j][keys[i]] = parseDetails(raw);
+        delete result[j][detailsKey];
       }
     }
   // } else {
@@ -67,9 +67,7 @@ export const getOne = async (table, column, value, includedColumns = null, joine
 
 export const getAll = async (table, column = null, value = null, includedColumns = null, sorting = null, joined_tables = null, paging = null) => {
   const preppedBody = services.prepGetAll(column, value, includedColumns, sorting, joined_tables, paging);
-
   let result = await services.fetchData(table, 'getAll', preppedBody);
-  console.log("BEFORE", result);
 
   if (result) {
     if (joined_tables) {
