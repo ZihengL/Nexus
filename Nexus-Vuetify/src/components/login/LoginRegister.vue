@@ -154,20 +154,20 @@ const toggleProfileLog = async () => {
     
     const loginResponse = await loginService(login);
    // const devId = await getOne("users", "email", email.value, ["id"])
-    //console.log('loginRegister devId : ', loginResponse)
+    console.log('loginRes: ', loginResponse)
 
     //console.log("Login successful : ", loginResponse);
     if (loginResponse !== false) {
-      //console.log("loginResponse : ", loginResponse);
-      // loginTokens_access_token = loginResponse.access_token;
-      // loginTokens_refresh_token = loginResponse.refresh_token;
-      // storageManager.setAccessToken(loginResponse.access_token)
-      // // localStorage.setItem("accessToken", loginResponse.access_token);
-      // storageManager.setRefreshToken(loginResponse.refresh_token)
-      // localStorage.setItem("refreshToken", loginResponse.refresh_token);
+      console.log("loginResponse : ", loginResponse);
+      loginTokens_access_token = loginResponse.access_token;
+      loginTokens_refresh_token = loginResponse.refresh_token;
+      storageManager.setAccessToken(loginResponse.access_token)
+      // localStorage.setItem("accessToken", loginResponse.access_token);
+      storageManager.setRefreshToken(loginResponse.refresh_token)
+      localStorage.setItem("refreshToken", loginResponse.refresh_token);
 
-      // localStorage.setItem("idDev", devId);
-      storageManager.setIdDev(loginResponse.id)
+      //localStorage.setItem("idDev", devId);
+      storageManager.setIdDev(loginResponse.user.id)
 
       console.log("devId : ", loginResponse.id);
       emit("showProfile");

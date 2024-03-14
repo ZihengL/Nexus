@@ -56,7 +56,7 @@ const store_data = reactive({
   gameList_result: [],
 });
 
-const nbMax = 3;
+const nbMax = 6;
 let nbPage = null;
 let paginationNb = 1;
 let count = 1;
@@ -83,39 +83,25 @@ const handleSearch = async (query) => {
   //console.log(" store_data.gameList_result: ", store_data.gameList_result);
 };
 
-const getNbPage = () => {
+const getNbPage = async () => {
   //emit('pageNb');
   paginationNb = PaginationManager.getStorePage();
   
-  console.log('newww ', paginationNb);
-  let max = paginationNb * nbMax;
-  if (count < nbMax) {
-    max = count;
-  }
-  let min = max - nbMax;
-  let paging = {limit: nbMax, offset: min};
-  
-  console.log('min ', min);
-  console.log('max ', max);
-  store_data.gameList_result = getAllGamesWithDeveloperNameNEW(null, null, null, sorting, paging);
-    
+    // Calculer le paging en fonction de nbMax et paginationNb
+    let paging = getPaging(nbMax, paginationNb);
+
+    // Appeler getAllGamesWithDeveloperNameNEW avec la nouvelle pagination
+    store_data.gameList_result = await getAllGamesWithDeveloperNameNEW(null, null, null, sorting, paging);
+
+    // Afficher le résultat
     console.log('liste jeux new ', store_data.gameList_result);
+  //window.location.reload();
  }
 
-// watch(
-//   () => paginationNb,
-//   (newVal, oldVal) => {
-//     let max = newVal * nbMax;
-//     let paging = {limit: nbMax, offset: max};
-//     store_data.gameList_result = getAllGamesWithDeveloperNameNEW(null, null, null, sorting, paging);
-    
-//     console.log('liste jeux new ', store_data.gameList_result);
-//   },
-//   { deep: true }
-// );
+
 
 onMounted(async () => {
-
+  //paginationNb = PaginationManager.getStorePage();
   if(store_data.gameList_result.length === 0){
     sorting ={
       id:true

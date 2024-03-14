@@ -10,9 +10,9 @@
     >
       <div class="wrapper2">
         <div class="description glass roundBorderSmall">
-          <div :class="isHimself ? 'imgContainerFull' : 'imgContainer'">
+          <div :class="isHimself ? 'imgContainerFull' : 'imgContainer'" class="round">
             <img
-              :src="leDevs.picture || defaultProfilePic"
+              :src="urlPic || defaultProfilePic"
               alt="Photo de Profile"
               class="imgProfil"
             />
@@ -110,7 +110,7 @@ import defaultProfilePic from '@/assets/Avatar/Avatar_1.png';
 const props = defineProps(["isHimself", "idDevl"]);
 const emit = defineEmits(["showProfile"]);
 let devId = props.idDevl;
-
+let urlPic = null;
 const leDevs = ref(null);
 const errorMsg = ref("Unsuccessful login");
 const gameList = ref(null);
@@ -176,6 +176,7 @@ async function getUserInfos() {
   try {
     // console.log("Profile.vue props.idDevl : ", props.idDevl);
     if (props.idDevl) {
+      console.log("iddevv prp: ", props.idDevl);
       const userData = await getUser(props.idDevl);
 
       console.log("userData : ", userData);
@@ -218,6 +219,7 @@ onMounted(async () => {
     loginTokens_refresh_token = storageManager.getRefreshToken();
     // console.log("loginTokens_refresh_token : ", loginTokens_refresh_token);
     // localStorage.getItem("refreshToken");
+    urlPic = '/src/assets/Avatar/' + leDevs.value.picture;
   } catch (error) {
     console.error("Error fetching data:", error);
   } finally {
@@ -229,4 +231,6 @@ onMounted(async () => {
 </script>
 
 <style src="../../styles/ProfileStyle.scss"></style>
-<style src="../../styles/SignRegisterStyle.scss" scoped></style>
+<style src="../../styles/SignRegisterStyle.scss">
+
+</style>

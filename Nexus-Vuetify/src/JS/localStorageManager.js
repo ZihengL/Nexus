@@ -8,10 +8,13 @@ const StorageKeys = {
 
 const StorageManager = {
   setIdDev (id) {
+    console.log('set id d ', id);
     localStorage.setItem(StorageKeys.ID_DEV, id)
   },
   getIdDev () {
-    return localStorage.getItem(StorageKeys.ID_DEV)
+    let data = localStorage.getItem(StorageKeys.ID_DEV);
+    console.log('get id d ', data);
+    return data;
   },
   setAccessToken (token) {
     localStorage.setItem(StorageKeys.ACCESS_TOKEN, token)
