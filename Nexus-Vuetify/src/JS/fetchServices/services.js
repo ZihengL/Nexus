@@ -1,3 +1,5 @@
+import StorageManager from "../localStorageManager";
+
 /*******************************************************************/
 /************************** LOCAL STORAGE **************************/
 /*******************************************************************/
@@ -147,11 +149,35 @@ export const refreshInterval = 55 * 60 * 1000; // 55 mins
 export const tokenRefreshInterval = setInterval(refreshToken, refreshInterval);
 
 export async function refreshToken() {
-  console.log("refreshing token");
+  if (StorageManager.getIsConnected()) {
+    console.log("Refreshing Token");
 
-  const result = await fetchData("users", "authenticate", {
-    access_token: null 
-  });
+    const result = await fetchData("users", "authenticate", {
+      id: StorageManager.getIdDev(),
+      refresh_token: StorageManager.getRefreshToken(),
+    });
+
+    if (result) {
+      console.log("Refreshed Access Token.", result);
+      StorageManager.setAccessToken(result);
+    } else {
+      console.log("Failed to refresh Access Token.");
+    }
+  }
+}
+
+export function getValidationCredentials() {
+  return {
+    id: StorageManager.getIdDev(),
+    access_token: StorageManager.getAccessToken(),
+  };
+}
+
+export function getAuthentificationCredentials() {
+  return {
+    id: StorageManager.getIdDev(),
+    refresh_token: StorageManager.getRefreshToken(),
+  };
 }
 
 // USER OPERATIONS
@@ -198,7 +224,7 @@ export async function logout() {
 export async function updateUser(data) {
   if (isLoggedIn()) {
     const result = await fetchData("users", "update", {
-      credentials: getCredentials(),
+      credentials: get(),
       request_data: data,
     });
 
@@ -219,33 +245,51 @@ const filterNulls = (obj) => {
   }, {});
 };
 
-export function prepGetOne(column, value, included_columns = null, joined_tables = null) {
+export function prepGetOne(
+  column,
+  value,
+  included_columns = null,
+  joined_tables = null
+) {
   return filterNulls({
     column: column,
     value: value,
     included_columns: included_columns ?? [],
-    joined_tables: joined_tables ?? []
+    joined_tables: joined_tables ?? [],
   });
 }
 
-export function prepGetAll(column = null, value = null, included_columns = null, sorting = null, joined_tables = null, paging = null) {
+export function prepGetAll(
+  column = null,
+  value = null,
+  included_columns = null,
+  sorting = null,
+  joined_tables = null,
+  paging = null
+) {
   return filterNulls({
     column: column,
     value: value,
     included_columns: included_columns ?? [],
     sorting: sorting ?? [],
     joined_tables: joined_tables ?? [],
-    paging: paging ?? []
+    paging: paging ?? [],
   });
 }
 
-export function prepGetAllMatching(filters = null, sorting = null, included_columns = null, joined_tables = null, paging = null) {
+export function prepGetAllMatching(
+  filters = null,
+  sorting = null,
+  included_columns = null,
+  joined_tables = null,
+  paging = null
+) {
   const res = filterNulls({
     filters: filters,
     included_columns: included_columns ?? [],
     sorting: sorting ?? [],
     joined_tables: joined_tables ?? [],
-    paging: paging ?? []
+    paging: paging ?? [],
   });
 
   return res;
@@ -275,10 +319,10 @@ export async function getDonationLink(developerID) {
 
     return await fetchData("transactions", "getLink", {
       credentials: credentials,
-      request_data: { 
+      request_data: {
         donatorID: credentials.id,
         donateeID: developerID,
-      }
+      },
     });
   }
 }

@@ -116,23 +116,23 @@ class BaseController
         [$credentials, $request_data] = getFromData(['credentials', 'request_data'], $data);
 
         if ($credentials) {
-            [$id, $tokens] = getFromData(['id', 'tokens'], $credentials);
+            [$id, $access_token] = getFromData(['id', 'access_token'], $credentials, true);
 
-            if ($this->validateUser($id, $tokens))
+            if ($this->validateUser($id, $access_token))
                 return $request_data;
         }
 
         throw new Exception("Missing credentials in privileged operation.");
     }
 
-    protected function validateUser($id, $tokens)
+    protected function authenticateUser($id, $refresh_token)
     {
-        return $this->getTokensController()->validateTokens($id, $tokens);
+        return $this->getTokensController()->refreshAccessToken($id, $refresh_token);
     }
 
-    protected function authenticateUser($id, $tokens)
+    protected function validateUser($id, $access_token)
     {
-        return $this->getTokensController()->authenticateTokens($id, $tokens);
+        return $this->getTokensController()->validateAccessToken($id, $access_token);
     }
 
 
