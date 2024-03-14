@@ -55,7 +55,12 @@ const StorageManager = {
   },
   clearIsConnected () {
     localStorage.removeItem(StorageKeys.IS_CONNECTED)
-  }
+  },
+  clearAll() {
+    this.clearIdDev();
+    this.clearAccessToken();
+    this.clearRefreshToken();
+  },
 }
 
 export default StorageManager

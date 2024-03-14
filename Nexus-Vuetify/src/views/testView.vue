@@ -459,7 +459,7 @@ export default {
     },
 
     async ziLogout() {
-      await this.$logout().then(
+      await services.logoutService().then(
         this.isLoggedIn()
       );
     },
@@ -490,8 +490,8 @@ export default {
       // const result2 = await services.getGamesForCarousel();
       // console.log("CAROUSEL", result2);
       
-      // const result3 = await services.getReviewsAndUsernamesNEW();
-      // console.log("REVIEWS", result3);
+      const result3 = await services.getReviewsAndUsernamesNEW();
+      console.log("REVIEWS", result3);
 
       // const tags = await services.getAll('tags');
       // console.log('tags', tags);
@@ -501,6 +501,10 @@ export default {
 
       const user = await services.getUser(4);
       console.log('user', user);
+
+      const carousel = await services.getGamesForCarousel();
+
+      console.log(carousel);
 
       // const login = await services.login({})
     }

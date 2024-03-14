@@ -30,6 +30,9 @@ export const parseDetails = (details) => {
 }
 
 export const parseJoins = (result, keys) => {
+  console.log('result', result);
+  console.log('keys', keys);
+
   for (var key in keys) {
     const detailsKey = key + "_details";
 
@@ -50,8 +53,6 @@ export const parseJoins = (result, keys) => {
 }
 
 export const getOne = async (table, column, value, includedColumns = null, joined_tables = null) => {
-  // let data = await fetchData(table, "getOne", column, value, includedColumns, sorting, null, "GET");
-
   const preppedBody = services.prepGetOne(column, value, includedColumns, joined_tables);
   let result = await services.getOne(table, preppedBody);
 
@@ -78,15 +79,6 @@ export const getAll = async (table, column = null, value = null, includedColumns
 };
 
 export const getAllMatching = async (table, filters,  includedColumns = null, sorting = null, joined_tables = null, paging = null) => {
-  // let body = {
-  //   filters,
-  //   sorting,
-  //   includedColumns
-  // }
-
-  // let data = await fetchData(table, "getAllMatching", null, null, null, null, body, "POST");
-  // return data
-
   const preppedBody = services.prepGetAllMatching(filters, includedColumns, sorting, joined_tables, paging);
   let result = await services.getAllMatching(table, preppedBody);
 
@@ -98,29 +90,18 @@ export const getAllMatching = async (table, filters,  includedColumns = null, so
 };
 
 export const create = async (table, createData) => {
-  let body = {
-    createData
-  }
-  // let data = await fetchData(table, "create", null, null, null, null, body, "POST");
   const data = await services.fetchData(table, "create", createData);
   return data;
 };
 
 export const deleteData = async(table, deleteData) => {
-  let body = {
-    deleteData
-  }
-  // let data = await fetchData(table, "delete", null, null, null, null, body, "POST");
   const data = await services.fetchData(table, "delete", deleteData);
   return data;
 };
 
 export const updateData = async(table, updateData) => {
-  let body = {
-    updateData
-  }
-  // let data = await fetchData(table, "update", null, null, null, null, body, "POST");
-  const data = await services.fetchData(table, "update", deleteData);
+
+  const data = await services.fetchData(table, "update", updateData);
   return data;
 };
 
@@ -137,9 +118,6 @@ export const registerService = async (createData) => {
 };
 
 export const loginService = async (login) => {
-  // const email = login.email;
-  // const password = login.password;
-
   const data = await services.fetchData('users', 'login', login);
   if (data) {
     StorageManager.setIdDev(data.user.id);
@@ -150,16 +128,13 @@ export const loginService = async (login) => {
   return data
 };
 
-export const logoutService = async (logout) => {
-  let body = {
-    logout
+export const logoutService = async () => {
+  const data = await services.fetchData('users', 'logout', services.getAuthentificationCredentials());
+  if (data) {
+    StorageManager.clearAll();
   }
-  // let data = await fetchData("users", "logout", null, null, null, null, body, "POST");
-  const data = await services.fetchData('users', 'logout', {
 
-  });
-
-  return data
+  return data;
 };
 
 export const getUser = async (developerID) => {
@@ -184,20 +159,6 @@ export const getPaging = (maxPerPage, currentPage) => {
 /*******************************************************************/
 /****************************** GAMES ******************************/
 /*******************************************************************/
-
-const deleteGamesAndrelationships = async (jsonObject) => {
-  const gameId = jsonObject["gameId"];
-  const game = await getOne("games", "id", gameId);
-  if (game) {
-    await deleteData("games", jsonObject);
-    const gamesTags = await getAll("gamesTags", "gameId", gameId);
-    for (const game_tag of gamesTags) {
-      await deleteData("gamesTags", { gameId: game_tag.gameId });
-    }
-    return true
-  }
-  return false
-};
 
 export const getGameDetails = async (idGame) => {
   let data = await getAll("games", "id", idGame);
@@ -239,10 +200,10 @@ export const getGamesForCarousel = async () => {
       users: ['id', 'username', 'picture', 'isOnline'],
       tags: ['id', 'name']
     };
-
   let paging = { limit: 4, offset: 0};
 
   let data = await getAllMatching('games', filters, included_columns, sorting, joined_tables, paging);
+  console.log("CAROUSEL", data);
   return fetchGameImages(data);
 }
 
@@ -335,6 +296,20 @@ export const countAllMatching = async (table, filters = []) => {
 }
 
 /***************************************************/
+
+const deleteGamesAndrelationships = async (jsonObject) => {
+  const gameId = jsonObject["gameId"];
+  const game = await getOne("games", "id", gameId);
+  if (game) {
+    await deleteData("games", jsonObject);
+    const gamesTags = await getAll("gamesTags", "gameId", gameId);
+    for (const game_tag of gamesTags) {
+      await deleteData("gamesTags", { gameId: game_tag.gameId });
+    }
+    return true
+  }
+  return false
+};
 
 export const getAllGamesWithDeveloperName = async (column = null, value = null, includedColumns = null, sorting = null, joined_tables = null, paging = null) => {
   try {
