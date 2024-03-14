@@ -64,6 +64,8 @@ const changeConnexion = () => {
 const toggleProfileForm = () => {
     if (storageManager.getIdDev()) {
       idDev.value = storageManager.getIdDev()
+      
+      console.log("iddevv: ", idDev.value);
       changeConnexion();
     }
     //storageManager.setIdDev(idDev.value);

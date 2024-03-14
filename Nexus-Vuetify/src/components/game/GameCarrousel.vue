@@ -2,27 +2,28 @@
   <div v-if="tabImgGame.length > 0" class="slider">
     <div class="list" ref="sliderList">
       <div v-for="(imgGame, index) in tabImgGame" :key="index" class="item">
-          <img :src="imgGame.image" alt="#">
+        <img :src="imgGame.image" :alt="`Image ${index}`">
       </div>
     </div>
     <div class="buttons">
-      <button id="prev" @click="prevFunc"  class="glow2">&lt;</button>
-      <button id="next" @click="nextFunc"  class="glow2">&gt;</button>
+      <button id="prev" @click="prevFunc" class="glow2">&lt;</button>
+      <button id="next" @click="nextFunc" class="glow2">&gt;</button>
     </div>
     <ul class="dots">
       <li :class="{ active: active === index }" v-for="(dot, index) in tabImgGame" :key="index" @click="goToSlide(index)" class="glow2"></li>
     </ul>
   </div>
 </template>
+
 <script setup>
-import { onMounted, onBeforeUnmount, ref as vueRef, reactive } from 'vue';
+import { onMounted, onBeforeUnmount, ref as vueRef, nextTick, defineProps } from 'vue';
 import { getStorage, ref as firebaseRef, getDownloadURL } from "firebase/storage";
 
 const storage = getStorage();
 
 const props = defineProps({
   idJeux: {
-    type:Number,
+    type: Number,
   },
 })
 
@@ -50,7 +51,7 @@ onMounted(async () => {
   for (let index = 1; index <= 4; index++) {
     await fetchCarouselGameImages(props.idJeux, index);
   }
-  if (tabImgGame.value.length > 0){
+  if (tabImgGame.value.length > 0) {
     await nextTick(); // Ensure the DOM is updated
     lengthItems = sliderList.value.querySelectorAll('.item').length - 1;
 
@@ -77,15 +78,15 @@ const prevFunc = () => {
 const reloadSlider = () => {
   const items = sliderList.value.querySelectorAll('.item');
   const dots = document.querySelectorAll('.dots li');
-  
+
   sliderList.value.style.transform = `translateX(-${items[active.value].offsetLeft}px)`;
 
   const lastActiveDot = document.querySelector('.dots li.active');
   if (lastActiveDot) {
-      lastActiveDot.classList.remove('active');
+    lastActiveDot.classList.remove('active');
   }
-  
-  if(dots.length > 0) {
+
+  if (dots.length > 0) {
     dots[active.value].classList.add('active');
   }
 
@@ -100,7 +101,5 @@ const goToSlide = (index) => {
   reloadSlider();
 };
 </script>
-
-
 
 <style src="../../styles/GameCarrouselStyle.scss"></style>

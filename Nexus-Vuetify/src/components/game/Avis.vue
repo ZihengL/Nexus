@@ -1,12 +1,13 @@
 <template>
   <div v-if="review" class="AvisComp roundBorderSmall">
     <div class="absolute" v-if="review.length > 0">
+      <h2 v-if="props.sort == '0'" >Les mieux notees</h2>
       <ul>
         <li v-for="(avis, index) in review" :key="index" class="glass roundBorderSmall padding">
           <div class="containerStar">
             <div class="containerAvis">
               <div class="containerIMG">
-                <img :src="avis.profilePic || defaultPic" alt="Profile Picture" class="img" />
+                <img :src="urlPic || defaultPic" alt="Profile Picture" class="img" />
                 <p>{{ avis.username }}</p>
                 <!-- <p>UserTOTO {{ userName.value[index]?.username ?? 'Nom d\'utilisateur non disponible' }}</p> -->
               </div>
@@ -49,7 +50,7 @@
       default: 150,
     },
   });
-
+let urlPic = null;
   let nb = props.taille;
 
   let review = ref(null);
@@ -78,10 +79,14 @@
       console.error("Element with class 'AvisComp' not found.");
     }
   };
-  
+  //const 
   onMounted(async () => {
     try {
       review.value = props.idGame;
+      console.log('review ,', review.value)
+      urlPic = '/src/assets/Avatar/' + review.value.users.picture;
+      
+      console.log('pic,', urlPic)
       // let sorting = null;
       // if(props.sort == "1"){
       //   sorting = { timestamp: false };
