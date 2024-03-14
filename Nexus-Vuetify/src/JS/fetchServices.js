@@ -168,6 +168,13 @@ export const getUsername = async (userID) => {
   return await getOne("users", "id", userID)
 };
 
+export const getPaging = (maxPerPage, currentPage) => {
+  return {
+    limit: maxPerPage,
+    offset: currentPage * maxPerPage
+  }
+}
+
 
 /*******************************************************************/
 /****************************** GAMES ******************************/

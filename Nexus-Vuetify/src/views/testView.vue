@@ -502,7 +502,7 @@ export default {
       const user = await services.getUser(4);
       console.log('user', user);
 
-      const login = await services.login({})
+      // const login = await services.login({})
     }
   },
 };
