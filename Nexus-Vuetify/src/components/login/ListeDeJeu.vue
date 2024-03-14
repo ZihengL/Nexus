@@ -123,6 +123,21 @@ async function deleteGame() {
       const response = await deleteData("games", delete_data);
       if (response != false) {
         console.log("Game deleted successfully", response);
+
+
+             /*
+        var dossierRef = firebaseRef(storage,'Games/18');
+
+        console.log("allo dossierref=",dossierRef);
+
+        // Supprimer le dossier et son contenu
+        dossierRef.delete().then(function () {
+          console.log("Dossier supprimé avec succès.");
+        }).catch(function (error) {
+          console.error("Erreur lors de la suppression du dossier:", error);
+        });
+*/
+
         window.location.reload();
       }
     } catch (error) {
