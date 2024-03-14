@@ -484,14 +484,14 @@ export default {
     },
 
     async testFetchJoins() {
-      // const result = await services.getAllGamesWithDeveloperNameNEW();
-      // console.log("GAMES W USERNAME", result);
+      const result = await services.getAllGamesWithDeveloperNameNEW();
+      console.log("GAMES W USERNAME", result);
 
       // const result2 = await services.getGamesForCarousel();
       // console.log("CAROUSEL", result2);
       
-      const result3 = await services.getReviewsAndUsernamesNEW();
-      console.log("REVIEWS", result3);
+      // const result3 = await services.getReviewsAndUsernamesNEW();
+      // console.log("REVIEWS", result3);
 
       // const tags = await services.getAll('tags');
       // console.log('tags', tags);
@@ -499,12 +499,12 @@ export default {
       // const result4 = await services.getGameDetailsWithDeveloperNameNEW(2);
       // console.log(result4);
 
-      const user = await services.getUser(4);
-      console.log('user', user);
+      // const user = await services.getUser(4);
+      // console.log('user', user);
 
-      const carousel = await services.getGamesForCarousel();
+      // const carousel = await services.getGamesForCarousel();
 
-      console.log(carousel);
+      // console.log(carousel);
 
       // const login = await services.login({})
     }
