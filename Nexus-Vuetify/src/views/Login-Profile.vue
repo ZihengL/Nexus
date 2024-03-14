@@ -7,7 +7,7 @@
     <Profile
       v-else-if="idDev"
       :key="idDev.value"
-      @showLogin="toggleLoginForm"
+      @showLogin="toggleLoginForm()"
       :isHimself="true"
       :idDevl="idDev"
     />
