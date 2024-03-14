@@ -332,7 +332,7 @@ class BaseController
 
     public function delete($data)
     {
-        $id = $data['id'] ?? null;
+        $id = getOneFromData(['id'], $data, true);
 
         return $this->model->delete($id);
     }

@@ -92,21 +92,23 @@ function getFromData($keys, $data, $mandatory = true)
 {
     $items = [];
 
-    foreach ($keys as $key)
-        if (!$mandatory) {
-            array_push($items, $data[$key] ?? '');
+    foreach ($keys as $key) {
+        if (isset($data[$key])) {
+            array_push($items, $data[$key]);
+        } elseif (!$mandatory) {
+            array_push($items, '');
         } else {
             throw new Exception("Mandatory parameter '$key' is missing in request data.");
         }
+    }
 
     return [...$items];
 }
 
-function getOneFromData($key, $data)
+function getOneFromData($key, $data, $mandatory = true)
 {
-    if (isset($data[$key]))
-        return $data[$key];
-
+    if (!$mandatory)
+        return isset($data[$key]) ? $data[$key] : null;
 
     throw new Exception("Mandatory parameter '$key' is missing in request data.");
 }
