@@ -149,6 +149,7 @@ export const logoutService = async () => {
 export const getUser = async (developerID) => {
   const joined_tables = {games: ['id', 'title', 'releaseDate', 'ratingAverage']};
   let data = await getOne("users", "id", developerID, null, joined_tables);
+  console.log('data brut : ', data);
   return fetchGameImagesByDev(data);
 };
 

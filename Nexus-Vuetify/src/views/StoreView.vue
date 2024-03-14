@@ -56,7 +56,7 @@ const store_data = reactive({
   gameList_result: [],
 });
 
-const nbMax = 3;
+const nbMax = 6;
 let nbPage = null;
 let paginationNb = 1;
 let count = 1;

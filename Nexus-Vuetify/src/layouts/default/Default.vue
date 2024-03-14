@@ -16,13 +16,14 @@ import NavBar from '../../components/NavBar.vue';
 import Footer from '../../components/Footer.vue';
 import DefaultView from './View.vue';
 import { ref, onMounted } from 'vue';
+import StorageManager from "../../JS/localStorageManager";
 
 let connect = ref(false);
 
-//storageManager.setIsConnected(connect.value)
-
+// storageManager.setIsConnected(connect.value)
+// StorageManager.clearAll();
 const initializeConnect = () => {
-  // storageManager.setIsConnected(false)
+  storageManager.setIsConnected(false)
   const storedIsConnected = storageManager.getIsConnected()
   if (storedIsConnected !== null) {
     connect.value = storedIsConnected;
