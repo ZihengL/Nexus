@@ -2,9 +2,9 @@
   <div v-if="user != null" :key="user.value" id="fullProfile">
     <form action="#" class="glass">
       <!-- <v-avatar size="10rem"> -->
-      <div class="profile-and-gallery">
+      <div class="profile-and-gallery round">
         <img
-          :src="user.picture || defaultProfilePic"
+          :src="getImage(user.picture) || defaultProfilePic"
           alt="Profile Picture"
           class="img"
         />
@@ -12,20 +12,20 @@
         <!-- <v-btn icon @click="galleryDialog = true">
           <v-icon>mdi-image-multiple</v-icon>
         </v-btn> -->
-        <!-- <btnComp
-            :propClass="'changerProfileBtn'"
+         <btnComp
+            Class="changerProfileBtn"
             :contenu="'Changer Profile'"
             @toggle-btn="galleryDialog = true"
-          /> -->
-        <button class="changerProfileBtn" @click="galleryDialog = true">
+          /> 
+        <!--<button class="changerProfileBtn" @click="galleryDialog = true">
           Changer Profile
-        </button>
+        </button>-->
       </div>
       <!-- </v-avatar> -->
       <!-- ... Signup form content ... -->
-      <div class="field-container">
-        <span class="title">Prénom</span>
-        <div class="input-group">
+      <!--<<div class="field-container">
+        <span class="title">Prénom</span> -->
+        <div class="input-group field">
           <input
             class="infos"
             :key="`name-${user.name}`"
@@ -41,11 +41,11 @@
             @toggle-btn="() => deleteInfo('name')"
           />
         </div>
-      </div>
+      <!--<</div>-->
 
-      <div class="field-container">
-        <span class="title">Nom</span>
-        <div class="input-group">
+      <!--<div class="field-container">
+        <span class="title">Nom</span> -->
+        <div class="input-group field">
           <input
             class="infos"
             :key="`lastName-${user.lastName}`"
@@ -60,11 +60,11 @@
             @toggle-btn="() => deleteInfo('lastName')"
           />
         </div>
-      </div>
+      <!--</div>-->
 
-      <div class="field-container">
-        <span class="title">Téléphone</span>
-        <div class="input-group">
+      <!--<div class="field-container">
+        <span class="title">Téléphone</span> -->
+        <div class="input-group field">
           <input
             class="infos"
             :key="`phoneNumber-${user.phoneNumber}`"
@@ -79,11 +79,11 @@
             @toggle-btn="() => deleteInfo('phoneNumber')"
           />
         </div>
-      </div>
+      <!--</div>-->
 
-      <div class="field-container">
-        <span class="title">Nom Utilisateur</span>
-        <div class="input-group">
+      <!--<div class="field-container">
+        <span class="title">Nom Utilisateur</span> -->
+        <div class="input-group  field">
           <input
             class="infos"
             :key="`username-${user.username}`"
@@ -93,11 +93,11 @@
             v-model="state.username"
           />
         </div>
-      </div>
+      <!--</div>-->
 
-      <div class="field-container">
-        <span class="title">Description</span>
-        <div class="input-group">
+      <!--<div class="field-container">
+        <span class="title">Description</span> -->
+        <div class="input-group  field">
           <textarea
             class="infos"
             :key="`description-${user.description}`"
@@ -111,11 +111,11 @@
             @toggle-btn="() => deleteInfo('description')"
           />
         </div>
-      </div>
+      <!--</div>-->
 
-      <div class="field-container">
-        <span class="title">Mot de Passe</span>
-        <div class="input-group">
+      <!--<div class="field-container">
+        <span class="title">Mot de Passe</span> -->
+        <div class="input-group  field">
           <input
             class="infos"
             type="password"
@@ -123,11 +123,11 @@
             v-model="state.firstPassword"
           />
         </div>
-      </div>
+      <!--</div>-->
 
-      <div class="field-container">
-        <span class="title">Confirmer Mot De Passe</span>
-        <div class="input-group">
+      <!--<div class="field-container">
+        <<span class="title">Confirmer Mot De Passe</span> -->
+        <div class="input-group  field">
           <input
             class="infos"
             type="password"
@@ -136,13 +136,12 @@
             required
           />
         </div>
-      </div>
+      <!--</div>-->
 
       <btnComp :contenu="'Modifier'" @toggle-btn="updateUserInfos" />
     </form>
-  </div>
 
-  <v-dialog v-model="galleryDialog" persistent max-width="600px">
+    <v-dialog v-model="galleryDialog" persistent max-width="600px">
     <v-card>
       <v-card-title>
         Gallery
@@ -156,6 +155,9 @@
       </v-card-text>
     </v-card>
   </v-dialog>
+  </div>
+
+
 </template>
 
 <script setup>
@@ -217,7 +219,12 @@ const getUserInfos = async () => {
     console.error("Error fetching user data:", error);
   }
 };
-
+const getImage = (image) =>{
+    console.log(' get pic,', image)
+    let urlPic = '/src/assets/Avatar/' + image;
+    console.log('pic,', urlPic)
+    return urlPic
+  } 
 const updateUserInfos = async () => {
   const originalUser = user.value;
   // console.log("Original user info:", originalUser.id);
@@ -458,17 +465,24 @@ onMounted(async () => {
 </script>
 
 <style lang="scss">
-img {
-  width: 25%;
-  margin: auto;
-  // padding-top: 3%;
-  // padding-bottom: 3%;
-}
-
-.profile-and-gallery {
+.round {
+  //border-radius: 50%;
+  border: 2px solid red;
   display: flex;
   align-items: center;
-}
+  justify-content: space-between;
+
+  img {
+  border-radius: 50%;
+  border: 2px solid red;
+  width: 25%;
+  margin: 0%;
+  }
+  // .changerProfileBtn {
+  //   flex: 3;
+  // }
+} 
+
 
 #fullProfile {
   width: 100%;
@@ -483,7 +497,9 @@ img {
     padding: 2%;
     margin: auto;
     .field-container {
-      margin: 2%;
+      margin: 0%;
+      display: inline-block;
+      border: 2px solid red;
     }
 
     .infos {
@@ -506,7 +522,7 @@ img {
     input,
     textarea {
       flex-grow: 1; // Allow input and textarea to fill available space
-      margin-right: 2%;
+      margin-right: 0%;
       background-color: rgb(64, 86, 119);
       font-size: 1.5rem;
     }
@@ -528,6 +544,7 @@ img {
   width: 50%;
   position: relative;
   overflow: hidden;
+  margin-left: 2%;
 
   .btn-layer {
     height: 100%;
@@ -572,22 +589,22 @@ img {
   }
 }
 
-.changerProfileBtn {
-  height: 60%;
-  width: 50%;
-  // position: relative;
-  overflow: hidden;
-  // padding: 5%;
-  // display: flex;
-  align-items: center;
-  border-radius: 20px;
-  background: -webkit-linear-gradient(
-      right,
-      var(--purple),
-      var(--dark-blue),
-      var(--purple),
-      var(--dark-blue)
-    );
-    color: #ffffff;
-}
+// .changerProfileBtn {
+//   height: 60%;
+//   width: 50%;
+//   // position: relative;
+//   overflow: hidden;
+//   // padding: 5%;
+//   // display: flex;
+//   align-items: center;
+//   border-radius: 20px;
+//   background: -webkit-linear-gradient(
+//       right,
+//       var(--purple),
+//       var(--dark-blue),
+//       var(--purple),
+//       var(--dark-blue)
+//     );
+//     color: #ffffff;
+// }
 </style>
