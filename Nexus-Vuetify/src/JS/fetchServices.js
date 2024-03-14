@@ -128,10 +128,10 @@ export const loginService = async (login) => {
   return data
 };
 
-export const logoutService = async (logout) => {
+export const logoutService = async () => {
   const data = await services.fetchData('users', 'logout', services.getAuthentificationCredentials());
 
-  return data
+  return data;
 };
 
 export const getUser = async (developerID) => {
