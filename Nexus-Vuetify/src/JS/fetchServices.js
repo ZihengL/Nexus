@@ -172,7 +172,7 @@ export const getUsername = async (userID) => {
 export const getPaging = (maxPerPage, currentPage) => {
   return {
     limit: maxPerPage,
-    offset: currentPage * maxPerPage
+    offset: (currentPage - 1) * maxPerPage
   }
 }
 
