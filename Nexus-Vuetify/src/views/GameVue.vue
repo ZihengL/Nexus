@@ -28,7 +28,7 @@
           />
         </div>
         <div class="devs">
-          <p><b>Developeur :</b> ma lubellule </p> <!--  {{ gameInfos.leGame.users.username }} -->
+          <p><b>Developeur :</b> {{user}} </p>
         </div>
         <div class="tags">
           <a
@@ -126,7 +126,7 @@ const gameInfos = reactive({
 
 const defaultPath = "/src/assets/image/img1.png";
 const props = defineProps(['idGame']);
-
+let user = ref(null);
 let reviewTemp = ref(null);
 let dataReview1 = null;
 let dataReview2 = null;
@@ -190,7 +190,9 @@ onMounted(async () => {
 
     const dataGame = await getGameDetailsWithDeveloperNameNEW(props.idGame);
     gameInfos.leGame = dataGame;
+    user.value = gameInfos.leGame.users[0].username;
     console.log('game object', gameInfos.leGame);
+    console.log('user', user.value);
     // gameInfos.tags = gameInfos.leGame.tags;
     // gameInfos.devName = gameInfos.leGame.devName;
     let sorting1 = { timestamp: false };
