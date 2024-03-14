@@ -67,7 +67,7 @@ export const getAll = async (table, column = null, value = null, includedColumns
   // let data = await fetchData(table, "getAll", column, value, includedColumns, sorting, null, "GET");
 
   const preppedBody = services.prepGetAll(column, value, includedColumns, sorting, joined_tables, paging);
-  console.log('body', preppedBody);
+  //console.log('body', preppedBody);
   let result = await services.getAll(table, preppedBody);
 
   if (result) {
@@ -163,7 +163,9 @@ export const logoutService = async (logout) => {
 };
 
 export const getUser = async (developerID) => {
-  return await getOne("users", "id", developerID)
+  const joined_tables = {games: ['id', 'title', 'releaseDate', 'ratingAverage']};
+
+  return await getOne("users", "id", developerID, null, joined_tables);
 };
 
 export const getUsername = async (userID) => {
@@ -196,7 +198,7 @@ export const getGameDetails = async (idGame) => {
 
 export const getTags = async () => {
   let data = await getAll("tags");
-  console.log('tags brut : ', data);
+  //console.log('tags brut : ', data);
   return data
 };
 

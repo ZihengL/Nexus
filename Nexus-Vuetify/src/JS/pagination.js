@@ -1,9 +1,12 @@
 const PaginationManager = {
     setStorePage (id) {
+      console.log('put : ', id)
         localStorage.setItem('nbPagination', id)
     },
     getStorePage () {
-      return localStorage.getItem('nbPagination')
+      let data = localStorage.getItem('nbPagination');
+      console.log('data get : ', data);
+      return data;
     }
 }
   

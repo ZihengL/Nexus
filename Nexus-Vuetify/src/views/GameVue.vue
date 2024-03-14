@@ -34,7 +34,7 @@
           <a
             href="#"
             class="glow"
-            v-for="tag in gameInfos.tags"
+            v-for="tag in gameInfos.leGame.tags"
             :key="tag.id"
             >{{ tag.name }}</a
           >
