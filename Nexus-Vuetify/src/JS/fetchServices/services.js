@@ -219,33 +219,33 @@ const filterNulls = (obj) => {
   }, {});
 };
 
-export function prepGetOne(column, value, included_columns = [], joined_tables = []) {
+export function prepGetOne(column, value, included_columns = null, joined_tables = null) {
   return filterNulls({
     column: column,
     value: value,
-    included_columns: included_columns,
-    joined_tables: joined_tables
+    included_columns: included_columns ?? [],
+    joined_tables: joined_tables ?? []
   });
 }
 
-export function prepGetAll(column = null, value = null, included_columns = [], sorting = [], joined_tables = [], paging = []) {
+export function prepGetAll(column = null, value = null, included_columns = null, sorting = null, joined_tables = null, paging = null) {
   return filterNulls({
     column: column,
     value: value,
-    included_columns: included_columns,
-    sorting: sorting,
-    joined_tables: joined_tables,
-    paging: paging
+    included_columns: included_columns ?? [],
+    sorting: sorting ?? [],
+    joined_tables: joined_tables ?? [],
+    paging: paging ?? []
   });
 }
 
-export function prepGetAllMatching(filters = [], sorting = [], included_columns = [], joined_tables = [], paging = []) {
+export function prepGetAllMatching(filters = null, sorting = null, included_columns = null, joined_tables = null, paging = null) {
   const res = filterNulls({
     filters: filters,
-    included_columns: included_columns,
-    sorting: sorting,
-    joined_tables: joined_tables,
-    paging: paging
+    included_columns: included_columns ?? [],
+    sorting: sorting ?? [],
+    joined_tables: joined_tables ?? [],
+    paging: paging ?? []
   });
 
   return res;
