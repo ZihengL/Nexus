@@ -138,64 +138,73 @@ $id = 10;
 // $data = ['included_columns' => ['username', 'email'], 'paging' => ['limit' => 4, 'offset' => 0], 'joined_tables' => ['games' => []]];
 // $result = parse('users', 'getAll', $data);
 
-echo "<hr><h4>GAMES WITH THEIR TAGS N USERS</h4>";
-$data = [
-    // 'paging' => ['limit' => 4, 'offset' => 0],
-    'joined_tables' => ['tags' => ['id', 'name'], 'users' => ['id', 'username', 'picture', 'name']]
-];
+////////////////////////////////
 
-$result = parse('games', 'getAll', $data);
-printall($result);
+// echo "<hr><h4>GAMES WITH THEIR TAGS N USERS</h4>";
+// $data = [
+//     // 'paging' => ['limit' => 4, 'offset' => 0],
+//     'joined_tables' => ['tags' => ['id', 'name'], 'users' => ['id', 'username', 'picture', 'name']]
+// ];
 
-echo "<hr><h4>USERS WITH THEIR GAMES</h4>";
-$data = [
-    // 'paging' => ['limit' => 4, 'offset' => 0],
-    'joined_tables' => ['games' => ['id', 'title', 'ratingAverage']]
-];
+// $result = parse('games', 'getAll', $data);
+// printall($result);
 
-$result = parse('users', 'getAll', $data);
-printall($result);
+// echo "<hr><h4>USERS WITH THEIR GAMES</h4>";
+// $data = [
+//     // 'paging' => ['limit' => 4, 'offset' => 0],
+//     'joined_tables' => ['games' => ['id', 'title', 'ratingAverage']]
+// ];
 
-echo "<hr><h4>USERS WITH THEIR GAMES N TAGS</h4>";
-$data = [
-    // 'paging' => ['limit' => 4, 'offset' => 0],
-    'joined_tables' => ['games' => ['id', 'title', 'ratingAverage'], 'tags' => []]
-];
+// $result = parse('users', 'getAll', $data);
+// printall($result);
 
-$result = parse('users', 'getAll', $data);
-printall($result);
+// echo "<hr><h4>USERS WITH THEIR GAMES N TAGS</h4>";
+// $data = [
+//     // 'paging' => ['limit' => 4, 'offset' => 0],
+//     'joined_tables' => ['games' => ['id', 'title', 'ratingAverage'], 'tags' => []]
+// ];
 
-echo "<hr><h4>GAME WITH DEVELOPER, REVIEWS, AND TAGS</h4>";
-$data = [
-    // 'paging' => ['limit' => 4, 'offset' => 0],
-    'column' => 'id',
-    'value' => 2,
-    'joined_tables' => ['users' => ['id', 'username'], 'reviews' => [], 'tags' => []]
-];
+// $result = parse('users', 'getAll', $data);
+// printall($result);
 
-$result = parse('games', 'getOne', $data);
-printall($result);
+// echo "<hr><h4>GAME WITH DEVELOPER, REVIEWS, AND TAGS</h4>";
+// $data = [
+//     // 'paging' => ['limit' => 4, 'offset' => 0],
+//     'column' => 'id',
+//     'value' => 2,
+//     'joined_tables' => ['users' => ['id', 'username'], 'reviews' => [], 'tags' => []]
+// ];
 
-echo "<hr><h4>GAME WITH DEVELOPER, REVIEWS, AND TAGS</h4>";
-$data = [
-    // 'paging' => ['limit' => 4, 'offset' => 0],
-    'column' => 'id',
-    'value' => 2,
-    'joined_tables' => ['users' => ['id', 'username'], 'reviews' => [], 'tags' => []]
-];
+// $result = parse('games', 'getOne', $data);
+// printall($result);
 
-$result = parse('games', 'getAllMatching', $data);
-printall($result);
+// echo "<hr><h4>GAME WITH DEVELOPER, REVIEWS, AND TAGS</h4>";
+// $data = [
+//     // 'paging' => ['limit' => 4, 'offset' => 0],
+//     'column' => 'id',
+//     'value' => 2,
+//     'joined_tables' => ['users' => ['id', 'username'], 'reviews' => [], 'tags' => []]
+// ];
+
+// $result = parse('games', 'getAllMatching', $data);
+// printall($result);
 
 
 
 
-echo "<hr>count test<br>";
+// echo "<hr>count test<br>";
 
-$result = parse('users', 'countAll', []);
-printall($result);
+// $result = parse('users', 'countAll', []);
+// printall($result);
 
-$result = parse('users', 'countAllMatching', []);
+// $result = parse('users', 'countAllMatching', []);
+// printall($result);
+
+
+// $result = parse('games', 'getAll', ['column' => null, 'value' => null]);
+// printall($result);
+
+$result = parse('games', 'getAll', ['joined_tables' => [ 'users' => ['id', 'username', 'picture', 'isOnline'], 'tags' => ['id', 'name']]]);
 printall($result);
 
 // printall($gamestags_ctrl->getGamesWith(['users' => true, 'tags' => true]));
