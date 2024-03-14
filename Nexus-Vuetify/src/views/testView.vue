@@ -492,6 +492,9 @@ export default {
       
       const result3 = await services.getReviewsAndUsernamesNEW();
       console.log("REVIEWS", result3);
+
+      const tags = await services.getAll('tags');
+      console.log(tags);
     }
   },
 };
