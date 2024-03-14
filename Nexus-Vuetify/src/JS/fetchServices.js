@@ -67,7 +67,6 @@ export const getAll = async (table, column = null, value = null, includedColumns
   // let data = await fetchData(table, "getAll", column, value, includedColumns, sorting, null, "GET");
 
   const preppedBody = services.prepGetAll(column, value, includedColumns, sorting, joined_tables, paging);
-  console.log('body', preppedBody);
   let result = await services.getAll(table, preppedBody);
 
   if (result) {
@@ -137,19 +136,16 @@ export const registerService = async (createData) => {
 };
 
 export const loginService = async (login) => {
-  console.log('dddd ', login)
-  let body = {
-    login
+  // const email = login.email;
+  // const password = login.password;
+
+  const data = await services.fetchData('users', 'login', login);
+  if (data) {
+    StorageManager.setIdDev(data.user.id);
+    StorageManager.setAccessToken(data.tokens.access_token);
+    StorageManager.setRefreshToken(data.tokens.refresh_token);
   }
-  const email = login.email;
-  const password = login.password;
   
-  console.log('email ', email );
-  console.log('pass ', password );
-  //console.log(body)
-  // let data = await fetchData("users", "login", null, null, null, null, body, "POST");
-  const data = await services.login(email, password);
-  console.log('data log : ', data)
   return data
 };
 
@@ -163,7 +159,9 @@ export const logoutService = async (logout) => {
 };
 
 export const getUser = async (developerID) => {
-  return await getOne("users", "id", developerID)
+  const joined_tables = {games: ['id', 'title', 'releaseDate', 'ratingAverage']};
+
+  return await getOne("users", "id", developerID, null, joined_tables);
 };
 
 export const getUsername = async (userID) => {

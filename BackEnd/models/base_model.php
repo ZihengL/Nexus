@@ -256,17 +256,20 @@ class BaseModel
         return $this->bindingQuery($sql, $params);
     }
 
-    public function countAll($column, $value)
+    public function countAll($column = null, $value = null)
     {
-        $sql = "SELECT COUNT(*) FROM {$this->table} WHERE $column = ?";
+        $sql = "SELECT COUNT(*) AS 'count' FROM {$this->table}";
 
-        return $this->query($sql, [$value])->fetchAll(PDO::FETCH_ASSOC);
+        if ($column && $value)
+            $sql .= " WHERE $column = ?";
+
+        return $this->query($sql, $value ? [$value] : [])->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function countAllMatching($filters = [])
     {
         ['sql' => $filtering_sql, 'params' => $params] = $this->applyFilters($filters);
-        $sql = "SELECT COUNT(*) FROM {$this->table} WHERE 1 = 1 $filtering_sql";
+        $sql = "SELECT COUNT(*) AS 'count' FROM {$this->table} WHERE 1 = 1 $filtering_sql";
 
         return $this->bindingQuery($sql, $params);
     }
@@ -313,6 +316,26 @@ class BaseModel
         return $selections;
     }
 
+    public function getJoinedSelections($table, $internal, $external, $included_columns)
+    {
+        $selections = '';
+        $joins = '';
+
+        $column_pairs = array_map(function ($column) use ($table) {
+            // if (isset($this->keys[$column])) {
+
+            // } else {
+            return "'$column:', $table.$column";
+            // }
+        }, $included_columns);
+        $columns = count($column_pairs) > 1 ? implode(",';',", $column_pairs) : implode("", $column_pairs);
+
+        $selections .= ", GROUP_CONCAT(DISTINCT CONCAT($columns) ORDER BY {$table}.{$external} SEPARATOR '|') AS {$table}_details";
+        $joins .= " JOIN $table ON {$this->table}.{$internal} = {$table}.{$external}";
+
+        return [$selections, $joins];
+    }
+
     // SEPARATOR FOR ROWS = '|'
     // SEPARATOR FOR COLUMNS = ','
     // SEPARATOR BETWEEN COLUMN NAME AND DATA = ':'
@@ -324,14 +347,18 @@ class BaseModel
         foreach ($joined_tables as $table => $included_columns)
             if (isset($this->keys[$table])) {
                 ['internal' => $internal, 'external' => $external] = $this->keys[$table];
+                [$subselects, $subjoins] = $this->getJoinedSelections($table, $internal, $external, $included_columns);
 
-                $column_pairs = array_map(function ($column) use ($table) {
-                    return "'$column:', $table.$column";
-                }, $included_columns);
-                $columns = count($column_pairs) > 1 ? implode(",';',", $column_pairs) : implode("", $column_pairs);
+                $selects .= $subselects;
+                $joins .= $subjoins;
 
-                $selects .= ", GROUP_CONCAT(DISTINCT CONCAT($columns) ORDER BY {$table}.{$external} SEPARATOR '|') AS {$table}_details";
-                $joins .= " JOIN $table ON {$this->table}.{$internal} = {$table}.{$external}";
+                // $column_pairs = array_map(function ($column) use ($table) {
+                //     return "'$column:', $table.$column";
+                // }, $included_columns);
+                // $columns = count($column_pairs) > 1 ? implode(",';',", $column_pairs) : implode("", $column_pairs);
+
+                // $selects .= ", GROUP_CONCAT(DISTINCT CONCAT($columns) ORDER BY {$table}.{$external} SEPARATOR '|') AS {$table}_details";
+                // $joins .= " JOIN $table ON {$this->table}.{$internal} = {$table}.{$external}";
             } else {
                 if ($composite_model = $this->getCompositeModel($table))
                     $selects .= $composite_model->getCompositeSelections($table, $included_columns);

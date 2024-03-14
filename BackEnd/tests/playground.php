@@ -187,12 +187,15 @@ $data = [
 $result = parse('games', 'getAllMatching', $data);
 printall($result);
 
+
+
+
 echo "<hr>count test<br>";
 
-$result = parse('users', 'countAll', ['column' => 'isOnline', 'value' => false]);
+$result = parse('users', 'countAll', []);
 printall($result);
 
-$result = parse('users', 'countAllMatching', ['filters' => ['isOnline' => false]]);
+$result = parse('users', 'countAllMatching', []);
 printall($result);
 
 // printall($gamestags_ctrl->getGamesWith(['users' => true, 'tags' => true]));

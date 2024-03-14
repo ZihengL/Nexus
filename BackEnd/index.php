@@ -88,13 +88,13 @@ function parseRequestMethod()
     }
 }
 
-function getFromData($keys, $data)
+function getFromData($keys, $data, $mandatory = true)
 {
     $items = [];
 
     foreach ($keys as $key)
-        if (isset($data[$key])) {
-            array_push($items, $data[$key]);
+        if (!$mandatory) {
+            array_push($items, $data[$key] ?? '');
         } else {
             throw new Exception("Mandatory parameter '$key' is missing in request data.");
         }
