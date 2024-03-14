@@ -37,7 +37,7 @@ import {
   searchOn_titleOrUsername,
   search_AndFilter,
 } from "../JS/store_search.js";
-import {  getAllGamesWithDeveloperNameNEW, countAll } from "../JS/fetchServices";
+import {  getAllGamesWithDeveloperNameNEW, countAll, getPaging } from "../JS/fetchServices";
 import ListeJeux from "../components/store/GameListComponent.vue";
 import PaginationManager from "../JS/pagination.js";
 
@@ -135,10 +135,7 @@ onMounted(async () => {
       min = max - nbMax;
     }
     console.log('nbPage : ', nbPage)
-    let paging = {limit: nbMax, offset: min};
-    
-    console.log('min ', min);
-    console.log('max ', max);
+    let paging = getPaging(nbMax, paginationNb);
     store_data.gameList_result = await getAllGamesWithDeveloperNameNEW(null, null, null, sorting, paging);
     console.log('liste jeux old', store_data.gameList_result);
   }
