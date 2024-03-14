@@ -4,8 +4,7 @@
       <SingleGameComponent
         v-for="game in arrayStore"
         :key="game.id"
-        :gameList="props.gameList"
-        :idGame="game.id"
+        :gameList=" game"
         class="vuee"
       />
     </div>
@@ -36,7 +35,7 @@ let paginationNb = 1;
   // console.log('min  w2 : ', min);
   // console.log('max  w2 : ', max);
   // console.log('all lent w2  : ', props.gameList.length);
-console.log("props.gameList : ", props.gameList)
+  //console.log("props.gameList : ", props.gameList)
   arrayStore.value = props.gameList.slice(min, max);
 
   // console.log('array  w2 : ', arrayStore.value.length);

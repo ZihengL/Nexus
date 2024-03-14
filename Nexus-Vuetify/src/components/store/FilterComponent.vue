@@ -57,7 +57,7 @@
 <script setup>
 import { onMounted, reactive, watch } from "vue";
 // import SearchComponent from "../game/SearchComponent.vue";
-import { getAll, filterSearchedTags } from "../../JS/fetchServices";
+import { getAll, filterSearchedTags, getTags } from "../../JS/fetchServices";
 import btnComp from "../btnComponent.vue";
 const props = defineProps({
   filter_title: String,
@@ -93,8 +93,9 @@ function handleUserInteraction() {
 }
 
 
-async function getTags() {
-  const fetchedGenres = await getAll("tags");
+async function getAllTags() {
+  const fetchedGenres = await getTags();
+  console.log('all tags : ', fetchedGenres);
   filter_data.genres = fetchedGenres.map((genre) => ({
     ...genre,
     checked: false,
@@ -156,7 +157,7 @@ watch(
 );
 
 onMounted(async () => {
-  await getTags();
+  await getAllTags();
 });
 </script>
 

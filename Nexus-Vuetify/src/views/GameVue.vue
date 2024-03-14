@@ -5,7 +5,7 @@
       <div class="gameInfo roundBorderSmall glass">
         <div class="gameImg">
           <img
-            :src="UrlGameImg"
+            :src="gameInfos.leGame.image"
             alt="#"
             class="roundBorderSmall"
           />
@@ -28,7 +28,7 @@
           />
         </div>
         <div class="devs">
-          <p><b>Developeur : </b> {{ gameInfos.devName }}</p>
+          <p><b>Developeur :</b> ma lubellule </p> <!--  {{ gameInfos.leGame.users.username }} -->
         </div>
         <div class="tags">
           <a href="#" class="glow" v-for="tag in gameInfos.tags" :key="tag.id">{{ tag.name }}</a>
@@ -89,7 +89,7 @@ import myAvis from "../components/game/myAvis.vue";
 import Avis from "../components/game/Avis.vue";
 import game from "../components/game/GameCarrousel.vue";
 import { defineProps, onMounted, ref, reactive } from "vue";
-import { getGameDetailsWithDeveloperName, getReviews } from '../JS/fetchServices';
+import { getGameDetailsWithDeveloperNameNEW, getReviews } from '../JS/fetchServices';
 import { getStorage, ref as firebaseRef, getDownloadURL, uploadBytes} from "firebase/storage";
 
 const storage = getStorage();
@@ -105,11 +105,8 @@ const gameInfos = reactive({
 });
 
 const defaultPath = "/src/assets/image/img1.png";
-const props = defineProps({
-  idGame: {
-    type: Number,
-  }
-});
+const props = defineProps(['idGame']);
+
 let reviewTemp = ref(null);
 
 const isLogin = ref(true);
@@ -167,15 +164,16 @@ const downloadZipFile = async () => {
 
 onMounted(async () => {
   try {
-    UrlGameImg.value = await fetchGameUrl(props.idGame); // Await the async call
+    //UrlGameImg.value = await fetchGameUrl(props.idGame); // Await the async call
 
-    const dataGame = await getGameDetailsWithDeveloperName(props.idGame);
+    const dataGame = await getGameDetailsWithDeveloperNameNEW(props.idGame);
     gameInfos.leGame = dataGame;
-    gameInfos.tags = gameInfos.leGame.tags;
-    gameInfos.devName = gameInfos.leGame.devName;
+    console.log('game object', gameInfos.leGame);
+    // gameInfos.tags = gameInfos.leGame.tags;
+    // gameInfos.devName = gameInfos.leGame.devName;
 
-    const dataReview = await getReviews(props.idGame);
-    reviewTemp.value = dataReview.length;
+    // const dataReview = await getReviews(props.idGame);
+    // reviewTemp.value = dataReview.length;
   } catch (error) {
     console.error("Error during component mounting:", error);
   }
