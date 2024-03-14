@@ -148,15 +148,15 @@ const toggleLogout = async () => {
   // console.log("loginTokens_refresh_token : ", loginTokens_refresh_token);
   // localStorage.getItem("refreshToken");
 
-  const logout = {
-    id: props.idDevl,
-    tokens: {
-      access_token: loginTokens_access_token,
-      refresh_token: loginTokens_refresh_token,
-    },
-  };
+  // const logout = {
+  //   id: props.idDevl,
+  //   tokens: {
+  //     access_token: loginTokens_access_token,
+  //     refresh_token: loginTokens_refresh_token,
+  //   },
+  // };
 
-  let results = await logoutService(logout);
+  let results = await logoutService();
   if (results !== false) {
     loginTokens_access_token = "";
     loginTokens_refresh_token = "";

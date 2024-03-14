@@ -459,7 +459,7 @@ export default {
     },
 
     async ziLogout() {
-      await this.$logout().then(
+      await services.logoutService().then(
         this.isLoggedIn()
       );
     },

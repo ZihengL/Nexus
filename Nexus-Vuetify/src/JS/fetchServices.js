@@ -30,6 +30,9 @@ export const parseDetails = (details) => {
 }
 
 export const parseJoins = (result, keys) => {
+  console.log('result', result);
+  console.log('keys', keys);
+
   for (var key in keys) {
     const detailsKey = key + "_details";
 
