@@ -11,8 +11,8 @@
       <input
         type="text"
         id="title"
-        v-model="state.gameTitle"
-        placeholder="Entrer le titre du jeu..."
+        v-model="state.gameObject.title"
+        :placeholder="  state.gameObject.title || 'Entrer le titre du jeu...'"
       />
     </div>
 
@@ -71,9 +71,9 @@
       <textarea
         class="description"
         name="description"
-        placeholder="Mon jeu est super cool ;) parce que..."
+        :placeholder=" state.gameObject.description  || 'Mon jeu est super cool ;) parce que...'"
         v-on:input="validateDescriptionLength"
-        v-model="state.description"
+        v-model="state.gameObject.description"
       ></textarea>
       <p id="charCount">{{ charCountText }}</p>
     </div>
@@ -142,21 +142,21 @@
 <script setup>
 import btnComp from "../components/btnComponent.vue";
 import storageManager from "../JS/localStorageManager";
+import { useRoute } from 'vue-router';
 import { reactive, defineProps, computed, onMounted } from "vue";
 import {
   create,
   getAllMatching,
   deleteData,
   getAll,
+  getOne
 } from "../JS/fetchServices.js";
+const route = useRoute();
 // import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 // import { getStorage, ref as firebaseRef, getDownloadURL, uploadBytes} from "firebase/storage";
 
+
 const props = defineProps({
-  developerID: {
-    type: Number,
-    default: storageManager.getIdDev(),
-  },
   pageTitle: {
     type: String,
     default: "Create Game",
@@ -172,8 +172,9 @@ const props = defineProps({
 });
 
 const state = reactive({
+  gameId:"",
+  gameObject:{},
   pageTitle: props.pageTitle,
-  gameTitle: "",
   tags: "",
   tagsArray: [],
   gameFile: null,
@@ -368,112 +369,124 @@ function updateTagsArray() {
 
 }
 
-const create_gameAndTags = async () => {
-  await createGame();
+// const update_gamesAndTags = async () => {
+//   // await createGame();
 
-  const tagsCreationResult = await createTags();
-  if (tagsCreationResult.isSuccessful ==false) {
-    console.error(
-      "Game couldn't be added because tags were not successfully created."
-    );
-    // await deleteGame();
-  } else {
-    console.log("Game creation succeeded.");
-  }
-};
+//   // const tagsCreationResult = await createTags();
+//   if (tagsCreationResult.isSuccessful ==false) {
+//     console.error(
+//       "Game couldn't be added because tags were not successfully created."
+//     );
+//     // await deleteGame();
+//   } else {
+//     console.log("Game creation succeeded.");
+//   }
+// };
 
-const createGame = async () => {
-  let jsonObject = {
-    title: state.gameTitle,
-    developerID: props.developerID,
-    description: state.description,
-    releaseDate: state.creation_date,
-    ratingAverage: 0,
-  };
-  let wasGameCreated = await create("games", jsonObject);
-  console.log("wasGameCreated:", wasGameCreated);
-};
+// const createGame = async () => {
+//   let jsonObject = {
+//     title: state.gameTitle,
+//     developerID: props.gameToUpdateId,
+//     description: state.description,
+//     releaseDate: state.creation_date,
+//     ratingAverage: 0,
+//   };
+//   let wasGameCreated = await create("games", jsonObject);
+//   console.log("wasGameCreated:", wasGameCreated);
+// };
 
-const createTags = async () => {
-  const gameId = await get_CreatedGameID();
-  if (!gameId) {
-    console.error("Failed to get game ID");
-    return false;
-  }
+// const createTags = async () => {
+//   const gameId = await get_CreatedGameID();
+//   if (!gameId) {
+//     console.error("Failed to get game ID");
+//     return false;
+//   }
 
-  let allTagsCreated = true;
-  for (const tag of state.tagsArray) {
-    const jsonObject = {
-      name: tag,
-      gameId: gameId,
-    };
-    const result = await create("tags", jsonObject);
-    console.log("Tag was created:", result);
-    if (result.isSuccessful == false) {
-      allTagsCreated = false;
-      break;
-    }
-  }
-  return allTagsCreated;
-};
+//   let allTagsCreated = true;
+//   for (const tag of state.tagsArray) {
+//     const jsonObject = {
+//       name: tag,
+//       gameId: gameId,
+//     };
+//     const result = await create("tags", jsonObject);
+//     console.log("Tag was created:", result);
+//     if (result.isSuccessful == false) {
+//       allTagsCreated = false;
+//       break;
+//     }
+//   }
+//   return allTagsCreated;
+// };
 
-const deleteGame = async () => {
-  const gameId = await get_CreatedGameID();
-  if (!gameId) {
-    console.error("Failed to get game ID for deletion");
-    return;
-  }
+// const deleteGame = async () => {
+//   const gameId = await get_CreatedGameID();
+//   if (!gameId) {
+//     console.error("Failed to get game ID for deletion");
+//     return;
+//   }
 
-  const response = await deleteData("games", { id: gameId });
+//   const response = await deleteData("games", { id: gameId });
 
-  if (response.ok) {
-    console.log("Game was successfully deleted");
-  } else {
-    console.error("Failed to delete the game");
-  }
-};
+//   if (response.ok) {
+//     console.log("Game was successfully deleted");
+//   } else {
+//     console.error("Failed to delete the game");
+//   }
+// };
 
-async function get_CreatedGameID() {
-  const filters = {
-    title: state.gameTitle,
-    developerID: props.developerID,
-    description: state.description,
-  };
+// async function get_CreatedGameID() {
+//   const filters = {
+//     title: state.gameTitle,
+//     developerID: props.gameToUpdateId,
+//     description: state.description,
+//   };
 
-  try {
-    let game = await getAllMatching("games", filters);
-    if (game.length > 0) {
-      console.log("created game :", game);
-      return game[0].id;
-    } else {
-      console.log("No games found with the specified criteria.");
-      return null;
-    }
-  } catch (error) {
-    console.error("Error fetching game ID:", error);
-    return null;
-  }
-}
+//   try {
+//     let game = await getAllMatching("games", filters);
+//     if (game.length > 0) {
+//       console.log("created game :", game);
+//       return game[0].id;
+//     } else {
+//       console.log("No games found with the specified criteria.");
+//       return null;
+//     }
+//   } catch (error) {
+//     console.error("Error fetching game ID:", error);
+//     return null;
+//   }
+// }
 
 const submitGame = async () => {
   if (formatData()) {
-    await create_gameAndTags();
+    await update_gamesAndTags();
   }
 };
 
-async function setDefaultValues() {
-  if (props.mode === "update" && props.initialData) {
-    state.gameTitle = props.initialData.gameTitle || "";
-    state.tags = props.initialData.tags.join(", ") || "";
-    state.description = props.initialData.description || "";
-    // and so on for other fields...
-  }
-}
+// async function setDefaultValues() {
+//   if (props.mode === "update" && props.initialData) {
+//     state.gameTitle = props.initialData.gameTitle || "";
+//     state.tags = props.initialData.tags.join(", ") || "";
+//     state.description = props.initialData.description || "";
+//     // and so on for other fields...
+//   }
+// }
 
 onMounted(async () => {
   try {
-    await setDefaultValues();
-    await getTagsFrom_DB();
+    const route = useRoute();
+    const gameToUpdateId = route.params.gameToUpdateId; 
+    state.gameId = gameToUpdateId;
+    console.log("state.gameId : ", state.gameId);
+
+    let data = await getOne("games", "id", gameToUpdateId);
+    if (data) {
+      state.gameObject = data[0];
+      console.log("state.gameObject : ", state.gameObject);
+    
+      state.tagsArray = state.gameObject.tags.map(tag => tag.name);
+      console.log("Updated tagsArray with names: ", state.tagsArray);
+      await getTagsFrom_DB();
+    }
   } catch (error) {
     console.error("Error setting default values:", error);
   }
@@ -506,13 +519,9 @@ textarea {
   padding: 0.5rem;
   margin-bottom: 0.5rem;
   border-radius: 0.5rem;
-  width: 100%; // Ensures input fields stretch to container width
+  width: 100%; 
 }
 
-// input[type="text"]:focus,
-// textarea:focus {
-//   outline: 2px solid #007bff;
-// }
 
 .error-message {
   color: #ff3860;
@@ -563,7 +572,7 @@ textarea {
 .tags-from-db-container {
   display: flex;
   align-items: center;
-  // flex-wrap: wrap;
+ 
   gap: 0.5rem;
   flex-direction: column;
 }
@@ -578,15 +587,14 @@ textarea {
   display: flex;
   align-items: center;
   width: 100%;
-  // flex-wrap: wrap;
-  gap: 0.5rem;
+   gap: 0.5rem;
   flex-direction: column;
 }
 
 .tags-display-container {
   flex-direction: column;
   justify-items: center;
-  // justify-content: space-between;
+ 
   margin-top: 1rem;
   display: flex;
   gap: 0.5rem;
@@ -620,21 +628,20 @@ textarea {
   padding: 0.5rem;
   border-radius: 0.5rem;
   display: flex;
-  // flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
 }
 
 img {
-  width: auto; // Allows the image to maintain aspect ratio
-  height: 5rem; // Adjust based on your needs
+  width: auto;
+  height: 5rem; 
   object-fit: cover;
 }
 
 video {
-  width: 100%; // Adapts to the width of its container
-  max-width: 20rem; // Limits video width while allowing it to be responsive
-  height: auto; // Maintain aspect ratio
+  width: 100%; 
+  max-width: 20rem; 
+  height: auto; 
 }
 
 .vid_item {
@@ -645,11 +652,10 @@ video {
 }
 
 textarea {
-  min-height: 10rem; // Adjust based on your needs
+  min-height: 10rem;  
 }
 
-// Buttons
-.btnComp {
+ .btnComp {
   background-color: #0062cc;
   border: none;
   color: white;
@@ -662,14 +668,13 @@ textarea {
   background-color: #004da2;
 }
 
-// Responsive adjustments
-@media (max-width: 768px) {
+ @media (max-width: 768px) {
   .tags-display-container {
     flex-direction: column;
   }
 
   video {
-    width: 100%; // Ensures video is not wider than the screen on smaller devices
+    width: 100%;  
   }
 }
 </style>
