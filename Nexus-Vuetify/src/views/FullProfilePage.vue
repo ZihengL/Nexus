@@ -6,7 +6,7 @@
         <img
           :src="user.picture || defaultProfilePic"
           alt="Profile Picture"
-          class="img"
+          class="img_userProfilePic"
         />
         <!-- Dialog Trigger Button -->
         <!-- <v-btn icon @click="galleryDialog = true">
@@ -458,6 +458,11 @@ onMounted(async () => {
 </script>
 
 <style lang="scss">
+
+.img_userProfilePic{
+  margin: 5%;
+}
+
 img {
   width: 25%;
   margin: auto;
@@ -467,7 +472,10 @@ img {
 
 .profile-and-gallery {
   display: flex;
+  flex-direction: column;
   align-items: center;
+  // justify-content: space-between;
+  margin-bottom: 10%;
 }
 
 #fullProfile {
