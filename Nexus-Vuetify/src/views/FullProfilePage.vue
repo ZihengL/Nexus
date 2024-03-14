@@ -156,15 +156,17 @@ const state = reactive({
   MAX_PASSWORD_LENGTH: 5,
 });
 
-
 const updatephonenumber = (event) => {
-  let input = event.target.value.replace(/\D/g, ''); 
-  let formattedNumber = '';
+  let input = event.target.value.replace(/\D/g, "");
+  let formattedNumber = "";
 
   if (input.length > 3 && input.length <= 6) {
     formattedNumber = `(${input.slice(0, 3)}) ${input.slice(3)}`;
   } else if (input.length > 6) {
-    formattedNumber = `(${input.slice(0, 3)}) ${input.slice(3, 6)}-${input.slice(6, 10)}`;
+    formattedNumber = `(${input.slice(0, 3)}) ${input.slice(
+      3,
+      6
+    )}-${input.slice(6, 10)}`;
   } else {
     formattedNumber = input;
   }
@@ -178,7 +180,7 @@ const getUserInfos = async () => {
 
     if (dataUser) {
       user.value = dataUser;
-      state.userToUpdate = dataUser;
+      state.userToUpdate = JSON.parse(JSON.stringify(dataUser));
     }
     console.log(" dataUser : ", dataUser);
   } catch (error) {
@@ -219,7 +221,16 @@ const updateUserInfos = async () => {
 };
 
 const deleteInfo = (field) => {
-  state.userToUpdate[field] = null;
+  const fieldValue = user.value[field];
+  const isConfirmed = confirm(
+    `Êtes-vous sûr de vouloir supprimer ${fieldValue}?`
+  );
+  if (!isConfirmed) {
+    console.log("Deletion canceled by the user.");
+    return;
+  }
+
+  user.value[field] = null;
 };
 
 function validateField(field, currentValue, originalValue) {
@@ -227,8 +238,10 @@ function validateField(field, currentValue, originalValue) {
     return "";
   } else if (currentValue && currentValue !== originalValue) {
     return currentValue;
+  } else if (!currentValue && currentValue == originalValue) {
+    return currentValue;
   }
-  return null; 
+  return null;
 }
 
 function validateUsername(currentValue, originalValue) {
@@ -241,10 +254,10 @@ function validateUsername(currentValue, originalValue) {
 }
 
 function validatePhoneNumber(phoneNumber) {
-  if(phoneNumber){
-    return phoneNumber.replace(/\D/g, '');
+  if (phoneNumber) {
+    return phoneNumber.replace(/\D/g, "");
   }
- return null
+  return null;
 }
 
 function validateDescription(currentValue, originalValue, maxDescLength) {
@@ -258,7 +271,11 @@ function validateDescription(currentValue, originalValue, maxDescLength) {
 }
 
 function validatePasswords(firstPassword, secondPassword) {
-  if (firstPassword === secondPassword && firstPassword.trim().length > 0 && secondPassword.trim().length > 0) {
+  if (
+    firstPassword === secondPassword &&
+    firstPassword.trim().length > 0 &&
+    secondPassword.trim().length > 0
+  ) {
     return firstPassword;
   } else {
     console.error("Les mots de passe ne correspondent pas ou sont vides.");
@@ -266,86 +283,121 @@ function validatePasswords(firstPassword, secondPassword) {
   }
 }
 
-function compareAndUpdateUser(updatedUser, userToUpdate) {
-  // Assume updatedUser has already been constructed with potential updates
+function compareAndUpdateUser(updatedUser, stateUser) {
   let isDifferent = false;
 
-  for (const key in updatedUser) {
-    if (updatedUser.hasOwnProperty(key) && key !== 'id') {
-      const updatedValue = updatedUser[key];
-      const originalValue = userToUpdate[key] ? userToUpdate[key].toString().trim() : '';
+  console.error(" state.userToUpdate : ", state.userToUpdate);
 
-      if (updatedValue.toString().trim() !== originalValue) {
-        isDifferent = true;
-        break;
+  for (const key in updatedUser) {
+    if (updatedUser.hasOwnProperty(key) && key !== "id") {
+      let updatedValue = updatedUser[key] ?? ""; // Use nullish coalescing operator to default to empty string
+      let originalValue = stateUser[key] ?? ""; // Use nullish coalescing operator to default to empty string
+
+      // Special handling for fields that can be null
+      if (key === "name" || key === "lastName") {
+        if (
+          (updatedValue === null && originalValue.trim() === "") ||
+          (updatedValue.trim() === "" && originalValue === null) ||
+          updatedValue.trim() !== originalValue.trim()
+        ) {
+          console.log(
+            `Difference found in ${key}: Updated value is "${updatedValue}", original value was "${originalValue}".`
+          );
+          isDifferent = true;
+          break;
+        }
+      } else {
+        // Convert both values to string and trim, safeguard against undefined values
+        updatedValue =
+          updatedValue !== null ? updatedValue.toString().trim() : "";
+        originalValue =
+          originalValue !== null ? originalValue.toString().trim() : "";
+
+        if (updatedValue !== originalValue) {
+          console.log(
+            `Difference found in ${key}: Updated value is "${updatedValue}", original value was "${originalValue}".`
+          );
+          isDifferent = true;
+          break;
+        }
       }
     }
   }
+
   if (!isDifferent) {
     console.error("No changes detected.");
-    resetState()
+    user.value = JSON.parse(JSON.stringify(state.userToUpdate));
+    // resetState(); // Ensure resetState() is defined elsewhere in your code.
     return null;
   }
 
   return updatedUser;
 }
 
-
 async function validateDataBeforeSending() {
   let updatedUser = { id: user.value.id };
 
   // Example usage for a general field
-  const fields = ["name", "lastName", "phoneNumber"];
-  fields.forEach(field => {
+  const fields = ["name", "lastName"];
+  fields.forEach((field) => {
     const currentValue = state[field].trim();
     const originalValue = state.userToUpdate[field]?.trim() ?? "";
     const result = validateField(field, currentValue, originalValue);
-    if (result !== null) {
-      updatedUser[field] = result;
-    }
+    // if (result !== null) {
+    updatedUser[field] = result;
+    // }
   });
 
   // Username
-  const usernameResult = validateUsername(state.username.trim(), state.userToUpdate.username?.trim() ?? "");
-  if (usernameResult ){
+  const usernameResult = validateUsername(
+    state.username.trim(),
+    state.userToUpdate.username?.trim() ?? ""
+  );
+  if (usernameResult) {
     updatedUser.username = usernameResult;
   }
 
-
   // Description
-  const descriptionResult = validateDescription(state.description.trim(), state.userToUpdate.description?.trim() ?? "", state.MAX_DESC_LENGTH);
-  if (descriptionResult){
+  const descriptionResult = validateDescription(
+    state.description.trim(),
+    state.userToUpdate.description?.trim() ?? "",
+    state.MAX_DESC_LENGTH
+  );
+  if (descriptionResult) {
     updatedUser.description = descriptionResult;
   }
 
-
   // Passwords
-  const passwordResult = validatePasswords(state.firstPassword, state.secondPassword);
-  if (passwordResult){
+  const passwordResult = validatePasswords(
+    state.firstPassword,
+    state.secondPassword
+  );
+  if (passwordResult) {
     updatedUser.password = passwordResult;
   }
 
   let sanitizedNumber = validatePhoneNumber(state.phoneNumber.trim());
-  if (sanitizedNumber){
+  if (sanitizedNumber) {
     updatedUser.phoneNumber = sanitizedNumber;
   }
- 
-  let final_updatedUser =  compareAndUpdateUser(updatedUser, state.userToUpdate);
+
+  console.log("updatedUser : ", updatedUser);
+  let final_updatedUser = compareAndUpdateUser(updatedUser,  state.userToUpdate);
   console.log("final_updatedUser : ", final_updatedUser);
-  return final_updatedUser
+  return final_updatedUser;
 }
 
-function resetState() {
-  state.name = "";
-  state.lastName = "";
-  state.email = "";
-  state.username = "";
-  state.phoneNumber = "";
-  state.firstPassword = "";
-  state.description = "";
-  state.secondPassword = "";
-  state.erroMsg = "";
-}
+// function resetState() {
+//   state.name = "";
+//   state.lastName = "";
+//   state.email = "";
+//   state.username = "";
+//   state.phoneNumber = "";
+//   state.firstPassword = "";
+//   state.description = "";
+//   state.secondPassword = "";
+//   state.erroMsg = "";
+// }
 
 // watch(
 //   () =>  state.imagePath,
@@ -358,7 +410,6 @@ function resetState() {
 onMounted(async () => {
   try {
     await getUserInfos();
-
   } catch (error) {
     console.error("Error fetching data:", error);
   }

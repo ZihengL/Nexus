@@ -31,7 +31,7 @@
 
     
 onMounted(() => {
-    console.log("fullProfile propClass : ", props.propClass)
+    // console.log("fullProfile propClass : ", props.propClass)
 });
 </script>
 

@@ -379,6 +379,7 @@ const create_gameAndTags = async () => {
     // await deleteGame();
   } else {
     console.log("Game creation succeeded.");
+    window.location.reload();
   }
 };
 
@@ -466,7 +467,6 @@ async function setDefaultValues() {
     state.gameTitle = props.initialData.gameTitle || "";
     state.tags = props.initialData.tags.join(", ") || "";
     state.description = props.initialData.description || "";
-    // and so on for other fields...
   }
 }
 

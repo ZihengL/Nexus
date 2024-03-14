@@ -4,7 +4,7 @@
     <div class="up">
       <div class="img">
         <img
-          src="../../assets//img/apex.png"
+          :src=" UrlGameImg"
           alt="image jeu"
           class="roundBorderSmall"
         />
@@ -51,12 +51,16 @@ import btnComp from "../btnComponent.vue";
 import { defineProps, onMounted, ref , computed} from "vue";
 import { useRouter } from 'vue-router';
 import storageManager from "../../JS/localStorageManager.js";
-import { fetchData } from "../../JS/fetch";
+import { getStorage, ref as firebaseRef, getDownloadURL, uploadBytes} from "firebase/storage";
 import { deleteData, getOne } from "../../JS/fetchServices.js";
 const props = defineProps(["himself", "idJeu", "buy"]);
 const LeGame_title = ref(null);
 const gameObject = ref(null);
+let UrlGameImg = ref(""); 
+const defaultPath = '/src/assets/imgJeuxLogo/noImg.jpg';
 const router = useRouter();
+const storage = getStorage();
+
 
 onMounted(async () => {
   try {
@@ -65,10 +69,24 @@ onMounted(async () => {
     LeGame_title.value = dataGame[0].title;
     gameObject.value = dataGame[0];
     console.log("leDevs : ", dataGame);
+    UrlGameImg.value = await fetchGameUrl(props.idJeu); 
+    console.log("UrlGameImg : ", UrlGameImg);
   } catch (error) {
     console.error("Error fetching data:", error);
   }
 });
+
+async function fetchGameUrl(gameId) {
+  const imagePath = `Games/${gameId}/media/${gameId}_Store.png`;
+  const imageRef = firebaseRef(storage, imagePath);
+  try {
+    const url = await getDownloadURL(imageRef);
+    return url; // Directly return the URL string
+  } catch (error) {
+    console.error(`Error fetching image for ${gameId}:`, error);
+    return defaultPath; // Return the default image path on error
+  }
+}
 
 const formattedReleaseDate = computed(() => {
   if (!gameObject.value || !gameObject.value.releaseDate) return 'Erreur Date Introuvable';
@@ -80,7 +98,14 @@ function routeToUpload() {
   router.push({ name: 'update', params: { gameToUpdateId: props.idJeu } }); 
 }
 
+
 async function deleteGame() {
+  const isConfirmed = confirm(`Êtes-vous sûr de vouloir supprimer le jeu ${LeGame_title.value}?`);
+  if (!isConfirmed) {
+    console.log("Deletion canceled by the user.");
+    return; 
+  }
+
   if (
     props.idJeu &&
     storageManager.getAccessToken() &&
@@ -105,6 +130,7 @@ async function deleteGame() {
     }
   }
 }
+
 </script>
 
 <style lang="scss">
