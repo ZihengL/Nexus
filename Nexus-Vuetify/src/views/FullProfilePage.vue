@@ -1,8 +1,8 @@
 <template>
-  <div v-if="user != null" :key="user.value" id="fullProfile">
+  <div v-if="user != null && AllImages.length > 0" :key="user.value" id="fullProfile">
     <form action="#" class="glass">
       <!-- <v-avatar size="10rem"> -->
-      <div class="profile-and-gallery round">
+      <div class="round">
         <img
           :src="getImage(user.picture) || defaultProfilePic"
           alt="Profile Picture"
@@ -13,7 +13,6 @@
           <v-icon>mdi-image-multiple</v-icon>
         </v-btn> -->
          <btnComp
-            Class="changerProfileBtn"
             :contenu="'Changer Profile'"
             @toggle-btn="galleryDialog = true"
           /> 
@@ -141,20 +140,25 @@
       <btnComp :contenu="'Modifier'" @toggle-btn="updateUserInfos" />
     </form>
 
-    <v-dialog v-model="galleryDialog" persistent max-width="600px">
-    <v-card>
-      <v-card-title>
-        Gallery
-        <v-spacer></v-spacer>
-        <v-btn icon @click="galleryDialog = false">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </v-card-title>
-      <v-card-text>
-        <!-- Your gallery content goes here. Use v-img inside a loop, for example -->
-      </v-card-text>
-    </v-card>
-  </v-dialog>
+    <div v-if="galleryDialog"  class="glass4  roundBorderSmall dialog">
+      <v-icon @click="galleryDialog = false" class="close">mdi-close</v-icon>
+      <div class="content">
+        <label
+          v-for="img, index in AllImages"
+          :key="index"
+          :class="{ 'filter-label': true, glow: true, checked: genre.checked }"
+          class="roundBorderSmall one"
+        >
+          <input
+            @change="handleUserInteraction"
+            type="checkbox"
+            :name="img"
+            :value="img"
+          />
+          <img :src="img" alt="">
+        </label>
+      </div>
+    </div>
   </div>
 
 
@@ -187,7 +191,7 @@ const state = reactive({
   MAX_LASTNAME_LENGTH: 5,
   MAX_PASSWORD_LENGTH: 5,
 });
-
+let AllImages = ref([]);
 const updatephonenumber = (event) => {
   let input = event.target.value.replace(/\D/g, "");
   let formattedNumber = "";
@@ -224,7 +228,24 @@ const getImage = (image) =>{
     let urlPic = '/src/assets/Avatar/' + image;
     console.log('pic,', urlPic)
     return urlPic
-  } 
+  }
+
+const getAllImages = async () => {
+  const folderPath = '/src/assets/Avatar/';
+  const imagePaths = [];
+  for (let i = 1; i <= 7; i++) {
+    let path = folderPath + 'Avatar_' + i + '.png';
+    console.log('path ', path);
+    imagePaths.push(`${folderPath}Avatar_${i}.png`);
+  }
+
+    //console.log('Nombre de fichiers dans le dossier :', nb);
+  console.log('Chemins de toutes les images :', imagePaths);
+  return imagePaths;
+
+};
+
+
 const updateUserInfos = async () => {
   const originalUser = user.value;
   // console.log("Original user info:", originalUser.id);
@@ -447,6 +468,8 @@ async function validateDataBeforeSending() {
 onMounted(async () => {
   try {
     await getUserInfos();
+    AllImages.value = getAllImages();
+    console.log('length ', AllImages.value)
   } catch (error) {
     console.error("Error fetching data:", error);
   }
@@ -467,15 +490,13 @@ onMounted(async () => {
 <style lang="scss">
 .round {
   //border-radius: 50%;
-  border: 2px solid red;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
-
+  gap: 30%;
   img {
   border-radius: 50%;
-  border: 2px solid red;
   width: 25%;
   margin: 0%;
   }
@@ -484,10 +505,35 @@ onMounted(async () => {
   // }
 } 
 
+.dialog {
+  position: absolute;
+  top: 10%;
+  left: 15%;
+  width: 70%;
+  margin: auto;
+
+  .close {
+    float: right;
+  }
+  .content {
+    margin: 5%;
+    border: 2px solid red;
+    display: grid;
+    grid-template-columns: auto auto auto;
+    gap: 2%;
+    padding: 2% 2% 5% 2%;
+
+     .one {
+    padding: 2% 2% 5% 2%;
+      
+      border: 2px solid red;
+     }
+  }
+}
 
 #fullProfile {
   width: 100%;
-  margin: 0 auto 3%;
+  margin: 0 auto 3% auto;
   padding: 5%;
   // margin-top: 10%;
   // margin-bottom: 10%;
