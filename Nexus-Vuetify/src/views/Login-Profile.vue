@@ -2,7 +2,7 @@
   <div class="loginProfile">
     <LoginRegister
       v-if="!props.connectedView"
-      @showProfile="toggleProfileForm"
+      @showProfile="toggleProfileForm()"
     />
     <Profile
       v-else-if="idDev"

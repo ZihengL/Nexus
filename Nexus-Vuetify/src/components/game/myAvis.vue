@@ -76,16 +76,16 @@ const createReview = async () => {
     storageManager.getAccessToken() &&
     storageManager.getRefreshToken()) {
       try {
-        let reviewIsCreated = await create("reviews", {
-          userID: userid,
+        let data = { userID: userid,
           gameID: props.gameID,
           rating: state.ratingValue,
           comment: state.comment,
           tokens: {
             access_token: storageManager.getAccessToken(),
             refresh_token: storageManager.getRefreshToken(),
-          },
-        });
+          }
+        }
+        let reviewIsCreated = await create("reviews", data);
         if(reviewIsCreated == true){
           window.location.reload();
         }

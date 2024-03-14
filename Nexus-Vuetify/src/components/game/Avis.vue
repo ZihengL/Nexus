@@ -30,11 +30,11 @@
   import storageManager from '../../JS/localStorageManager';
   import defaultProfilePic from '../../assets/Dev_Picture/defaultProfilePic.png';
 
-  //const props = defineProps(["idGame", "sort", "nbMax"]);
+  //const props = defineProps(["idGame", "sort", "nbMax", "taille"]);
   const props = defineProps({
     idGame: {
-      type: String,
-      default: "1",
+      type: Object,
+      default: null,
     },
     sort: {
       type: String,
@@ -81,40 +81,41 @@
   
   onMounted(async () => {
     try {
-      let sorting = null;
-      if(props.sort == "1"){
-        sorting = { timestamp: false };
-      }
-      else if (props.sort == "2"){
-        sorting = { timestamp: true };
-      }
-      else {
-        sorting = { rating: false };
-      }
-      let reviewData = await getReviewsAndUsernames(props.idGame, sorting)
-      if(props.sort == "0"){
-        review.value = reviewData.slice(0, props.nbMax);
-      }
-      else {
-        review.value = reviewData;
-      }
+      review.value = props.idGame;
+      // let sorting = null;
+      // if(props.sort == "1"){
+      //   sorting = { timestamp: false };
+      // }
+      // else if (props.sort == "2"){
+      //   sorting = { timestamp: true };
+      // }
+      // else {
+      //   sorting = { rating: false };
+      // }
+      // let reviewData = await getReviewsAndUsernames(props.idGame, sorting)
+      // if(props.sort == "0"){
+      //   review.value = reviewData.slice(0, props.nbMax);
+      // }
+      // else {
+      //   review.value = reviewData;
+      // }
 
-      if(review.value.length == 1){
-        let nbHeight = nb;
-        setOverflow(1);
-      }
-      else if(review.value.length == 2){
-        let nbHeight = nb * 2;
-        setOverflow(2);
-      }
-      else if(review.value.length == 3){
-        let nbHeight = nb * 3;
-        setOverflow(3);
-      }
-      else {
-        let nbHeight = nb * 4;
-        setOverflow(4);
-      }
+      // if(review.value.length == 1){
+      //   let nbHeight = nb;
+      //   setOverflow(1);
+      // }
+      // else if(review.value.length == 2){
+      //   let nbHeight = nb * 2;
+      //   setOverflow(2);
+      // }
+      // else if(review.value.length == 3){
+      //   let nbHeight = nb * 3;
+      //   setOverflow(3);
+      // }
+      // else {
+      //   let nbHeight = nb * 4;
+      //   setOverflow(4);
+      // }
 
 
     } catch (error) {
