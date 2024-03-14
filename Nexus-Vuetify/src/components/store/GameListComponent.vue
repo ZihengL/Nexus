@@ -21,7 +21,7 @@ import  Pagination  from "../PaginationComponent.vue";
 import { reactive, ref, onMounted, watch } from "vue";
 
 const nbMax = 3;
-let paginationNb = 1;
+//let paginationNb = 1;
 
 const props = defineProps({
   gameList: {
@@ -35,7 +35,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['pageNb']);
-
  const getNbPage = () => {
   emit('pageNb');
   // paginationNb = PaginationManager.getStorePage()
@@ -57,27 +56,18 @@ const gameList_data = reactive({
   errorMsg: "Erreur Aucuns Jeux Dans La Liste",
 });
 
-// watch(
-//   () => props.gameList,
-//   (newVal, oldVal) => {
-//     if (props.gameList.length > nbMax) {
-//       nbPage = props.gameList.length / nbMax;
-//     } else {
-//       nbPage = 1; // ou une autre valeur si vous préférez
-//     }
-//     console.log('nbPage : ', nbPage)
-    
-//     let max = paginationNb * nbMax;
-//     let min = max - nbMax;
-//     if (nbPage < max){
-//       max = props.gameList.length
-//     }
-//     arrayStore.value = props.gameList.slice(min, max);
-//     console.log("props.gameList : ", props.gameList)
-//   },
-//   { deep: true }
-// );
+watch(
+  () => props.gameList,
+  (newVal, oldVal) => {
+    console.log('game liste get : ', newVal)
+  },
+  { deep: true }
+);
 
+onMounted(async () => {
+  
+  console.log('game liste get : ', props.gameList)
+});
 </script>
 
 <style lang="scss">

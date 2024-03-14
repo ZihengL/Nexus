@@ -58,7 +58,7 @@ const store_data = reactive({
 
 const nbMax = 3;
 let nbPage = null;
-let paginationNb = 2;
+let paginationNb = 1;
 let count = 1;
 let sorting = null;
 
@@ -89,8 +89,15 @@ const getNbPage = () => {
   
   console.log('newww ', paginationNb);
   let max = paginationNb * nbMax;
-    let paging = {limit: nbMax, offset: max};
-    store_data.gameList_result = getAllGamesWithDeveloperNameNEW(null, null, null, sorting, paging);
+  if (count < nbMax) {
+    max = count;
+  }
+  let min = max - nbMax;
+  let paging = {limit: nbMax, offset: min};
+  
+  console.log('min ', min);
+  console.log('max ', max);
+  store_data.gameList_result = getAllGamesWithDeveloperNameNEW(null, null, null, sorting, paging);
     
     console.log('liste jeux new ', store_data.gameList_result);
  }
@@ -114,17 +121,24 @@ onMounted(async () => {
       id:true
     }
     count = await countAll('games');
-    console.log('nb ', count);
+    console.log('nb ', count[0].count);
+    let max;
+    let min;
 
-    if (count > nbMax) {
-      nbPage = count / nbMax;
-    } else {
+    if (count < nbMax) {
       nbPage = 2; // ou une autre valeur si vous préférez
+      //max = count
+      min = 0;
+    } else {
+      nbPage = count[0].count / nbMax;
+      max = paginationNb * nbMax;
+      min = max - nbMax;
     }
     console.log('nbPage : ', nbPage)
+    let paging = {limit: nbMax, offset: min};
     
-    let max = paginationNb * nbMax;
-    let paging = {limit: nbMax, offset: max};
+    console.log('min ', min);
+    console.log('max ', max);
     store_data.gameList_result = await getAllGamesWithDeveloperNameNEW(null, null, null, sorting, paging);
     console.log('liste jeux old', store_data.gameList_result);
   }
