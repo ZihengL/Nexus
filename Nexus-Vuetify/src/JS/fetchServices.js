@@ -137,19 +137,16 @@ export const registerService = async (createData) => {
 };
 
 export const loginService = async (login) => {
-  console.log('dddd ', login)
-  let body = {
-    login
+  // const email = login.email;
+  // const password = login.password;
+
+  const data = await services.fetchData('users', 'login', login);
+  if (data) {
+    StorageManager.setIdDev(data.user.id);
+    StorageManager.setAccessToken(data.tokens.access_token);
+    StorageManager.setRefreshToken(data.tokens.refresh_token);
   }
-  const email = login.email;
-  const password = login.password;
   
-  console.log('email ', email );
-  console.log('pass ', password );
-  //console.log(body)
-  // let data = await fetchData("users", "login", null, null, null, null, body, "POST");
-  const data = await services.login(email, password);
-  console.log('data log : ', data)
   return data
 };
 

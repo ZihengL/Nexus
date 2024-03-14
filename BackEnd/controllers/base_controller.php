@@ -291,16 +291,20 @@ class BaseController
         return $this->model->getAllMatching($filters, $sorting, $included_columns, $joined_tables, $paging);
     }
 
-    public function countAll($data)
+    public function countAll($data = null)
     {
-        [$column, $value] = getFromData(['column', 'value'], $data);
+        if ($data) {
+            [$column, $value] = getFromData(['column', 'value'], $data, false);
 
-        return $this->model->countAll($column, $value);
+            return $this->model->countAll($column, $value);
+        }
+
+        return $this->model->countAll();
     }
 
-    public function countAllMatching($data)
+    public function countAllMatching($data = null)
     {
-        $filters = $this->getDefault('filters', getFromData(['filters'], $data));
+        $filters = $data && $data['filters'] ? $data['filters'] : [];
 
         return $this->model->countAllMatching($filters);
     }

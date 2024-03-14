@@ -140,6 +140,7 @@
 </template>
 
 <script setup>
+import JSZip from "jszip";
 import btnComp from "../components/btnComponent.vue";
 import storageManager from "../JS/localStorageManager";
 import { reactive, defineProps, computed, onMounted } from "vue";
@@ -149,8 +150,15 @@ import {
   deleteData,
   getAll,
 } from "../JS/fetchServices.js";
+const storage = getStorage();
 // import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-// import { getStorage, ref as firebaseRef, getDownloadURL, uploadBytes} from "firebase/storage";
+import { getStorage, ref as firebaseRef, uploadBytes } from "firebase/storage";
+const validImageTypes = ["image/jpeg", "image/png"];
+const validFileTypes = [
+  "application/x-msdownload", // MIME type for .exe files
+  "application/java-archive", // MIME type for .jar files
+];
+// const maxFileSize = 5 * 1024 * 1024;
 
 const props = defineProps({
   developerID: {
@@ -181,7 +189,7 @@ const state = reactive({
   imageFiles: [],
   videoFiles: [],
   MIN_IMG: 0,
-  MAX_IMGS: 10,
+  MAX_IMGS: 4,
   MAX_VIDS: 2,
   MIN_TAG: 1,
   MIN_DESC_LENGTH: 0,
@@ -229,12 +237,21 @@ const openFileBrowser = () => {
   console.log("selected game file");
   const fileInput = document.createElement("input");
   fileInput.type = "file";
+  fileInput.accept = validFileTypes.join(","); // Suggest to the browser to filter files by these types
+
   fileInput.onchange = (e) => {
     const file = e.target.files[0];
+
+    if (!file || !validFileTypes.includes(file.type)) {
+      alert("Invalid file type selected. Please select an executable file.");
+      return; // Exit the function if the file type is not valid
+    }
+
     console.log("selected game file : ", file);
     const fileUrl = URL.createObjectURL(file);
 
     state.gameFile = {
+      file: file,
       name: file.name,
       size: file.size,
       type: file.type,
@@ -293,10 +310,23 @@ const openImageBrowser = () => {
       );
       return;
     }
-    const newImageFiles = newFiles.slice(0, availableSlots).map((file) => ({
-      ...file,
-      url: URL.createObjectURL(file),
-    }));
+    const newImageFiles = newFiles
+      .slice(0, availableSlots)
+      .map((file) => {
+        if (!validImageTypes.includes(file.type)) {
+          alert("Invalid file type.");
+          return null;
+        }
+        return {
+          ...file,
+          file,
+          url: URL.createObjectURL(file),
+          name: file.name,
+          type: file.type,
+        };
+      })
+      .filter((file) => file !== null);
+    console.log("newImageFiles : ", newImageFiles);
 
     state.imageFiles = [...state.imageFiles, ...newImageFiles];
   };
@@ -334,29 +364,70 @@ const formatData = () => {
   }
 };
 
-// // Method to upload a file
-// const uploadZipFile = async () => {
-//   // Example file to upload, you might want to replace this with actual file selection logic
-//   const file = new Blob(["This is a test ZIP file content"], { type: 'application/zip' });
-//   const fileName = `${props.idGame}/${gameInfos.leGame.title}.zip`; // Example file name, replace as needed
-//   console.log(fileName);
-//   const fileRef = firebaseRef(storage, `Games/${fileName}`);
+const uploadImageFiles = async (gameId) => {
+  for (const imageElement of state.imageFiles) {
+    const fileName = `${gameId}_Store.png`;
+    const fileRef = firebaseRef(storage, `Games/${gameId}/media/${fileName}`);
+    const metadata = {
+      contentType: imageElement.type,
+    };
+    try {
+      await uploadBytes(fileRef, imageElement.file, metadata);
+      console.log(`${imageElement} uploaded successfully.`);
+    } catch (error) {
+      console.error(`Failed to upload ${imageElement.name}:`, error);
+    }
+  }
+};
 
-//   try {
-//     await uploadBytes(fileRef, file);
-//     console.log(`${fileName} uploaded successfully`);
-//   } catch (error) {
-//     console.error("Failed to upload file:", error);
-//   }
-// };
+const zipFile = async (file, fileName) => {
+  const zip = new JSZip();
+  // Add a file to the zip. The first argument is the filename inside the zip
+  // The second argument is the content of the file
+  zip.file(fileName, file);
+
+  try {
+    const content = await zip.generateAsync({ type: "blob" });
+
+    // Return the ZIP Blob
+    return content;
+  } catch (error) {
+    console.error("Failed to zip the file:", error);
+    throw error;
+  }
+};
+
+const uploadZipFile = async (gameId) => {
+  if (!state.gameFile || !state.gameFile.file || !state.gameTitle) {
+    console.error("No file selected for upload");
+    return;
+  }
+
+  const zippedFileName = `${state.gameTitle}.zip`;
+
+  const fileRef = firebaseRef(storage, `Games/${gameId}/${zippedFileName}`);
+
+  try {
+    const zippedFileBlob = await zipFile(state.gameFile.file, zippedFileName);
+
+    const metadata = {
+      contentType: "application/zip",
+    };
+
+    await uploadBytes(fileRef, zippedFileBlob, metadata);
+    console.log(`${zippedFileBlob} uploaded successfully`);
+  } catch (error) {
+    console.error("Failed to upload zipped file:", error);
+  }
+};
 
 function updateTagsArray() {
   let newTags = state.tags
     .split(",")
-    .map(tag => tag.trim())
-    .filter(Boolean); 
+    .map((tag) => tag.trim())
+    .filter(Boolean);
 
-  newTags.forEach(newTag => {
+  newTags.forEach((newTag) => {
     if (!state.tagsArray.includes(newTag)) {
       state.tagsArray.push(newTag);
     } else {
@@ -365,20 +436,23 @@ function updateTagsArray() {
   });
 
   state.tags = "";
-
 }
 
 const create_gameAndTags = async () => {
   await createGame();
 
   const tagsCreationResult = await createTags();
-  if (tagsCreationResult.isSuccessful ==false) {
+  if (tagsCreationResult.isSuccessful == false) {
     console.error(
       "Game couldn't be added because tags were not successfully created."
     );
-    // await deleteGame();
+    await deleteGame();
   } else {
     console.log("Game creation succeeded.");
+
+    const gameId = await get_CreatedGameID();
+    await uploadImageFiles(gameId);
+    await uploadZipFile(gameId);
     window.location.reload();
   }
 };
@@ -425,7 +499,16 @@ const deleteGame = async () => {
     return;
   }
 
-  const response = await deleteData("games", { id: gameId });
+  let delete_data = {
+    id: gameId,
+    tokens: {
+      access_token: storageManager.getAccessToken(),
+      refresh_token: storageManager.getRefreshToken(),
+    },
+  };
+  console.log("delete_data : ", delete_data);
+
+  const response = await deleteData("games", delete_data);
 
   if (response.ok) {
     console.log("Game was successfully deleted");
