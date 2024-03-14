@@ -502,6 +502,10 @@ export default {
       const user = await services.getUser(4);
       console.log('user', user);
 
+      const carousel = await services.getGamesForCarousel();
+
+      console.log(carousel);
+
       // const login = await services.login({})
     }
   },

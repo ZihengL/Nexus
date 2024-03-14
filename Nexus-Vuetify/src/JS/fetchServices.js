@@ -194,10 +194,10 @@ export const getGamesForCarousel = async () => {
       users: ['id', 'username', 'picture', 'isOnline'],
       tags: ['id', 'name']
     };
-
   let paging = { limit: 4, offset: 0};
 
   let data = await getAllMatching('games', filters, included_columns, sorting, joined_tables, paging);
+  console.log("CAROUSEL", data);
   return fetchGameImages(data);
 }
 
