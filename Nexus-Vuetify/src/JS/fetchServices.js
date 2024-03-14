@@ -31,12 +31,18 @@ export const parseDetails = (details) => {
 
 export const parseJoins = (result, keys) => {
   for (var key in keys) {
-    const resultKey = key + "_details";
+    const detailsKey = key + "_details";
 
-    for (var index in result) {
-      const obj = result[index];
-      obj[key] = parseDetails(obj[resultKey]);
-      delete obj[resultKey];
+    if (result.length > 1)
+      for (var index in result) {
+        const obj = result[index];
+
+        obj[key] = parseDetails(obj[detailsKey]);
+        delete obj[detailsKey];
+      }
+    else {
+      result[key] = parseDetails(result[detailsKey]);
+      delete result[detailsKey];
     }
   }
 
@@ -51,6 +57,7 @@ export const getOne = async (table, column, value, includedColumns = null, joine
 
   if (result) {
     return joined_tables ? parseJoins(result, joined_tables) : result;
+
   }
 
   return null;
@@ -60,7 +67,6 @@ export const getAll = async (table, column = null, value = null, includedColumns
   // let data = await fetchData(table, "getAll", column, value, includedColumns, sorting, null, "GET");
 
   const preppedBody = services.prepGetAll(column, value, includedColumns, sorting, joined_tables, paging);
-  console.log(preppedBody);
   let result = await services.getAll(table, preppedBody);
 
   if (result) {
@@ -203,8 +209,8 @@ export const getAllGamesWithDeveloperNameNEW = async (column = null, value = nul
 // GetOne
 export const getGameDetailsWithDeveloperNameNEW = async (gameID) => {
   const joined_tables = { users: ['id', 'username', 'picture', 'isOnline'], tags: ['id', 'name'] };
-  let data = await getOne('games', 'id', gameID, null, null, joined_tables);
-  console.log('data brut : ', data);
+
+  let data = await getOne('games', 'id', gameID, null, joined_tables);
   return fetchOneGameImages(data);
 }
 

@@ -484,17 +484,20 @@ export default {
     },
 
     async testFetchJoins() {
-      const result = await services.getAllGamesWithDeveloperNameNEW();
-      console.log("GAMES W USERNAME", result);
+      // const result = await services.getAllGamesWithDeveloperNameNEW();
+      // console.log("GAMES W USERNAME", result);
 
-      const result2 = await services.getGamesForCarousel();
-      console.log("CAROUSEL", result2);
+      // const result2 = await services.getGamesForCarousel();
+      // console.log("CAROUSEL", result2);
       
-      const result3 = await services.getReviewsAndUsernamesNEW();
-      console.log("REVIEWS", result3);
+      // const result3 = await services.getReviewsAndUsernamesNEW();
+      // console.log("REVIEWS", result3);
 
-      const tags = await services.getAll('tags');
-      console.log(tags);
+      // const tags = await services.getAll('tags');
+      // console.log(tags);
+
+      const result4 = await services.getGameDetailsWithDeveloperNameNEW(2);
+      console.log(result4);
     }
   },
 };
