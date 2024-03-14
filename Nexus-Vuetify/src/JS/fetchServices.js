@@ -100,8 +100,7 @@ export const deleteData = async(table, deleteData) => {
 };
 
 export const updateData = async(table, updateData) => {
-
-  const data = await services.fetchData(table, "update", updateData);
+  const data = await services.updateWithValidation(table, updateData);
   return data;
 };
 

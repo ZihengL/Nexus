@@ -152,10 +152,7 @@ export async function refreshToken() {
   if (StorageManager.getIsConnected()) {
     console.log("Refreshing Token");
 
-    const result = await fetchData("users", "authenticate", {
-      id: StorageManager.getIdDev(),
-      refresh_token: StorageManager.getRefreshToken(),
-    });
+    const result = await fetchData("users", "authenticate", getAuthentificationCredentials());
 
     if (result) {
       console.log("Refreshed Access Token.", result);
@@ -221,17 +218,25 @@ export async function logout() {
   return false;
 }
 
-export async function updateUser(data) {
+export async function updateWithValidation(table, data) {
   if (isLoggedIn()) {
-    const result = await fetchData("users", "update", {
-      credentials: get(),
+    return await fetchData(table, "update", {
+      credentials: getValidationCredentials(),
       request_data: data,
     });
-
-    if (result) {
-      storeTokens(result.tokens);
-    }
   }
+}
+
+export async function updateUser(data) {
+  const result = await updateWithValidation('users', data);
+
+  return result;
+}
+
+export async function updateGame(data) {
+  const result = await updateWithValidation('games', data);
+
+  return result;
 }
 
 // GENERICS
