@@ -190,7 +190,7 @@ export const getGameDetailsWithDeveloperNameNEW = async (gameID) => {
   const joined_tables = { users: ['id', 'username', 'picture', 'isOnline'], tags: ['id', 'name'] };
 
   let data = await getOne('games', 'id', gameID, null, joined_tables);
-  console.log('tags brut : ', data);
+  console.log('data brut : ', data);
   return fetchOneGameImages(data);
 }
 
@@ -211,7 +211,7 @@ export const getGamesForCarousel = async () => {
   let paging = { limit: 4, offset: 0};
 
   let data = await getAllMatching('games', filters, included_columns, sorting, joined_tables, paging);
-  console.log("CAROUSEL", data);
+  console.log("CAROUSEL ", data);
   return fetchGameImages(data);
 }
 

@@ -1,4 +1,4 @@
-import { getAllGamesWithDeveloperName } from './fetchServices'
+import { getAllGamesWithDeveloperName, fetchGameImages} from './fetchServices'
 
 export const searchOn_titleOrUsername = async titleOrDevName => {
   let games = await getAllGamesWithDeveloperName()
@@ -13,7 +13,7 @@ export const searchOn_titleOrUsername = async titleOrDevName => {
     )
   })
   //   console.log('searchedGames : ', searchedGames)
-  return searchedGames
+  return fetchGameImages(searchedGames)
 }
 
 export const search_AndFilter = async (
