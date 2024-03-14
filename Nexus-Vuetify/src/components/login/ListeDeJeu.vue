@@ -1,6 +1,6 @@
 <template>
   <!-- <div v-for="activity in activities" :key="activity.id" class="activities">-->
-  <div v-if="LeGame" class="container glass2 roundBorderSmall">
+  <div v-if="LeGame_title" class="container glass2 roundBorderSmall">
     <div class="up">
       <div class="img">
         <img
@@ -11,12 +11,12 @@
       </div>
       <div class="jeu">
         <span v-if="props.himself && !props.buy"
-          >{{ LeGame }} : televerser le 17/04/2022
+          > Joué à {{ LeGame_title }} le 17/04/2022
         </span>
-        <span v-if="props.himself && props.buy"
-          >Joué à {{ LeGame }} le 17/04/2022</span
-        >
-        <span v-else>{{ LeGame }}</span>
+        <span v-if="props.himself && props.buy">
+          Titre : {{ LeGame_title || 'Erreur Titre Introuvable' }} - Televerser le : {{formattedReleaseDate}}
+         </span>
+        <span v-else>{{ LeGame_title }}</span>
         <br />
       </div>
     </div>
@@ -36,30 +36,49 @@
         :contenu="'Supprimmer'"
         @toggle-btn="deleteGame"
       />
-      <btnComp v-if="props.himself" :contenu="'Mettre a jour'" />
+      <btnComp
+        v-if="props.himself"
+        :contenu="'Mettre a jour'"
+        @toggle-btn="routeToUpload"
+        title="update"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
 import btnComp from "../btnComponent.vue";
-import { defineProps, onMounted, ref } from "vue";
+import { defineProps, onMounted, ref , computed} from "vue";
+import { useRouter } from 'vue-router';
 import storageManager from "../../JS/localStorageManager.js";
 import { fetchData } from "../../JS/fetch";
 import { deleteData, getOne } from "../../JS/fetchServices.js";
 const props = defineProps(["himself", "idJeu", "buy"]);
-const LeGame = ref(null);
+const LeGame_title = ref(null);
+const gameObject = ref(null);
+const router = useRouter();
 
 onMounted(async () => {
   try {
     const dataGame = await getOne("games", "id", props.idJeu);
     // fetchData("games", "getOne", "id", props.idJeu,null, null, null, "GET");
-    LeGame.value = dataGame[0].title;
+    LeGame_title.value = dataGame[0].title;
+    gameObject.value = dataGame[0];
     console.log("leDevs : ", dataGame);
   } catch (error) {
     console.error("Error fetching data:", error);
   }
 });
+
+const formattedReleaseDate = computed(() => {
+  if (!gameObject.value || !gameObject.value.releaseDate) return 'Erreur Date Introuvable';
+  const date = new Date(gameObject.value.releaseDate);
+  return date.toISOString().split('T')[0]; // Correctly formats the date
+});
+
+function routeToUpload() {
+  router.push({ name: 'update', params: { gameToUpdateId: props.idJeu } }); 
+}
 
 async function deleteGame() {
   if (

@@ -184,7 +184,7 @@ const state = reactive({
   MAX_IMGS: 10,
   MAX_VIDS: 2,
   MIN_TAG: 1,
-  MIN_DESC_LENGTH: 1,
+  MIN_DESC_LENGTH: 0,
   MAX_DESC_LENGTH: 250,
   errorMessage: "",
   creation_date: new Date().toISOString().replace("T", " ").substring(0, 16),
