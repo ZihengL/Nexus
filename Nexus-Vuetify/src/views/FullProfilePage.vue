@@ -2,11 +2,25 @@
   <div v-if="user != null" :key="user.value" id="fullProfile">
     <form action="#" class="glass">
       <!-- <v-avatar size="10rem"> -->
-      <img
-        :src="user.picture || defaultProfilePic"
-        alt="Profile Picture"
-        class="img"
-      />
+      <div class="profile-and-gallery">
+        <img
+          :src="user.picture || defaultProfilePic"
+          alt="Profile Picture"
+          class="img"
+        />
+        <!-- Dialog Trigger Button -->
+        <!-- <v-btn icon @click="galleryDialog = true">
+          <v-icon>mdi-image-multiple</v-icon>
+        </v-btn> -->
+        <!-- <btnComp
+            :propClass="'changerProfileBtn'"
+            :contenu="'Changer Profile'"
+            @toggle-btn="galleryDialog = true"
+          /> -->
+        <button class="changerProfileBtn" @click="galleryDialog = true">
+          Changer Profile
+        </button>
+      </div>
       <!-- </v-avatar> -->
       <!-- ... Signup form content ... -->
       <div class="field-container">
@@ -127,6 +141,21 @@
       <btnComp :contenu="'Modifier'" @toggle-btn="updateUserInfos" />
     </form>
   </div>
+
+  <v-dialog v-model="galleryDialog" persistent max-width="600px">
+    <v-card>
+      <v-card-title>
+        Gallery
+        <v-spacer></v-spacer>
+        <v-btn icon @click="galleryDialog = false">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-card-title>
+      <v-card-text>
+        <!-- Your gallery content goes here. Use v-img inside a loop, for example -->
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
@@ -138,6 +167,7 @@ import { updateData, getOne } from "../JS/fetchServices";
 
 const props = defineProps(["IdDev"]);
 let user = ref(null);
+let galleryDialog = ref(false);
 
 const state = reactive({
   userToUpdate: "",
@@ -382,7 +412,7 @@ async function validateDataBeforeSending() {
   }
 
   console.log("updatedUser : ", updatedUser);
-  let final_updatedUser = compareAndUpdateUser(updatedUser,  state.userToUpdate);
+  let final_updatedUser = compareAndUpdateUser(updatedUser, state.userToUpdate);
   console.log("final_updatedUser : ", final_updatedUser);
   return final_updatedUser;
 }
@@ -433,6 +463,11 @@ img {
   margin: auto;
   // padding-top: 3%;
   // padding-bottom: 3%;
+}
+
+.profile-and-gallery {
+  display: flex;
+  align-items: center;
 }
 
 #fullProfile {
@@ -535,5 +570,24 @@ img {
       0 0 82px #0fa, 0 0 92px #0fa, 0 0 102px #0fa, 0 0 151px #0fa;
     animation: neonGlow 1.5s ease-in-out infinite alternate;
   }
+}
+
+.changerProfileBtn {
+  height: 60%;
+  width: 50%;
+  // position: relative;
+  overflow: hidden;
+  // padding: 5%;
+  // display: flex;
+  align-items: center;
+  border-radius: 20px;
+  background: -webkit-linear-gradient(
+      right,
+      var(--purple),
+      var(--dark-blue),
+      var(--purple),
+      var(--dark-blue)
+    );
+    color: #ffffff;
 }
 </style>
