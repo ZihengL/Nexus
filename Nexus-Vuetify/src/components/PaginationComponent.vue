@@ -45,6 +45,8 @@
       });
     //console.log('le nb p : ', nbPageCheck);
     PaginationManager.setStorePage(leNbPage);
+    //PaginationManager.getStorePage();
+
     emit("nbPage")
   }
 

@@ -101,7 +101,7 @@
 <script setup>
 import storageManager from "../../JS/localStorageManager";
 import ListeDeJeu from "./ListeDeJeu.vue";
-import { logoutService, getOne, getAllMatching } from "../../JS/fetchServices";
+import { logoutService, getUser, getAllMatching } from "../../JS/fetchServices";
 import { defineProps, ref, onMounted, defineEmits } from "vue";
 import btnComp from "../btnComponent.vue";
 import defaultProfilePic from '@/assets/Avatar/Avatar_1.png';
@@ -176,7 +176,7 @@ async function getUserInfos() {
   try {
     // console.log("Profile.vue props.idDevl : ", props.idDevl);
     if (props.idDevl) {
-      const userData = await getOne("users", "id", props.idDevl);
+      const userData = await getUser(props.idDevl);
 
       console.log("userData : ", userData);
 

@@ -95,7 +95,7 @@ function handleUserInteraction() {
 
 async function getAllTags() {
   const fetchedGenres = await getTags();
-  console.log('all tags : ', fetchedGenres);
+  //console.log('all tags : ', fetchedGenres);
   filter_data.genres = fetchedGenres.map((genre) => ({
     ...genre,
     checked: false,

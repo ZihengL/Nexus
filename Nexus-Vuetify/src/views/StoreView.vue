@@ -13,6 +13,8 @@
     <div class="contenue">
       <ListeJeux
         :gameList="store_data.gameList_result"
+        :nbPage="nbPage"
+        @pageNb="getNbPage"
         class="listeJeux roundBorderSmall"
       />
       <div class="filtre glass roundBorderSmall">
@@ -28,15 +30,16 @@
 </template>
 
 <script setup>
-import { reactive, onMounted } from "vue";
+import { reactive, onMounted, watch } from "vue";
 import FilterComponent from "../components/store/FilterComponent.vue";
 import Search from "../components/game/Search.vue";
 import {
   searchOn_titleOrUsername,
   search_AndFilter,
 } from "../JS/store_search.js";
-import {  getAllGamesWithDeveloperNameNEW } from "../JS/fetchServices";
+import {  getAllGamesWithDeveloperNameNEW, countAll } from "../JS/fetchServices";
 import ListeJeux from "../components/store/GameListComponent.vue";
+import PaginationManager from "../JS/pagination.js";
 
 const store_data = reactive({
   genres: [
@@ -53,6 +56,11 @@ const store_data = reactive({
   gameList_result: [],
 });
 
+const nbMax = 3;
+let nbPage = null;
+let paginationNb = 2;
+let count = 1;
+let sorting = null;
 
 async function handleFilterUpdate(filterData) {
   console.log("Received filter data:", filterData);
@@ -75,17 +83,51 @@ const handleSearch = async (query) => {
   //console.log(" store_data.gameList_result: ", store_data.gameList_result);
 };
 
+const getNbPage = () => {
+  //emit('pageNb');
+  paginationNb = PaginationManager.getStorePage();
+  
+  console.log('newww ', paginationNb);
+  let max = paginationNb * nbMax;
+    let paging = {limit: nbMax, offset: max};
+    store_data.gameList_result = getAllGamesWithDeveloperNameNEW(null, null, null, sorting, paging);
+    
+    console.log('liste jeux new ', store_data.gameList_result);
+ }
+
+// watch(
+//   () => paginationNb,
+//   (newVal, oldVal) => {
+//     let max = newVal * nbMax;
+//     let paging = {limit: nbMax, offset: max};
+//     store_data.gameList_result = getAllGamesWithDeveloperNameNEW(null, null, null, sorting, paging);
+    
+//     console.log('liste jeux new ', store_data.gameList_result);
+//   },
+//   { deep: true }
+// );
+
 onMounted(async () => {
 
   if(store_data.gameList_result.length === 0){
-    let sorting ={
+    sorting ={
       id:true
     }
-    store_data.gameList_result = await getAllGamesWithDeveloperNameNEW(null, null, null, sorting);
-    console.log('liste jeux ', store_data.gameList_result);
-  }
- 
+    count = await countAll('games');
+    console.log('nb ', count);
 
+    if (count > nbMax) {
+      nbPage = count / nbMax;
+    } else {
+      nbPage = 2; // ou une autre valeur si vous préférez
+    }
+    console.log('nbPage : ', nbPage)
+    
+    let max = paginationNb * nbMax;
+    let paging = {limit: nbMax, offset: max};
+    store_data.gameList_result = await getAllGamesWithDeveloperNameNEW(null, null, null, sorting, paging);
+    console.log('liste jeux old', store_data.gameList_result);
+  }
 });
 </script>
 
