@@ -316,7 +316,7 @@ class BaseModel
         return $selections;
     }
 
-    public function getJoinedSelections($table, $internal, $external, $included_columns)
+    public function getJoinedSelections($table, $internal, $external, $included_columns = [])
     {
         $selections = '';
         $joins = '';
