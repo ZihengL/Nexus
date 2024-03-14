@@ -90,7 +90,7 @@
     </div>
     <div>
       <btnComp
-        :contenu="'Téléverser des images (Max ' + state.MAX_IMGS + ')'"
+        :contenu="'Téléverser des images (Max ' + state.MAX_IMG_LIST + ')'"
         @toggle-btn="openImageBrowser"
       ></btnComp>
       <div class="imgList" v-if="state.imageFiles.length">
@@ -105,6 +105,29 @@
             :propClass="'removeBtn'"
             :contenu="'X'"
             @toggle-btn="() => removeItem(index, state.imageFiles)"
+          ></btnComp>
+        </div>
+      </div>
+    </div>
+    <div>
+      <btnComp
+        :contenu="
+          'Téléverser une image d\'icone (Max ' + state.MAX_IMG_STORE + ')'
+        "
+        @toggle-btn="openImageBrowser_forStore"
+      ></btnComp>
+      <div class="imgList" v-if="state.imageStoreObject.length">
+        <div
+          class="img_element"
+          v-for="(file, index) in state.imageStoreObject"
+          :key="index"
+        >
+          {{ file.name }}
+          <img :src="file.url" :alt="file.name" />
+          <btnComp
+            :propClass="'removeBtn'"
+            :contenu="'X'"
+            @toggle-btn="() => removeItem(index, state.imageStoreObject)"
           ></btnComp>
         </div>
       </div>
@@ -163,7 +186,7 @@ const validFileTypes = [
 const props = defineProps({
   developerID: {
     type: Number,
-    default: storageManager.getIdDev(),
+    default: Number(storageManager.getIdDev()),
   },
   pageTitle: {
     type: String,
@@ -186,10 +209,13 @@ const state = reactive({
   tagsArray: [],
   gameFile: null,
   gameFilePath: "",
+  imageStoreObject: [],
   imageFiles: [],
   videoFiles: [],
-  MIN_IMG: 0,
-  MAX_IMGS: 4,
+  MIN_IMG_LIST: 4,
+  MIN_IMG_STORE: 1,
+  MAX_IMG_LIST: 4,
+  MAX_IMG_STORE: 1,
   MAX_VIDS: 2,
   MIN_TAG: 1,
   MIN_DESC_LENGTH: 0,
@@ -295,14 +321,13 @@ const openVideoBrowser = () => {
 };
 
 const openImageBrowser = () => {
-  console.log("hi");
   const fileInput = document.createElement("input");
   fileInput.type = "file";
   fileInput.multiple = true;
   fileInput.accept = "image/*";
   fileInput.onchange = (e) => {
     const newFiles = Array.from(e.target.files);
-    const availableSlots = state.MAX_IMGS - state.imageFiles.length;
+    const availableSlots = state.MAX_IMG_LIST - state.imageFiles.length;
 
     if (newFiles.length > availableSlots) {
       alert(
@@ -333,6 +358,44 @@ const openImageBrowser = () => {
   fileInput.click();
 };
 
+const openImageBrowser_forStore = () => {
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.multiple = true;
+  fileInput.accept = "image/*";
+  fileInput.onchange = (e) => {
+    const newFiles = Array.from(e.target.files);
+    const availableSlots = state.MAX_IMG_STORE - state.imageStoreObject.length;
+
+    if (newFiles.length > availableSlots) {
+      alert(
+        `You can only upload a maximum of ${availableSlots} more image(s).`
+      );
+      return;
+    }
+    const newImage_forStore = newFiles
+      .slice(0, availableSlots)
+      .map((file) => {
+        if (!validImageTypes.includes(file.type)) {
+          alert("Invalid file type.");
+          return null;
+        }
+        return {
+          ...file,
+          file,
+          url: URL.createObjectURL(file),
+          name: file.name,
+          type: file.type,
+        };
+      })
+      .filter((file) => file !== null);
+    console.log("newImageFiles : ", newImage_forStore);
+
+    state.imageStoreObject = [...state.imageStoreObject, ...newImage_forStore];
+  };
+  fileInput.click();
+};
+
 const removeItem = (indexToRemove, fileList) => {
   URL.revokeObjectURL(fileList[indexToRemove].url);
   fileList.splice(indexToRemove, 1);
@@ -345,13 +408,17 @@ const formatData = () => {
   } else if (state.tagsArray.length < state.MIN_TAG) {
     state.errorMessage = `At least ${state.MIN_TAG} tags are required.`;
     return false;
-  } else if (state.imageFiles.length < state.MIN_IMG) {
-    state.errorMessage = `At least ${state.MIN_IMG} images are required.`;
+  } else if (state.imageFiles.length < state.MIN_IMG_LIST) {
+    state.errorMessage = `At least ${state.MIN_IMG_LIST} images are required.`;
     return false;
   } else if (state.description.trim().length < state.MIN_DESC_LENGTH) {
     state.errorMessage = "Description is required.";
     return false;
-  } else {
+  } else if (state.imageStoreObject.length < state.MAX_IMG_STORE) {
+    state.errorMessage = `At least ${state.MAX_IMG_STORE} images are required for the store.`;
+    return false;
+  }
+   else {
     state.errorMessage = "";
     console.log("Submitting:", {
       gameTitle: state.gameTitle,
@@ -365,17 +432,52 @@ const formatData = () => {
 };
 
 const uploadImageFiles = async (gameId) => {
-  for (const imageElement of state.imageFiles) {
+  for (let i = 0; i < state.imageStoreObject.length; i++) {
+    const imageElement = state.imageStoreObject[i];
     const fileName = `${gameId}_Store.png`;
+
     const fileRef = firebaseRef(storage, `Games/${gameId}/media/${fileName}`);
     const metadata = {
       contentType: imageElement.type,
     };
     try {
       await uploadBytes(fileRef, imageElement.file, metadata);
-      console.log(`${imageElement} uploaded successfully.`);
+      console.log(`${fileName} uploaded successfully.`);
     } catch (error) {
-      console.error(`Failed to upload ${imageElement.name}:`, error);
+      console.error(`Failed to upload ${fileName}:`, error);
+    }
+  }
+
+  for (let i = 0; i < state.imageStoreObject.length; i++) {
+    const imageElement = state.imageStoreObject[i];
+    const fileName = `${gameId}_${i}.png`; 
+
+    const fileRef = firebaseRef(storage, `Games/${gameId}/media/${fileName}`);
+    const metadata = {
+      contentType: imageElement.type,
+    };
+    try {
+      await uploadBytes(fileRef, imageElement.file, metadata);
+      console.log(`${fileName} uploaded successfully.`);
+    } catch (error) {
+      console.error(`Failed to upload ${fileName}:`, error);
+    }
+  }
+
+ 
+  for (let i = 0; i < (state.MAX_IMG_LIST ); i++) {
+    const imageElement = state.imageFiles[i];
+    const fileName = `${gameId}_${i+1}.png`; 
+
+    const fileRef = firebaseRef(storage, `Games/${gameId}/media/${fileName}`);
+    const metadata = {
+      contentType: imageElement.type,
+    };
+    try {
+      await uploadBytes(fileRef, imageElement.file, metadata);
+      console.log(`${fileName} uploaded successfully.`);
+    } catch (error) {
+      console.error(`Failed to upload ${fileName}:`, error);
     }
   }
 };
@@ -389,7 +491,6 @@ const zipFile = async (file, fileName) => {
   try {
     const content = await zip.generateAsync({ type: "blob" });
 
-    // Return the ZIP Blob
     return content;
   } catch (error) {
     console.error("Failed to zip the file:", error);
@@ -440,8 +541,10 @@ function updateTagsArray() {
 
 const create_gameAndTags = async () => {
   await createGame();
-
-  const tagsCreationResult = await createTags();
+  const gameId = await get_CreatedGameID();
+  console.log("create_gameAndTags gameId : ", gameId)
+  if(gameId){
+    const tagsCreationResult = await createTags();
   if (tagsCreationResult.isSuccessful == false) {
     console.error(
       "Game couldn't be added because tags were not successfully created."
@@ -450,24 +553,34 @@ const create_gameAndTags = async () => {
   } else {
     console.log("Game creation succeeded.");
 
-    const gameId = await get_CreatedGameID();
+  
     await uploadImageFiles(gameId);
     await uploadZipFile(gameId);
     window.location.reload();
   }
+  }
+
 };
 
 const createGame = async () => {
-  let jsonObject = {
-    title: state.gameTitle,
-    developerID: props.developerID,
-    description: state.description,
-    releaseDate: state.creation_date,
-    ratingAverage: 0,
-  };
-  let wasGameCreated = await create("games", jsonObject);
-  console.log("wasGameCreated:", wasGameCreated);
-};
+  if (
+    state.imageStoreObject.length == state.MAX_IMG_STORE &&
+    state.MAX_IMG_LIST == state.imageFiles.length
+  ) {
+    let jsonObject = {
+      title: state.gameTitle,
+      developerID: props.developerID,
+      description: state.description,
+      releaseDate: state.creation_date,
+      ratingAverage: 0,
+    };
+    let wasGameCreated = await create("games", jsonObject);
+    console.log("wasGameCreated:", wasGameCreated);
+  }
+
+  console.log(" state.imageStoreObject.length : ",  state.imageStoreObject.length);
+  console.log("state.imageFiles.length : ", state.imageFiles.length);
+}
 
 const createTags = async () => {
   const gameId = await get_CreatedGameID();
