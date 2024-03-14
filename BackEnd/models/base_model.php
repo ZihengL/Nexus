@@ -86,8 +86,9 @@ class BaseModel
             if (
                 isset($model->keys[$this->table]) &&
                 isset($model->keys[$ref_table])
-            )
+            ) {
                 return $model;
+            }
 
         return null;
     }
@@ -299,19 +300,22 @@ class BaseModel
     }
 
     // COMPOSITE SELECT (MANY-TO-MANY)
-    public function getCompositeSelections($table, $included_columns = [])
+    public function getCompositeSelections($k1, $k2, $included_columns = [])
     {
-        ['internal' => $internal, 'external' => $external] = $this->keys[$table];
+        ['internal' => $from_int, 'external' => $from_ext] = $this->keys[$k1];
+        ['internal' => $with_int, 'external' => $with_ext] = $this->keys[$k2];
 
-        $column_pairs = array_map(function ($column) use ($table) {
-            return "CONCAT('$column:', $table.$column)";
+        $column_pairs = array_map(function ($column) use ($k2) {
+            return "CONCAT('$column:', $k2.$column)";
         }, $included_columns);
         $columns = implode(",';',", $column_pairs);
 
-        $selections = ", (SELECT GROUP_CONCAT(DISTINCT $columns ORDER BY {$table}.{$external} SEPARATOR '|')
-                        FROM $table
-                        JOIN {$this->table} ON {$this->table}.{$internal} = {$table}.{$external}
-                        WHERE {$this->table}.{$internal} = {$table}.{$external}) AS {$table}_details";
+        $selections = ", (SELECT GROUP_CONCAT(DISTINCT $columns ORDER BY {$k2}.{$with_ext} SEPARATOR '|')
+                        FROM $k2
+                        JOIN {$this->table} ON {$this->table}.{$with_int} = {$k2}.{$with_ext}
+                        WHERE {$this->table}.{$with_int} = {$k2}.{$with_ext}
+                        AND {$this->table}.{$from_int} = {$k1}.{$from_ext}
+                        ) AS {$k2}_details";
 
         return $selections;
     }
@@ -360,8 +364,10 @@ class BaseModel
                 // $selects .= ", GROUP_CONCAT(DISTINCT CONCAT($columns) ORDER BY {$table}.{$external} SEPARATOR '|') AS {$table}_details";
                 // $joins .= " JOIN $table ON {$this->table}.{$internal} = {$table}.{$external}";
             } else {
-                if ($composite_model = $this->getCompositeModel($table))
-                    $selects .= $composite_model->getCompositeSelections($table, $included_columns);
+                if ($composite_model = $this->getCompositeModel($table)) {
+                    $from = $this->table;
+                    $selects .= $composite_model->getCompositeSelections($from, $table, $included_columns);
+                }
             }
 
         $group = !empty($selects) ? " GROUP BY {$this->table}.id" : '';

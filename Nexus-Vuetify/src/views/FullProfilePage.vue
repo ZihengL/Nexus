@@ -6,7 +6,7 @@
         <img
           :src="getImage(user.picture) || defaultProfilePic"
           alt="Profile Picture"
-          class="img"
+          class="img_userProfilePic"
         />
         <!-- Dialog Trigger Button -->
         <!-- <v-btn icon @click="galleryDialog = true">
@@ -469,6 +469,7 @@ onMounted(async () => {
   //border-radius: 50%;
   border: 2px solid red;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: space-between;
 
