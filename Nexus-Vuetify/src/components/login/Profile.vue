@@ -21,7 +21,7 @@
             <!-- <h3>efew4w</h3> -->
             <h3>{{ leDevs.username }}</h3>
             <br />
-            <p>description</p>
+            <p>{{ leDevs.description || 'Aucune Description...' }}</p>
           </div>
           <div class="button" v-show="isHimself">
             <router-link
@@ -104,7 +104,7 @@ import ListeDeJeu from "./ListeDeJeu.vue";
 import { logoutService, getOne, getAllMatching } from "../../JS/fetchServices";
 import { defineProps, ref, onMounted, defineEmits } from "vue";
 import btnComp from "../btnComponent.vue";
-import defaultProfilePic from '@/assets/Dev_Picture/defaultProfilePic.png';
+import defaultProfilePic from '@/assets/Avatar/Avatar_1.png';
 //import Amis from './amis.vue';
 
 const props = defineProps(["isHimself", "idDevl"]);

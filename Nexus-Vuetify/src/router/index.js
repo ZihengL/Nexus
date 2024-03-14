@@ -93,7 +93,7 @@ const routes = [
         component: () => import('@/views/UploadGameView.vue'),
       },
       {
-        path: '/update',
+        path: '/update/:gameToUpdateId',
         name: 'update',
         // route level code-splitting
         // this generates a separate chunk (Home-[hash].js) for this route
