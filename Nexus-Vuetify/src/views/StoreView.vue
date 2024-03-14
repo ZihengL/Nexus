@@ -122,8 +122,11 @@ onMounted(async () => {
     }
     console.log('nbPage : ', nbPage)
     let paging = getPaging(nbMax, paginationNb);
+    // console.log('sorting ', sorting);
+    // console.log('pagging', paging);
     store_data.gameList_result = await getAllGamesWithDeveloperNameNEW(null, null, null, sorting, paging);
-    console.log('liste jeux old', store_data.gameList_result);
+    //let donne = await getAllGamesWithDeveloperNameNEW(null, null, null, sorting, paging);
+    //console.log('liste jeux old', store_data.gameList_result);
   }
 });
 </script>
