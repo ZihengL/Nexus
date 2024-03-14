@@ -493,11 +493,11 @@ export default {
       // const result3 = await services.getReviewsAndUsernamesNEW();
       // console.log("REVIEWS", result3);
 
-      // const tags = await services.getAll('tags');
-      // console.log(tags);
+      const tags = await services.getAll('tags');
+      console.log('tags', tags);
 
-      const result4 = await services.getGameDetailsWithDeveloperNameNEW(2);
-      console.log(result4);
+      // const result4 = await services.getGameDetailsWithDeveloperNameNEW(2);
+      // console.log(result4);
     }
   },
 };

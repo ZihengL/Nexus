@@ -67,6 +67,7 @@ export const getAll = async (table, column = null, value = null, includedColumns
   // let data = await fetchData(table, "getAll", column, value, includedColumns, sorting, null, "GET");
 
   const preppedBody = services.prepGetAll(column, value, includedColumns, sorting, joined_tables, paging);
+  console.log('body', preppedBody);
   let result = await services.getAll(table, preppedBody);
 
   if (result) {
