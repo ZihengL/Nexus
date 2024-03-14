@@ -164,9 +164,9 @@ export const logoutService = async (logout) => {
 
 export const getUser = async (developerID) => {
   const joined_tables = {games: ['id', 'title', 'releaseDate', 'ratingAverage']};
-  let data = await getOne("users", "id", developerID, null, null, joined_tables);
+  let data = await getOne("users", "id", developerID, null, joined_tables);
   console.log('data ', data)
-  return data;
+  return fetchGameImagesByDev(data);
 };
 
 export const getUsername = async (userID) => {
@@ -278,6 +278,31 @@ export const fetchGameImages  = async (games) => {
     return []; // Return an empty array in case of error
   }
 }
+
+export const fetchGameImagesByDev = async (user) => {
+  try {
+    const imageFetchPromises = user.games.map(async (game) => {
+      const files = game.id || `defaultName.jpg`;
+      const imagePath = `Games/${files}/media/${files}_0.png`;
+      const imageRef = ref(storage, imagePath);
+
+      try {
+        const url = await getDownloadURL(imageRef);
+        return { ...game, image: url }; // Ajout de l'image à l'objet game
+      } catch (error) {
+        console.error(`Error fetching image for ${game.title}:`, error);
+        return { ...game, image: defaultImage }; // Fallback image
+      }
+    });
+
+    const gamesWithImages = await Promise.all(imageFetchPromises);
+    return { ...user, games: gamesWithImages }; // Retourne l'utilisateur avec les jeux mis à jour
+  } catch (error) {
+    console.error('Error fetching game images:', error);
+    return user; // En cas d'erreur, retourne l'utilisateur tel quel
+  }
+};
+
 
 export const fetchOneGameImages  = async (data) => {
   let gameId = data.id;

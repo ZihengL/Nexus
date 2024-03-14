@@ -7,7 +7,7 @@
           <div class="containerStar">
             <div class="containerAvis">
               <div class="containerIMG">
-                <img :src="urlPic || defaultPic" alt="Profile Picture" class="img" />
+                <img :src="getImage(avis.users[0].picture) || defaultPic" alt="Profile Picture" class="img" />
                 <p>{{ avis.username }}</p>
                 <!-- <p>UserTOTO {{ userName.value[index]?.username ?? 'Nom d\'utilisateur non disponible' }}</p> -->
               </div>
@@ -79,14 +79,17 @@ let urlPic = null;
       console.error("Element with class 'AvisComp' not found.");
     }
   };
-  //const 
+  const getImage = (image) =>{
+    console.log(' get pic,', image)
+    urlPic = '/src/assets/Avatar/' + image;
+    console.log('pic,', urlPic)
+    return urlPic
+  } 
   onMounted(async () => {
     try {
       review.value = props.idGame;
       console.log('review ,', review.value)
-      urlPic = '/src/assets/Avatar/' + review.value.users.picture;
-      
-      console.log('pic,', urlPic)
+
       // let sorting = null;
       // if(props.sort == "1"){
       //   sorting = { timestamp: false };
