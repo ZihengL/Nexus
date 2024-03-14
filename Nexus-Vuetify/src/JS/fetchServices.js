@@ -130,15 +130,19 @@ export const registerService = async (createData) => {
 };
 
 export const loginService = async (login) => {
-  //console.log(jsonObject)
+  console.log('dddd ', login)
   let body = {
     login
   }
-  const email = login.email.value;
-  const password = login.password.value
+  const email = login.email;
+  const password = login.password;
+  
+  console.log('email ', email );
+  console.log('pass ', password );
   //console.log(body)
   // let data = await fetchData("users", "login", null, null, null, null, body, "POST");
   const data = await services.login(email, password);
+  console.log('data log : ', data)
   return data
 };
 
@@ -226,10 +230,10 @@ export const getGamesForCarousel = async () => {
   return fetchGameImages(data);
 }
 
-export const getGameReviews = async (gameID) => {
+export const getGameReviews = async (gameID, sorting) => {
   const joined_tables = {users: ['id', 'username', 'picture']};
 
-  return await getAll('reviews', 'gameID', gameID, null, null, joined_tables);
+  return await getAll('reviews', 'gameID', gameID, null, sorting, joined_tables);
 }
 
 export const fetchGameImages  = async (games) => {

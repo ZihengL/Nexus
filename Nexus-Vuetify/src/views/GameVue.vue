@@ -74,13 +74,13 @@
           <div class="form-inner">
             <Avis
               class="recent"
-              :idGame="gameInfos.leGame.id"
+              :idGame="dataReview1"
               :sort="'1'"
               :nbMax="1"
             />
             <Avis
               class="old"
-              :idGame="gameInfos.leGame.id"
+              :idGame="dataReview2"
               :sort="'2'"
               :nbMax="1"
             />
@@ -90,7 +90,7 @@
       </div>
       <Avis
         class="rate glass"
-        :idGame="gameInfos.leGame.id"
+        :idGame="dataReview0"
         :sort="'0'"
         :nbMax="5"
       />
@@ -109,7 +109,7 @@ import myAvis from "../components/game/myAvis.vue";
 import Avis from "../components/game/Avis.vue";
 import game from "../components/game/GameCarrousel.vue";
 import { defineProps, onMounted, ref, reactive } from "vue";
-import { getGameDetailsWithDeveloperNameNEW, getReviews } from '../JS/fetchServices';
+import { getGameDetailsWithDeveloperNameNEW, getGameReviews } from '../JS/fetchServices';
 import { getStorage, ref as firebaseRef, getDownloadURL, uploadBytes} from "firebase/storage";
 
 const storage = getStorage();
@@ -128,6 +128,9 @@ const defaultPath = "/src/assets/image/img1.png";
 const props = defineProps(['idGame']);
 
 let reviewTemp = ref(null);
+let dataReview1 = null;
+let dataReview2 = null;
+let dataReview0 = null;
 
 const isLogin = ref(true);
 const toggleLogin = () => {
@@ -190,9 +193,15 @@ onMounted(async () => {
     console.log('game object', gameInfos.leGame);
     // gameInfos.tags = gameInfos.leGame.tags;
     // gameInfos.devName = gameInfos.leGame.devName;
+    let sorting1 = { timestamp: false };
+    let sorting2 = { timestamp: true };
+    let sorting0 = { rating: false };
 
-    // const dataReview = await getReviews(props.idGame);
-    // reviewTemp.value = dataReview.length;
+    dataReview1 = await getGameReviews(props.idGame, sorting1);
+    dataReview2 = await getGameReviews(props.idGame, sorting2);
+    dataReview0 = await getGameReviews(props.idGame, sorting0);
+    
+    reviewTemp.value = dataReview0.length;
   } catch (error) {
     console.error("Error during component mounting:", error);
   }
