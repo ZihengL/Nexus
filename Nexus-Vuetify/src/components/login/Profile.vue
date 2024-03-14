@@ -53,7 +53,7 @@
                   class="gamess">
                   <liste-de-jeu
                     :himself="props.isHimself"
-                    :idJeu="item.id"
+                    :idJeu="item"
                     :buy="true"
                     class="game gamess"
                   />
@@ -157,18 +157,18 @@ const toggleLogout = async () => {
   // };
 
   let results = await logoutService();
-  if (results !== false) {
-    loginTokens_access_token = "";
-    loginTokens_refresh_token = "";
+  // if (results !== false) {
+  //   loginTokens_access_token = "";
+  //   loginTokens_refresh_token = "";
 
-    // localStorage.removeItem("accessToken");
-    storageManager.clearAccessToken();
-    // localStorage.removeItem("refreshToken");
-    storageManager.clearRefreshToken();
-    // localStorage.removeItem("idDev");
-    storageManager.clearIdDev();
-  }
-  console.log(results);
+  //   // localStorage.removeItem("accessToken");
+  //   storageManager.clearAccessToken();
+  //   // localStorage.removeItem("refreshToken");
+  //   storageManager.clearRefreshToken();
+  //   // localStorage.removeItem("idDev");
+  //   storageManager.clearIdDev();
+  // }
+  // console.log(results);
   emit("showLogin");
 };
 
@@ -184,26 +184,12 @@ async function getUserInfos() {
       leDevs.value = userData;
       console.log("leDevs : ", leDevs.value);
 
-      if (leDevs.value) {
-        
-        storageManager.setIsConnected(true);
-        const filters = {
-          developerID: props.idDevl,
-        };
-        const sorting = {
-          id: false,
-        };
-        const includedColumns = ["id", "title", "tags"];
-        const dataDevs = await getAllMatching(
-          "games",
-          filters,
-          includedColumns,
-          sorting
-        );
+      storageManager.setIsConnected(true);
+       
         // console.log("dataDevs ", dataDevs);
-        gameList.value = dataDevs;
-        // console.log("gameList ", gameList);
-      }
+        gameList.value = leDevs.value.games;
+        console.log("gameList ", gameList.value);
+     
     }
   } catch (error) {
     console.error("Error fetching data:", error);

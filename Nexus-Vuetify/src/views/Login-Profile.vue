@@ -75,7 +75,7 @@ const toggleProfileForm = () => {
 };
 
 const toggleLoginForm = () => {
-    storageManager.clearIdDev()
+    //storageManager.clearIdDev()
   //isConnected.value = !isConnected.value;
   changeConnexion();
 };

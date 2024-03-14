@@ -1,42 +1,42 @@
 <template>
   <!-- <div v-for="activity in activities" :key="activity.id" class="activities">-->
-  <div v-if="LeGame_title" class="container glass2 roundBorderSmall">
+  <div v-if="dataGame" class="container glass2 roundBorderSmall">
     <div class="up">
       <div class="img">
         <img
-          :src=" UrlGameImg"
+          :src=" dataGame.image"
           alt="image jeu"
           class="roundBorderSmall"
         />
       </div>
       <div class="jeu">
         <span v-if="props.himself && !props.buy"
-          > Joué à {{ LeGame_title }} le 17/04/2022
+          > Joué à {{ dataGame.title }} le 17/04/2022
         </span>
         <span v-if="props.himself && props.buy">
-          Titre : {{ LeGame_title || 'Erreur Titre Introuvable' }} - Televerser le : {{formattedReleaseDate}}
+          Titre : {{ dataGame.title || 'Erreur Titre Introuvable' }} - Televerser le : {{dataGame.releaseDate}}
          </span>
-        <span v-else>{{ LeGame_title }}</span>
+        <span v-else>{{ dataGame.title }}</span>
         <br />
       </div>
     </div>
     <div class="listeBtn">
-      <div class="fieldBtn">
+      <div class="fieldBtn btn">
         <div class="btn-layer"></div>
         <v-btn
-          :to="{ name: 'Game', params: { idGame: props.idJeu } }"
+          :to="{ name: 'Game', params: { idGame: dataGame.id } }"
           density="default"
           class="submit glow"
         >
           Voir plus
         </v-btn>
       </div>
-      <btnComp
+      <btnComp class="btn"
         v-if="props.himself"
         :contenu="'Supprimmer'"
         @toggle-btn="deleteGame"
       />
-      <btnComp
+      <btnComp class="btn"
         v-if="props.himself"
         :contenu="'Mettre a jour'"
         @toggle-btn="routeToUpload"
@@ -61,20 +61,21 @@ const defaultPath = '/src/assets/imgJeuxLogo/noImg.jpg';
 const router = useRouter();
 const storage = getStorage();
 
-
-onMounted(async () => {
-  try {
-    const dataGame = await getOne("games", "id", props.idJeu);
-    // fetchData("games", "getOne", "id", props.idJeu,null, null, null, "GET");
-    LeGame_title.value = dataGame[0].title;
-    gameObject.value = dataGame[0];
-    console.log("leDevs : ", dataGame);
-    UrlGameImg.value = await fetchGameUrl(props.idJeu); 
-    console.log("UrlGameImg : ", UrlGameImg);
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-});
+console.log('game get lj ', props.idJeu)
+const dataGame = props.idJeu;
+// onMounted(async () => {
+//   try {
+//     const dataGame = await getOne("games", "id", props.idJeu);
+//     // fetchData("games", "getOne", "id", props.idJeu,null, null, null, "GET");
+//     LeGame_title.value = dataGame[0].title;
+//     gameObject.value = dataGame[0];
+//     console.log("leDevs : ", dataGame);
+//     UrlGameImg.value = await fetchGameUrl(props.idJeu); 
+//     console.log("UrlGameImg : ", UrlGameImg);
+//   } catch (error) {
+//     console.error("Error fetching data:", error);
+//   }
+// });
 
 async function fetchGameUrl(gameId) {
   const imagePath = `Games/${gameId}/media/${gameId}_Store.png`;
@@ -161,7 +162,11 @@ async function deleteGame() {
     justify-content: space-between;
 
     .img {
-      flex: 2;
+      flex: 3;
+      
+      display: flex;
+      justify-content: center;
+      align-items: center;
 
       img {
         width: 100%;
@@ -180,7 +185,7 @@ async function deleteGame() {
     display: flex;
     flex-direction: row;
     gap: 3%;
-    padding: 0% 1% 2% 1%;
+    padding: 0% 5% 2% 1%;
   }
 }
 </style>
