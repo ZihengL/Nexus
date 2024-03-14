@@ -61,6 +61,9 @@ const gameList_data = reactive({
 watch(
   () => props.gameList,
   (newVal, oldVal) => {
+    // nbMax = nb jeux par page
+    // paginationNb = la page de pagination ou on est
+    
     let max = paginationNb * nbMax;
     let min = max - nbMax;
     if (props.gameList.length < max){
