@@ -35,7 +35,7 @@ import {
   searchOn_titleOrUsername,
   search_AndFilter,
 } from "../JS/store_search.js";
-import {  getAllGamesWithDeveloperName } from "../JS/fetchServices";
+import {  getAllGamesWithDeveloperNameNEW } from "../JS/fetchServices";
 import ListeJeux from "../components/store/GameListComponent.vue";
 
 const store_data = reactive({
@@ -81,7 +81,8 @@ onMounted(async () => {
     let sorting ={
       id:true
     }
-    store_data.gameList_result = await getAllGamesWithDeveloperName(null, null, null, sorting);
+    store_data.gameList_result = await getAllGamesWithDeveloperNameNEW(null, null, null, sorting);
+    console.log('liste jeux ', store_data.gameList_result);
   }
  
 

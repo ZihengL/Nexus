@@ -1,6 +1,9 @@
 import { fetchData } from "./fetch";
 import * as services from "./fetchServices/services";
 import StorageManager from "./localStorageManager";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import defaultImage from '@/assets/imgJeuxLogo/noImg.jpg';
+const storage = getStorage();
 
 // NEXT 2 FUNCTIONS BELOW ARE FOR PARSING JOINS
 // CUZ THE DATA IS CONCATENATED INTO A STRING
@@ -39,8 +42,7 @@ export const parseJoins = (result, keys) => {
   return result;
 }
 
-
-export const getOne = async (table, column, value, includedColumns = null, sorting = null, joined_tables = null) => {
+export const getOne = async (table, column, value, includedColumns = null, joined_tables = null) => {
   // let data = await fetchData(table, "getOne", column, value, includedColumns, sorting, null, "GET");
 
   const preppedBody = services.prepGetOne(column, value, includedColumns, joined_tables);
@@ -119,8 +121,9 @@ export const updateData = async(table, updateData) => {
 
 export const registerService = async (createData) => {
   console.log('registerService createData : ' ,createData);
+  // let data = await create("users", createData);
 
-  let data = await create("users", createData);
+  let data = await services.create("users", createData);
   return data
 };
 
@@ -179,15 +182,15 @@ export const getGameDetails = async (idGame) => {
 };
 
 export const getAllGamesWithDeveloperNameNEW = async (column = null, value = null, includedColumns = null, sorting = null, paging = null) => {
-  const joined_tables = { users: ['id', 'username', 'picture', 'isOnline'] };
+  const joined_tables = { users: ['id', 'username', 'picture', 'isOnline'], tags: ['id', 'name'] };
 
   return await getAll('games', column, value, includedColumns, sorting, joined_tables, paging);
 }
 
 export const getGameDetailsWithDeveloperNameNEW = async (gameID) => {
-  const joined_tables = { users: ['id', 'username', 'picture', 'isOnline'] };
-  
-  return await getOne('games', 'id', gameID, null, null, joined_tables);
+  const joined_tables = { users: ['id', 'username', 'picture', 'isOnline'], tags: ['id', 'name'] };
+  let data = await getOne('games', 'id', gameID, null, null, joined_tables);
+  return fetchGameImages(data);
 }
 
 export const getReviewsAndUsernamesNEW = async (gameID, sorting, paging = null) => {
@@ -196,34 +199,79 @@ export const getReviewsAndUsernamesNEW = async (gameID, sorting, paging = null) 
   return await getAll("reviews", "gameID", gameID, null, sorting, joined_tables, paging);
 }
 
-export const createReviewsNEW = async (table, createData) => {
-  return await services.fetchData(table, 'create', {
-    credentials: {
-      id: StorageManager.getIdDev,
-      tokens: StorageManager.getTokens
-    },
-    request_data: createData
-  });
-};
-
-// export const getGameWithAllDetails = async (gameID) => {
-//   const joined_tables = { 
-//     users: ['id', 'username', 'picture', 'isOnline'],
-//     reviews:
-//   };
-// }
-
 export const getGamesForCarousel = async () => {
   const filters = { ratingAverage: {gt: 1, lte: 7}};
   const sorting = { id: true };
-  const included_columns = ['id', 'developerID', 'title', 'files'];
+  const included_columns = ['id', 'developerID', 'title', 'releaseDate', 'ratingAverage'];
   const joined_tables = {
       users: ['id', 'username', 'picture', 'isOnline'],
       tags: ['id', 'name']
     };
   const paging = { limit: 4, offset: 0};
 
-  return await getAllMatching('games', filters, included_columns, sorting, joined_tables, paging);
+  let data = await getAllMatching('games', filters, included_columns, sorting, joined_tables, paging);
+  return fetchGameImages(data);
+}
+
+export const getGameReviews = async (gameID) => {
+  const joined_tables = {users: ['id', 'username', 'picture']};
+
+  return await getAll('reviews', 'gameID', gameID, null, null, joined_tables);
+}
+
+export const fetchGameImages  = async (games) => {
+  try {
+    const imageFetchPromises = games.map(async (game) => {
+      const files = game.id || `defaultName.jpg`;
+      const imagePath = `Games/${files}/media/${files}_0.png`;
+      
+      //console.log('imagePath : ', imagePath);
+      const imageRef = ref(storage, imagePath);
+      //console.log('imageRef : ', imageRef);
+
+      try {
+        const url = await getDownloadURL(imageRef);
+        return { ...game, image: url };
+      } catch (error) {
+        console.error(`Error fetching image for ${game.title}:`, error);
+        return { ...game, image: "../assets/imgJeuxLogo/Mario.png" }; // Fallback image
+      }
+    });
+
+    return Promise.all(imageFetchPromises);
+  } catch (error) {
+    console.error("Error fetching game images:", error);
+    return []; // Return an empty array in case of error
+  }
+}
+
+export const fetchOneGameImages  = async (gameId) => {
+  try {
+    const imagePath = `Games/${gameId}/media/${gameId}_Store.png`;
+    //console.log('imagePath : ', imagePath);
+    const imageRef = ref(storage, imagePath);
+
+    try {
+      const url = await getDownloadURL(imageRef);
+      return { id: gameId, image: url }; // Corrected the return statement
+    } catch (error) {
+      console.error(`Error fetching image for ${gameId}:`, error);
+      return { id: gameId, image: singleGame_data.DEFAULT_IMAGE_PATH };// Fallback image
+    }
+  } catch (error) {
+    console.error("Error fetching game images:", error);
+    throw error; // Re-throw the error to handle it at a higher level if needed
+  }
+}
+
+/*** COUNT ***/
+
+export const countAll = async (table, column = null, value = null) => {
+  return await services.fetchData(table, 'countAll', {column: column, value: value});
+}
+
+export const countAllMatching = async (table, filters = []) => {
+  return await services.fetchData(table, 'countAllMatching', {filters: filters});
 }
 
 /***************************************************/

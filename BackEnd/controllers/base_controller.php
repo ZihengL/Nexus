@@ -7,6 +7,8 @@ class BaseController
         'getOne' => false,
         'getAll' => false,
         'getAllMatching' => false,
+        'countAll' => false,
+        'countAllMatching' => false,
         'create' => false,
         'update' => false,
         'delete' => false
@@ -111,7 +113,7 @@ class BaseController
     // TODO: CHANGING FROM AUTHENTICATION TO JUST VALIDATION?
     public function verifyCredentials($data)
     {
-        ['credentials' => $credentials, 'request_data' => $request_data] = $data + [null, null];
+        [$credentials, $request_data] = getFromData(['credentials', 'request_data'], $data);
 
         if ($credentials) {
             [$id, $tokens] = getFromData(['id', 'tokens'], $credentials);
@@ -199,7 +201,7 @@ class BaseController
 
 
     /*******************************************************************/
-    /****************************** CRUDS ******************************/
+    /***************************** GETTERS *****************************/
     /*******************************************************************/
 
     protected function getOneFrom($table, $column, $value, $included_columns = [], $joined_tables = [])
@@ -289,6 +291,25 @@ class BaseController
         return $this->model->getAllMatching($filters, $sorting, $included_columns, $joined_tables, $paging);
     }
 
+    public function countAll($data)
+    {
+        [$column, $value] = getFromData(['column', 'value'], $data);
+
+        return $this->model->countAll($column, $value);
+    }
+
+    public function countAllMatching($data)
+    {
+        $filters = $this->getDefault('filters', getFromData(['filters'], $data));
+
+        return $this->model->countAllMatching($filters);
+    }
+
+
+    /*******************************************************************/
+    /****************************** CRUDS ******************************/
+    /*******************************************************************/
+
     public function create($data)
     {
         return $this->model->create($data);
@@ -328,7 +349,6 @@ class BaseController
         ];
 
         return $response;
-
         // return json_encode($response);
     }
 
@@ -336,47 +356,4 @@ class BaseController
     {
         return $this->getTokensController()->getTokenSub($tokens);
     }
-
-
-
-    // public function createResponse($isSuccess, $message)
-    // {
-    //     $response = [
-    //         'isSuccessful' => (bool) $isSuccess,
-    //         'message' => $message,
-    //     ];
-
-    //     return json_encode($response);
-    // }
-
-    // protected function create($data, $mandatory_entries = [])
-    // {
-    //     if ($this->validateMandatoryData($data, $mandatory_entries)) {
-    //         return $this->model->create($data);
-    //     }
-
-    //     return null;
-    // }
-
-    // protected function update($data, $mandatory_entries = [])
-    // {
-    //     $mandatory_entries = [...$mandatory_entries, $this->id];
-
-    //     if ($this->validateMandatoryData($data, $mandatory_entries)) {
-    //         $id = $data[$this->id];
-
-    //         return $this->model->update($id, $data);
-    //     }
-    // }
-
-    // protected function delete($data, $mandatory_entries = [])
-    // {
-    //     $mandatory_entries = [...$mandatory_entries, $this->id];
-
-    //     if ($this->validateMandatoryData($data, $mandatory_entries)) {
-    //         $id = $data[$this->id];
-
-    //         return $this->model->delete($id);
-    //     }
-    // }
 }
