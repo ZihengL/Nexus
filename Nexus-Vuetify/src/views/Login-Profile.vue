@@ -61,18 +61,19 @@ const changeConnexion = () => {
   }
 };
 
-const toggleProfileForm = (devId) => {
-  if (devId && devId.id) {
-    storageManager.clearIdDev()
-    idDev.value = devId.id;
-    storageManager.setIdDev(idDev.value);
+const toggleProfileForm = () => {
+    if (storageManager.getIdDev()) {
+      idDev.value = storageManager.getIdDev()
+      changeConnexion();
+    }
+    //storageManager.setIdDev(idDev.value);
     // console.log("login-Profile toggleProfileForm idDev.value : ", idDev.value);
     // console.log("login-Profile toggleProfileForm storageManager.getIdDev() : ", storageManager.getIdDev());
-    changeConnexion();
-  } 
+    
 };
 
 const toggleLoginForm = () => {
+    storageManager.clearIdDev()
   //isConnected.value = !isConnected.value;
   changeConnexion();
 };
