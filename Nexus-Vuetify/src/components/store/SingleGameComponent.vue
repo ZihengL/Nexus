@@ -7,7 +7,7 @@
     <div class="img roundBorderSmall">
       <img
         :src="singleGame_data.image.image"
-        alt="nothingBro"
+        alt="image par défaut"
         class="roundBorderSmall gameImg"
       />
       <p class="roundBorderSmall">

@@ -1,14 +1,10 @@
 <template>
-  <div  v-if="gameInfos.leGame && gameInfos.devName" id="gameVue">
+  <div v-if="gameInfos.leGame && gameInfos.devName" id="gameVue">
     <div class="content">
-      <game class="gameCarrousel" :idJeux="props.idGame"/>
+      <game class="gameCarrousel" :idJeux="props.idGame" />
       <div class="gameInfo roundBorderSmall glass">
         <div class="gameImg">
-          <img
-            :src="UrlGameImg"
-            alt="#"
-            class="roundBorderSmall"
-          />
+          <img :src="UrlGameImg" alt="#" class="roundBorderSmall" />
         </div>
         <div class="descript">
           <p>{{ gameInfos.leGame.title }}</p>
@@ -28,57 +24,90 @@
           />
         </div>
         <div class="devs">
-          <p><b>Developeur : </b> {{ gameInfos.devName }}</p>
+          <p>
+            <b>Développeur :</b>
+            <a :href="`/Dev/${props.idGame}`" class="developerProfileLink">  {{ gameInfos.devName }} </a>
+            <!-- <router-link
+              :to="{
+                name: 'DeveloperProfile',
+                params: { devId: gameInfos.devId },
+              }"
+              class="developer-link"
+            >
+              {{ gameInfos.devName }}
+            </router-link> -->
+
+          </p>
         </div>
         <div class="tags">
-          <a href="#" class="glow" v-for="tag in gameInfos.tags" :key="tag.id">{{ tag.name }}</a>
+          <a
+            href="#"
+            class="glow"
+            v-for="tag in gameInfos.tags"
+            :key="tag.id"
+            >{{ tag.name }}</a
+          >
         </div>
-        <btnComp :contenu="'Telecharger'" @toggle-btn="downloadZipFile()"/>
-        <btnComp :contenu="'Faire un don'" @toggle-btn="toggleProfile"/>
+        <btnComp :contenu="'Telecharger'" @toggle-btn="downloadZipFile()" />
+        <btnComp :contenu="'Faire un don'" @toggle-btn="toggleProfile" />
       </div>
     </div>
 
-    <div v-if="reviewTemp > 0" class="Avis ">
+    <div v-if="reviewTemp > 0" class="Avis">
       <div class="Pagin wrapper roundBorderSmall glass">
-        
-          <div class="form-container">
-            <div class="slide-controls roundBorderSmall">
-              <input
-                type="radio"
-                name="slide"
-                id="login"
-                v-model="isLogin"
-                value="true"
-                checked
-              />
-              <input
-                type="radio"
-                name="slide"
-                id="signup"
-                v-model="isLogin"
-                value="false"
-              />
-              <label for="login" class="slide login" @click="toggleLogin()"
-                >Les plus récents</label
-              >
-              <label for="signup" class="slide signup" @click="toggleSignup()"
-                >Les plus anciens</label
-              >
-              <div class="slider-tab"></div>
-            </div>
-            <div class="form-inner">
-              <Avis class="recent" :idGame="gameInfos.leGame.id" :sort="'1'" :nbMax="1" />
-              <Avis class="old "  :idGame="gameInfos.leGame.id" :sort="'2'" :nbMax="1" />
-            </div>
+        <div class="form-container">
+          <div class="slide-controls roundBorderSmall">
+            <input
+              type="radio"
+              name="slide"
+              id="login"
+              v-model="isLogin"
+              value="true"
+              checked
+            />
+            <input
+              type="radio"
+              name="slide"
+              id="signup"
+              v-model="isLogin"
+              value="false"
+            />
+            <label for="login" class="slide login" @click="toggleLogin()"
+              >Les plus récents</label
+            >
+            <label for="signup" class="slide signup" @click="toggleSignup()"
+              >Les plus anciens</label
+            >
+            <div class="slider-tab"></div>
           </div>
-        <myAvis :gameID="props.idGame"/>
+          <div class="form-inner">
+            <Avis
+              class="recent"
+              :idGame="gameInfos.leGame.id"
+              :sort="'1'"
+              :nbMax="1"
+            />
+            <Avis
+              class="old"
+              :idGame="gameInfos.leGame.id"
+              :sort="'2'"
+              :nbMax="1"
+            />
+          </div>
+        </div>
+        <myAvis :gameID="props.idGame" />
       </div>
-      <Avis class="rate glass"  :idGame="gameInfos.leGame.id" :sort="'0'" :nbMax="5"/>
+      <Avis
+        class="rate glass"
+        :idGame="gameInfos.leGame.id"
+        :sort="'0'"
+        :nbMax="5"
+      />
     </div>
 
-    <div v-else class="avisVide  roundBorderSmall glass">
-      <p>Aucun commentaire pour l'instant </p>
-      <myAvis :gameID="props.idGame"/>
+    <div v-else class="avisVide roundBorderSmall glass">
+      <p>Aucun commentaire pour l'instant</p>
+      <myAvis :gameID="props.idGame" />
     </div>
   </div>
 </template>
@@ -89,26 +118,34 @@ import myAvis from "../components/game/myAvis.vue";
 import Avis from "../components/game/Avis.vue";
 import game from "../components/game/GameCarrousel.vue";
 import { defineProps, onMounted, ref, reactive } from "vue";
-import { getGameDetailsWithDeveloperName, getReviews } from '../JS/fetchServices';
-import { getStorage, ref as firebaseRef, getDownloadURL, uploadBytes} from "firebase/storage";
+import {
+  getGameDetailsWithDeveloperName,
+  getReviews,
+} from "../JS/fetchServices";
+import {
+  getStorage,
+  ref as firebaseRef,
+  getDownloadURL,
+  uploadBytes,
+} from "firebase/storage";
 
 const storage = getStorage();
-let UrlGameImg = ref(""); 
+let UrlGameImg = ref("");
 const gameInfos = reactive({
-  leGame: {}, 
-  devName: "error", 
-  tags: [], 
-  reviewDate_titre : "Avis les plus récents",
-  reviewRating_titre : "Avis par rating",
-  sortByDate: {timestamp: false},
-  sortByRating: {rating: false},
+  leGame: {},
+  devName: "error",
+  tags: [],
+  reviewDate_titre: "Avis les plus récents",
+  reviewRating_titre: "Avis par rating",
+  sortByDate: { timestamp: false },
+  sortByRating: { rating: false },
 });
 
 const defaultPath = "/src/assets/image/img1.png";
 const props = defineProps({
   idGame: {
     type: Number,
-  }
+  },
 });
 let reviewTemp = ref(null);
 
@@ -116,7 +153,7 @@ const isLogin = ref(true);
 const toggleLogin = () => {
   isLogin.value = true;
   const gamessShow = document.querySelector(".recent"); // Use class selector
- //const gamesContainer = document.querySelector(".gamesss"); // Use class selector
+  //const gamesContainer = document.querySelector(".gamesss"); // Use class selector
   if (gamessShow) {
     gamessShow.style.marginLeft = "0%";
   }
@@ -143,7 +180,6 @@ async function fetchGameUrl(gameId) {
   }
 }
 
-
 const downloadZipFile = async () => {
   const fileName = `${props.idGame}/${gameInfos.leGame.title}.zip`; // Use reactive properties directly
   console.log(fileName);
@@ -152,9 +188,9 @@ const downloadZipFile = async () => {
   try {
     const url = await getDownloadURL(fileRef);
     // Trigger the file download
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = fileName.split('/').pop(); // Use the file's title as the download name
+    a.download = fileName.split("/").pop(); // Use the file's title as the download name
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -182,7 +218,17 @@ onMounted(async () => {
 });
 </script>
 
-
-
 <style src="../styles/SignRegisterStyle.scss" lang="scss"></style>
 <style src="../styles/GameVueStyle.scss" lang="scss"></style>
+<style scoped>
+.developerProfileLink {
+    color: #ffffff; 
+  }
+  
+  .developerProfileLink:hover {
+    color: #ffffff;
+    font-weight: bolder;
+    /* text-shadow: 0 0 7px #fff,  0 0 21px #fff; */
+  }
+
+</style>

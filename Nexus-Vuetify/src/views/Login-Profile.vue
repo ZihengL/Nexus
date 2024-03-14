@@ -51,9 +51,6 @@ watch(
   }
 );
 
-watch(idDev, (newValue, oldValue) => {
-  // console.log("idDev.value changed from", oldValue, "to", newValue);
-});
 
 const changeConnexion = () => {
   // console.log("login-Profile changeConnexion idDev.value : ", idDev.value);

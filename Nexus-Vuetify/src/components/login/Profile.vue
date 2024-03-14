@@ -21,7 +21,7 @@
             <!-- <h3>efew4w</h3> -->
             <h3>{{ leDevs.username }}</h3>
             <br />
-            <p>description</p>
+            <p>{{ leDevs.description || 'Aucune Description...' }}</p>
           </div>
           <div class="button" v-show="isHimself">
             <router-link
