@@ -59,7 +59,7 @@ export const getOne = async (table, column, value, includedColumns = null, joine
 
   if (result) {
     if (joined_tables) {
-      result = parseJoins(result, joined_tables);
+      result = parseJoins(result, Object.keys(joined_tables));
     }
     
     return result;
@@ -87,9 +87,10 @@ export const getAllMatching = async (table, filters,  includedColumns = null, so
   const preppedBody = services.prepGetAllMatching(filters, includedColumns, sorting, joined_tables, paging);
   let result = await services.getAllMatching(table, preppedBody);
 
+  console.log('getallmatching', result);
   if (result) {
     if (joined_tables) {
-      result = parseJoins(result, joined_tables);
+      result = parseJoins(result, Object.keys(joined_tables));
     }
 
     return result;
