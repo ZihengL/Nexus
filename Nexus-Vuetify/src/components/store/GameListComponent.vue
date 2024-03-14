@@ -1,5 +1,5 @@
 <template>
-  <div v-if="props.gameList.length > 0" class="glass">
+  <div v-if="props.gameList" class="glass">
     <div id="storeComp">
       <SingleGameComponent
         v-for="game in gameList"
@@ -37,18 +37,7 @@ const props = defineProps({
 const emit = defineEmits(['pageNb']);
  const getNbPage = () => {
   emit('pageNb');
-  // paginationNb = PaginationManager.getStorePage()
-  // let max = paginationNb * nbMax;
-  // let min = max - nbMax;
-  // if (props.gameList.length < max){
-  //   max = props.gameList.length
-  // }
-  // arrayStore.value = props.gameList.slice(min, max);
  }
-
-// let arrayStore = ref([]);
-
-
 
 
 const gameList_data = reactive({
@@ -59,14 +48,13 @@ const gameList_data = reactive({
 watch(
   () => props.gameList,
   (newVal, oldVal) => {
-    console.log('game liste get w : ', newVal)
+    console.log('game liste get w : ', props.gameList.length)
     //window.location.reload();
   },
   { deep: true }
 );
 
 onMounted(async () => {
-  
   console.log('game liste get m : ', props.gameList)
 });
 </script>

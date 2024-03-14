@@ -187,6 +187,7 @@ export const getGameDetailsWithDeveloperNameNEW = async (gameID) => {
   const joined_tables = { users: ['id', 'username', 'picture', 'isOnline'], tags: ['id', 'name'] };
 
   let data = await getOne('games', 'id', gameID, null, joined_tables);
+  console.log('tags brut : ', data);
   return fetchOneGameImages(data);
 }
 

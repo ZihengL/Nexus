@@ -28,7 +28,7 @@
         class="rat"
       />
     </div>
-    <div class="tags">
+    <div class="tags" v-if="singleGame_data.tags">
       <ul class="glow" v-for="tag in limitedTags" :key="tag.id">{{ tag.name }}</ul>
     </div>
   </router-link>
@@ -49,6 +49,7 @@ let singleGame_data = props.gameList;
 console.log('one object', singleGame_data);
 
 const limitedTags = computed(() => {
+  
   if (singleGame_data.tags.length > 3){
     let data = singleGame_data.tags.slice(0, 4);
     //console.log('data nnn : ', data);

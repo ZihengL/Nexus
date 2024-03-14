@@ -1,5 +1,5 @@
 <template>
-  <div id="store">
+  <div v-if="store_data.gameList_result"  id="store">
     <div class="search">
       <div class="search">
         <Search
@@ -126,7 +126,7 @@ onMounted(async () => {
     // console.log('pagging', paging);
     store_data.gameList_result = await getAllGamesWithDeveloperNameNEW(null, null, null, sorting, paging);
     //let donne = await getAllGamesWithDeveloperNameNEW(null, null, null, sorting, paging);
-    //console.log('liste jeux old', store_data.gameList_result);
+    console.log('liste jeux old', store_data.gameList_result);
   }
 });
 </script>

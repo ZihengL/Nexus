@@ -188,6 +188,7 @@ onMounted(async () => {
   try {
     //UrlGameImg.value = await fetchGameUrl(props.idGame); // Await the async call
 
+    console.log('user id ', props.idGame);
     const dataGame = await getGameDetailsWithDeveloperNameNEW(props.idGame);
     gameInfos.leGame = dataGame;
     user.value = gameInfos.leGame.users[0].username;
@@ -195,13 +196,14 @@ onMounted(async () => {
     console.log('user', user.value);
     // gameInfos.tags = gameInfos.leGame.tags;
     // gameInfos.devName = gameInfos.leGame.devName;
-    let sorting1 = { timestamp: false };
-    let sorting2 = { timestamp: true };
-    let sorting0 = { rating: false };
 
-    dataReview1 = await getGameReviews(props.idGame, sorting1);
-    dataReview2 = await getGameReviews(props.idGame, sorting2);
-    dataReview0 = await getGameReviews(props.idGame, sorting0);
+    // let sorting1 = { timestamp: false };
+    // let sorting2 = { timestamp: true };
+    // let sorting0 = { rating: false };
+
+    // dataReview1 = await getGameReviews(props.idGame, sorting1);
+    // dataReview2 = await getGameReviews(props.idGame, sorting2);
+    // dataReview0 = await getGameReviews(props.idGame, sorting0);
     
     reviewTemp.value = dataReview0.length;
   } catch (error) {
