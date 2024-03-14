@@ -3,19 +3,14 @@
   <div v-if="LeGame_title" class="container glass2 roundBorderSmall">
     <div class="up">
       <div class="img">
-        <img
-          :src=" UrlGameImg"
-          alt="image jeu"
-          class="roundBorderSmall"
-        />
+        <img :src="UrlGameImg" alt="image jeu" class="roundBorderSmall" />
       </div>
       <div class="jeu">
-        <span v-if="props.himself && !props.buy"
-          > Joué à {{ LeGame_title }} le 17/04/2022
+        <span v-if="props.himself && !props.buy"> Joué à {{ LeGame_title }} le 17/04/2022
         </span>
         <span v-if="props.himself && props.buy">
-          Titre : {{ LeGame_title || 'Erreur Titre Introuvable' }} - Televerser le : {{formattedReleaseDate}}
-         </span>
+          Titre : {{ LeGame_title || 'Erreur Titre Introuvable' }} - Televerser le : {{ formattedReleaseDate }}
+        </span>
         <span v-else>{{ LeGame_title }}</span>
         <br />
       </div>
@@ -23,40 +18,27 @@
     <div class="listeBtn">
       <div class="fieldBtn">
         <div class="btn-layer"></div>
-        <v-btn
-          :to="{ name: 'Game', params: { idGame: props.idJeu } }"
-          density="default"
-          class="submit glow"
-        >
+        <v-btn :to="{ name: 'Game', params: { idGame: props.idJeu } }" density="default" class="submit glow">
           Voir plus
         </v-btn>
       </div>
-      <btnComp
-        v-if="props.himself"
-        :contenu="'Supprimmer'"
-        @toggle-btn="deleteGame"
-      />
-      <btnComp
-        v-if="props.himself"
-        :contenu="'Mettre a jour'"
-        @toggle-btn="routeToUpload"
-        title="update"
-      />
+      <btnComp v-if="props.himself" :contenu="'Supprimmer'" @toggle-btn="deleteGame" />
+      <btnComp v-if="props.himself" :contenu="'Mettre a jour'" @toggle-btn="routeToUpload" title="update" />
     </div>
   </div>
 </template>
 
 <script setup>
-import btnComp from "../btnComponent.vue";
-import { defineProps, onMounted, ref , computed} from "vue";
+import { ref as firebaseRef, getDownloadURL, getStorage } from "firebase/storage";
+import { computed, defineProps, onMounted, ref } from "vue";
 import { useRouter } from 'vue-router';
-import storageManager from "../../JS/localStorageManager.js";
-import { getStorage, ref as firebaseRef, getDownloadURL, uploadBytes} from "firebase/storage";
 import { deleteData, getOne } from "../../JS/fetchServices.js";
+import storageManager from "../../JS/localStorageManager.js";
+import btnComp from "../btnComponent.vue";
 const props = defineProps(["himself", "idJeu", "buy"]);
 const LeGame_title = ref(null);
 const gameObject = ref(null);
-let UrlGameImg = ref(""); 
+let UrlGameImg = ref("");
 const defaultPath = '/src/assets/imgJeuxLogo/noImg.jpg';
 const router = useRouter();
 const storage = getStorage();
@@ -69,7 +51,7 @@ onMounted(async () => {
     LeGame_title.value = dataGame[0].title;
     gameObject.value = dataGame[0];
     console.log("leDevs : ", dataGame);
-    UrlGameImg.value = await fetchGameUrl(props.idJeu); 
+    UrlGameImg.value = await fetchGameUrl(props.idJeu);
     console.log("UrlGameImg : ", UrlGameImg);
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -95,7 +77,7 @@ const formattedReleaseDate = computed(() => {
 });
 
 function routeToUpload() {
-  router.push({ name: 'update', params: { gameToUpdateId: props.idJeu } }); 
+  router.push({ name: 'update', params: { gameToUpdateId: props.idJeu } });
 }
 
 
@@ -103,7 +85,7 @@ async function deleteGame() {
   const isConfirmed = confirm(`Êtes-vous sûr de vouloir supprimer le jeu ${LeGame_title.value}?`);
   if (!isConfirmed) {
     console.log("Deletion canceled by the user.");
-    return; 
+    return;
   }
 
   if (
@@ -123,6 +105,18 @@ async function deleteGame() {
       const response = await deleteData("games", delete_data);
       if (response != false) {
         console.log("Game deleted successfully", response);
+        /*
+        var dossierRef = firebaseRef(storage,'Games/18');
+
+        console.log("allo dossierref=",dossierRef);
+
+        // Supprimer le dossier et son contenu
+        dossierRef.delete().then(function () {
+          console.log("Dossier supprimé avec succès.");
+        }).catch(function (error) {
+          console.error("Erreur lors de la suppression du dossier:", error);
+        });
+*/
         window.location.reload();
       }
     } catch (error) {
@@ -161,6 +155,7 @@ async function deleteGame() {
       padding: 0%;
     }
   }
+
   .listeBtn {
     display: flex;
     flex-direction: row;
