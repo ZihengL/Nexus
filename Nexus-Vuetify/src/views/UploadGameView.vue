@@ -1,13 +1,13 @@
 <template>
   <div id="pageContainer">
     <h2>
-      {{ props.mode === "create" ? "Create Game Page" : "Update Game Page" }}
+      {{ props.mode === "create" ? "Ajouter un Jeu" : "Modifier un Jeu" }}
     </h2>
     <div v-if="state.errorMessage" class="error-message">
       {{ state.errorMessage }}
     </div>
     <div>
-      <label for="title">Game Title*</label>
+      <label for="title">Titre du Jeu</label>
       <input
         type="text"
         id="title"
@@ -15,24 +15,32 @@
         placeholder="Entrer le titre du jeu..."
       />
     </div>
-    <label for="tags">Tags:*</label>
-    <div class="tags-input-container">
-      <input
-        type="text"
-        id="tags"
-        v-model="state.tags"
-        placeholder="action, sport, solo..."
-      />
-      <btnComp :contenu="'Add Tag'" @toggle-btn="updateTagsArray"></btnComp>
+
+    <div class="tags-creator-container">
+      <label for="tags">Genre:</label>
+      <div class="tags-input-container">
+        <input
+          type="text"
+          id="tags"
+          v-model="state.tags"
+          placeholder="action, sport, solo..."
+        />
+        <btnComp
+          :propClass="'addTagBtn'"
+          :contenu="'Add Tag'"
+          @toggle-btn="updateTagsArray"
+        ></btnComp>
+      </div>
+
       <div class="tags-display-container">
         <div class="tags-from-db-container">
-          <p>Available Tags:</p>
-
+          <p>Genres existants :</p>
           <div class="tags-from-db">
             <div
               v-for="tag in state.tagsFromDatabase"
               :key="tag.id"
-              class="tag_element"
+              class="tag_element_DB"
+              @click="addClickedTagToTagsArray(tag.name)"
             >
               {{ tag.name }}
             </div>
@@ -40,7 +48,7 @@
         </div>
 
         <div class="user-added-tags-container">
-          <p>Added Tags:</p>
+          <p>Genres à ajouter :</p>
           <div class="user-added-tags">
             <div
               v-for="(tag, index) in state.tagsArray"
@@ -49,7 +57,7 @@
             >
               {{ tag }}
               <btnComp
-                :propClass="'newbtnClass'"
+                :propClass="'removeBtn'"
                 :contenu="'X'"
                 @toggle-btn="() => removeItem(index, state.tagsArray)"
               ></btnComp>
@@ -58,8 +66,8 @@
         </div>
       </div>
     </div>
-    <div>
-      <p class="description">Description : *</p>
+    <div class="description_container">
+      <p class="description_title">Description :</p>
       <textarea
         class="description"
         name="description"
@@ -71,7 +79,7 @@
     </div>
     <div>
       <btnComp
-        :contenu="'Select Game File'"
+        :contenu="'Sélectionner le fichier du jeu'"
         @toggle-btn="openFileBrowser"
       ></btnComp>
       <div v-if="state.gameFile">
@@ -82,7 +90,7 @@
     </div>
     <div>
       <btnComp
-        :contenu="'Upload Images (Max ' + state.MAX_IMGS + ')'"
+        :contenu="'Téléverser des images (Max ' + state.MAX_IMGS + ')'"
         @toggle-btn="openImageBrowser"
       ></btnComp>
       <div class="imgList" v-if="state.imageFiles.length">
@@ -94,6 +102,7 @@
           {{ file.name }}
           <img :src="file.url" :alt="file.name" />
           <btnComp
+            :propClass="'removeBtn'"
             :contenu="'X'"
             @toggle-btn="() => removeItem(index, state.imageFiles)"
           ></btnComp>
@@ -102,30 +111,29 @@
     </div>
     <div>
       <btnComp
-        :contenu="'Upload Videos (Max ' + state.MAX_VIDS + ')'"
+        :contenu="'Téléverser des vidéos (Max ' + state.MAX_VIDS + ')'"
         @toggle-btn="openVideoBrowser"
       ></btnComp>
       <div class="vidList" v-if="state.videoFiles.length">
-        <p>Selected videos:</p>
-        <ol>
-          <li v-for="(file, index) in state.videoFiles" :key="index">
-            {{ file.name }}
-            <video
-              controls
-              :src="file.url"
-              :alt="file.name"
-              style="width: 25%"
-            ></video>
-            <btnComp
-              :contenu="'X'"
-              @toggle-btn="() => removeItem(index, state.videoFiles)"
-            ></btnComp>
-          </li>
-        </ol>
+        <div
+          class="vid_item"
+          v-for="(file, index) in state.videoFiles"
+          :key="index"
+        >
+          {{ file.name }}
+          <video controls :src="file.url" :alt="file.name"></video>
+          <btnComp
+            :propClass="'vid_RemoveBtn'"
+            :contenu="'X'"
+            @toggle-btn="() => removeItem(index, state.videoFiles)"
+          ></btnComp>
+        </div>
       </div>
     </div>
     <btnComp
-      :contenu="props.mode === 'create' ? 'Create Game' : 'Update Game'"
+      :contenu="
+        props.mode === 'create' ? 'Créer un jeu' : 'Mettre à jour le jeu'
+      "
       @toggle-btn="submitGame"
     ></btnComp>
   </div>
@@ -133,6 +141,7 @@
 
 <script setup>
 import btnComp from "../components/btnComponent.vue";
+import storageManager from "../JS/localStorageManager";
 import { reactive, defineProps, computed, onMounted } from "vue";
 import {
   create,
@@ -146,7 +155,7 @@ import {
 const props = defineProps({
   developerID: {
     type: Number,
-    default: 9,
+    default: storageManager.getIdDev(),
   },
   pageTitle: {
     type: String,
@@ -183,6 +192,14 @@ const state = reactive({
   tagsFromDatabase: [],
 });
 
+function addClickedTagToTagsArray(tagName) {
+  if (!state.tagsArray.includes(tagName)) {
+    state.tagsArray.push(tagName);
+  } else {
+    console.log(`${tagName} already added.`);
+  }
+}
+
 const getTagsFrom_DB = async () => {
   try {
     let data = await getAll("tags");
@@ -199,7 +216,7 @@ const fileSize = computed(() => {
 
 const charCountText = computed(() => {
   let currentLength = state.description.length;
-  return `${currentLength}/${state.MAX_DESC_LENGTH} characters`;
+  return `${currentLength}/${state.MAX_DESC_LENGTH} caractêres`;
 });
 
 function validateDescriptionLength() {
@@ -336,24 +353,32 @@ const formatData = () => {
 function updateTagsArray() {
   let newTags = state.tags
     .split(",")
-    .map((tag) => tag.trim())
-    .filter(Boolean);
-  state.tagsArray = [...state.tagsArray, ...newTags];
+    .map(tag => tag.trim())
+    .filter(Boolean); 
+
+  newTags.forEach(newTag => {
+    if (!state.tagsArray.includes(newTag)) {
+      state.tagsArray.push(newTag);
+    } else {
+      console.log(`${newTag} already added.`);
+    }
+  });
+
   state.tags = "";
-  // console.log("updating tags array : ", state.tagsArray);
+
 }
 
 const create_gameAndTags = async () => {
   await createGame();
 
   const tagsCreationResult = await createTags();
-  if (!tagsCreationResult) {
+  if (tagsCreationResult.isSuccessful ==false) {
     console.error(
       "Game couldn't be added because tags were not successfully created."
     );
-    await deleteGame();
+    // await deleteGame();
   } else {
-    console.error("Game creation failed.");
+    console.log("Game creation succeeded.");
   }
 };
 
@@ -384,7 +409,7 @@ const createTags = async () => {
     };
     const result = await create("tags", jsonObject);
     console.log("Tag was created:", result);
-    if (!result) {
+    if (result.isSuccessful == false) {
       allTagsCreated = false;
       break;
     }
@@ -469,7 +494,11 @@ onMounted(async () => {
   margin-bottom: 5%;
 }
 
-input[type="text"],
+.description_container {
+  margin-top: 5%;
+}
+
+input,
 textarea {
   background-color: rgb(64, 86, 119);
   border: none;
@@ -480,10 +509,10 @@ textarea {
   width: 100%; // Ensures input fields stretch to container width
 }
 
-input[type="text"]:focus,
-textarea:focus {
-  outline: 2px solid #007bff;
-}
+// input[type="text"]:focus,
+// textarea:focus {
+//   outline: 2px solid #007bff;
+// }
 
 .error-message {
   color: #ff3860;
@@ -494,12 +523,33 @@ textarea:focus {
   border: 1px solid #ff3860;
 }
 
-.tags-input-container,
-.imgList,
-.vidList {
+.tags-input-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tags-creator-container {
   display: flex;
   flex-wrap: wrap;
+  flex-direction: column;
   gap: 0.5rem;
+}
+
+.imgList {
+  margin: 2rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.vidList {
+  margin: 2rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .tags-from-db {
@@ -519,16 +569,15 @@ textarea:focus {
 }
 
 .user-added-tags {
-  display: flex;
-  align-items: center;
-  // flex-wrap: wrap;
-  gap: 0.5rem;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: 25% 25% 25% 25%;
+  gap: 2%;
 }
 
 .user-added-tags-container {
   display: flex;
   align-items: center;
+  width: 100%;
   // flex-wrap: wrap;
   gap: 0.5rem;
   flex-direction: column;
@@ -543,12 +592,35 @@ textarea:focus {
   gap: 0.5rem;
 }
 
-.tag_element,
-.img_element {
-  background: grey;
+.tag_element_DB {
+  background-color: rgba(150, 181, 226, 0.205);
   padding: 0.5rem;
   border-radius: 0.5rem;
   display: flex;
+  flex-wrap: wrap;
+  font-weight: bolder;
+  align-items: center;
+  justify-content: center;
+}
+
+.tag_element {
+  background-color: rgba(150, 181, 226, 0.205);
+  padding: 2%;
+  border-radius: 0.5rem;
+  display: grid;
+  grid-template-columns: 80% 20%;
+  font-weight: bolder;
+  align-items: center;
+  justify-items: center;
+  gap: 3%;
+}
+
+.img_element {
+  background-color: rgba(150, 181, 226, 0.205);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  display: flex;
+  // flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
 }
@@ -563,6 +635,13 @@ video {
   width: 100%; // Adapts to the width of its container
   max-width: 20rem; // Limits video width while allowing it to be responsive
   height: auto; // Maintain aspect ratio
+}
+
+.vid_item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5%;
 }
 
 textarea {
@@ -596,9 +675,9 @@ textarea {
 </style>
 
 <style>
-.newbtnClass {
+.addTagBtn {
   height: 100%;
-  width: 50%;
+  width: 30%;
   position: relative;
   overflow: hidden;
 
@@ -608,14 +687,14 @@ textarea {
     position: absolute;
     margin: auto;
     left: -100%;
-    background: -webkit-linear-gradient(right, var(--purple), pink, yellow);
-    /* background: -webkit-linear-gradient(
+    /* background: -webkit-linear-gradient(right, var(--purple), pink, yellow); */
+    background: -webkit-linear-gradient(
       right,
       var(--purple),
       var(--dark-blue),
       var(--purple),
       var(--dark-blue)
-    ); */
+    );
     border-radius: 5%;
     transition: all 0.4s ease;
   }
@@ -643,5 +722,105 @@ textarea {
       0 0 82px #0fa, 0 0 92px #0fa, 0 0 102px #0fa, 0 0 151px #0fa;
     animation: neonGlow 1.5s ease-in-out infinite alternate;
   }
+}
+
+.removeBtn {
+  width: 30%;
+  position: relative;
+  overflow: hidden;
+  display: flex; /* Enable Flexbox */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+
+  .btn-layer {
+    /* height: 100%; */
+    /* width: 300%; */
+    position: absolute;
+    left: -100%;
+    background: -webkit-linear-gradient(
+      right,
+      var(--purple),
+      var(--dark-blue),
+      var(--purple),
+      var(--dark-blue)
+    );
+    border-radius: 5%;
+    transition: all 0.4s ease;
+  }
+
+  .submit {
+    z-index: 1;
+    position: relative;
+    background: none;
+    border: none;
+    /* color: var(--light); */
+    color: rgb(89, 14, 14);
+    padding: 0; /* Adjust padding as needed */
+    border-radius: 5%;
+    font-size: 20px; /* Adjust font size as needed */
+    /* font-weight: 500; */
+    cursor: pointer;
+    /* Removed margin and width/height 100% to let flexbox handle centering */
+  }
+}
+
+.fieldBtn:hover .btn-layer {
+  left: 0;
+}
+
+.fieldBtn:hover .submit {
+  text-shadow: 0 0 7px #fff, 0 0 10px #fff, 0 0 21px #fff, 0 0 42px #0fa,
+    0 0 82px #0fa, 0 0 92px #0fa, 0 0 102px #0fa, 0 0 151px #0fa;
+  animation: neonGlow 1.5s ease-in-out infinite alternate;
+}
+
+.vid_RemoveBtn {
+  /* width: 30%; */
+  position: relative;
+  overflow: hidden;
+  display: flex; /* Enable Flexbox */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+
+  .btn-layer {
+    height: 100%;
+    width: 300%;
+    position: absolute;
+    left: -100%;
+    background: -webkit-linear-gradient(
+      right,
+      var(--purple),
+      var(--dark-blue),
+      var(--purple),
+      var(--dark-blue)
+    );
+    border-radius: 5%;
+    transition: all 0.4s ease;
+  }
+
+  .submit {
+    z-index: 1;
+    position: relative;
+    background: none;
+    border: none;
+    color: var(--light);
+    /* color: rgb(89, 14, 14); */
+    padding: 0; /* Adjust padding as needed */
+    border-radius: 5%;
+    font-size: 20px; /* Adjust font size as needed */
+    /* font-weight: 500; */
+    cursor: pointer;
+    /* Removed margin and width/height 100% to let flexbox handle centering */
+  }
+}
+
+.fieldBtn:hover .btn-layer {
+  left: 0;
+}
+
+.fieldBtn:hover .submit {
+  text-shadow: 0 0 7px #fff, 0 0 10px #fff, 0 0 21px #fff, 0 0 42px #0fa,
+    0 0 82px #0fa, 0 0 92px #0fa, 0 0 102px #0fa, 0 0 151px #0fa;
+  animation: neonGlow 1.5s ease-in-out infinite alternate;
 }
 </style>
