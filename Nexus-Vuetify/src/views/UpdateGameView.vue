@@ -885,24 +885,24 @@ function validateDescriptionLength() {
 const formatData = () => {
   // console.log("state.gameObject.description.trim().length : ", state.gameObject.description.trim().length)
   if (!state.gameObject.title) {
-    state.errorMessage = "Game title is required.";
+    state.errorMessage = "Le titre du jeu est requis.";
     return false;
   } else if (state.tagsArray.length < state.MIN_TAG) {
-    state.errorMessage = `At least ${state.MIN_TAG} tags are required.`;
+    state.errorMessage = `Au moins ${state.MIN_TAG} genre(s) sont requis.`;
     return false;
   } else if (state.imageFiles.length < state.MIN_IMG_LIST) {
-    state.errorMessage = `At least ${state.MIN_IMG_LIST} images are required.`;
+    state.errorMessage = `Au moins ${state.MIN_IMG_LIST} images sont requises.`;
     return false;
   } else if (
     state.gameObject.description.trim().length < state.MIN_DESC_LENGTH
   ) {
-    state.errorMessage = `Description between  ${state.MIN_DESC_LENGTH} and  ${state.MAX_DESC_LENGTH} characters is required.`;
+    state.errorMessage = `Une description entre ${state.MIN_DESC_LENGTH} et ${state.MAX_DESC_LENGTH} caractères est requise.`;
     return false;
   } else if (state.imageStoreObject.length < state.MAX_IMG_STORE) {
-    state.errorMessage = `At least ${state.MAX_IMG_STORE} images are required for the store.`;
+    state.errorMessage =  `Au moins ${state.MAX_IMG_STORE} images sont requises pour le magasin.`;
     return false;
   } else if (state.gameFile == null) {
-    state.errorMessage = `A Game File is required`;
+    state.errorMessage = "Un fichier de jeu est requis.";
     return false;
   } else {
     state.errorMessage = "";
@@ -916,6 +916,7 @@ const formatData = () => {
     return true;
   }
 };
+
 
 /*******************************************************************/
 /************************* UPDATE GAMES AND TAGS ******************/
