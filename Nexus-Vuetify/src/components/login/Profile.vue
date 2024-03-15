@@ -162,6 +162,9 @@ const toggleLogout = async () => {
   // };
 
   let results = await logoutService();
+
+  if (results)
+    emit("showLogin");
   // if (results !== false) {
   //   loginTokens_access_token = "";
   //   loginTokens_refresh_token = "";
@@ -174,7 +177,7 @@ const toggleLogout = async () => {
   //   storageManager.clearIdDev();
   // }
   // console.log(results);
-  emit("showLogin");
+
 };
 
 async function getUserInfos() {

@@ -259,21 +259,25 @@ class BaseController
         return $this->model->getOne($column, $value, $included_columns, $joined_tables);
     }
 
-    public function getAll($data)
+    public function getAll($data = null)
     {
-        $defaults = ['column' => null, 'value' => null, 'included_columns' => [], 'sorting' => [], 'joined_tables' => [], 'paging' => []];
-        $data = $this->setGetterDefaults(array_merge($defaults, $data));
+        if ($data) {
+            $defaults = ['column' => null, 'value' => null, 'included_columns' => [], 'sorting' => [], 'joined_tables' => [], 'paging' => []];
+            $data = $this->setGetterDefaults(array_merge($defaults, $data));
 
-        [
-            'column' => $column,
-            'value' => $value,
-            'included_columns' => $included_columns,
-            'sorting' => $sorting,
-            'joined_tables' => $joined_tables,
-            'paging' => $paging
-        ] = $data;
+            [
+                'column' => $column,
+                'value' => $value,
+                'included_columns' => $included_columns,
+                'sorting' => $sorting,
+                'joined_tables' => $joined_tables,
+                'paging' => $paging
+            ] = $data;
 
-        return $this->model->getAll($column, $value, $included_columns, $sorting, $joined_tables, $paging);
+            return $this->model->getAll($column, $value, $included_columns, $sorting, $joined_tables, $paging);
+        }
+
+        return $this->model->getAll();
     }
 
     public function getAllMatching($data)

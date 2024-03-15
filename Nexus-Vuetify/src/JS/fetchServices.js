@@ -251,6 +251,8 @@ export const logoutService = async () => {
     "logout",
     services.getAuthentificationCredentials()
   );
+    console.log('LOGOUT', data);
+
   if (data) {
     StorageManager.clearAll();
   }

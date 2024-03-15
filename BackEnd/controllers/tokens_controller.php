@@ -204,16 +204,16 @@ class TokensController extends BaseController
             ($id && $this->deleteAllFromUser($id));
     }
 
-    public function revokeAllAccess($user_id) {
-        return $this->deleteAllFromUser($user_id);
-    }
-
-    protected function revokeRefreshToken($refresh_token) {
+    public function revokeRefreshToken($refresh_token) {
         if ($stored = $this->getBySha($refresh_token)) {
             return $this->model->delete($stored['id']);
         }
 
         throw new Exception("Refresh token not found.");
+    }
+
+    public function revokeAllAccess($user_id) {
+        return $this->deleteAllFromUser($user_id);
     }
 
 

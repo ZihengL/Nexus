@@ -212,19 +212,26 @@ $id = 10;
 // $result = parse('games', 'getOne', ['column' => 'id', 'value' => 6, 'joined_tables' => ['tags' => ['id', 'name']]]);
 // printall($result);
 
-// $result = parse('users', 'login', ['email' => 'test@test', 'password' => '123']);
+$result = parse('users', 'login', ['email' => 'test@test', 'password' => '123']);
 
-// $tokens = $result['tokens'];
-// $id = $result['user']['id'];
+$tokens = $result['tokens'];
+$id = $result['user']['id'];
 
-// $credentials = ['id' => $id, 'access_token' => $tokens['access_token']];
-// // printall($result);
+$credentials = ['id' => $id, 'access_token' => $tokens['access_token']];
 
-// // $updateresult = parse('users', 'update', ['credentials' => $credentials, 'request_data' => ['id' => $id, 'username' => 'ggggggg']]);
+$logout = ['id' => $id, 'refresh_token' => $tokens['refresh_token']];
+if ($logoutresult = parse('users', 'logout', $logout))
+    echo "LOGGED OUT";
+else
+    echo "FAIL TO LOG OUT";
+
+// printall($result);
+
+// $updateresult = parse('users', 'update', ['credentials' => $credentials, 'request_data' => ['id' => $id, 'username' => 'ggggggg']]);
 
 
-// $review = ['userID' => $id, 'gameID' => 2, 'rating' => 3, 'comment' => 'asdjkahsdjkashdasjklhdas'];
-// $data = ['credentials' => $credentials, 'request_data' => $review];
+$review = ['userID' => $id, 'gameID' => 2, 'rating' => 3, 'comment' => 'asdjkahsdjkashdasjklhdas'];
+$data = ['credentials' => $credentials, 'request_data' => $review];
 
 // $reviewres = parse('reviews', 'create', $data);
 

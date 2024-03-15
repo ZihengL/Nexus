@@ -56,7 +56,14 @@ class ReviewsController extends BaseController
         // }
         // echo "not validated review data: ";
         // return false;
-        return parent::create($data);
+
+        if (parent::create($data)) {
+            $this->updateGameRatingAverage($data['gameID']);
+
+            return true;
+        }
+
+        return false;
     }
 
     public function delete($data)
@@ -76,13 +83,21 @@ class ReviewsController extends BaseController
         // }
         // // echo "not validated review data: ";
         // return false;
-        return parent::delete($data);
+
+        if ($review = $this->model->getOne('id', $data['id'])) {
+            if (parent::delete($data)) {
+                $this->updateGameRatingAverage($review['gameID']);
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // public function update($id, $tokens = null, ...$data)
     public function update($data)
     {
-        return parent::update($data);
         // // [$id, $tokens, $data] = getFromData(['id', 'tokens'], $data, true);
         // // echo "<br> update reviews_controller <br>";
         // // print_r($data);
@@ -101,6 +116,16 @@ class ReviewsController extends BaseController
         // }
         // // echo "not validated review data: ";
         // return false;
+
+        if ($review = $this->model->getOne('id', $data['id'])) {
+            if (parent::update($data)) {
+                $this->updateGameRatingAverage($review['gameID']);
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
 

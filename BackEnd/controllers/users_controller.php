@@ -26,7 +26,7 @@ class UsersController extends BaseController
         $specific_actions = [
             'authenticate' => false,
             'login' => false,
-            'logout' => true,
+            'logout' => false,
             'update' => true,
             'delete' => true
         ];
@@ -77,7 +77,10 @@ class UsersController extends BaseController
     {
         ['id' => $id, 'refresh_token' => $refresh_token] = $data;
 
-        return $this->getTokensController()->revokeRefreshToken($refresh_token) &&
-            $this->model->update($id, ['isOnline' => false]);
+        if ($this->getTokensController()->revokeRefreshToken($refresh_token) &&
+            $this->model->update($id, ['isOnline' => false])) {
+
+                return true;
+            }
     }
 }
