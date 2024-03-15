@@ -1,6 +1,6 @@
 <template>
   <div v-if="user" :key="user.value" id="fullProfile">
-    <form action="#" class="glass">
+    <form action="#" class="glass roundBorderSmall">
       <!-- <v-avatar size="10rem"> -->
       <div class="round">
         <img
@@ -140,7 +140,7 @@
       <btnComp :contenu="'Confimer les Modifications'" @toggle-btn="updateUserInfos" />
     </form>
     <div v-if="galleryDialog" class="roundBorderSmall glass4 dialog">
-      <v-icon @click="galleryDialog = false" class="close">mdi-close</v-icon>
+      <v-icon @click="galleryDialog = false" class="close glow">mdi-close</v-icon>
       <div class="content">
         <label
           v-for="(img, index) in AllImages"
@@ -574,6 +574,7 @@ onMounted(async () => {
 
 .close {
   float: right;
+  font-size: 3rem;
 }
 
 .content {

@@ -117,6 +117,10 @@ onMounted(async () => {
 </script>
 
 <style lang="scss">
+.single:hover {
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
 .single  {
   text-decoration: none;
   color: var(--light-trans-2);
@@ -124,6 +128,7 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   height: 20rem;
+
   // padding: 5%;
   .img {
     flex: 6;

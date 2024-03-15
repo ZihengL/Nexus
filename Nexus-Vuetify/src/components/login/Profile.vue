@@ -10,7 +10,7 @@
     >
       <div class="wrapper2">
         <div class="description glass roundBorderSmall">
-          <div :class="isHimself ? 'imgContainerFull' : 'imgContainer'">
+          <div :class="isHimself ? 'imgContainerFull' : 'imgContainer'" class="round">
             <img
               :src="leDevs.picture || defaultProfilePic"
               alt="Photo de Profile"
