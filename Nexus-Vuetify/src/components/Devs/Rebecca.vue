@@ -32,6 +32,9 @@
 </template>
 
 <style>
+.myName {
+  color: white;
+}
 
 .all-info {
   display: flex;
