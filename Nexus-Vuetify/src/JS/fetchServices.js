@@ -182,12 +182,14 @@ export const actionWithValidation = async (table, action, data) => {
     request_data: data,
   };
 
-  console.log(pack);
+  console.log('pack ', pack);
 
-  return await services.fetchData(table, action, {
+  let dataReturn = await services.fetchData(table, action, {
     credentials: services.getValidationCredentials(),
     request_data: data,
   });
+  console.log('return ', dataReturn)
+  return dataReturn;
 }
 
 export const createWithValidation = async (table, createData) => {

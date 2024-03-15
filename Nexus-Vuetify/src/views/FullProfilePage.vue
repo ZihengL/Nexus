@@ -148,6 +148,7 @@
           :key="index"
           id="pic"
           class="roundBorderSmall one glass2  "
+          @click="state.picture = img"
         >
           <input
             type="radio"
@@ -181,6 +182,7 @@ const state = reactive({
   lastName: "",
   email: "",
   username: "",
+  picture: "",
   phoneNumber: "",
   firstPassword: "",
   secondPassword: "",
