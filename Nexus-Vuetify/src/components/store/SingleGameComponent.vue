@@ -46,7 +46,7 @@ const storage = getStorage();
 const props = defineProps(['gameList']);
 
 let singleGame_data = props.gameList;
-console.log('one object', singleGame_data);
+// console.log('one object', singleGame_data);
 
 const limitedTags = computed(() => {
   

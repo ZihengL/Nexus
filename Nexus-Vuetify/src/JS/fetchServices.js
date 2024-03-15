@@ -30,7 +30,7 @@ function parseDetails(details) {
 }
 
 function parseJoins(result, keys) {
-  console.log("PARSEJOINS BEFORE", result, keys);
+  // console.log("PARSEJOINS BEFORE", result, keys);
 
   for (var i in keys) {
     const detailsKey = keys[i] + "_details";
@@ -60,7 +60,7 @@ function parseJoins(result, keys) {
 
   }
 
-  console.log("PARSEJOINS AFTER", result);
+  // console.log("PARSEJOINS AFTER", result);
   return result;
 }
 
@@ -78,7 +78,7 @@ export const getOne = async (
     joined_tables
   );
   let result = await services.fetchData(table, "getOne", preppedBody);
-  console.log("GETONE", result);
+  // console.log("GETONE", result);
 
   if (result) {
     if (joined_tables) {
@@ -138,7 +138,7 @@ export const getAllMatching = async (
   );
   let result = await services.getAllMatching(table, preppedBody);
 
-  console.log("getallmatching", result);
+  // console.log("getallmatching", result);
   if (result) {
     if (joined_tables) {
       result = parseJoins(result, Object.keys(joined_tables));
@@ -208,7 +208,7 @@ export const getUser = async (developerID) => {
     games: ["id", "title", "releaseDate", "ratingAverage"],
   };
   let data = await getOne("users", "id", developerID, null, joined_tables);
-  console.log("GETUSER", data);
+  // console.log("GETUSER", data);
 
   if (data.games)
     return fetchGameImagesByDev(data);
@@ -274,7 +274,7 @@ export const getGameDetailsWithDeveloperNameNEW = async (gameID) => {
   };
 
   let data = await getOne('games', 'id', gameID, null, joined_tables);
-  console.log('tags brut : ', data);
+  // console.log('tags brut : ', data);
   return fetchOneGameImages(data);
 };
 
@@ -313,7 +313,7 @@ export const getGamesForCarousel = async () => {
   let paging = { limit: 4, offset: 0 };
 
   let data = await getAllMatching('games', filters, included_columns, sorting, joined_tables, paging);
-  console.log("CAROUSEL", data);
+  // console.log("CAROUSEL", data);
   return fetchGameImages(data);
 };
 

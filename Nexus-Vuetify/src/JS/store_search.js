@@ -1,19 +1,24 @@
-import { getAllGamesWithDeveloperName, fetchGameImages} from './fetchServices'
+import * as services from './fetchServices'
 
 export const searchOn_titleOrUsername = async titleOrDevName => {
-  let games = await getAllGamesWithDeveloperName()
-  //   console.log('games : ', games)
+  let games = await services.getAllGamesWithDeveloperNameNEW()
+    console.log('games 1: ', games)
   const searchQuery = titleOrDevName.toLowerCase()
+
+
+
   const searchedGames = games.filter(game => {
+    console.log('searchedgames', game);
+    console.log('username', game.users[0].username.toLowerCase());
     const titleLower = game.title ? game.title.toLowerCase() : ''
-    const devNameLower = game.devName ? game.devName.toLowerCase() : ''
+    const devNameLower = game.users[0] ? game.users[0].username.toLowerCase() : ''
 
     return (
       titleLower.includes(searchQuery) || devNameLower.includes(searchQuery)
     )
   })
   //   console.log('searchedGames : ', searchedGames)
-  return fetchGameImages(searchedGames)
+  return services.fetchGameImages(searchedGames)
 }
 
 export const search_AndFilter = async (
@@ -26,25 +31,33 @@ export const search_AndFilter = async (
   let sorting = null;
 
   // Only proceed if sortingValue is an object and has keys
-  if (sortingValue && typeof sortingValue === 'object' && Object.keys(sortingValue).length > 0) {
+if (sortingValue && typeof sortingValue === 'object' && Object.keys(sortingValue).length > 0) {
   const keys = Object.keys(sortingValue)
   const key = keys[0]
   console.log('key : ', key)
   sorting = {
     [key]:sortingValue[key]
   }
+
+  console.log("sortingvalue", keys);
 }
   let games = titleOrDevName
     ? await searchOn_titleOrUsername(titleOrDevName)
-    : await getAllGamesWithDeveloperName(null, null, null, sorting)
+    : await services.getAllGamesWithDeveloperNameNEW(null, null, null, sorting)
 
-  //console.log('games  : ', games)
+  console.log('games 2: ', games)
 
   if (tags.length > 0) {
     games = games.filter(game =>
-      tags.every(tag => game.tags.some(gameTag => gameTag.name === tag))
+      tags.every(tag => 
+        game.tags.some(gameTag => 
+          gameTag.name === tag
+        )
+      )
     );
   }
+
+  console.log(games);
 
   if (sortingValue === "devName") {
     games.sort((a, b) => {
