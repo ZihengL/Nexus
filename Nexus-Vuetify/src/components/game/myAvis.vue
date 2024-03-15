@@ -65,7 +65,7 @@ const createReview = async () => {
       try {
         let data = {
           userID: userid,
-          gameID: props.gameID,
+          gameID: parseInt(props.gameID),
           rating: state.ratingValue,
           comment: state.comment,
         }

@@ -22,6 +22,8 @@ let connect = ref(false);
 
 // storageManager.setIsConnected(connect.value)
 // StorageManager.clearAll();
+// let id = StorageManager.getIdDev()
+// console.log('ide dev ', id)
 const initializeConnect = () => {
   storageManager.setIsConnected(false)
   const storedIsConnected = storageManager.getIsConnected()
