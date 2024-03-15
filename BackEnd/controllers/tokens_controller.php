@@ -98,7 +98,7 @@ class TokensController extends BaseController
         return JWT::encode($payload, $this->access_key, $this->encoding_alg);
     }
 
-    protected function refreshAccessToken($refresh_token)
+    public function refreshAccessToken($refresh_token)
     {
         if ($decoded = $this->decodeToken($refresh_token, true))
             return $this->generateAccessToken($decoded[self::SUB]);
@@ -138,10 +138,11 @@ class TokensController extends BaseController
         return true;
     }
 
-    public function validateRefreshToken($id, $refresh_token)
+    public function validateRefreshToken($user_id, $refresh_token)
     {
-        if ($stored = $this->getBySha($refresh_token))
-            return $stored[self::EXP] > time() && $stored[self::SUB] === $id;
+        if ($stored = $this->getBySha($refresh_token)) {
+            return $stored[self::SUB] == $user_id && $stored[self::EXP] > time();
+        }
 
         return false;
     }
@@ -150,9 +151,6 @@ class TokensController extends BaseController
     {
         if ($decoded = $this->decodeToken($access_token, false)) {
             // DOUBLE EQUALS IGNORES IF USER ID IS IN STRING FORMAT
-            // printall($decoded);
-            // printer($decoded[self::EXP] . " " . time());
-            // echo ($decoded[self::SUB] == $user_id && $decoded[self::EXP] > time()) ? "truc " : "pas truc";
             return $decoded[self::SUB] == $user_id && $decoded[self::EXP] > time();
         }
 
@@ -210,7 +208,8 @@ class TokensController extends BaseController
             ($id && $this->deleteAllFromUser($id));
     }
 
-    public function revokeRefreshToken($refresh_token) {
+    public function revokeRefreshToken($refresh_token)
+    {
         if ($stored = $this->getBySha($refresh_token)) {
             return $this->model->delete($stored['id']);
         }
@@ -218,7 +217,8 @@ class TokensController extends BaseController
         throw new Exception("Refresh token not found.");
     }
 
-    public function revokeAllAccess($user_id) {
+    public function revokeAllAccess($user_id)
+    {
         return $this->deleteAllFromUser($user_id);
     }
 
@@ -281,7 +281,7 @@ class TokensController extends BaseController
         return $this->model->getOne(column: self::SUB, value: $user_id);
     }
 
-    protected function getBySha($refresh_jwt)
+    public function getBySha($refresh_jwt)
     {
         return $this->model->getOne(column: self::SHA, value: hash($this->hashing_alg, $refresh_jwt));
     }

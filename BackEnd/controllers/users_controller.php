@@ -51,9 +51,11 @@ class UsersController extends BaseController
     {
         ['id' => $id, 'refresh_token' => $refresh_token] = $data;
 
-        if ($access_token = $this->authenticateUser($id, $refresh_token)) {
-            return $access_token;
+        if ($this->authenticateUser($id, $refresh_token)) {
+            return $this->getTokensController()->refreshAccessToken($refresh_token);
         }
+
+        return null;
     }
 
     // Do this if user needs to do a fresh login
@@ -77,10 +79,12 @@ class UsersController extends BaseController
     {
         ['id' => $id, 'refresh_token' => $refresh_token] = $data;
 
-        if ($this->getTokensController()->revokeRefreshToken($refresh_token) &&
-            $this->model->update($id, ['isOnline' => false])) {
-                return true;
-            }
+        if (
+            $this->getTokensController()->revokeRefreshToken($refresh_token) &&
+            $this->model->update($id, ['isOnline' => false])
+        ) {
+            return true;
+        }
 
         return false;
     }

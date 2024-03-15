@@ -122,6 +122,7 @@ export async function fetchData(table, action, body = null) {
   const OPTIONS = options(body);
 
   console.log("fetch uri", URI, "fetch options", OPTIONS);
+  console.log("fetch STRINGIFIED", JSON.stringify(body));
 
   const result = await fetch(URI, OPTIONS)
     .then((response) => {
@@ -141,6 +142,8 @@ export async function fetchData(table, action, body = null) {
   if (result) {
     if (Object.prototype.hasOwnProperty.call(result, "ERROR")) {
       console.log("ERROR", result);
+
+      return null;
     }
 
     return result;
@@ -166,17 +169,17 @@ export async function fetchDelete(table, data) {
 /*******************************************************************/
 
 export const refreshInterval = 55 * 60 * 1000; // 55 mins
+// export const refreshInterval = 20000;
 export const tokenRefreshInterval = setInterval(refreshToken, refreshInterval);
 
 export async function refreshToken() {
-  if (StorageManager.getIsConnected()) {
+  if (StorageManager.getRefreshToken()) {
     console.log("Refreshing Token");
 
-    const result = await fetchData(
-      "users",
-      "authenticate",
-      getAuthentificationCredentials()
-    );
+    const result = await fetchData("users", "authenticate", {
+      id: StorageManager.getIdDev(),
+      refresh_token: StorageManager.getRefreshToken(),
+    });
 
     if (result) {
       console.log("Refreshed Access Token.", result);

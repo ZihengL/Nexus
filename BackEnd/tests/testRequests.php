@@ -26,17 +26,20 @@ $request_data = ['gameID' => 2, 'userID' => $id, 'rating' => 2.5, 'comment' => '
 $data = ['credentials' => $credentials, 'request_data' => $request_data];
 $jsonData = json_encode($data);
 
-$table = 'reviews';
-$action = 'create';
+$table = 'users';
+$action = 'authenticate';
 $uri = getURI($table, $action);
 
-$uri = 'http://localhost:4208/Nexus/Backend/table=reviews&action=create';
-$data = '{"credentials":{"id":12,"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEyLCJpYXQiOjE3MTA1MTE0NjgsImV4cCI6MTcxMDUxNTA2OCwiaXNzIjoiTkVYVVMiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZC8ifQ.b1yVu68wDbz6tI_62PSUL1okggYcVn2juvTEZdwR8o8"},"request_data":{"userID":12,"gameID":6,"rating":3.5,"comment":"asdsadasdas"}}';
+$data = '{"id":12,"refresh_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEyLCJpYXQiOjE3MTA1MTk1MTgsImV4cCI6MTcxMTEyNDMxOCwiaXNzIjoiTkVYVVMiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZC8ifQ.0YVC7kDJpJ5Z_m_WAsyRrLNX74A1AMleUtQwPISAzXI"}';
 $jsonData = $data;
 $decoded = json_decode($data, true);
+
+$token = $decoded['refresh_token'];
+
 printall($decoded);
 
 // Initialize a cURL session
+$uri = "http://localhost:4208/Nexus/Backend/table=$table&action=$action";
 printer(getURI($table, $action));
 
 $ch = curl_init($uri);

@@ -128,7 +128,7 @@ class BaseController
 
     protected function authenticateUser($id, $refresh_token)
     {
-        return $this->getTokensController()->refreshAccessToken($id, $refresh_token);
+        return $this->getTokensController()->validateRefreshToken($id, $refresh_token);
     }
 
     protected function validateUser($id, $access_token)
