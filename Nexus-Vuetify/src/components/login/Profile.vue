@@ -61,7 +61,7 @@
                   </div>
                 </div>
                 <div class=" sign glass roundBorderSmall">
-                  <p>En developpement ...</p>
+                  <p>En développement ...</p>
                 </div>
               </div>
             </div>

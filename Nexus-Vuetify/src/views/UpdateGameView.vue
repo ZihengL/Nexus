@@ -353,7 +353,7 @@ const openVideoBrowser = () => {
 const openImageBrowser = () => {
   const fileInput = document.createElement("input");
   fileInput.type = "file";
-  fileInput.multiple = true;
+  fileInput.multiple = false;
   fileInput.accept = "image/*";
   fileInput.onchange = (e) => {
     const newFiles = Array.from(e.target.files);
