@@ -26,7 +26,7 @@
 </template>
 <script setup>
 import btnComp from "../btnComponent.vue";
-import { create, getOne, deleteData } from "../../JS/fetchServices";
+import {  getOne, actionWithValidation } from "../../JS/fetchServices";
 import storageManager from "../../JS/localStorageManager";
 import { reactive, onMounted, watch, defineProps } from "vue";
 
@@ -85,7 +85,7 @@ const createReview = async () => {
             refresh_token: storageManager.getRefreshToken(),
           }
         }
-        let reviewIsCreated = await create("reviews", data);
+        let reviewIsCreated = await actionWithValidation("reviews", "update", data);
         if(reviewIsCreated == true){
           window.location.reload();
         }
