@@ -1,8 +1,12 @@
 <template>
   <div v-if="tabImgGame.length > 0" class="slider">
     <div class="list" ref="sliderList">
-      <div v-for="(imgGame, index) in tabImgGame" :key="index" class="item">
-        <img :src="imgGame.image" :alt="`Image ${index}`">
+      <div v-for="(media, index) in tabImgGame" :key="index" class="item">
+        <img v-if="['png', 'jpg', 'jpeg', 'image'].includes(media.type)" :src="media.src" :alt="`Image ${index}`">
+        <video v-else controls>
+          <source :src="media.src" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
       </div>
     </div>
     <div class="buttons">
@@ -17,7 +21,7 @@
 
 <script setup>
 import { onMounted, onBeforeUnmount, ref as vueRef, nextTick, defineProps } from 'vue';
-import { getStorage, ref as firebaseRef, getDownloadURL } from "firebase/storage";
+import { getStorage, ref as firebaseRef, getDownloadURL , getMetadata} from "firebase/storage";
 
 const storage = getStorage();
 
@@ -35,15 +39,28 @@ let active = vueRef(0);
 let lengthItems = 0;
 let refreshInterval;
 
+
+
 async function fetchCarouselGameImages(gameId, index) {
   const imagePath = `Games/${gameId}/media/${gameId}_${index}.png`;
   const imageRef = firebaseRef(storage, imagePath);
   try {
     const url = await getDownloadURL(imageRef);
-    tabImgGame.value.push({ id: gameId, image: url });
+    console.log("Firebase URL image: ", url);
+
+    const metadata = await getMetadata(imageRef); 
+    console.log("Metadata: ", metadata);
+
+    tabImgGame.value.push({
+      id: gameId,
+      src: url,
+      type: metadata.contentType.startsWith('image/') ? 'image' : 'video',
+      size: metadata.size,
+      contentType: metadata.contentType,
+    });
   } catch (error) {
     console.error(`Error fetching image for ${gameId}:`, error);
-    tabImgGame.value.push({ id: gameId, image: defaultPath });
+    tabImgGame.value.push({ id: gameId, src: defaultPath, type: 'image' });
   }
 }
 
