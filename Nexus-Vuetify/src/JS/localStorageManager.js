@@ -1,5 +1,6 @@
 
 const StorageKeys = {
+  USER: 'user',
   ID_DEV: 'idDev',
   ACCESS_TOKEN: 'access_token',
   REFRESH_TOKEN: 'refresh_Token',
@@ -7,13 +8,26 @@ const StorageKeys = {
 }
 
 const StorageManager = {
+  setUser(user) {
+    localStorage.setItem(StorageKeys.USER, JSON.stringify(user));
+  },
+  getUser() {
+    try {
+      const user = JSON.parse(localStorage.getItem(StorageKeys.USER) || '{}');
+      console.log("STORED USER", user);
+
+      return user;
+    } catch (e) {
+        console.error("Error parsing JSON from localStorage", e);
+    }
+  },
   setIdDev (id) {
-    console.log('set id d ', id);
+    // console.log('set id d ', id);
     localStorage.setItem(StorageKeys.ID_DEV, id)
   },
   getIdDev () {
     let data = localStorage.getItem(StorageKeys.ID_DEV);
-    console.log('get id d ', data);
+    // console.log('get id d ', data);
     return data;
   },
   setAccessToken (token) {

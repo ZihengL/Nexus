@@ -508,32 +508,23 @@ export default {
 
       // const login = await services.login({})
 
-      const joined_tables = {
-        games: ["id", "title", "releaseDate", "ratingAverage"],
-      };
+      // const joined_tables = {
+      //   games: ["id", "title", "releaseDate", "ratingAverage"],
+      // };
       
-      let data = await services.getOne("users", "id", 11, null, joined_tables);
+      // let data = await services.getOne("users", "id", 11, null, joined_tables);
 
-      console.log('data', data);
-
-
-      const access_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjExLCJpYXQiOjE3MTA0Njg3ODIsImV4cCI6MTcxMDQ3MjM4MiwiaXNzIjoiTkVYVVMiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZC8ifQ.qhzRlsnK42cnHHOHIWep6ewTpmxsBfyj66-E3JuWpc4';
-      const id = 11;
-
-      const updateresult = await services.fetchDataProxy("users", "update", {
-        credentials: {
-          id: id,
-          access_token: access_token,
-        },
-        request_data: {
-          id: 11,
-          username: "jkalsdfj;asflqkwjrqwUPDATE",
-        }
-      })
-
-      console.log(updateresult);
+      // console.log('data', data);
 
 
+      // const access_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjExLCJpYXQiOjE3MTA0Njg3ODIsImV4cCI6MTcxMDQ3MjM4MiwiaXNzIjoiTkVYVVMiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZC8ifQ.qhzRlsnK42cnHHOHIWep6ewTpmxsBfyj66-E3JuWpc4';
+      // const id = 11;
+
+      const updatedata = {id: 11, username: "1111131231232121312"};
+
+      const updateresult = await services.updateWithValidation("users", updatedata);
+
+      console.log("UPDATE", updateresult);
 
       const store = await services.getAllGamesWithDeveloperNameNEW(null, null, null, null, null);
 

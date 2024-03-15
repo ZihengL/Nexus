@@ -22,9 +22,12 @@ class ReviewsModel extends BaseModel
     //     // return parent::create($new_data);
     // }
 
+    public function getAverage($gameID)
+    {
+        $sql = "SELECT AVG(rating) AS average_rating
+                FROM reviews
+                WHERE gameID = ?";
 
-
-
-
-
+        return $this->query($sql, [$gameID])->fetch(PDO::FETCH_ASSOC);
+    }
 }

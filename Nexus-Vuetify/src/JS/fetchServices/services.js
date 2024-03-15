@@ -141,6 +141,18 @@ export async function fetchData(table, action, body = null) {
   }
 }
 
+export async function fetchCreate(table, data) {
+  return await fetchData(table, "create", data);
+}
+
+export async function fetchUpdate(table, data) {
+  return await fetchData(table, 'update', data);
+}
+
+export async function fetchDelete(table, data) {
+  return await fetchData(table, 'delete', data);
+}
+
 /*******************************************************************/
 /*************************** OTHER FETCH ***************************/
 /*******************************************************************/

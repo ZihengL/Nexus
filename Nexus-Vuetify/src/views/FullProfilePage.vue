@@ -3,19 +3,12 @@
     <form action="#" class="glass">
       <!-- <v-avatar size="10rem"> -->
       <div class="round">
-        <img
-          :src="getImage(user.picture) || defaultProfilePic"
-          alt="Profile Picture"
-          class="img_userProfilePic"
-        />
+        <img :src="getImage(user.picture) || defaultProfilePic" alt="Profile Picture" class="img_userProfilePic" />
         <!-- Dialog Trigger Button -->
         <!-- <v-btn icon @click="galleryDialog = true">
           <v-icon>mdi-image-multiple</v-icon>
         </v-btn> -->
-         <btnComp
-            :contenu="'Changer Profile'"
-            @toggle-btn="galleryDialog = true"
-          /> 
+        <btnComp :contenu="'Changer Profile'" @toggle-btn="galleryDialog = true" />
         <!--<button class="changerProfileBtn" @click="galleryDialog = true">
           Changer Profile
         </button>-->
@@ -24,137 +17,72 @@
       <!-- ... Signup form content ... -->
       <!--<<div class="field-container">
         <span class="title">Prénom</span> -->
-        <div class="input-group field">
-          <input
-            class="infos"
-            :key="`name-${user.name}`"
-            :class="{ notEmptyInput: user.name }"
-            type="text"
-            :placeholder="user.name || 'Prénom'"
-            v-model="state.name"
-            required
-          />
-          <btnComp
-            :propClass="'newbtnClass'"
-            :contenu="'effacer'"
-            @toggle-btn="() => deleteInfo('name')"
-          />
-        </div>
+      <div class="input-group field">
+        <input class="infos" :key="`name-${user.name}`" :class="{ notEmptyInput: user.name }" type="text"
+          :placeholder="user.name || 'Prénom'" v-model="state.name" required />
+        <btnComp :propClass="'newbtnClass'" :contenu="'effacer'" @toggle-btn="() => deleteInfo('name')" />
+      </div>
       <!--<</div>-->
 
       <!--<div class="field-container">
         <span class="title">Nom</span> -->
-        <div class="input-group field">
-          <input
-            class="infos"
-            :key="`lastName-${user.lastName}`"
-            :class="{ notEmptyInput: user.lastName }"
-            type="text"
-            :placeholder="user.lastName || 'Nom'"
-            v-model="state.lastName"
-          />
-          <btnComp
-            :propClass="'newbtnClass'"
-            :contenu="'effacer'"
-            @toggle-btn="() => deleteInfo('lastName')"
-          />
-        </div>
+      <div class="input-group field">
+        <input class="infos" :key="`lastName-${user.lastName}`" :class="{ notEmptyInput: user.lastName }" type="text"
+          :placeholder="user.lastName || 'Nom'" v-model="state.lastName" />
+        <btnComp :propClass="'newbtnClass'" :contenu="'effacer'" @toggle-btn="() => deleteInfo('lastName')" />
+      </div>
       <!--</div>-->
 
       <!--<div class="field-container">
         <span class="title">Téléphone</span> -->
-        <div class="input-group field">
-          <input
-            class="infos"
-            :key="`phoneNumber-${user.phoneNumber}`"
-            type="tel"
-            placeholder="Numero de Téléphone"
-            v-model="state.phoneNumber"
-            @input="updatephonenumber"
-          />
-          <btnComp
-            :propClass="'newbtnClass'"
-            :contenu="'effacer'"
-            @toggle-btn="() => deleteInfo('phoneNumber')"
-          />
-        </div>
+      <div class="input-group field">
+        <input class="infos" :key="`phoneNumber-${user.phoneNumber}`" type="tel" placeholder="Numero de Téléphone"
+          v-model="state.phoneNumber" @input="updatephonenumber" />
+        <btnComp :propClass="'newbtnClass'" :contenu="'effacer'" @toggle-btn="() => deleteInfo('phoneNumber')" />
+      </div>
       <!--</div>-->
 
       <!--<div class="field-container">
         <span class="title">Nom Utilisateur</span> -->
-        <div class="input-group  field">
-          <input
-            class="infos"
-            :key="`username-${user.username}`"
-            :class="{ notEmptyInput: user.username }"
-            type="text"
-            :placeholder="user.username || 'Nom Utilisateur'"
-            v-model="state.username"
-          />
-        </div>
+      <div class="input-group  field">
+        <input class="infos" :key="`username-${user.username}`" :class="{ notEmptyInput: user.username }" type="text"
+          :placeholder="user.username || 'Nom Utilisateur'" v-model="state.username" />
+      </div>
       <!--</div>-->
 
       <!--<div class="field-container">
         <span class="title">Description</span> -->
-        <div class="input-group  field">
-          <textarea
-            class="infos"
-            :key="`description-${user.description}`"
-            :class="{ notEmptyInput: user.description }"
-            :placeholder="user.description || 'Description...'"
-            v-model="state.description"
-          ></textarea>
-          <btnComp
-            :propClass="'newbtnClass'"
-            :contenu="'effacer'"
-            @toggle-btn="() => deleteInfo('description')"
-          />
-        </div>
+      <div class="input-group  field">
+        <textarea class="infos" :key="`description-${user.description}`" :class="{ notEmptyInput: user.description }"
+          :placeholder="user.description || 'Description...'" v-model="state.description"></textarea>
+        <btnComp :propClass="'newbtnClass'" :contenu="'effacer'" @toggle-btn="() => deleteInfo('description')" />
+      </div>
       <!--</div>-->
 
       <!--<div class="field-container">
         <span class="title">Mot de Passe</span> -->
-        <div class="input-group  field">
-          <input
-            class="infos"
-            type="password"
-            placeholder="Mot de passe"
-            v-model="state.firstPassword"
-          />
-        </div>
+      <div class="input-group  field">
+        <input class="infos" type="password" placeholder="Mot de passe" v-model="state.firstPassword" />
+      </div>
       <!--</div>-->
 
       <!--<div class="field-container">
         <<span class="title">Confirmer Mot De Passe</span> -->
-        <div class="input-group  field">
-          <input
-            class="infos"
-            type="password"
-            placeholder="Confirmer le mot de passe"
-            v-model="state.secondPassword"
-            required
-          />
-        </div>
+      <div class="input-group  field">
+        <input class="infos" type="password" placeholder="Confirmer le mot de passe" v-model="state.secondPassword"
+          required />
+      </div>
       <!--</div>-->
 
       <btnComp :contenu="'Modifier'" @toggle-btn="updateUserInfos" />
     </form>
 
-    <div v-if="galleryDialog"  class="roundBorderSmall glass4 dialog">
+    <div v-if="galleryDialog" class="roundBorderSmall glass4 dialog">
       <v-icon @click="galleryDialog = false" class="close">mdi-close</v-icon>
       <div class="content">
-        <label
-          v-for="img, index in AllImages"
-          :key="index"
-          id="pic"
-          class="roundBorderSmall one glass2  "
-          @click="state.picture = img"
-        >
-          <input
-            type="radio"
-            name="pic"
-            :value="img"
-          />
+        <label v-for="img, index in AllImages" :key="index" id="pic" class="roundBorderSmall one glass2  "
+          @click="state.picture = img">
+          <input type="radio" name="pic" :value="img" />
           <img :src="img" alt="">
           <p></p>
         </label>
@@ -170,7 +98,7 @@ import btnComp from "../components/btnComponent.vue";
 import { defineProps, ref, onMounted, watch, reactive } from "vue";
 import storageManager from "../JS/localStorageManager.js";
 import defaultProfilePic from "@/assets/Dev_Picture/defaultProfilePic.png";
-import { getOne, updateWithValidation } from "../JS/fetchServices";
+import { getOne, updateWithValidation, actionWithValidation } from "../JS/fetchServices";
 
 const props = defineProps(["IdDev"]);
 let user = ref(null);
@@ -225,26 +153,60 @@ const getUserInfos = async () => {
     console.error("Error fetching user data:", error);
   }
 };
-const getImage = (image) =>{
-    console.log(' get pic,', image)
-    let urlPic = '/src/assets/Avatar/' + image;
-    console.log('pic,', urlPic)
-    return urlPic
-  }
+const getImage = (image) => {
+  console.log(' get pic,', image)
+  let urlPic = '/src/assets/Avatar/' + image;
+  console.log('pic,', urlPic)
+  return urlPic
+}
 
-  const getAllImages = async (tab) => {
+const getAllImages = async (tab) => {
   const folderPath = '/src/assets/Avatar/';
   //const imagePaths = [];
   for (let i = 1; i <= 7; i++) {
     let path = folderPath + 'Avatar_' + i + '.png';
-    console.log('path ', path);
+    // console.log('path ', path);
     tab.push(`${folderPath}Avatar_${i}.png`);
   }
 
-    //console.log('Nombre de fichiers dans le dossier :', nb);
-  console.log('Chemins de toutes les images :', tab);
+  //console.log('Nombre de fichiers dans le dossier :', nb);
+  // console.log('Chemins de toutes les images :', tab);
   return tab
 };
+
+// const updateUserInfos2 = async () => {
+//   const original = user.value;
+//   console.log("original", original);
+
+//   if (original) {
+//     const data = await validateDataBeforeSending();
+//     console.log("update data", data);
+
+//     const data_pack = {
+//       credentials: {
+//         id: original.id,
+//         access_token: storageManager.getAccessToken()
+//       },
+//       request_data: data
+//     };
+
+//     console.log(JSON.stringify(data_pack));
+
+//     const result = await this.$fetchData("users", "update", {
+//       credentials: {
+//         id: original.id,
+//         access_token: storageManager.getAccessToken()
+//       },
+//       request_data: data
+//     });
+
+//     if (result) {
+//       console.log("update result", result);
+//       window.location.reload();
+//     }
+//   }
+// }
+
 
 
 const updateUserInfos = async () => {
@@ -255,17 +217,22 @@ const updateUserInfos = async () => {
     try {
       if (updatedUser) {
         console.log("Updating user information...");
-        updatedUser.tokens = {
-          access_token: storageManager.getAccessToken(),
-          refresh_token: storageManager.getRefreshToken(),
-        };
+        // updatedUser.tokens = {
+        //   access_token: storageManager.getAccessToken(),
+        //   refresh_token: storageManager.getRefreshToken(),
+        // };
 
-        let userIsUpdated = await updateWithValidation("users", updatedUser);
-        if (userIsUpdated != false) {
+        console.log("UPDATEDUSER VALUE", updatedUser);
+        const userIsUpdated = await actionWithValidation("users", "update", updatedUser);
+        if (userIsUpdated)
+          window.location.reload();
+        console.log("UPDATE RESULT", userIsUpdated);
+
+        if (userIsUpdated) {
           console.log("SUCCESSFULLY UPDATED USER");
-          storageManager.setAccessToken(userIsUpdated["access_token"]);
+          // storageManager.setAccessToken(userIsUpdated["access_token"]);
           // console.log("storageManager.getAccessToken() : ", storageManager.getAccessToken())
-          storageManager.setRefreshToken(userIsUpdated["refresh_token"]);
+          // storageManager.setRefreshToken(userIsUpdated["refresh_token"]);
           // console.log("storageManager.getRefreshToken() : ", storageManager.getRefreshToken())
           window.location.reload();
         } else {
@@ -348,7 +315,7 @@ function compareAndUpdateUser(updatedUser, stateUser) {
   console.error(" state.userToUpdate : ", state.userToUpdate);
 
   for (const key in updatedUser) {
-    if (updatedUser.hasOwnProperty(key) && key !== "id") {
+    if (Object.hasOwn(updatedUser, key) && key !== "id") {
       let updatedValue = updatedUser[key] ?? ""; // Use nullish coalescing operator to default to empty string
       let originalValue = stateUser[key] ?? ""; // Use nullish coalescing operator to default to empty string
 
@@ -496,73 +463,87 @@ onMounted(async () => {
   align-items: center;
   justify-content: space-between;
   gap: 30%;
+
   img {
-  border-radius: 50%;
-  width: 25%;
-  margin: 0%;
+    border-radius: 50%;
+    width: 25%;
+    margin: 0%;
   }
+
   // .changerProfileBtn {
   //   flex: 3;
   // }
-} 
+}
 
 
 .dialog {
-    position: absolute;
-    top: 10%;
-    left: 30%;
-    width: 40%;
-    margin: auto;
-  }
-  
-  .close {
-    float: right;
-  }
-  
-  .content {
-    margin: 5%;
-    display: grid;
-    grid-template-columns: auto auto auto;
-    gap: 2%;
-    padding: 2% 2% 5% 2%;
-  }
-  
-  .one {
-    padding: 2% 2% 5% 2%;
-    position: relative; /* Ajout de cette ligne */
-  }
-  
-  .one img {
-    width: 100%;
-  }
-  
-  .one p {
-    position: absolute; /* Ajout de cette ligne */
-    top: 0; /* Ajout de cette ligne */
-    left: 0; /* Ajout de cette ligne */
-    width: 100%; /* Ajout de cette ligne */
-    height: 100%; /* Ajout de cette ligne */
+  position: absolute;
+  top: 10%;
+  left: 30%;
+  width: 40%;
+  margin: auto;
+}
 
-    /* From https://css.glass */
-    background: rgba(255, 255, 255, 0.62);
-    //border-radius: 0px;
-    backdrop-filter: blur(0px);
-    -webkit-backdrop-filter: blur(0px);
-    border: 1px solid rgba(255, 255, 255, 0); /* Ajout de cette ligne */
-    display: none; /* Ajout de cette ligne */
-  }
-  
-  .one input {
-    display: none;
-  }
-  .one:hover p, .one input:checked ~ p {
-    display: block; /* Ajout de cette ligne */
-  }
+.close {
+  float: right;
+}
+
+.content {
+  margin: 5%;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  gap: 2%;
+  padding: 2% 2% 5% 2%;
+}
+
+.one {
+  padding: 2% 2% 5% 2%;
+  position: relative;
+  /* Ajout de cette ligne */
+}
+
+.one img {
+  width: 100%;
+}
+
+.one p {
+  position: absolute;
+  /* Ajout de cette ligne */
+  top: 0;
+  /* Ajout de cette ligne */
+  left: 0;
+  /* Ajout de cette ligne */
+  width: 100%;
+  /* Ajout de cette ligne */
+  height: 100%;
+  /* Ajout de cette ligne */
+
+  /* From https://css.glass */
+  background: rgba(255, 255, 255, 0.62);
+  //border-radius: 0px;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  border: 1px solid rgba(255, 255, 255, 0);
+  /* Ajout de cette ligne */
+  display: none;
+  /* Ajout de cette ligne */
+}
+
+.one input {
+  display: none;
+}
+
+.one:hover p,
+.one input:checked~p {
+  display: block;
+  /* Ajout de cette ligne */
+}
 
 #fullProfile {
   width: 100%;
   margin: 0 auto 3% auto;
   padding: 5%;
+
   // margin-top: 10%;
   // margin-bottom: 10%;
   form {
@@ -571,6 +552,7 @@ onMounted(async () => {
     width: 50%;
     padding: 2%;
     margin: auto;
+
     .field-container {
       margin: 0%;
       display: inline-block;
@@ -581,11 +563,13 @@ onMounted(async () => {
       width: 200%;
       font-size: 1em;
     }
+
     .input-group {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
+
     .title {
       display: block;
       text-align: center;
@@ -594,6 +578,7 @@ onMounted(async () => {
       // margin-bottom: 1%;
       // margin-top: 8%;
     }
+
     input,
     textarea {
       flex-grow: 1; // Allow input and textarea to fill available space
@@ -601,9 +586,11 @@ onMounted(async () => {
       background-color: rgb(64, 86, 119);
       font-size: 1.5rem;
     }
+
     .notEmptyInput {
       // border: 2px solid #4caf50 !important;
       font-size: 1em;
+
       &::placeholder {
         color: #ffffff;
         opacity: 1;
@@ -628,16 +615,15 @@ onMounted(async () => {
     margin: auto;
     left: -100%;
     // background: -webkit-linear-gradient(right, var(--purple), pink, yellow);
-    background: -webkit-linear-gradient(
-      right,
-      var(--purple),
-      var(--dark-blue),
-      var(--purple),
-      var(--dark-blue)
-    );
+    background: -webkit-linear-gradient(right,
+        var(--purple),
+        var(--dark-blue),
+        var(--purple),
+        var(--dark-blue));
     border-radius: 5%;
     transition: all 0.4s ease;
   }
+
   .submit {
     height: 100%;
     width: 100%;
@@ -653,10 +639,12 @@ onMounted(async () => {
     cursor: pointer;
   }
 }
+
 .fieldBtn:hover {
   .btn-layer {
     left: 0;
   }
+
   .submit {
     text-shadow: 0 0 7px #fff, 0 0 10px #fff, 0 0 21px #fff, 0 0 42px #0fa,
       0 0 82px #0fa, 0 0 92px #0fa, 0 0 102px #0fa, 0 0 151px #0fa;
@@ -681,5 +669,4 @@ onMounted(async () => {
 //       var(--dark-blue)
 //     );
 //     color: #ffffff;
-// }
-</style>
+// }</style>

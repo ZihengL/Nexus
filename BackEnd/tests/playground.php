@@ -54,6 +54,11 @@ function areSet($array, $keys)
     return true;
 }
 
+function pr($message)
+{
+    echo "<b>$message</b><br>";
+}
+
 
 
 /*******************************/
@@ -216,22 +221,36 @@ $result = parse('users', 'login', ['email' => 'test@test', 'password' => '123'])
 
 $tokens = $result['tokens'];
 $id = $result['user']['id'];
+printall($result);
 
 $credentials = ['id' => $id, 'access_token' => $tokens['access_token']];
 
-$logout = ['id' => $id, 'refresh_token' => $tokens['refresh_token']];
-if ($logoutresult = parse('users', 'logout', $logout))
-    echo "LOGGED OUT";
-else
-    echo "FAIL TO LOG OUT";
+// $logout = ['id' => $id, 'refresh_token' => $tokens['refresh_token']];
+// if ($logoutresult = parse('users', 'logout', $logout))
+//     echo "LOGGED OUT";
+// else
+//     echo "FAIL TO LOG OUT";
+
+// $JSON = <<<DATA
+// {"credentials":{"id":"11","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjExLCJpYXQiOjE3MTA0NzUwNzcsImV4cCI6MTcxMDQ3ODY3NywiaXNzIjoiTkVYVVMiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZC8ifQ.esjl6VBtoNHqkMRRqpyrqLOzTdVxptck3zvLZyXEcIo"},"request_data":{"id":11,"name":"123","lastName":"","username":"1111"}}
+// DATA;
+
+// $decoded = json_decode($JSON, true);
+// // printall($decoded);
+// $decoded['request_data']['username'] = "ASDSADAVVVVV";
+// printall($decoded);
+
+// $res = parse("users", "update", $decoded);
+
+// printall($res);
 
 // printall($result);
 
 // $updateresult = parse('users', 'update', ['credentials' => $credentials, 'request_data' => ['id' => $id, 'username' => 'ggggggg']]);
 
 
-$review = ['userID' => $id, 'gameID' => 2, 'rating' => 3, 'comment' => 'asdjkahsdjkashdasjklhdas'];
-$data = ['credentials' => $credentials, 'request_data' => $review];
+// $review = ['userID' => $id, 'gameID' => 2, 'rating' => 3, 'comment' => 'asdjkahsdjkashdasjklhdas'];
+// $data = ['credentials' => $credentials, 'request_data' => $review];
 
 // $reviewres = parse('reviews', 'create', $data);
 

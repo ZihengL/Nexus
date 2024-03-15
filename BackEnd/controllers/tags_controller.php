@@ -11,9 +11,9 @@ class TagsController extends BaseController
     {
         $this->model = new TagsModel($pdo);
         $specific_actions = [
-            'create' => true,
-            'update' => true,
-            'delete' => true,
+            'create' => false,
+            'update' => false,
+            'delete' => false,
         ];
         parent::__construct($central_controller, $specific_actions);
     }
@@ -62,70 +62,78 @@ class TagsController extends BaseController
         return false;
     }
 
-
     public function delete($data)
     {
-        $isValid = $this->validateData("delete", $data);
-        $name = $data["name"];
-        $gameId = $data["gameId"];
-        $isValidArray = json_decode($isValid, true);
-
-        if ($isValidArray['isSuccessful']) {
-
-            $tagExists = $this->model->getOne("name", $name);
-
-            if ($tagExists) {
-                $tagId = $tagExists["id"];
-                $filters = [
-                    'gameId' => $gameId,
-                    'tagId' => $tagId,
-                ];
-                $gameTagsRelation = $this->getGamesTagsController()->getAllMatching($filters);
-
-                if (!empty($gameTagsRelation) && $this->model->delete($tagId)) {
-                    // echo "gameTagsRelation ". print_r($gameTagsRelation, true). "<br>";
-                    if ($this->getGamesTagsController()->delete($gameTagsRelation[0]["id"])) {
-                        return true;
-                        // return $this->createResponse(true, 'tags successfully deleted in gameTags and tags table');
-                    }
-                }
-                throw new Exception('tag deletion unsuccessful');
-                // return $this->createResponse(false, 'tag deletion unsuccessful');
-            }
-            throw new Exception('Cannot delete tag that doesnt exist');
-            // return $this->createResponse(false, 'Cannot delete tag that doesnt exist');
-        }
-        return true;
-        // return $isValidArray['isSuccessful'];
+        return parent::delete($data);
     }
+
+    public function update($data)
+    {
+        return parent::update($data);
+    }
+
+
+    // public function delete($data)
+    // {
+    //     $isValid = $this->validateData("delete", $data);
+    //     $name = $data["name"];
+    //     $gameId = $data["gameId"];
+    //     $isValidArray = json_decode($isValid, true);
+
+    //     if ($isValidArray['isSuccessful']) {
+
+    //         $tagExists = $this->model->getOne("name", $name);
+
+    //         if ($tagExists) {
+    //             $tagId = $tagExists["id"];
+    //             $filters = [
+    //                 'gameId' => $gameId,
+    //                 'tagId' => $tagId,
+    //             ];
+    //             $gameTagsRelation = $this->getGamesTagsController()->getAllMatching($filters);
+
+    //             if (!empty($gameTagsRelation) && $this->model->delete($tagId)) {
+    //                 // echo "gameTagsRelation ". print_r($gameTagsRelation, true). "<br>";
+    //                 if ($this->getGamesTagsController()->delete($gameTagsRelation[0]["id"])) {
+    //                     return true;
+    //                     // return $this->createResponse(true, 'tags successfully deleted in gameTags and tags table');
+    //                 }
+    //             }
+    //             throw new Exception('tag deletion unsuccessful');
+    //             // return $this->createResponse(false, 'tag deletion unsuccessful');
+    //         }
+    //         throw new Exception('Cannot delete tag that doesnt exist');
+    //         // return $this->createResponse(false, 'Cannot delete tag that doesnt exist');
+    //     }
+    //     return true;
+    //     // return $isValidArray['isSuccessful'];
+    // }
 
 
 
     // public function update($id = null, $tokens = null, ...$data)
-    public function update($data)
-    {
-        $isValid = $this->validateData("update", $data);
-        $isValidArray = json_decode($isValid, true);
-        $id = $data['id'];
+    // public function update($data)
+    // {
+    //     $isValid = $this->validateData("update", $data);
+    //     // $isValidArray = json_decode($isValid, true);
+    //     $id = $data['id'];
 
-        if ($isValidArray['isSuccessful']) {
-            $newName = $data["newName"];
-            $similarTagExist = $this->model->getOne("name", $newName);
-            if ($similarTagExist) {
-                return $this->createResponse(false, 'There is already a tag with that same name');
-            }
-            $newData = ['id' => $id, 'name' => $newName];
-            if ($this->model->update($id, $newData)) {
-                return $this->createResponse(true, 'Tag has been updated');
-            } else {
-                return $this->createResponse(false, 'Failed to update tag');
-            }
-        } else {
-            return $isValid;
-        }
-    }
-
-
+    //     if ($isValid) {
+    //         $newName = $data["newName"];
+    //         $similarTagExist = $this->model->getOne("name", $newName);
+    //         if ($similarTagExist) {
+    //             return $this->createResponse(false, 'There is already a tag with that same name');
+    //         }
+    //         $newData = ['id' => $id, 'name' => $newName];
+    //         if ($this->model->update($id, $newData)) {
+    //             return $this->createResponse(true, 'Tag has been updated');
+    //         } else {
+    //             return $this->createResponse(false, 'Failed to update tag');
+    //         }
+    //     } else {
+    //         return $isValid;
+    //     }
+    // }
 
     public function validateData($action, $data)
     {

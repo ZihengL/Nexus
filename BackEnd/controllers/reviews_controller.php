@@ -34,6 +34,16 @@ class ReviewsController extends BaseController
     /***************************** GETTERS *****************************/
     /*******************************************************************/
 
+    private function recalculateAverageRating($gameID)
+    {
+        if ($game = $this->getOneFrom('games', 'id', $gameID)) {
+            $average = floatval($this->model->getAverage($gameID)['average_rating']);
+
+            return self::$controllers['games']->update(['id' => $gameID, 'ratingAverage' => $average]);
+        }
+    }
+
+
     // public function create($tokens = null, ...$data)
     public function create($data)
     {
@@ -58,7 +68,7 @@ class ReviewsController extends BaseController
         // return false;
 
         if (parent::create($data)) {
-            $this->updateGameRatingAverage($data['gameID']);
+            $this->recalculateAverageRating($data['gameID']);
 
             return true;
         }
@@ -86,7 +96,7 @@ class ReviewsController extends BaseController
 
         if ($review = $this->model->getOne('id', $data['id'])) {
             if (parent::delete($data)) {
-                $this->updateGameRatingAverage($review['gameID']);
+                $this->recalculateAverageRating($review['gameID']);
 
                 return true;
             }
@@ -119,7 +129,7 @@ class ReviewsController extends BaseController
 
         if ($review = $this->model->getOne('id', $data['id'])) {
             if (parent::update($data)) {
-                $this->updateGameRatingAverage($review['gameID']);
+                $this->recalculateAverageRating($review['gameID']);
 
                 return true;
             }

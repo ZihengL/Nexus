@@ -144,11 +144,12 @@ class TokensController extends BaseController
         return false;
     }
 
-    public function validateAccessToken($user_id, $jwt)
+    public function validateAccessToken($user_id, $access_token)
     {
-        if ($decoded = $this->decodeToken($jwt, false))
-            return $decoded[self::SUB] === $user_id && $decoded[self::EXP] > time();
-        
+        if ($decoded = $this->decodeToken($access_token, false)) {
+            // DOUBLE EQUALS IGNORES IF USER ID IS IN STRING FORMAT
+            return $decoded[self::SUB] == $user_id && $decoded[self::EXP] > time();
+        }
 
         return false;
     }

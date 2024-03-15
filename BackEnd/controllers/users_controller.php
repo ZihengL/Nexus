@@ -79,8 +79,9 @@ class UsersController extends BaseController
 
         if ($this->getTokensController()->revokeRefreshToken($refresh_token) &&
             $this->model->update($id, ['isOnline' => false])) {
-
                 return true;
             }
+
+        return false;
     }
 }

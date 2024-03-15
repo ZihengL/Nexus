@@ -192,7 +192,7 @@ class BaseModel
             return $this->query($sql, $formatted_data)->rowCount();
         }
 
-        throw new Exception("Update operation failed on {$this->table} for id '$id' with datas: " . unwrap($data));
+        throw new Exception("Update operation failed on {$this->table} for id '$id'.");
     }
 
     public function delete($id)
@@ -208,6 +208,7 @@ class BaseModel
             if (in_array($column, array_keys($data)))
                 $formatted[$column] = $data[$column];
         }
+
         return $formatted;
     }
 

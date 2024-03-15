@@ -1,4 +1,4 @@
-import { fetchData } from "./fetch";
+// import { fetchData } from "./fetch";
 import * as services from "./fetchServices/services";
 import StorageManager from "./localStorageManager";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
@@ -150,7 +150,7 @@ export const getAllMatching = async (
   return null;
 };
 
-export const fetchDataProxy = async (table, action, data) => {
+export async function fetchProxy(table, action, data) {
   return await services.fetchData(table, action, data);
 }
 
@@ -180,40 +180,34 @@ export const deleteData = async (table, deleteData) => {
 // };
 
 export const actionWithValidation = async (table, action, data) => {
-  const pack = {
-    credentials: services.getValidationCredentials(),
-    request_data: data,
-  };
+  const dataWithCreds = {
+    credentials: {
+      id: parseInt(StorageManager.getIdDev()),
+      access_token: StorageManager.getAccessToken()
+    },
+    request_data: data
+  }
 
-  console.log('pack ', pack);
+  console.log("TABLE AND ACTION", table, action);
+  console.log('ACTION REQUEST DATA', table, action, dataWithCreds);
+  console.log("STRINGIFIED", JSON.stringify(dataWithCreds));
 
-  let dataReturn = await services.fetchData(table, action, {
-    credentials: services.getValidationCredentials(),
-    request_data: data,
-  });
-  console.log('return ', dataReturn)
-  return dataReturn;
-}
+  const res = await services.fetchData(table, action, dataWithCreds);
 
-export const createWithValidation = async (table, createData) => {
-  return await createData(table, {
-    credentials: services.getValidationCredentials(),
-    request_data: createData,
-  });
+  console.log(res);
+  return res;
 };
 
-export const updateWithValidation = async (table, updateData) => {
-  return await updateData(table, {
-    credentials: services.getValidationCredentials(),
-    request_data: updateData,
-  });
+export const createWithValidation = async (table, data) => {
+  return await actionWithValidation(table, 'create', data);
 };
 
-export const deleteWithValidation = async (table, deleteData) => {
-  return await deleteData(table, {
-    credentials: services.getValidationCredentials(),
-    request_data: deleteData,
-  });
+export const updateWithValidation = async (table, data) => {
+  return await actionWithValidation(table, 'update', data);
+};
+
+export const deleteWithValidation = async (table, data) => {
+  return await actionWithValidation(table, 'delete', data);
 };
 
 export const getDonationLink = async () => {
@@ -228,14 +222,18 @@ export const registerService = async (createData) => {
   console.log("registerService createData : ", createData);
   // let data = await create("users", createData);
 
-  let data = await services.create("users", createData);
+  let data = await services.fetchCreate("users", createData);
   return data;
 };
 
 export const loginService = async (login) => {
   const data = await services.fetchData("users", "login", login);
+
+  console.log(data);
+
   if (data) {
     console.log("LOGIN", data);
+    StorageManager.setUser(data.user);
     StorageManager.setIdDev(data.user.id);
     StorageManager.setAccessToken(data.tokens.access_token);
     StorageManager.setRefreshToken(data.tokens.refresh_token);

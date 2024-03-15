@@ -117,6 +117,7 @@ class BaseController
 
         if ($credentials) {
             [$id, $access_token] = getFromData(['id', 'access_token'], $credentials, true);
+            $id = intval($id);
 
             if ($this->validateUser($id, $access_token)) {
                 return $request_data;
@@ -321,26 +322,19 @@ class BaseController
 
     public function create($data)
     {
-        printall($data);
-
         return $this->model->create($data);
     }
 
     public function update($data)
     {
-        $id = $data['id'] ?? null;
+        $id = $data['id'];
 
         return $this->model->update($id, $data);
-        // if () {
-        //     return $this->model->getOne($this->id, $id);
-        // }
-
-        // return false;
     }
 
     public function delete($data)
     {
-        $id = getOneFromData(['id'], $data, true);
+        $id = $data['id'];
 
         return $this->model->delete($id);
     }
