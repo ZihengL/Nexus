@@ -28,19 +28,18 @@ $jsonData = json_encode($data);
 
 $table = 'reviews';
 $action = 'create';
+$uri = getURI($table, $action);
 
-$data = '{"credentials":{"id":12,"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEyLCJpYXQiOjE3MTA1MTE0NjgsImV4cCI6MTcxMDUxNTA2OCwiaXNzIjoiTkVYVVMiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZC8ifQ.b1yVu68wDbz6tI_62PSUL1okggYcVn2juvTEZdwR8o8"},"request_data":{"userID":12,"gameID":"5","rating":2.5,"comment":"asdvgv"}}';
+$uri = 'http://localhost:4208/Nexus/Backend/table=reviews&action=create';
+$data = '{"credentials":{"id":12,"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEyLCJpYXQiOjE3MTA1MTE0NjgsImV4cCI6MTcxMDUxNTA2OCwiaXNzIjoiTkVYVVMiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZC8ifQ.b1yVu68wDbz6tI_62PSUL1okggYcVn2juvTEZdwR8o8"},"request_data":{"userID":12,"gameID":6,"rating":3.5,"comment":"asdsadasdas"}}';
 $jsonData = $data;
 $decoded = json_decode($data, true);
 printall($decoded);
 
-// echo $decoded['credentials']['access_token'] === $b ? "ASDASDSADAAS" : "NO";
-
-
 // Initialize a cURL session
 printer(getURI($table, $action));
 
-$ch = curl_init(getURI($table, $action));
+$ch = curl_init($uri);
 
 // Set cURL options
 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
@@ -59,6 +58,8 @@ curl_close($ch);
 
 // Display the result
 if ($response)
-    printer($response);
+    printer("RESPONSE SUCCESS ");
+else
+    printer("RESPONSE FAILED ");
 
 printall($response);

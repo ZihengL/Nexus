@@ -118,9 +118,15 @@ const options = (body = null) => {
 // BASE FETCH
 
 export async function fetchData(table, action, body = null) {
-  const result = await fetch(uri(table, action), options(body))
+  const URI = uri(table, action);
+  const OPTIONS = options(body);
+
+  console.log("fetch uri", URI, "fetch options", OPTIONS);
+
+  const result = await fetch(URI, OPTIONS)
     .then((response) => {
-      if (response.ok && response.status === 200) {
+      // if (response.ok && response.status === 200) {
+      if (response.ok) {
         return response.json();
       }
 
@@ -132,13 +138,15 @@ export async function fetchData(table, action, body = null) {
       return null;
     });
 
-  if (Object.prototype.hasOwnProperty.call(result, "ERROR")) {
-    console.log("ERROR", result);
+  if (result) {
+    if (Object.prototype.hasOwnProperty.call(result, "ERROR")) {
+      console.log("ERROR", result);
+    }
 
-    return false;
-  } else {
     return result;
   }
+
+  return null;
 }
 
 export async function fetchCreate(table, data) {
@@ -146,11 +154,11 @@ export async function fetchCreate(table, data) {
 }
 
 export async function fetchUpdate(table, data) {
-  return await fetchData(table, 'update', data);
+  return await fetchData(table, "update", data);
 }
 
 export async function fetchDelete(table, data) {
-  return await fetchData(table, 'delete', data);
+  return await fetchData(table, "delete", data);
 }
 
 /*******************************************************************/
@@ -164,7 +172,11 @@ export async function refreshToken() {
   if (StorageManager.getIsConnected()) {
     console.log("Refreshing Token");
 
-    const result = await fetchData("users", "authenticate", getAuthentificationCredentials());
+    const result = await fetchData(
+      "users",
+      "authenticate",
+      getAuthentificationCredentials()
+    );
 
     if (result) {
       console.log("Refreshed Access Token.", result);
@@ -240,13 +252,13 @@ export async function updateWithValidation(table, data) {
 }
 
 export async function updateUser(data) {
-  const result = await updateWithValidation('users', data);
+  const result = await updateWithValidation("users", data);
 
   return result;
 }
 
 export async function updateGame(data) {
-  const result = await updateWithValidation('games', data);
+  const result = await updateWithValidation("games", data);
 
   return result;
 }
