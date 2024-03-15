@@ -212,17 +212,23 @@ $id = 10;
 // $result = parse('games', 'getOne', ['column' => 'id', 'value' => 6, 'joined_tables' => ['tags' => ['id', 'name']]]);
 // printall($result);
 
-$result = parse('users', 'login', ['email' => 'test@test', 'password' => '123']);
+// $result = parse('users', 'login', ['email' => 'test@test', 'password' => '123']);
 
-$tokens = $result['tokens'];
-$id = $result['user']['id'];
+// $tokens = $result['tokens'];
+// $id = $result['user']['id'];
 
-$credentials = ['id' => $id, 'access_token' => $tokens['access_token']];
-printall($result);
+// $credentials = ['id' => $id, 'access_token' => $tokens['access_token']];
+// // printall($result);
 
-$updateresult = parse('users', 'update', ['credentials' => $credentials, 'request_data' => ['username' => 'abcedfjkhakj']]);
+// $updateresult = parse('users', 'update', ['credentials' => $credentials, 'request_data' => ['id' => $id, 'username' => 'ggggggg']]);
 
-printall($result);
+// // if ($updateresult)
+// //     echo "TRUE";
+// // else
+// //     echo "FALSE";
+
+// $updated = parse('users', 'getOne', ['column' => 'id', 'value' => $id]);
+// // printall($updated);
 
 
 // printall($gamestags_ctrl->getGamesWith(['users' => true, 'tags' => true]));

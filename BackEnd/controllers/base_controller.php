@@ -118,8 +118,9 @@ class BaseController
         if ($credentials) {
             [$id, $access_token] = getFromData(['id', 'access_token'], $credentials, true);
 
-            if ($this->validateUser($id, $access_token))
+            if ($this->validateUser($id, $access_token)) {
                 return $request_data;
+            }
         }
 
         throw new Exception("Missing credentials in privileged operation.");
@@ -323,11 +324,12 @@ class BaseController
     {
         $id = $data['id'] ?? null;
 
-        if ($this->model->update($id, $data)) {
-            return $this->model->getOne($this->id, $id);
-        }
+        return $this->model->update($id, $data);
+        // if () {
+        //     return $this->model->getOne($this->id, $id);
+        // }
 
-        return false;
+        // return false;
     }
 
     public function delete($data)
