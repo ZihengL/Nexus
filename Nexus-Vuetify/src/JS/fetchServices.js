@@ -368,7 +368,7 @@ export const getGamesForCarousel = async () => {
   let paging = { limit: 4, offset: 0 };
 
   let data = await getAllMatching('games', filters, included_columns, sorting, joined_tables, paging);
-  // console.log("CAROUSEL", data);
+  console.log("CAROUSEL", data);
   return fetchGameImages(data);
 };
 
@@ -388,7 +388,7 @@ export const getGameReviews = async (gameID, sorting) => {
 export const fetchGameImages = async (games) => {
   try {
     const imageFetchPromises = games.map(async (game) => {
-      //console.log('un gameee : ', game);
+      console.log('un gameee : ', game);
       const files = game.id || `defaultName.jpg`;
       const imagePath = `Games/${files}/media/${files}_0.png`;
 
