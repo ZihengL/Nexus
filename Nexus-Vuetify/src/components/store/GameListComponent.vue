@@ -77,7 +77,6 @@ watch(
   },
   { deep: true }
 );
-onMounted (async )
 </script>
 
 <style lang="scss">

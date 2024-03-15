@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "firebase": "^10.8.0",
-    "jszip": "^3.10.1"
-  }
-}

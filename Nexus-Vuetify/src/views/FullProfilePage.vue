@@ -167,7 +167,7 @@
         </label>
       </div>
       <!-- Confirmation Button -->
-      <button @click="confirmImage()" class="confirm-btn">Confirmer</button>
+      <btnComp :contenu="'Confirmer'" @toggle-btn="confirmImage()" class="confirm-btn"/>
     </div>
   </div>
 </template>
@@ -534,16 +534,16 @@ onMounted(async () => {
 <style lang="scss">
 
 .confirm-btn {
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  cursor: pointer;
-  padding: 5% 10%;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 1em;
-  margin-top: 2%;
+  //background-color: #4CAF50;
+  // color: white;
+  // border: none;
+  // cursor: pointer;
+  // padding: 5% 10%;
+  // text-align: center;
+  // text-decoration: none;
+  // display: inline-block;
+  // font-size: 1em;
+  // margin-top: 2%;
   margin-bottom: 10%;
 }
 
