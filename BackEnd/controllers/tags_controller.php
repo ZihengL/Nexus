@@ -11,9 +11,9 @@ class TagsController extends BaseController
     {
         $this->model = new TagsModel($pdo);
         $specific_actions = [
-            'create' => false,
-            'update' => false,
-            'delete' => false,
+            'create' => true,
+            'update' => true,
+            'delete' => true,
         ];
         parent::__construct($central_controller, $specific_actions);
     }

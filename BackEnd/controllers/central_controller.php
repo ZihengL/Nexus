@@ -22,21 +22,21 @@ class CentralController
     private static $instance = null;
 
     // MANAGERS
-    public $database_manager;
-    public $google_client_manager;
+    private $database_manager;
+    private $google_client_manager;
 
     // TABLES
-    public $tokens_controller;
-    public $routines_controller;
-    public $users_controller;
-    public $games_controller;
-    public $reviews_controller;
-    public $tags_controller;
-    public $transactions_controller;
+    private $tokens_controller;
+    private $routines_controller;
+    private $users_controller;
+    private $games_controller;
+    private $reviews_controller;
+    private $tags_controller;
+    private $transactions_controller;
 
     // RELATIONAL TABLES
-    public $gamestags_controller;
-    public $users_downloads_controller;
+    private $gamestags_controller;
+    private $users_downloads_controller;
 
     private function __construct()
     {
@@ -99,7 +99,7 @@ class CentralController
 
     // COMMANDS
 
-    public function setRoutines($toRunning)
+    private function setRoutines($toRunning)
     {
         $this->routines_controller->setRunningState($toRunning);
     }

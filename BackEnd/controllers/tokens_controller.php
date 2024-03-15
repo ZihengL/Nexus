@@ -45,6 +45,7 @@ class TokensController extends BaseController
 
         $this->model = new TokensModel($pdo);
         parent::__construct($central_controller);
+        $this->restricted_columns = $this->model->getColumns(true);
         $this->actions = [];
     }
 
