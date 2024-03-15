@@ -4,11 +4,7 @@
       <game class="gameCarrousel" :idJeux="props.idGame" />
       <div class="gameInfo roundBorderSmall glass">
         <div class="gameImg">
-          <img
-            :src="gameInfos.leGame.image"
-            alt="#"
-            class="roundBorderSmall"
-          />
+          <img :src="gameInfos.leGame.image" alt="#" class="roundBorderSmall" />
         </div>
         <div class="descript">
           <p>{{ gameInfos.leGame.title }}</p>
@@ -17,30 +13,17 @@
           <p>{{ gameInfos.leGame.description }}</p>
         </div>
         <div class="ratings">
-          <v-rating
-            readonly
-            half-increments
-            :length="5"
-            :size="32"
-            :model-value="gameInfos.leGame.ratingAverage"
-            active-color="primary"
-            class="rat"
-          />
+          <v-rating readonly half-increments :length="5" :size="32" :model-value="gameInfos.leGame.ratingAverage"
+            active-color="primary" class="rat" />
         </div>
         <div class="devs">
-          <p><b>Developeur :</b> {{user}} </p>
+          <p><b>Developeur :</b> {{ user }} </p>
         </div>
         <div class="tags">
-          <a
-            href="#"
-            class="glow"
-            v-for="tag in gameInfos.leGame.tags"
-            :key="tag.id"
-            >{{ tag.name }}</a
-          >
+          <a href="#" class="glow" v-for="tag in gameInfos.leGame.tags" :key="tag.id">{{ tag.name }}</a>
         </div>
         <btnComp :contenu="'Telecharger'" @toggle-btn="downloadZipFile()" />
-        <btnComp :contenu="'Faire un don'" @toggle-btn="getLink" />
+        <btnComp :contenu="'Faire un don'" @toggle-btn="stripeRedirect()" />
       </div>
     </div>
 
@@ -48,52 +31,20 @@
       <div class="Pagin wrapper roundBorderSmall glass">
         <div class="form-container">
           <div class="slide-controls roundBorderSmall">
-            <input
-              type="radio"
-              name="slide"
-              id="login"
-              v-model="isLogin"
-              value="true"
-              checked
-            />
-            <input
-              type="radio"
-              name="slide"
-              id="signup"
-              v-model="isLogin"
-              value="false"
-            />
-            <label for="login" class="slide login" @click="toggleLogin()"
-              >Les plus récents</label
-            >
-            <label for="signup" class="slide signup" @click="toggleSignup()"
-              >Les plus anciens</label
-            >
+            <input type="radio" name="slide" id="login" v-model="isLogin" value="true" checked />
+            <input type="radio" name="slide" id="signup" v-model="isLogin" value="false" />
+            <label for="login" class="slide login" @click="toggleLogin()">Les plus récents</label>
+            <label for="signup" class="slide signup" @click="toggleSignup()">Les plus anciens</label>
             <div class="slider-tab"></div>
           </div>
           <div class="form-inner">
-            <Avis
-              class="recent"
-              :idGame="dataReview1"
-              :sort="'1'"
-              :nbMax="1"
-            />
-            <Avis
-              class="old"
-              :idGame="dataReview2"
-              :sort="'2'"
-              :nbMax="1"
-            />
+            <Avis class="recent" :idGame="dataReview1" :sort="'1'" :nbMax="1" />
+            <Avis class="old" :idGame="dataReview2" :sort="'2'" :nbMax="1" />
           </div>
         </div>
         <myAvis :gameID="props.idGame" />
       </div>
-      <Avis
-        class="rate glass"
-        :idGame="dataReview0"
-        :sort="'0'"
-        :nbMax="5"
-      />
+      <Avis class="rate glass" :idGame="dataReview0" :sort="'0'" :nbMax="5" />
     </div>
 
     <div v-else class="avisVide roundBorderSmall glass">
@@ -110,7 +61,7 @@ import Avis from "../components/game/Avis.vue";
 import game from "../components/game/GameCarrousel.vue";
 import { defineProps, onMounted, ref, reactive } from "vue";
 import { getGameDetailsWithDeveloperNameNEW, getGameReviews, getDonationLink } from '../JS/fetchServices';
-import { getStorage, ref as firebaseRef, getDownloadURL, uploadBytes} from "firebase/storage";
+import { getStorage, ref as firebaseRef, getDownloadURL, uploadBytes } from "firebase/storage";
 
 const storage = getStorage();
 let UrlGameImg = ref("");
@@ -151,7 +102,7 @@ const toggleSignup = () => {
   }
 };
 
-async function getLink() {
+async function stripeRedirect() {
   const gameID = props.idGame;
   console.log("gameID", gameID);
 
@@ -214,7 +165,7 @@ onMounted(async () => {
     dataReview1 = await getGameReviews(props.idGame, sorting1);
     dataReview2 = await getGameReviews(props.idGame, sorting2);
     dataReview0 = await getGameReviews(props.idGame, sorting0);
-    
+
     reviewTemp.value = dataReview0.length;
   } catch (error) {
     console.error("Error during component mounting:", error);
@@ -226,13 +177,12 @@ onMounted(async () => {
 <style src="../styles/GameVueStyle.scss" lang="scss"></style>
 <style scoped>
 .developerProfileLink {
-    color: #ffffff; 
-  }
-  
-  .developerProfileLink:hover {
-    color: #ffffff;
-    font-weight: bolder;
-    /* text-shadow: 0 0 7px #fff,  0 0 21px #fff; */
-  }
+  color: #ffffff;
+}
 
+.developerProfileLink:hover {
+  color: #ffffff;
+  font-weight: bolder;
+  /* text-shadow: 0 0 7px #fff,  0 0 21px #fff; */
+}
 </style>
