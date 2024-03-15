@@ -888,10 +888,10 @@ const formatData = () => {
     state.errorMessage = "Le titre du jeu est requis.";
     return false;
   } else if (state.tagsArray.length < state.MIN_TAG) {
-    state.errorMessage = `Au moins ${state.MIN_TAG} genre(s) sont requis.`;
+    state.errorMessage = `Au moins ${state.MIN_TAG} genre(s) est/sont requis.`;
     return false;
   } else if (state.imageFiles.length < state.MIN_IMG_LIST) {
-    state.errorMessage = `Au moins ${state.MIN_IMG_LIST} images sont requises.`;
+    state.errorMessage = `Au moins ${state.MIN_IMG_LIST} images est/sont requises.`;
     return false;
   } else if (
     state.gameObject.description.trim().length < state.MIN_DESC_LENGTH
@@ -899,7 +899,7 @@ const formatData = () => {
     state.errorMessage = `Une description entre ${state.MIN_DESC_LENGTH} et ${state.MAX_DESC_LENGTH} caractères est requise.`;
     return false;
   } else if (state.imageStoreObject.length < state.MAX_IMG_STORE) {
-    state.errorMessage =  `Au moins ${state.MAX_IMG_STORE} images sont requises pour le magasin.`;
+    state.errorMessage =  `Au moins ${state.MAX_IMG_STORE} images est/sont requises pour le magasin.`;
     return false;
   } else if (state.gameFile == null) {
     state.errorMessage = "Un fichier de jeu est requis.";
