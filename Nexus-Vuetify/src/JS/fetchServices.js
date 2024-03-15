@@ -211,6 +211,10 @@ export const deleteWithValidation = async (table, deleteData) => {
   });
 };
 
+export const getDonationLink = async () => {
+  return await services.getDonationLink();
+}
+
 /*******************************************************************/
 /****************************** USERS ******************************/
 /*******************************************************************/

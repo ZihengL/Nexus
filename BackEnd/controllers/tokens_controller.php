@@ -146,7 +146,7 @@ class TokensController extends BaseController
 
     public function validateAccessToken($jwt)
     {
-        if ($decoded = $this->decodeToken($jwt))
+        if ($decoded = $this->decodeToken($jwt, false))
             return $decoded[self::EXP] > time();
 
         return false;

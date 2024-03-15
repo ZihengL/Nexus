@@ -45,7 +45,7 @@ class ReviewsController extends BaseController
                 // echo "create review: ";
                 //create review, remove the tokens and send infos without tokens
                 // unset($data['tokens']);
-                $data['timestamp'] = date('Y-m-d');
+                // $data['timestamp'] = date('Y-m-d');
 
                 // echo "proper review  : ", print_r($data, true), "<br>";
                 if ($this->model->create($data)) {
@@ -62,7 +62,7 @@ class ReviewsController extends BaseController
     {
         // echo "<br> delete reviews_controller <br>";
         // print_r($data);
-        $id = $data['id'] ;
+        $id = $data['id'];
         if ($this->validateReview("delete", $data)) {
             if ($this->model->getOne(column: "id", value: $id)) {
                 // echo "delete review: ";
@@ -83,7 +83,7 @@ class ReviewsController extends BaseController
         // [$id, $tokens, $data] = getFromData(['id', 'tokens'], $data, true);
         // echo "<br> update reviews_controller <br>";
         // print_r($data);
-        $id = $data['id'] ;
+        $id = $data['id'];
         if ($this->validateReview("update", $data)) {
             if ($this->model->getOne(column: "id", value: $id)) {
                 // echo "update review: ";
@@ -122,7 +122,7 @@ class ReviewsController extends BaseController
     public function updateGameRatingAverage($gameID)
     {
         $gameController = $this->getGamesController();
-        $game = $gameController->getOne("id", $gameID);
+        $game = $gameController->model->getOne("id", $gameID);
         // echo "game before update : ", print_r($game, true), "<br>";
         // echo "newAverageRating : ", $newAverageRating, "<br>";
         $reviews = $this->model->getAll(column: "gameID", value: $gameID);
@@ -169,9 +169,9 @@ class ReviewsController extends BaseController
         $gameID = $data["gameID"] ?? null;
         $rating = $data["rating"] ?? null;
         $comment = $data["comment"] ?? null;
-        $tokens = $data["tokens"] ?? null;
-        $accessToken = $tokens["access_token"] ?? null;
-        $refreshToken = $tokens["refresh_token"] ?? null;
+        // $tokens = $data["tokens"] ?? null;
+        // $accessToken = $tokens["access_token"] ?? null;
+        // $refreshToken = $tokens["refresh_token"] ?? null;
 
         // echo "accessToken: " . $accessToken.  "<br>";
         // echo "refreshToken: " . $refreshToken . "<br>";

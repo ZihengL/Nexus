@@ -204,13 +204,16 @@ $id = 10;
 // $result = parse('games', 'getAll', ['column' => null, 'value' => null]);
 // printall($result);
 
-$result = parse('games', 'getAll', ['joined_tables' => ['users' => ['id', 'username', 'picture', 'isOnline'], 'tags' => ['id', 'name']]]);
-printall($result);
+// $result = parse('games', 'getAll', ['joined_tables' => ['users' => ['id', 'username', 'picture', 'isOnline'], 'tags' => ['id', 'name']]]);
+// printall($result);
 
-$joins = ['joined_tables' => ['games' => ['id', 'title', 'releaseDate', 'ratingAverage']]];
+// $joins = ['joined_tables' => ['games' => ['id', 'title', 'releaseDate', 'ratingAverage']]];
 
-$result = parse('games', 'getOne', ['column' => 'id', 'value' => 6, 'joined_tables' => ['tags' => ['id', 'name']]]);
-printall($result);
+// $result = parse('games', 'getOne', ['column' => 'id', 'value' => 6, 'joined_tables' => ['tags' => ['id', 'name']]]);
+// printall($result);
+
+$result = parse('users', 'login', ['email' => 'test@test', 'password' => '123']);
+
 
 // printall($gamestags_ctrl->getGamesWith(['users' => true, 'tags' => true]));
 
