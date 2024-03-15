@@ -227,7 +227,7 @@ const getImage = (image) =>{
     console.log(' get pic,', image)
     let urlPic = '/src/assets/Avatar/' + image;
     console.log('pic,', urlPic)
-    return urlPic
+    return urlPic 
   }
 
 const getAllImages = async (tab) => {

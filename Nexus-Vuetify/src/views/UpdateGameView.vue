@@ -199,13 +199,17 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 const storage = getStorage();
-const filesAndFolders = ref([]);
 const route = useRoute();
+
+
+
 const validImageTypes = ["image/jpeg", "image/png"];
 const validFileTypes = [
   "application/x-msdownload", // MIME type for .exe files
   "application/java-archive", // MIME type for .jar files
 ];
+const filesAndFolders = ref([]);
+const originalImageNames = ref([]);
 
 const props = defineProps({
   pageTitle: {
@@ -256,7 +260,6 @@ const state = reactive({
 onMounted(async () => {
   try {
     await setDefaultValues();
-    await eraseGamesTags();
   } catch (error) {
     console.error("Error setting default values:", error);
   }
@@ -454,57 +457,33 @@ async function fetchFilesAndFolders(folderPath) {
 const fetchFiles = async (gameID) => {
   let folderPath = `Games/${gameID}`;
   filesAndFolders.value = await fetchFilesAndFolders(folderPath);
-  console.log("filesAndFolders.value", filesAndFolders.value);
+  console.log("filesAndFolders.value: ", filesAndFolders.value);
+
 };
 
+
+
 const uploadImageFiles = async (gameId) => {
-  for (let i = 0; i < state.imageStoreObject.length; i++) {
-    const imageElement = state.imageStoreObject[i];
-    const fileName = `${gameId}_Store.png`;
+  // Determine which images are new, unchanged, or need renaming
+  const newImages = state.imageFiles.filter(image => !originalImageNames.value.includes(image.name));
+  const unchangedImages = state.imageFiles.filter(image => originalImageNames.value.includes(image.name));
+  // This example doesn't handle renamed images explicitly but you can extend it to do so
 
+  // Upload new images
+  for (const image of newImages) {
+    const fileName = `${gameId}_${image.name}`;
     const fileRef = firebaseRef(storage, `Games/${gameId}/media/${fileName}`);
-    const metadata = {
-      contentType: imageElement.type,
-    };
+    const metadata = { contentType: image.type };
     try {
-      await uploadBytes(fileRef, imageElement.file, metadata);
+      await uploadBytes(fileRef, image.file, metadata);
       console.log(`${fileName} uploaded successfully.`);
     } catch (error) {
       console.error(`Failed to upload ${fileName}:`, error);
     }
   }
 
-  for (let i = 0; i < state.imageStoreObject.length; i++) {
-    const imageElement = state.imageStoreObject[i];
-    const fileName = `${gameId}_${i}.png`;
-
-    const fileRef = firebaseRef(storage, `Games/${gameId}/media/${fileName}`);
-    const metadata = {
-      contentType: imageElement.type,
-    };
-    try {
-      await uploadBytes(fileRef, imageElement.file, metadata);
-      console.log(`${fileName} uploaded successfully.`);
-    } catch (error) {
-      console.error(`Failed to upload ${fileName}:`, error);
-    }
-  }
-
-  for (let i = 0; i < state.MAX_IMG_LIST; i++) {
-    const imageElement = state.imageFiles[i];
-    const fileName = `${gameId}_${i + 1}.png`;
-
-    const fileRef = firebaseRef(storage, `Games/${gameId}/media/${fileName}`);
-    const metadata = {
-      contentType: imageElement.type,
-    };
-    try {
-      await uploadBytes(fileRef, imageElement.file, metadata);
-      console.log(`${fileName} uploaded successfully.`);
-    } catch (error) {
-      console.error(`Failed to upload ${fileName}:`, error);
-    }
-  }
+  // Log unchanged images - These are not uploaded again
+  console.log("Unchanged Images (Not Re-uploaded): ", unchangedImages.map(image => image.name));
 };
 
 const zipFile = async (file, fileName) => {
@@ -574,6 +553,13 @@ const categorizeFiles = async (fetchedStructure) => {
     }
   });
 
+  mediaFolder.contents.forEach((file) => {
+    if (file.type === "file") {
+      originalImageNames.value.push(file.name);
+    }
+  });
+
+  console.log("Original Files Fetched: ", originalImageNames.value);
   console.log("Image Files:", state.imageFiles);
   console.log("Store Image:", state.imageStoreObject);
   console.log(
@@ -581,6 +567,26 @@ const categorizeFiles = async (fetchedStructure) => {
     state.gameFile ? state.gameFile.url : "No ZIP file found"
   );
 };
+
+
+function categorizeImages() {
+  const newImages = [];
+  const unchangedImages = [];
+  const renamedImages = [];
+
+  state.imageFiles.forEach((image) => {
+    const originalImage = originalImageNames.value.find((name) => name === image.name);
+    if (!originalImage) {
+      newImages.push(image);
+    } else if (originalImage === image.name) {
+      unchangedImages.push(image);
+    } else {
+      renamedImages.push({ oldName: originalImage, newName: image.name });
+    }
+  });
+
+  return { newImages, unchangedImages, renamedImages };
+}
 
 async function fetchZipFileBlob(url) {
   const response = await fetch(url);
@@ -608,6 +614,7 @@ async function unzipBlob(blob) {
 
   return fileContents; // Returns an object with filenames as keys and their contents as Blob
 }
+
 /*******************************************************************/
 /***************************** GAMES *****************************/
 /*******************************************************************/
@@ -615,14 +622,14 @@ async function unzipBlob(blob) {
 const updateGame = async () => {
   let jsonObject = {
     id: state.gameId,
-    description:state.gameObject.description,
+    description: state.gameObject.description,
     tokens: {
       access_token: storageManager.getAccessToken(),
       refresh_token: storageManager.getRefreshToken(),
     },
   };
-  let wasGameCreated = await updateData("games", jsonObject);
-  console.log("wasGameCreated:", wasGameCreated);
+  let wasGameUpdated = await updateData("games", jsonObject);
+  console.log("wasGameUpdated:", wasGameUpdated);
 };
 
 // const deleteGame = async () => {
@@ -738,40 +745,40 @@ const eraseGamesTags = async () => {
           (element) => element.tagId === tagToRemove.id
         );
         if (gamesTagsListElement) {
-          console.log("gamesTagsListElement : ", gamesTagsListElement)
-          // await deleteGameTag(gamesTagsListElement);
+          // console.log("gamesTagsListElement : ", gamesTagsListElement);
+          await deleteGameTag(gamesTagsListElement);
         }
       }
     }
 
-    // Remove each tag not present in the new set
-    // for (const tag of tagsToRemove) {
-    // await deleteTag(tag.id);
-    // console.log(`Tag removed: ${tag.name}`);
-    // }
 
     return true; // If the function completes successfully
   }
 };
 
 async function deleteGameTag(gamesTagsListElement) {
+  console.log("gamesTagsListElement : ", gamesTagsListElement);
+  if (gamesTagsListElement) {
+    let delete_data = {
+      id: gamesTagsListElement.id,
+      tokens: {
+        access_token: storageManager.getAccessToken(),
+        refresh_token: storageManager.getRefreshToken(),
+      },
+    };
+    console.log("delete_data : ", delete_data);
 
-  let delete_data = {
-    id: gamesTagsListElement.id,
-    tokens: {
-      access_token: storageManager.getAccessToken(),
-      refresh_token: storageManager.getRefreshToken(),
-    },
-  };
-  console.log("delete_data : ", delete_data);
+    const response = await deleteData("gamestags", delete_data);
 
-  const response = await deleteData("gamestags", delete_data);
-  if (response.success) {
-    console.log(`Tag ${gamesTagsListElement.tagId} removed successfully.`);
-  } else {
-    console.error(`Failed to remove tag ${gamesTagsListElement.tagId}.`);
+    if (response) {
+      console.log(`Tag ${gamesTagsListElement.tagId} removed successfully.`);
+    } else {
+      console.error(`Failed to remove tag ${gamesTagsListElement.tagId}.`);
+    }
   }
 }
+
+
 const createTags = async () => {
   const gameId = state.gameId;
   if (!gameId) {
@@ -780,18 +787,30 @@ const createTags = async () => {
   }
 
   let allTagsCreated = true;
+  let errors = []; // Array to collect errors
+
   for (const tag of state.tagsArray) {
-    const jsonObject = {
-      name: tag.name,
-      gameId: gameId,
-    };
-    const result = await create("tags", jsonObject);
-    console.log("Tag was created:", tag.name);
-    // if (result.isSuccessful == false) {
-    //   allTagsCreated = false;
-    //   break;
-    // }
+    if (tag && tag.name && state.gameId) {
+      const jsonObject = {
+        name: tag.name,
+        gameId: state.gameId,
+      };
+      try {
+        const result = await create("tags", jsonObject);
+        console.log("Tag was created:", tag.name, result);
+      } catch (error) {
+        console.error(`Failed to create tag ${tag.name}:`, error);
+        errors.push({ tagName: tag.name, error: error }); // Collect errors
+        allTagsCreated = false; // Mark as false if any tag creation failed
+      }
+    }
   }
+
+  if (errors.length > 0) {
+    // Handle or log errors here
+    console.error("Errors occurred during tag creation:", errors);
+  }
+
   return allTagsCreated;
 };
 
@@ -839,10 +858,10 @@ const formatData = () => {
   } else {
     state.errorMessage = "";
     console.log("Submitting:", {
-      gameTitle: state.gameTitle,
+      gameTitle: state.gameObject.title,
       tags: state.tagsArray,
-      description: state.description,
-      gameFilePath: state.gameFilePath,
+      description: state.gameObject.description,
+      gameFileUrl: state.gameFile.url,
       imageFiles: state.imageFiles,
     });
     return true;
@@ -854,10 +873,10 @@ const formatData = () => {
 /*******************************************************************/
 
 const update_gamesAndTags = async () => {
-  await updateGame();
+  // await updateGame();
 
   const tagsCreationResult = await createTags();
-  if (tagsCreationResult.isSuccessful ==false) {
+  if (tagsCreationResult.isSuccessful == false) {
     console.error(
       "Game couldn't be added because tags were not successfully created."
     );
@@ -872,7 +891,6 @@ const submitGame = async () => {
     await update_gamesAndTags();
     await uploadImageFiles(state.gameId);
     await uploadZipFile(state.gameId);
-
   }
 };
 </script>

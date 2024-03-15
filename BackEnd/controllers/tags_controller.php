@@ -49,7 +49,21 @@ class TagsController extends BaseController
             $tagExists = $this->getOne("name", $name);
 
             if ($tagExists) {
-                $newData = ['gameId' => $gameId, 'tagId' => $tagExists["id"], 'name' => $name];
+
+                $tagId = $tagExists["id"];
+                $filters = [
+                    'gameId' => $gameId,
+                    'tagId' =>  $tagExists["id"],
+                ];
+
+                $gameTagsRelation = $this->getGameTagsController()->getAllMatching($filters);
+
+                if($gameTagsRelation){
+                    return $this->createResponse(true, "Tag {$name} and game_Tags already exist.");
+                }else{
+                    $newData = ['gameId' => $gameId, 'tagId' => $tagExists["id"], 'name' => $name];
+                }
+              
             } else {
                 if ($this->model->create(['name' => $name])) {
                     $createdTag = $this->getOne("name", $name);
