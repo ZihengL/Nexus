@@ -30,26 +30,35 @@ function parseDetails(details) {
 }
 
 function parseJoins(result, keys) {
+  console.log("PARSEJOINS BEFORE", result, keys);
+
   for (var i in keys) {
     const detailsKey = keys[i] + "_details";
 
-    for (var j in result) {
-      const raw = result[j][detailsKey];
-
-      if (raw !== null) {
-        result[j][keys[i]] = parseDetails(raw);
-      } else {
-        result[j][keys[i]] = [];
+    if (Object.hasOwn(result, detailsKey)) {
+      if (result[detailsKey] !== null) {
+        result[keys[i]] = parseDetails(result[detailsKey]);
       }
 
-      delete result[j][detailsKey];
+      delete result[detailsKey];
+    } else {
+      for (var j in result) {
+        const raw = result[j][detailsKey];
+
+
+        if (raw !== null) {
+          result[j][keys[i]] = parseDetails(raw);
+        } else {
+          result[j][keys[i]] = [];
+        }
+
+        delete result[j][detailsKey];
+      }
     }
-    // } else {
-    //   result[key] = parseDetails(result[details]);
-    //   delete result[details];
-    // }
+
   }
 
+  console.log("PARSEJOINS AFTER", result);
   return result;
 }
 
@@ -197,7 +206,12 @@ export const getUser = async (developerID) => {
     games: ["id", "title", "releaseDate", "ratingAverage"],
   };
   let data = await getOne("users", "id", developerID, null, joined_tables);
-  return fetchGameImagesByDev(data);
+  console.log("GETUSER", data);
+
+  if (Object.hasOwn(data, 'games'))
+    return fetchGameImagesByDev(data);
+
+  return data;
 };
 
 export const getUsername = async (userID) => {
