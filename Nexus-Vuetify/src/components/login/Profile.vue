@@ -187,9 +187,8 @@ async function getUserInfos() {
       storageManager.setIsConnected(true);
        
         // console.log("dataDevs ", dataDevs);
-        gameList.value = leDevs.value.games;
-        console.log("gameList ", gameList.value);
-     
+      gameList.value = leDevs.value.games;
+      console.log("gameList ", gameList.value);
     }
   } catch (error) {
     console.error("Error fetching data:", error);

@@ -109,6 +109,9 @@ class BaseModel
                 $stmt->execute(array_values($params));
             }
 
+            printall($this->table);
+            printall($sql);
+
             return $stmt;
         } catch (PDOException $e) {
             if (self::$print_errors) {
@@ -344,27 +347,28 @@ class BaseModel
         $selects = '';
         $joins = '';
 
-        foreach ($joined_tables as $table => $included_columns)
+        foreach ($joined_tables as $table => $included_columns) {
             if (isset($this->keys[$table])) {
                 ['internal' => $internal, 'external' => $external] = $this->keys[$table];
-                [$subselects, $subjoins] = $this->getJoinedSelections($table, $internal, $external, $included_columns);
+                // [$subselects, $subjoins] = $this->getJoinedSelections($table, $internal, $external, $included_columns);
 
-                $selects .= $subselects;
-                $joins .= $subjoins;
+                // $selects .= $subselects;
+                // $joins .= $subjoins;
 
-                // $column_pairs = array_map(function ($column) use ($table) {
-                //     return "'$column:', $table.$column";
-                // }, $included_columns);
-                // $columns = count($column_pairs) > 1 ? implode(",';',", $column_pairs) : implode("", $column_pairs);
+                $column_pairs = array_map(function ($column) use ($table) {
+                    return "'$column:', $table.$column";
+                }, $included_columns);
+                $columns = count($column_pairs) > 1 ? implode(",';',", $column_pairs) : implode("", $column_pairs);
 
-                // $selects .= ", GROUP_CONCAT(DISTINCT CONCAT($columns) ORDER BY {$table}.{$external} SEPARATOR '|') AS {$table}_details";
-                // $joins .= " JOIN $table ON {$this->table}.{$internal} = {$table}.{$external}";
+                $selects .= ", GROUP_CONCAT(DISTINCT CONCAT($columns) ORDER BY {$table}.{$external} SEPARATOR '|') AS {$table}_details";
+                $joins .= " LEFT JOIN $table ON {$this->table}.{$internal} = {$table}.{$external}";
             } else {
                 if ($composite_model = $this->getCompositeModel($table)) {
                     $from = $this->table;
                     $selects .= $composite_model->getCompositeSelections($from, $table, $included_columns);
                 }
             }
+        }
 
         $group = !empty($selects) ? " GROUP BY {$this->table}.id" : '';
         return ['selects' => $selects, 'joins' => $joins, 'group' => $group];

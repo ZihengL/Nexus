@@ -207,6 +207,11 @@ $id = 10;
 $result = parse('games', 'getAll', ['joined_tables' => [ 'users' => ['id', 'username', 'picture', 'isOnline'], 'tags' => ['id', 'name']]]);
 printall($result);
 
+$joins = ['joined_tables' => [ 'games' => ['id', 'title', 'releaseDate', 'ratingAverage']]];
+
+$result = parse('users', 'getOne', ['column' => 'id', 'value' => 11, 'joined_tables' => [ 'games' => ['id', 'title', 'releaseDate', 'ratingAverage']]]);
+printall($result);
+
 // printall($gamestags_ctrl->getGamesWith(['users' => true, 'tags' => true]));
 
 

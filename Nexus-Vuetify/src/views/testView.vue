@@ -508,6 +508,15 @@ export default {
 
       // const login = await services.login({})
 
+      const joined_tables = {
+        games: ["id", "title", "releaseDate", "ratingAverage"],
+      };
+      
+      let data = await services.getOne("users", "id", 11, null, joined_tables);
+
+      console.log('data', data);
+
+
 
 
       const store = await services.getAllGamesWithDeveloperNameNEW(null, null, null, null, null);

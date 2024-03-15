@@ -159,17 +159,17 @@ const toggleProfileLog = async () => {
     //console.log("Login successful : ", loginResponse);
     if (loginResponse !== false) {
       console.log("loginResponse : ", loginResponse);
-      loginTokens_access_token = loginResponse.access_token;
-      loginTokens_refresh_token = loginResponse.refresh_token;
-      storageManager.setAccessToken(loginResponse.access_token)
-      // localStorage.setItem("accessToken", loginResponse.access_token);
-      storageManager.setRefreshToken(loginResponse.refresh_token)
-      localStorage.setItem("refreshToken", loginResponse.refresh_token);
+      // loginTokens_access_token = loginResponse.access_token;
+      // loginTokens_refresh_token = loginResponse.refresh_token;
+      // storageManager.setAccessToken(loginResponse.access_token)
+      // // localStorage.setItem("accessToken", loginResponse.access_token);
+      // storageManager.setRefreshToken(loginResponse.refresh_token)
+      // localStorage.setItem("refreshToken", loginResponse.refresh_token);
 
       //localStorage.setItem("idDev", devId);
-      storageManager.setIdDev(loginResponse.user.id)
+      // storageManager.setIdDev(loginResponse.user.id)
 
-      console.log("devId : ", loginResponse.id);
+      // console.log("devId : ", loginResponse.id);
       emit("showProfile");
     }
   } catch (error) {
