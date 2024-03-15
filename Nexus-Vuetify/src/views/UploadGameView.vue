@@ -680,7 +680,7 @@ onMounted(async () => {
 });
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 #pageContainer {
   display: flex;
   flex-direction: column;
