@@ -22,21 +22,21 @@ class CentralController
     private static $instance = null;
 
     // MANAGERS
-    private $database_manager;
-    private $google_client_manager;
+    public $database_manager;
+    public  $google_client_manager;
 
     // TABLES
-    private $tokens_controller;
-    private $routines_controller;
-    private $users_controller;
-    private $games_controller;
-    private $reviews_controller;
-    private $tags_controller;
-    private $transactions_controller;
+    public $tokens_controller;
+    public $routines_controller;
+    public $users_controller;
+    public $games_controller;
+    public $reviews_controller;
+    public  $tags_controller;
+    public $transactions_controller;
 
     // RELATIONAL TABLES
-    private $gamestags_controller;
-    private $users_downloads_controller;
+    public  $gamestags_controller;
+    public  $users_downloads_controller;
 
     private function __construct()
     {

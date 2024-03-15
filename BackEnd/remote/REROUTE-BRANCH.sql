@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Mar 14, 2024 at 09:01 PM
+-- Generation Time: Mar 15, 2024 at 07:39 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -62,7 +62,7 @@ CREATE TABLE `games` (
 --
 
 INSERT INTO `games` (`id`, `developerID`, `stripeID`, `title`, `description`, `files`, `media`, `releaseDate`, `ratingAverage`) VALUES
-(1, 3, 0, 'Fantastic Adventure', 'Embark on an epic journey', 'adventure.exe', 'b', '2024-01-26', 3.5),
+(1, 3, 0, 'Fantastic Adventure', 'Embark on an epic journey', 'adventure.exe', 'b', '2024-01-26', 2.5),
 (2, 4, 0, 'Space Odyssey', 'Explore the depths of outer space', 'space.exe', 'a,b', '2024-02-06', 4),
 (3, 2, 0, 'Medieval Kingdoms', 'Rule your own kingdom', 'kingdoms.exe', 'a', '2024-01-17', 4.25),
 (4, 4, 0, 'Super Cat', 'Flying kitty', 'kitty.exe', '', '2024-01-14', 2.5),
@@ -88,7 +88,8 @@ CREATE TABLE `gamestags` (
 INSERT INTO `gamestags` (`id`, `gameId`, `tagId`) VALUES
 (1, 2, 1),
 (2, 2, 4),
-(3, 4, 1);
+(3, 4, 1),
+(7, 2, 17);
 
 -- --------------------------------------------------------
 
@@ -123,7 +124,7 @@ CREATE TABLE `reviews` (
   `id` int(11) NOT NULL,
   `userID` int(11) NOT NULL,
   `gameID` int(11) NOT NULL,
-  `timestamp` date NOT NULL,
+  `timestamp` date NOT NULL DEFAULT current_timestamp(),
   `rating` float NOT NULL,
   `comment` varchar(1000) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -135,7 +136,9 @@ CREATE TABLE `reviews` (
 INSERT INTO `reviews` (`id`, `userID`, `gameID`, `timestamp`, `rating`, `comment`) VALUES
 (15, 1, 4, '2024-02-22', 5, 'This is a review comment'),
 (24, 1, 5, '2024-02-25', 1, 'This is a review comment'),
-(17, 2, 4, '2024-02-22', 2.5, 'This is a review comment update');
+(17, 2, 4, '2024-02-22', 2.5, 'This is a review comment update'),
+(25, 11, 2, '0000-00-00', 3, 'asdjkahsdjkashdasjklhdas'),
+(44, 12, 1, '2024-03-15', 2.5, 'asdasdasdasas');
 
 -- --------------------------------------------------------
 
@@ -155,6 +158,7 @@ CREATE TABLE `tags` (
 INSERT INTO `tags` (`id`, `name`) VALUES
 (1, 'action'),
 (11, 'chocolate'),
+(17, 'metroidvania'),
 (3, 'rpg'),
 (4, 'singleplayer'),
 (2, 'wholesome');
@@ -253,7 +257,67 @@ INSERT INTO `tokens` (`id`, `sub`, `exp`, `sha`) VALUES
 (174, 11, 1710712507, '5579d162ebc227e54dabe873fb459485555c30ad180377113dd3c6ab06794b71'),
 (175, 11, 1710716875, '5afc6da18ff704a38c969af9de8da8dc9991015dd6b81f93b282f115fdb3b99a'),
 (176, 11, 1710736761, '2c41f8934c5ef325ccc869af28d2c752e5f4153ffba333439cbf5f87d8e30919'),
-(177, 9, 1710736823, 'e4aaae2713b15e4d20cc55bb5334be6cbf4529158ffeb06b13e6a1983e799a08');
+(177, 9, 1710736823, 'e4aaae2713b15e4d20cc55bb5334be6cbf4529158ffeb06b13e6a1983e799a08'),
+(178, 11, 1711064199, 'bafcadbad23a86344cec4e045ce10b89db68f4dcf18fe5232568a6d908e81d60'),
+(179, 11, 1711064750, 'e816f9978a66fe98cd7c659276dbaf168160b3d6b7efb79af7356cd0bc35080a'),
+(180, 11, 1711066145, 'ef31653a40b417257953ccb91098217b5751caa7e438835c739a60b2352e21d8'),
+(181, 11, 1711066679, '5db66bac591dca416abe9841578d35ba0c6ad04b95f8faf06cd65c48cea272a9'),
+(182, 11, 1711066709, '060e90b96abb3f679795de5a745027b0fc8daa028a49823dd5cb7d6c16cafe15'),
+(183, 11, 1711066903, 'c29d92e78931ed9b54fa3b1e13bb84de4e52b7c34b367b91ff5b57aa28ce0f71'),
+(184, 11, 1711066959, 'f9480c17edd570f1d78763c762107ffdb78dd18a3199630f1549ec5c3772087d'),
+(185, 11, 1711067028, '6f0d89dd2d2d2ca2e68f0d992bc516b89277bbf023415fefb916a0098690314a'),
+(186, 11, 1711067067, '6b8e39b84c70b363e9eebc181f3fd73c6553f5c5a5a2997cd154f1f603e39276'),
+(187, 11, 1711067138, '1f13b6c1a4cb6229ba21a1e6b09b9e6fc9cb6937952d26eaa98d3fc5569cbe6a'),
+(188, 11, 1711067343, '2346a22f834da454232b139411ae6ebb95b52e403f302adbd0ef6606deff0ebb'),
+(189, 11, 1711067960, '0bd8008e82384038c6ff2e4eaca7cef627987ea52eed99daca1f3f0ab901b1c9'),
+(190, 11, 1711073349, '4d5ad4a1dda4d230c23dd3a129b3d13e1087aaf58f88b4d941a8fa17838e7d9c'),
+(191, 11, 1711073379, '50e348cc1738beaaf20f116368875038d12e41ae39b67914eee1e49c5dbc1c28'),
+(192, 11, 1711073417, '6e9e888857f8759a07c9f6b801d0db427c58e0dfec764af9c3bb237da3c252a5'),
+(193, 11, 1711073449, '4697256b35331c080defb59460e94b2bcfe32640a1223d59be624eba88a505b1'),
+(194, 11, 1711073475, '5522177563818fe7e90415e4cf4bfeb54ec8ea5cfb1cbfa8b6558a63bb383b3d'),
+(195, 11, 1711073491, '29345f57c3a62888d98f5a77ea918aedf2e3ec6f5071449cd495337aaf2a02ba'),
+(196, 11, 1711073519, '8cabc28431a5b436cd5c4c65df15ed5e46d8f0d756e9e4d1e0ff435ea3210a5b'),
+(197, 11, 1711073582, '2291029ac7e28a309d88e4d85b9edb34052a9d3cb50f33f415196a14cae56827'),
+(198, 11, 1711073672, '8def1af3e62a39e3a8be85165af291307ad561f6313ad5c516bcf2ccd8c54fe7'),
+(199, 11, 1711074393, 'd9a2d9e4cc668c002466a3ac121e3c6ab9cf072a7abd2eeeb938f36ad4060a84'),
+(200, 11, 1711074422, 'cd63143c26ff61ddff74a620e31cafcf54e8ffc32b19fd37afbd9211645b9f9b'),
+(201, 11, 1711074442, '82c55ba1efe6c9172314383dc3cb95a25791b89964bc77211892d565c6ba5cb1'),
+(202, 11, 1711074473, 'dde318fbcf8e6cc9381c390cc476a7b54aeda867466ba0e3637366d074f5529f'),
+(203, 11, 1711074519, 'f2f6dd0210f7d3186e27470ac22668c5dbade59adf52cd0b41543bdf2a5c767b'),
+(204, 11, 1711074526, '924cb75fb78f728d119cfbb649d3ee9ee8d108dc70ab048df418744c94bb0e5f'),
+(205, 11, 1711074613, '12cd45670518993a1f7dd631844f76b39067a17c5a191995c696f9916cc7f5f6'),
+(206, 11, 1711074637, 'b0b5bcdc0f913eba018fee8cbddccb38f1de8f00947f04f2930465335aaff3dc'),
+(207, 11, 1711074676, '99a06c17095c971423bd6d044b61f1f6270ab5d5679a54e2802b3cba3b85d3b6'),
+(208, 11, 1711074773, 'a5a0650161c394519bcc71f8aeeae665be6cc8fbe1df1af70b0d80ad9795e8f3'),
+(209, 11, 1711074794, 'ec77bbeaa9e37d6b9fdaa47663d0fae7a0c75e1174bf0ec733de7d4be5bd9abf'),
+(210, 11, 1711075254, '5f2fc3bc134325f41d12e94974b18d4f25e67ee1110c274326c1f03b1e903697'),
+(211, 11, 1711075320, '5e23708f6ccc47deabdbcc42536ce4ff4031b65791bb735bd589d10942562c13'),
+(212, 11, 1711075415, 'c5fbcb47d26221f41dd577d0cba7b0f8a32d49708bca16c134ab49febf4c2398'),
+(213, 11, 1711075629, 'f9bb92e53a386a4643c545f2af6a86fa7420f10365617cd799a2fd36cc1a5511'),
+(214, 11, 1711075797, 'a4dcb380bcbfe1323bea4c2dd0d93f7ab8e8f2771179e2305d31bbd09ee71727'),
+(215, 11, 1711075927, '14d350dae051606227b1abeee7352b602e90b409658d5ce95babc9baad305293'),
+(218, 11, 1711076487, 'd8a5752646dc47ac714992137487e0697c57a596fe426d74b605dbd531cf864a'),
+(219, 11, 1711076498, '9a960dd60b7f1175c1f3b52d51d234679270ef4545ad90c9031cfe299e52d17f'),
+(225, 11, 1711078404, '614d934ce8987335ce988d9094303ecc8aca1e0eae6f58b2ae6986c55a789ebc'),
+(229, 11, 1711079649, 'f77247f7f2efb0b714d766275fdb2bf06a22169da68afe61fe81b38bf41a075c'),
+(230, 11, 1711079877, '45931741f6973c1ca2e3b0d0b7fdda9ef1719ad4d6783fece3e339b849c9724b'),
+(262, 11, 1711082220, '1180de32130f71481a30be4aca0c49283038e2220a7ca3a812e347ee92426268'),
+(263, 11, 1711082252, 'fe0c9f48869dacb1e240d8851848e12e7fe1ead0b8c539e9b43faa30a37665db'),
+(264, 11, 1711082321, 'cbb2b6f8e0a3a682f82f705e2465861e35ddc71d16a2dcbe7a3f3ad5b807ff37'),
+(265, 11, 1711082331, '7782d2018a89830f4a8e8597c9e1666d04d2de3b1eedcbe98ff7d269a31c3583'),
+(266, 11, 1711082373, 'd56fafbf9693e26cab5d8befc55cf9f040ce9eed8ba73e346cc5321e6ba18f09'),
+(267, 11, 1711082408, 'bbadf81f55751258c6b9c91f3ef0fd398e884361c045b9924aeeb8df7c7958cf'),
+(268, 11, 1711082437, '76df8f4af5475b6bbca4b3f9418c88517b6ce352a4c258944dba21b6852101a4'),
+(269, 11, 1711082482, 'd8e286f19dcf07840c61ea6ba306a4d1e859b9f39a9df67b48a88c9a83649d67'),
+(270, 11, 1711082497, '4f816d587adc67320fb4bf302703b759ea4430e7edb4c6806e67c8e491700758'),
+(271, 11, 1711082564, '94646e3abcd3233903b65aec51ae0d7f7bebd92c107fe38437cbcc0b65fa4a30'),
+(272, 11, 1711082606, '6bdfc3c7abc2e3e66f3c8476b99ab661802bcf7d1d5610b1e21691010c58fd34'),
+(273, 11, 1711083257, 'f93b7b7e31d8f0ef42bca2cc38e1e9a26e45d2f461a596ee41a69836ccc25c18'),
+(274, 11, 1711083282, '079218cfb130f16ec1f57a687cb85fa4a52e84ad04f5d039734055c3e5340aa8'),
+(275, 11, 1711083296, '619be902cfc84cebff99d561761a1549b126320ab6f7004b04ba805659faa2be'),
+(276, 11, 1711083348, 'a9e2cc913c7bdf2512985265c84cad86155d191379546387bbddd900b8b7d4f2'),
+(277, 11, 1711083420, '2b44afa70041e5430e43020d1e9b580355422fe3b4da324165f9e69db4dada33'),
+(279, 12, 1711087745, 'bc98e31af691f4875a072ffa09a583ba9fb125a3ec3e1d9c590a0ce7ba3e290c');
 
 -- --------------------------------------------------------
 
@@ -303,7 +367,8 @@ INSERT INTO `users` (`id`, `username`, `password`, `email`, `phoneNumber`, `pict
 (6, 'john_doe', '$2y$10$xpynWrLMrU.CS/gkl.HszuvgpMtDxQ4QuiFxEIuB4Kxug99zI5gDy', 'addaasda', 33344555, 'avatar_path ', 0, 0, '', '', '', '0000-00-00'),
 (7, 'tostitos', '$2y$10$Sj0mvySDyMjwOdGIO96hmO4DMybe9bxktLb.C/m1rJRjagjRan43.', 'b', NULL, 'avatar_path ', NULL, 0, NULL, NULL, NULL, '0000-00-00'),
 (9, 'playgroundtest', '$2y$10$ateRNXpi6B7lY7DhPV.4kepnBU1mdeevwRMcuj1DWFptjO2aZBizm', 'testUser@email', NULL, NULL, NULL, 0, NULL, NULL, NULL, '2024-03-06'),
-(11, '523443242', '$2y$10$I6cqvdjn76FRmLoSoAa5B.ZVG0pSIH.j7Ny5E61bkHq2SAKkF2pkG', 'test@test', NULL, NULL, NULL, 0, NULL, 'testname3421', NULL, '2024-03-08');
+(11, '1111131231232121312', '$2y$10$I6cqvdjn76FRmLoSoAa5B.ZVG0pSIH.j7Ny5E61bkHq2SAKkF2pkG', 'test@test', NULL, NULL, NULL, 1, NULL, '123', '', '2024-03-08'),
+(12, 'a', '$2y$10$nkOaq3CLcQBa.lrx5.8GCeYEHDLZb/LL6ZQwlbv9ZncIiKTLgHRrq', 'a@a', NULL, NULL, 0, 1, NULL, NULL, NULL, '2024-03-15');
 
 -- --------------------------------------------------------
 
@@ -405,7 +470,7 @@ ALTER TABLE `games`
 -- AUTO_INCREMENT for table `gamestags`
 --
 ALTER TABLE `gamestags`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `notification`
@@ -417,19 +482,19 @@ ALTER TABLE `notification`
 -- AUTO_INCREMENT for table `reviews`
 --
 ALTER TABLE `reviews`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT for table `tags`
 --
 ALTER TABLE `tags`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `tokens`
 --
 ALTER TABLE `tokens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=178;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=280;
 
 --
 -- AUTO_INCREMENT for table `transactions`
@@ -441,7 +506,7 @@ ALTER TABLE `transactions`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `users_downloads`

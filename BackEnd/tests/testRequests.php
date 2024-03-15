@@ -27,13 +27,13 @@ $data = ['id' => 17, 'name' => 'metroidvania'];
 $jsonData = json_encode($data);
 
 
-// $data = '{"credentials":{"id":12,"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEyLCJpYXQiOjE3MTA0ODI5NDUsImV4cCI6MTcxMDQ4NjU0NSwiaXNzIjoiTkVYVVMiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZC8ifQ.nCjg5JE-zYGtoZQm5j28xRiReuE3BgTvE7RJ2jbuu_U"},"request_data":{"userID":"12","gameID":"1","rating":2.5,"comment":"abcsadasd"}}';
-// $jsonData = $data;
-// $decoded = json_decode($data);
-// printall($decoded);
+ $data = '{"credentials":{"id":7,"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI3IiwiaWF0IjoxNzEwNDY5ODY1LCJleHAiOjE3MTA0NzM0NjUsImlzcyI6Ik5FWFVTIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo0MjA4L05leHVzL0JhY2tFbmQvIn0.WP9AwVv6-KRe4PQ7sxCuniGXhK9TLt6Uf9PuueeicUc"},"request_data":{"userID":"7","gameID":"4","rating":2,"comment":"htjtkk"}}';
+$jsonData = $data;
+$decoded = json_decode($data);
+printall($decoded);
 
-$table = 'tags';
-$action = 'update';
+$table = 'reviews';
+$action = 'create';
 
 
 // Initialize a cURL session

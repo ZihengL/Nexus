@@ -149,6 +149,9 @@ class TokensController extends BaseController
     {
         if ($decoded = $this->decodeToken($access_token, false)) {
             // DOUBLE EQUALS IGNORES IF USER ID IS IN STRING FORMAT
+            // printall($decoded);
+            // printer($decoded[self::EXP] . " " . time());
+            // echo ($decoded[self::SUB] == $user_id && $decoded[self::EXP] > time()) ? "truc " : "pas truc";
             return $decoded[self::SUB] == $user_id && $decoded[self::EXP] > time();
         }
 
