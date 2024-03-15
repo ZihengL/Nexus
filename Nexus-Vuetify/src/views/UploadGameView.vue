@@ -407,16 +407,16 @@ const formatData = () => {
     state.errorMessage = "Le titre du jeu est requis.";
     return false;
   } else if (state.tagsArray.length < state.MIN_TAG) {
-    state.errorMessage = `Au moins ${state.MIN_TAG} tags est/sont requis.`;
+    state.errorMessage = `Au moins ${state.MIN_TAG} genre(s) est/sont requis.`;
     return false;
   } else if (state.imageFiles.length < state.MIN_IMG_LIST) {
-    state.errorMessage = `Au moins ${state.MIN_IMG_LIST} images sont requises.`;
+    state.errorMessage = `Au moins ${state.MIN_IMG_LIST} images est/sont requise(s).`;
     return false;
   } else if (state.description.trim().length < state.MIN_DESC_LENGTH) {
     state.errorMessage =  `Une description entre ${state.MIN_DESC_LENGTH} et ${state.MAX_DESC_LENGTH} caractères est requise.`;
     return false;
   } else if (state.imageStoreObject.length < state.MAX_IMG_STORE) {
-    state.errorMessage = `Au moins ${state.MAX_IMG_STORE} images est/sont requises pour la boutique.`;
+    state.errorMessage = `Au moins ${state.MAX_IMG_STORE} images est/sont requise(s) pour la boutique.`;
     return false;
   } else if (state.gameFile == null) {
     state.errorMessage = "Un fichier de jeu est requis.";
@@ -548,23 +548,27 @@ const create_gameAndTags = async () => {
   await createGame();
   const gameId = await get_CreatedGameID();
   console.log("create_gameAndTags gameId : ", gameId)
-  if(gameId){
+  if (gameId) {
     const tagsCreationResult = await createTags();
-  if (tagsCreationResult.isSuccessful == false) {
-    console.error(
-      "Game couldn't be added because tags were not successfully created."
-    );
-    await deleteGame();
-  } else {
-    console.log("Game creation succeeded.");
-
-  
-    await uploadImageFiles(gameId);
-    await uploadZipFile(gameId);
-    // window.location.reload();
+    if (tagsCreationResult === false) {
+      console.error(
+        "Game couldn't be added because tags were not successfully created."
+      );
+      await deleteGame();
+    } else {
+      console.log("Game creation succeeded.");
+      try {
+        await uploadImageFiles(gameId);
+        await uploadZipFile(gameId);
+        alert("Le téléversement a été fait avec succès, veuillez rafraîchir votre page.");
+        // Refresh the page
+        window.location.reload();
+      } catch (error) {
+        console.error("Error during file upload:", error);
+        alert("An error occurred during file upload. Please try again.");
+      }
+    }
   }
-  }
-
 };
 
 const createGame = async () => {
