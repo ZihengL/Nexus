@@ -108,6 +108,8 @@ export const getAll = async (
     joined_tables,
     paging
   );
+
+  console.log("getall prepped", preppedBody);
   let result = await services.fetchData(table, "getAll", preppedBody);
 
   if (result) {
@@ -374,15 +376,11 @@ export const getGamesForCarousel = async () => {
 
 export const getGameReviews = async (gameID, sorting) => {
   const joined_tables = { users: ["id", "username", "picture"] };
+  const data = await getAll("reviews", "gameID", gameID, null, sorting, joined_tables);
 
-  return await getAll(
-    "reviews",
-    "gameID",
-    gameID,
-    null,
-    sorting,
-    joined_tables
-  );
+  console.log("GET REVIEWS", data);
+
+  return data;
 };
 
 export const fetchGameImages = async (games) => {
