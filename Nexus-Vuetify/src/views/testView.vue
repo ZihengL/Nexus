@@ -30,6 +30,7 @@
 
 <script>
 import { fetchData } from "../JS/fetch";
+import StorageManager from "@/JS/localStorageManager";
 import * as services from "../JS/fetchServices";
 // import ReviewsListComponent from "../components/reviewsListComponent.vue";
 
@@ -520,15 +521,26 @@ export default {
       // const access_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjExLCJpYXQiOjE3MTA0Njg3ODIsImV4cCI6MTcxMDQ3MjM4MiwiaXNzIjoiTkVYVVMiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZC8ifQ.qhzRlsnK42cnHHOHIWep6ewTpmxsBfyj66-E3JuWpc4';
       // const id = 11;
 
-      const updatedata = {id: 11, username: "1111131231232121312"};
+      // const updatedata = {id: 11, username: "1111131231232121312"};
 
-      const updateresult = await services.updateWithValidation("users", updatedata);
+      // const updateresult = await services.updateWithValidation("users", updatedata);
 
-      console.log("UPDATE", updateresult);
+      // console.log("UPDATE", updateresult);
 
-      const store = await services.getAllGamesWithDeveloperNameNEW(null, null, null, null, null);
+      // const store = await services.getAllGamesWithDeveloperNameNEW(null, null, null, null, null);
 
-      console.log(store);
+      // console.log(store);
+
+      const data = {
+        gameID: 4,
+        userID: StorageManager.getIdDev(),
+        rating: 4.5,
+        comment: "waow",
+      };
+
+      const reviewtest = services.actionWithValidation("reviews", "create", data);
+
+      console.log("review response", reviewtest);
     }
   },
 };

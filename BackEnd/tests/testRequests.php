@@ -29,16 +29,17 @@ $jsonData = json_encode($data);
 $table = 'reviews';
 $action = 'create';
 
-// $data = '{"credentials":{"id":7,"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI3IiwiaWF0IjoxNzEwNDY5ODY1LCJleHAiOjE3MTA0NzM0NjUsImlzcyI6Ik5FWFVTIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo0MjA4L05leHVzL0JhY2tFbmQvIn0.WP9AwVv6-KRe4PQ7sxCuniGXhK9TLt6Uf9PuueeicUc"},"request_data":{"userID":"7","gameID":"4","rating":2,"comment":"htjtkk"}}';
-// $jsonData = $data;
-// $decoded = json_decode($data, true);
+$data = '{"credentials":{"id":12,"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEyLCJpYXQiOjE3MTA1MTE0NjgsImV4cCI6MTcxMDUxNTA2OCwiaXNzIjoiTkVYVVMiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZC8ifQ.b1yVu68wDbz6tI_62PSUL1okggYcVn2juvTEZdwR8o8"},"request_data":{"userID":12,"gameID":"5","rating":2.5,"comment":"asdvgv"}}';
+$jsonData = $data;
+$decoded = json_decode($data, true);
+printall($decoded);
 
 // echo $decoded['credentials']['access_token'] === $b ? "ASDASDSADAAS" : "NO";
 
 
 // Initialize a cURL session
 printer(getURI($table, $action));
-// printall($decoded);
+
 $ch = curl_init(getURI($table, $action));
 
 // Set cURL options
@@ -57,4 +58,7 @@ $response = curl_exec($ch);
 curl_close($ch);
 
 // Display the result
-echo $response;
+if ($response)
+    printer($response);
+
+printall($response);

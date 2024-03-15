@@ -223,13 +223,13 @@ $tokens = $result['tokens'];
 $id = $result['user']['id'];
 printall($result);
 
-$credentials = ['id' => $id, 'access_token' => $tokens['access_token']];
+$credentials = ['id' => "$id", 'access_token' => $tokens['access_token']];
 
-// $logout = ['id' => $id, 'refresh_token' => $tokens['refresh_token']];
-// if ($logoutresult = parse('users', 'logout', $logout))
-//     echo "LOGGED OUT";
-// else
-//     echo "FAIL TO LOG OUT";
+$logout = ['id' => $id, 'refresh_token' => $tokens['refresh_token']];
+if ($logoutresult = parse('users', 'logout', $logout))
+    echo "LOGGED OUT";
+else
+    echo "FAIL TO LOG OUT";
 
 // $JSON = <<<DATA
 // {"credentials":{"id":"11","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjExLCJpYXQiOjE3MTA0NzUwNzcsImV4cCI6MTcxMDQ3ODY3NywiaXNzIjoiTkVYVVMiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZC8ifQ.esjl6VBtoNHqkMRRqpyrqLOzTdVxptck3zvLZyXEcIo"},"request_data":{"id":11,"name":"123","lastName":"","username":"1111"}}

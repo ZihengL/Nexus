@@ -59,9 +59,12 @@ class TokensController extends BaseController
         try {
             $key = $is_refresh ? $this->refresh_key : $this->access_key;
 
-            return (array) JWT::decode($jwt, new Key($key, $this->encoding_alg));
+            $token = (array) JWT::decode($jwt, new Key($key, $this->encoding_alg));
+            printall($token);
+
+            return $token;
         } catch (Exception $e) {
-            return false;
+            throw new Exception($e->getMessage());
         }
     }
 
