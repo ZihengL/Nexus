@@ -37,67 +37,70 @@ class ReviewsController extends BaseController
     // public function create($tokens = null, ...$data)
     public function create($data)
     {
-        // [$id, $tokens, $data] = getFromData(['id', 'tokens'], $data, true);
-        // echo "<br> create reviews_controller <br>";
-        // print_r($data);
-        if ($this->validateReview("create", $data)) {
-            if (!$this->checkReviewExists($data)) {
-                // echo "create review: ";
-                //create review, remove the tokens and send infos without tokens
-                // unset($data['tokens']);
-                // $data['timestamp'] = date('Y-m-d');
+        // // [$id, $tokens, $data] = getFromData(['id', 'tokens'], $data, true);
+        // // echo "<br> create reviews_controller <br>";
+        // // print_r($data);
+        // if ($this->validateReview("create", $data)) {
+        //     if (!$this->checkReviewExists($data)) {
+        //         // echo "create review: ";
+        //         //create review, remove the tokens and send infos without tokens
+        //         // unset($data['tokens']);
+        //         // $data['timestamp'] = date('Y-m-d');
 
-                // echo "proper review  : ", print_r($data, true), "<br>";
-                if ($this->model->create($data)) {
-                    return $this->updateGameRatingAverage($data["gameID"]);
-                    // return true; 
-                }
-            }
-        }
+        //         // echo "proper review  : ", print_r($data, true), "<br>";
+        //         if ($this->model->create($data)) {
+        //             return $this->updateGameRatingAverage($data["gameID"]);
+        //             // return true; 
+        //         }
+        //     }
+        // }
         // echo "not validated review data: ";
-        return false;
+        // return false;
+        return parent::create($data);
     }
 
     public function delete($data)
     {
-        // echo "<br> delete reviews_controller <br>";
-        // print_r($data);
-        $id = $data['id'];
-        if ($this->validateReview("delete", $data)) {
-            if ($this->model->getOne(column: "id", value: $id)) {
-                // echo "delete review: ";
-                // echo "proper review  : ", $data["id"], "<br>";
-                if ($this->model->delete($id)) {
-                    // echo "mlep: ";
-                    return $this->updateGameRatingAverage($data["gameID"]);
-                }
-            }
-        }
-        // echo "not validated review data: ";
-        return false;
+        // // echo "<br> delete reviews_controller <br>";
+        // // print_r($data);
+        // $id = $data['id'];
+        // if ($this->validateReview("delete", $data)) {
+        //     if ($this->model->getOne(column: "id", value: $id)) {
+        //         // echo "delete review: ";
+        //         // echo "proper review  : ", $data["id"], "<br>";
+        //         if ($this->model->delete($id)) {
+        //             // echo "mlep: ";
+        //             return $this->updateGameRatingAverage($data["gameID"]);
+        //         }
+        //     }
+        // }
+        // // echo "not validated review data: ";
+        // return false;
+        return parent::delete($data);
     }
 
     // public function update($id, $tokens = null, ...$data)
     public function update($data)
     {
-        // [$id, $tokens, $data] = getFromData(['id', 'tokens'], $data, true);
-        // echo "<br> update reviews_controller <br>";
-        // print_r($data);
-        $id = $data['id'];
-        if ($this->validateReview("update", $data)) {
-            if ($this->model->getOne(column: "id", value: $id)) {
-                // echo "update review: ";
-                //update review, remove the tokens and send infos without tokens
-                // unset($data['tokens']);
-                // echo "proper review to update : ", print_r($data, true), "<br>";
-                if ($this->model->update($id, $data)) {
-                    return $this->updateGameRatingAverage($data["gameID"]);
-                    // return true; 
-                }
-            }
-        }
-        // echo "not validated review data: ";
-        return false;
+        return parent::update($data);
+        // // [$id, $tokens, $data] = getFromData(['id', 'tokens'], $data, true);
+        // // echo "<br> update reviews_controller <br>";
+        // // print_r($data);
+        // $id = $data['id'];
+        // if ($this->validateReview("update", $data)) {
+        //     if ($this->model->getOne(column: "id", value: $id)) {
+        //         // echo "update review: ";
+        //         //update review, remove the tokens and send infos without tokens
+        //         // unset($data['tokens']);
+        //         // echo "proper review to update : ", print_r($data, true), "<br>";
+        //         if ($this->model->update($id, $data)) {
+        //             return $this->updateGameRatingAverage($data["gameID"]);
+        //             // return true; 
+        //         }
+        //     }
+        // }
+        // // echo "not validated review data: ";
+        // return false;
     }
 
 

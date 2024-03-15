@@ -220,19 +220,26 @@ $id = 10;
 // $credentials = ['id' => $id, 'access_token' => $tokens['access_token']];
 // // printall($result);
 
-// $updateresult = parse('users', 'update', ['credentials' => $credentials, 'request_data' => ['id' => $id, 'username' => 'ggggggg']]);
+// // $updateresult = parse('users', 'update', ['credentials' => $credentials, 'request_data' => ['id' => $id, 'username' => 'ggggggg']]);
 
-// // if ($updateresult)
-// //     echo "TRUE";
-// // else
-// //     echo "FALSE";
+
+// $review = ['userID' => $id, 'gameID' => 2, 'rating' => 3, 'comment' => 'asdjkahsdjkashdasjklhdas'];
+// $data = ['credentials' => $credentials, 'request_data' => $review];
+
+// $reviewres = parse('reviews', 'create', $data);
+
+// printall($reviewres);
+
+// if ($updateresult)
+//     echo "TRUE";
+// else
+//     echo "FALSE";
 
 // $updated = parse('users', 'getOne', ['column' => 'id', 'value' => $id]);
-// // printall($updated);
+// printall($updated);
 
 
 // printall($gamestags_ctrl->getGamesWith(['users' => true, 'tags' => true]));
-
 
 
 // $data = [

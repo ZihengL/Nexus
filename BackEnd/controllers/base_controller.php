@@ -317,6 +317,8 @@ class BaseController
 
     public function create($data)
     {
+        printall($data);
+
         return $this->model->create($data);
     }
 
