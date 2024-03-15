@@ -109,9 +109,6 @@ class BaseModel
                 $stmt->execute(array_values($params));
             }
 
-            printall($this->table);
-            printall($sql);
-
             return $stmt;
         } catch (PDOException $e) {
             if (self::$print_errors) {
