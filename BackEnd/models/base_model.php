@@ -189,7 +189,7 @@ class BaseModel
 
             $sql = "UPDATE {$this->table} SET $pairs WHERE id = ?";
 
-            return $this->query($sql, $formatted_data)->fetch();
+            return $this->query($sql, $formatted_data)->rowCount();
         }
 
         throw new Exception("Update operation failed on {$this->table} for id '$id' with datas: " . unwrap($data));

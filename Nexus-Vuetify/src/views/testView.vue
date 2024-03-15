@@ -517,6 +517,22 @@ export default {
       console.log('data', data);
 
 
+      const access_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjExLCJpYXQiOjE3MTA0Njg3ODIsImV4cCI6MTcxMDQ3MjM4MiwiaXNzIjoiTkVYVVMiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZC8ifQ.qhzRlsnK42cnHHOHIWep6ewTpmxsBfyj66-E3JuWpc4';
+      const id = 11;
+
+      const updateresult = await services.fetchDataProxy("users", "update", {
+        credentials: {
+          id: id,
+          access_token: access_token,
+        },
+        request_data: {
+          id: 11,
+          username: "jkalsdfj;asflqkwjrqwUPDATE",
+        }
+      })
+
+      console.log(updateresult);
+
 
 
       const store = await services.getAllGamesWithDeveloperNameNEW(null, null, null, null, null);

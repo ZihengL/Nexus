@@ -150,6 +150,9 @@ export const getAllMatching = async (
   return null;
 };
 
+export const fetchDataProxy = async (table, action, data) => {
+  return await services.fetchData(table, action, data);
+}
 
 export const createData = async (table, createData) => {
   const data = await services.fetchData(table, "create", createData);

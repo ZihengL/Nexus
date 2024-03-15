@@ -170,7 +170,7 @@ import btnComp from "../components/btnComponent.vue";
 import { defineProps, ref, onMounted, watch, reactive } from "vue";
 import storageManager from "../JS/localStorageManager.js";
 import defaultProfilePic from "@/assets/Dev_Picture/defaultProfilePic.png";
-import { updateData, getOne } from "../JS/fetchServices";
+import { getOne, updateWithValidation } from "../JS/fetchServices";
 
 const props = defineProps(["IdDev"]);
 let user = ref(null);
@@ -260,7 +260,7 @@ const updateUserInfos = async () => {
           refresh_token: storageManager.getRefreshToken(),
         };
 
-        let userIsUpdated = await updateData("users", updatedUser);
+        let userIsUpdated = await updateWithValidation("users", updatedUser);
         if (userIsUpdated != false) {
           console.log("SUCCESSFULLY UPDATED USER");
           storageManager.setAccessToken(userIsUpdated["access_token"]);
