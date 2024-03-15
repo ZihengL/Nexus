@@ -177,6 +177,13 @@ export const deleteData = async (table, deleteData) => {
 // };
 
 export const actionWithValidation = async (table, action, data) => {
+  const pack = {
+    credentials: services.getValidationCredentials(),
+    request_data: data,
+  };
+
+  console.log(pack);
+
   return await services.fetchData(table, action, {
     credentials: services.getValidationCredentials(),
     request_data: data,
