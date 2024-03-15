@@ -4,7 +4,7 @@
       <!-- <v-avatar size="10rem"> -->
       <div class="round">
         <img
-          :src="getImage(user.picture) || defaultProfilePic"
+          :src="selectedImage || user.picture"
           alt="Profile Picture"
           class="img_userProfilePic"
         />
@@ -12,10 +12,10 @@
         <!-- <v-btn icon @click="galleryDialog = true">
           <v-icon>mdi-image-multiple</v-icon>
         </v-btn> -->
-         <btnComp
-            :contenu="'Changer Profile'"
-            @toggle-btn="galleryDialog = true"
-          /> 
+        <btnComp
+          :contenu="'Changer Profile'"
+          @toggle-btn="galleryDialog = true"
+        />
         <!--<button class="changerProfileBtn" @click="galleryDialog = true">
           Changer Profile
         </button>-->
@@ -24,145 +24,152 @@
       <!-- ... Signup form content ... -->
       <!--<<div class="field-container">
         <span class="title">Prénom</span> -->
-        <div class="input-group field">
-          <input
-            class="infos"
-            :key="`name-${user.name}`"
-            :class="{ notEmptyInput: user.name }"
-            type="text"
-            :placeholder="user.name || 'Prénom'"
-            v-model="state.name"
-            required
-          />
-          <btnComp
-            :propClass="'newbtnClass'"
-            :contenu="'effacer'"
-            @toggle-btn="() => deleteInfo('name')"
-          />
-        </div>
+      <div class="input-group field">
+        <input
+          class="infos"
+          :key="`name-${user.name}`"
+          :class="{ notEmptyInput: user.name }"
+          type="text"
+          :placeholder="user.name || 'Prénom'"
+          v-model="state.name"
+          required
+        />
+        <btnComp
+          :propClass="'newbtnClass'"
+          :contenu="'effacer'"
+          @toggle-btn="() => deleteInfo('name')"
+        />
+      </div>
       <!--<</div>-->
 
       <!--<div class="field-container">
         <span class="title">Nom</span> -->
-        <div class="input-group field">
-          <input
-            class="infos"
-            :key="`lastName-${user.lastName}`"
-            :class="{ notEmptyInput: user.lastName }"
-            type="text"
-            :placeholder="user.lastName || 'Nom'"
-            v-model="state.lastName"
-          />
-          <btnComp
-            :propClass="'newbtnClass'"
-            :contenu="'effacer'"
-            @toggle-btn="() => deleteInfo('lastName')"
-          />
-        </div>
+      <div class="input-group field">
+        <input
+          class="infos"
+          :key="`lastName-${user.lastName}`"
+          :class="{ notEmptyInput: user.lastName }"
+          type="text"
+          :placeholder="user.lastName || 'Nom'"
+          v-model="state.lastName"
+        />
+        <btnComp
+          :propClass="'newbtnClass'"
+          :contenu="'effacer'"
+          @toggle-btn="() => deleteInfo('lastName')"
+        />
+      </div>
       <!--</div>-->
 
       <!--<div class="field-container">
         <span class="title">Téléphone</span> -->
-        <div class="input-group field">
-          <input
-            class="infos"
-            :key="`phoneNumber-${user.phoneNumber}`"
-            type="tel"
-            placeholder="Numero de Téléphone"
-            v-model="state.phoneNumber"
-            @input="updatephonenumber"
-          />
-          <btnComp
-            :propClass="'newbtnClass'"
-            :contenu="'effacer'"
-            @toggle-btn="() => deleteInfo('phoneNumber')"
-          />
-        </div>
+      <div class="input-group field">
+        <input
+          class="infos"
+          :key="`phoneNumber-${user.phoneNumber}`"
+          type="tel"
+          placeholder="Numero de Téléphone"
+          v-model="state.phoneNumber"
+          @input="updatephonenumber"
+        />
+        <btnComp
+          :propClass="'newbtnClass'"
+          :contenu="'effacer'"
+          @toggle-btn="() => deleteInfo('phoneNumber')"
+        />
+      </div>
       <!--</div>-->
 
       <!--<div class="field-container">
         <span class="title">Nom Utilisateur</span> -->
-        <div class="input-group  field">
-          <input
-            class="infos"
-            :key="`username-${user.username}`"
-            :class="{ notEmptyInput: user.username }"
-            type="text"
-            :placeholder="user.username || 'Nom Utilisateur'"
-            v-model="state.username"
-          />
-        </div>
+      <div class="input-group field">
+        <input
+          class="infos"
+          :key="`username-${user.username}`"
+          :class="{ notEmptyInput: user.username }"
+          type="text"
+          :placeholder="user.username || 'Nom Utilisateur'"
+          v-model="state.username"
+        />
+      </div>
       <!--</div>-->
 
       <!--<div class="field-container">
         <span class="title">Description</span> -->
-        <div class="input-group  field area">
-          <textarea
-            class="infos "
-            :key="`description-${user.description}`"
-            :class="{ notEmptyInput: user.description }"
-            :placeholder="user.description || 'Description...'"
-            v-model="state.description"
-          ></textarea>
-          <btnComp
-            :propClass="'newbtnClass'"
-            :contenu="'effacer'"
-            @toggle-btn="() => deleteInfo('description')"
-          />
-        </div>
+      <div class="input-group field area">
+        <textarea
+          class="infos"
+          :key="`description-${user.description}`"
+          :class="{ notEmptyInput: user.description }"
+          :placeholder="user.description || 'Description...'"
+          v-model="state.description"
+        ></textarea>
+        <btnComp
+          :propClass="'newbtnClass'"
+          :contenu="'effacer'"
+          @toggle-btn="() => deleteInfo('description')"
+        />
+      </div>
       <!--</div>-->
 
       <!--<div class="field-container">
         <span class="title">Mot de Passe</span> -->
-        <div class="input-group  field">
-          <input
-            class="infos"
-            type="password"
-            placeholder="Mot de passe"
-            v-model="state.firstPassword"
-          />
-        </div>
+      <div class="input-group field">
+        <input
+          class="infos"
+          type="password"
+          placeholder="Mot de passe"
+          v-model="state.firstPassword"
+        />
+      </div>
       <!--</div>-->
 
       <!--<div class="field-container">
         <<span class="title">Confirmer Mot De Passe</span> -->
-        <div class="input-group  field">
-          <input
-            class="infos"
-            type="password"
-            placeholder="Confirmer le mot de passe"
-            v-model="state.secondPassword"
-            required
-          />
-        </div>
+      <div class="input-group field">
+        <input
+          class="infos"
+          type="password"
+          placeholder="Confirmer le mot de passe"
+          v-model="state.secondPassword"
+          required
+        />
+      </div>
       <!--</div>-->
 
-      <btnComp :contenu="'Modifier'" @toggle-btn="updateUserInfos" />
+      <btnComp :contenu="'Confimer les Modifications'" @toggle-btn="updateUserInfos" />
     </form>
-
-    <div v-if="galleryDialog"  class="roundBorderSmall glass4 dialog">
+    <div v-if="galleryDialog" class="roundBorderSmall glass4 dialog">
       <v-icon @click="galleryDialog = false" class="close">mdi-close</v-icon>
       <div class="content">
         <label
-          v-for="img, index in AllImages"
+          v-for="(img, index) in AllImages"
           :key="index"
           id="pic"
           @click="sendPic(img)"
           class="roundBorderSmall one glass2  "
         >
+          <!-- Hidden radio input, if needed for form submissions -->
           <input
             type="radio"
             name="pic"
             :value="img"
+            v-model="selectedImage"
+            style="display: none"
           />
-          <img :src="img" alt="">
-          <p></p>
+          <!-- Clickable image that logs selection -->
+          <img
+            :src="img"
+            alt=""
+            @click="selectImage(img)"
+            class="clickable-image"
+          />
         </label>
       </div>
+      <!-- Confirmation Button -->
+      <button @click="confirmImage()" class="confirm-btn">Confirmer</button>
     </div>
   </div>
-
-
 </template>
 
 <script setup>
@@ -188,8 +195,9 @@ const state = reactive({
   secondPassword: "",
   description: "",
   erroMsg: "",
-  MAX_DESC_LENGTH: 5,
+  MAX_DESC_LENGTH: 250,
   MAX_NAME_LENGTH: 5,
+  MIN_DESC_LENGTH : 10,
   MAX_LASTNAME_LENGTH: 5,
   MAX_PASSWORD_LENGTH: 5,
 });
@@ -232,27 +240,45 @@ const getUserInfos = async () => {
     console.error("Error fetching user data:", error);
   }
 };
-const getImage = (image) =>{
-    console.log(' get pic,', image)
-    let urlPic = '/src/assets/Avatar/' + image;
-    console.log('pic,', urlPic)
-    return urlPic 
+// const getImage = (image) => {
+//   console.log(" get pic,", image);
+//   let urlPic = "/src/assets/Avatar/" + image;
+//   console.log("pic,", urlPic);
+//   return urlPic;
+// };
+
+// const galleryDialog = ref(false);
+//     const AllImages = ref([]); // Your images array
+const selectedImage = ref(null); // To keep track of the selected image
+
+const selectImage = (img) => {
+  selectedImage.value = img;
+  console.log("Clicked selectedImage.value : ", selectedImage);
+};
+
+const confirmImage = () => {
+  if (selectedImage.value) {
+    console.log(selectedImage.value); 
+
+    galleryDialog.value = false;
+  } else {
+    console.log("No image selected");
   }
+};
 
 const getAllImages = async (tab) => {
-  const folderPath = '/src/assets/Avatar/';
+  const folderPath = "/src/assets/Avatar/";
   //const imagePaths = [];
   for (let i = 1; i <= 7; i++) {
-    let path = folderPath + 'Avatar_' + i + '.png';
-    console.log('path ', path);
+    let path = folderPath + "Avatar_" + i + ".png";
+    console.log("path ", path);
     tab.push(`${folderPath}Avatar_${i}.png`);
   }
 
-    //console.log('Nombre de fichiers dans le dossier :', nb);
-  console.log('Chemins de toutes les images :', tab);
-  return tab
+  //console.log('Nombre de fichiers dans le dossier :', nb);
+  console.log("Chemins de toutes les images :", tab);
+  return tab;
 };
-
 
 const updateUserInfos = async () => {
   const originalUser = user.value;
@@ -267,6 +293,9 @@ const updateUserInfos = async () => {
           refresh_token: storageManager.getRefreshToken(),
         };
 
+
+        
+        console.error(" updatedUser : ", updatedUser);
         let userIsUpdated = await updateData("users", updatedUser);
         if (userIsUpdated != false) {
           console.log("SUCCESSFULLY UPDATED USER");
@@ -330,6 +359,9 @@ function validateDescription(currentValue, originalValue, maxDescLength) {
   if (currentValue.length > maxDescLength) {
     console.error("Mauvaise longueur de description");
     return null;
+  } else if(currentValue.length < state.MIN_DESC_LENGTH) {
+    console.error("Mauvaise longueur de description");
+    return null;
   } else if (currentValue !== originalValue) {
     return currentValue;
   }
@@ -352,7 +384,7 @@ function validatePasswords(firstPassword, secondPassword) {
 function compareAndUpdateUser(updatedUser, stateUser) {
   let isDifferent = false;
 
-  console.error(" state.userToUpdate : ", state.userToUpdate);
+  // console.error(" state.userToUpdate : ", state.userToUpdate);
 
   for (const key in updatedUser) {
     if (updatedUser.hasOwnProperty(key) && key !== "id") {
@@ -414,6 +446,9 @@ async function validateDataBeforeSending() {
     // }
   });
 
+  //Profile Picture
+  updatedUser.picture = `${selectedImage.value || user.value.picture}`
+
   // Username
   const usernameResult = validateUsername(
     state.username.trim(),
@@ -446,9 +481,10 @@ async function validateDataBeforeSending() {
   if (sanitizedNumber) {
     updatedUser.phoneNumber = sanitizedNumber;
   }
-
+  
   console.log("updatedUser : ", updatedUser);
   let final_updatedUser = compareAndUpdateUser(updatedUser, state.userToUpdate);
+
   console.log("final_updatedUser : ", final_updatedUser);
   return final_updatedUser;
 }
@@ -477,7 +513,7 @@ onMounted(async () => {
   try {
     await getUserInfos();
     getAllImages(AllImages.value);
-    console.log('length ', AllImages.value.length)
+    console.log("length ", AllImages.value);
   } catch (error) {
     console.error("Error fetching data:", error);
   }
@@ -496,6 +532,21 @@ onMounted(async () => {
 </script>
 
 <style lang="scss">
+
+.confirm-btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 5% 10%;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 1em;
+  margin-top: 2%;
+  margin-bottom: 10%;
+}
+
 .round {
   //border-radius: 50%;
   display: flex;
@@ -504,67 +555,68 @@ onMounted(async () => {
   justify-content: space-between;
   gap: 30%;
   img {
-  border-radius: 50%;
-  width: 25%;
-  margin: 0%;
+    border-radius: 50%;
+    width: 25%;
+    margin: 0%;
   }
   // .changerProfileBtn {
   //   flex: 3;
   // }
-} 
+}
 
 .dialog {
-    position: absolute;
-    top: 10%;
-    left: 30%;
-    width: 40%;
-    margin: auto;
-  }
-  
-  .close {
-    float: right;
-  }
-  
-  .content {
-    margin: 5%;
-    display: grid;
-    grid-template-columns: auto auto auto;
-    gap: 2%;
-    padding: 2% 2% 5% 2%;
-  }
-  
-  .one {
-    padding: 2% 2% 5% 2%;
-    position: relative; /* Ajout de cette ligne */
-  }
-  
-  .one img {
-    width: 100%;
-  }
-  
-  .one p {
-    position: absolute; /* Ajout de cette ligne */
-    top: 0; /* Ajout de cette ligne */
-    left: 0; /* Ajout de cette ligne */
-    width: 100%; /* Ajout de cette ligne */
-    height: 100%; /* Ajout de cette ligne */
+  position: absolute;
+  top: 10%;
+  left: 30%;
+  width: 40%;
+  margin: auto;
+}
 
-    /* From https://css.glass */
-    background: rgba(255, 255, 255, 0.62);
-    //border-radius: 0px;
-    backdrop-filter: blur(0px);
-    -webkit-backdrop-filter: blur(0px);
-    border: 1px solid rgba(255, 255, 255, 0); /* Ajout de cette ligne */
-    display: none; /* Ajout de cette ligne */
-  }
-  
-  .one input {
-    display: none;
-  }
-  .one:hover p, .one input:checked ~ p {
-    display: block; /* Ajout de cette ligne */
-  }
-  
+.close {
+  float: right;
+}
+
+.content {
+  margin: 5%;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  gap: 2%;
+  padding: 2% 2% 5% 2%;
+}
+
+.one {
+  padding: 2% 2% 5% 2%;
+  position: relative; /* Ajout de cette ligne */
+}
+
+.one img {
+  width: 100%;
+}
+
+.one p {
+  position: absolute; /* Ajout de cette ligne */
+  top: 0; /* Ajout de cette ligne */
+  left: 0; /* Ajout de cette ligne */
+  width: 100%; /* Ajout de cette ligne */
+  height: 100%; /* Ajout de cette ligne */
+
+  /* From https://css.glass */
+  background: rgba(255, 255, 255, 0.62);
+  //border-radius: 0px;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  border: 1px solid rgba(255, 255, 255, 0); /* Ajout de cette ligne */
+  display: none; /* Ajout de cette ligne */
+}
+
+.one input {
+  display: none;
+}
+.one:hover p,
+.one input:checked ~ p {
+  display: block; /* Ajout de cette ligne */
+}
+
 .area {
   height: auto;
   margin: 5% auto;

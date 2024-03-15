@@ -939,11 +939,19 @@ const update_gamesAndTags = async () => {
 
 const submitGame = async () => {
   if (formatData()) {
-    await update_gamesAndTags();
-    await uploadImageFiles(state.gameId);
-    await uploadZipFile(state.gameId);
-    await upload_storeImage(state.gameId);
-    // window.location.reload();
+    try {
+      await update_gamesAndTags();
+      await uploadImageFiles(state.gameId);
+      await upload_storeImage(state.gameId);
+      await uploadZipFile(state.gameId);
+
+      alert("Votre jeu a été mis à jour avec succès.");
+      
+      window.location.reload();
+    } catch (error) {
+      console.error("An error occurred during the game update process:", error);
+      alert("Une erreur s'est produite lors de la mise à jour du jeu. Veuillez réessayer.");
+    }
   }
 };
 </script>

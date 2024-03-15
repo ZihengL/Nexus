@@ -204,9 +204,9 @@ async function getUserInfos() {
           includedColumns,
           sorting
         );
-        // console.log("dataDevs ", dataDevs);
+        console.log("dataDevs ", dataDevs);
         gameList.value = dataDevs;
-        // console.log("gameList ", gameList);
+        console.log("gameList ", gameList);
       }
     }
   } catch (error) {

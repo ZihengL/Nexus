@@ -1,4 +1,4 @@
 <template>
-    <h1>Réussi</h1>
+    <h1>Bravo t'as réussi ta transaction!!!!</h1>
     <a href="/">Retour</a>
 </template>

@@ -26,7 +26,7 @@
         <div class="devs">
           <p>
             <b>Développeur :</b>
-            <a :href="`/Dev/${props.idGame}`" class="developerProfileLink">
+            <a :href="`/Dev/${gameInfos.leGame.developerID}`" class="developerProfileLink">
               {{ gameInfos.devName }}
             </a>
             <!-- <router-link
@@ -132,6 +132,7 @@ import game from "../components/game/GameCarrousel.vue";
 import { defineProps, onMounted, ref, reactive } from "vue";
 import {
   getGameDetailsWithDeveloperName,
+  getOne,
   getReviews,
 } from "../JS/fetchServices";
 import {
@@ -171,7 +172,7 @@ const props = defineProps({
   },
 });
 let reviewTemp = ref(null);
-
+let developerID = ref(null)
 const isLogin = ref(true);
 const toggleLogin = () => {
   isLogin.value = true;
@@ -265,6 +266,7 @@ onMounted(async () => {
     gameInfos.leGame = dataGame;
     gameInfos.tags = gameInfos.leGame.tags;
     gameInfos.devName = gameInfos.leGame.devName;
+    console.log("gameInfos.leGame : ", gameInfos.leGame)
 
     const dataReview = await getReviews(props.idGame);
     reviewTemp.value = dataReview.length;
