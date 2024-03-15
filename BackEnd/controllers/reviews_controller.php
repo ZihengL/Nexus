@@ -18,6 +18,7 @@ class ReviewsController extends BaseController
             'create' => true,
             'update' => true,
             'delete' => true,
+            'recalculateAverageRating' => false
         ];
         parent::__construct($central_controller, $specific_actions);
     }
@@ -34,7 +35,7 @@ class ReviewsController extends BaseController
     /***************************** GETTERS *****************************/
     /*******************************************************************/
 
-    private function recalculateAverageRating($gameID)
+    public function recalculateAverageRating($gameID)
     {
         if ($game = $this->getOneFrom('games', 'id', $gameID)) {
             $average = floatval($this->model->getAverage($gameID)['average_rating']);
