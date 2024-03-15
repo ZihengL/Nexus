@@ -4,7 +4,7 @@
       <!-- <v-avatar size="10rem"> -->
       <div class="round">
         <img
-          :src="defaultProfilePic"
+          :src="selectedImage || user.picture"
           alt="Profile Picture"
           class="img_userProfilePic"
         />
@@ -192,8 +192,9 @@ const state = reactive({
   secondPassword: "",
   description: "",
   erroMsg: "",
-  MAX_DESC_LENGTH: 5,
+  MAX_DESC_LENGTH: 250,
   MAX_NAME_LENGTH: 5,
+  MIN_DESC_LENGTH : 10,
   MAX_LASTNAME_LENGTH: 5,
   MAX_PASSWORD_LENGTH: 5,
 });
@@ -247,8 +248,9 @@ const selectImage = (img) => {
 
 const confirmImage = () => {
   if (selectedImage.value) {
-    console.log(selectedImage.value); // Log the selected image
-    galleryDialog.value = false; // Close the dialog
+    console.log(selectedImage.value); 
+
+    galleryDialog.value = false;
   } else {
     console.log("No image selected");
   }
@@ -281,6 +283,9 @@ const updateUserInfos = async () => {
           refresh_token: storageManager.getRefreshToken(),
         };
 
+
+        
+        console.error(" updatedUser : ", updatedUser);
         let userIsUpdated = await updateData("users", updatedUser);
         if (userIsUpdated != false) {
           console.log("SUCCESSFULLY UPDATED USER");
@@ -344,6 +349,9 @@ function validateDescription(currentValue, originalValue, maxDescLength) {
   if (currentValue.length > maxDescLength) {
     console.error("Mauvaise longueur de description");
     return null;
+  } else if(currentValue.length < state.MIN_DESC_LENGTH) {
+    console.error("Mauvaise longueur de description");
+    return null;
   } else if (currentValue !== originalValue) {
     return currentValue;
   }
@@ -366,7 +374,7 @@ function validatePasswords(firstPassword, secondPassword) {
 function compareAndUpdateUser(updatedUser, stateUser) {
   let isDifferent = false;
 
-  console.error(" state.userToUpdate : ", state.userToUpdate);
+  // console.error(" state.userToUpdate : ", state.userToUpdate);
 
   for (const key in updatedUser) {
     if (updatedUser.hasOwnProperty(key) && key !== "id") {
@@ -428,6 +436,9 @@ async function validateDataBeforeSending() {
     // }
   });
 
+  //Profile Picture
+  updatedUser.picture = `${selectedImage.value || user.value.picture}`
+
   // Username
   const usernameResult = validateUsername(
     state.username.trim(),
@@ -460,9 +471,10 @@ async function validateDataBeforeSending() {
   if (sanitizedNumber) {
     updatedUser.phoneNumber = sanitizedNumber;
   }
-
+  
   console.log("updatedUser : ", updatedUser);
   let final_updatedUser = compareAndUpdateUser(updatedUser, state.userToUpdate);
+
   console.log("final_updatedUser : ", final_updatedUser);
   return final_updatedUser;
 }
@@ -516,11 +528,13 @@ onMounted(async () => {
   color: white;
   border: none;
   cursor: pointer;
-  padding: 15px 32px;
+  padding: 5% 10%;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16px;
+  font-size: 1em;
+  margin-top: 2%;
+  margin-bottom: 10%;
 }
 
 .round {
