@@ -26,25 +26,24 @@ $request_data = ['gameID' => 2, 'userID' => $id, 'rating' => 2.5, 'comment' => '
 $data = ['credentials' => $credentials, 'request_data' => $request_data];
 $jsonData = json_encode($data);
 
-$table = 'users';
-$action = 'authenticate';
+
 $uri = getURI($table, $action);
 
-$data = '{"id":12,"refresh_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEyLCJpYXQiOjE3MTA1MTk1MTgsImV4cCI6MTcxMTEyNDMxOCwiaXNzIjoiTkVYVVMiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZC8ifQ.0YVC7kDJpJ5Z_m_WAsyRrLNX74A1AMleUtQwPISAzXI"}';
-$jsonData = $data;
-$decoded = json_decode($data, true);
 
-$token = $decoded['refresh_token'];
+// $jsonData = $data;
+// $decoded = json_decode($data, true);
 
-printall($decoded);
+// $token = $decoded['refresh_token'];
 
-// Initialize a cURL session
+// printall($decoded);
+
+$table = 'users';
+$action = 'authenticate';
 $uri = "http://localhost:4208/Nexus/Backend/table=$table&action=$action";
-printer(getURI($table, $action));
+printer($uri);
+
 
 $ch = curl_init($uri);
-
-// Set cURL options
 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
 curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -53,16 +52,8 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, [
     'Content-Length: ' . strlen($jsonData)
 ]);
 
-// Execute the POST request
 $response = curl_exec($ch);
-
-// Close cURL session
 curl_close($ch);
 
-// Display the result
-if ($response)
-    printer("RESPONSE SUCCESS ");
-else
-    printer("RESPONSE FAILED ");
-
+printer("$action on $table " . ($response ? 'succeeded' : 'failed'));
 printall($response);

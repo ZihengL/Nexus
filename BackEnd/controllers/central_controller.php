@@ -23,11 +23,11 @@ class CentralController
 
     // MANAGERS
     public $database_manager;
-    public  $google_client_manager;
+    // public  $google_client_manager;
 
     // TABLES
+    // public $routines_controller;
     public $tokens_controller;
-    public $routines_controller;
     public $users_controller;
     public $games_controller;
     public $reviews_controller;
@@ -99,8 +99,8 @@ class CentralController
 
     // COMMANDS
 
-    private function setRoutines($toRunning)
-    {
-        $this->routines_controller->setRunningState($toRunning);
-    }
+    // private function setRoutines($toRunning)
+    // {
+    //     $this->routines_controller->setRunningState($toRunning);
+    // }
 }

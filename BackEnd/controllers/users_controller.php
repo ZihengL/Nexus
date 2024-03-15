@@ -22,7 +22,7 @@ class UsersController extends BaseController
     public function __construct($central_controller, $pdo)
     {
         $this->model = new UsersModel($pdo);
-        $this->restricted_columns = ['password', 'email', 'phoneNumber', 'isAdmin'];
+        $this->restricted_columns = ['email', 'password', 'phoneNumber', 'isAdmin'];
         $specific_actions = [
             'authenticate' => false,
             'login' => false,
@@ -37,7 +37,7 @@ class UsersController extends BaseController
     public function userExists($data)
     {
         return isset($data[$this->email]) &&
-            !empty($this->model->getOne(column: $this->email, value: $data[$this->email]));
+            !empty($this->getByEmail($data[$this->email]));
     }
 
     private function getByEmail($email)
@@ -55,15 +55,14 @@ class UsersController extends BaseController
             return $this->getTokensController()->refreshAccessToken($refresh_token);
         }
 
-        return null;
+        return false;
     }
 
     // Do this if user needs to do a fresh login
     public function login($data)
     {
         ['email' => $email, 'password' => $password] = $data;
-
-        $user = $this->model->getOne(column: $this->email, value: $email);
+        $user = $this->getByEmail($email);
 
         $tokens_controller = $this->getTokensController();
         if ($tokens = $tokens_controller->generateTokensOnValidation($user, $email, $password)) {
@@ -79,10 +78,9 @@ class UsersController extends BaseController
     {
         ['id' => $id, 'refresh_token' => $refresh_token] = $data;
 
-        if (
-            $this->getTokensController()->revokeRefreshToken($refresh_token) &&
-            $this->model->update($id, ['isOnline' => false])
-        ) {
+        if ($this->getTokensController()->revokeRefreshToken($refresh_token)) {
+            $this->model->update($id, ['isOnline' => false]);
+
             return true;
         }
 
