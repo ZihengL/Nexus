@@ -100,6 +100,17 @@ const routes = [
         // which is lazy-loaded when the route is visited.
         component: () => import('@/views/UpdateGameView.vue'),
       },
+    //   {
+    //     path: '/success',
+    //     name: 'Stripesuccess',
+    //     component: SuccessPage,
+    //     props: (route) => ({ sessionId: route.query.session_id })
+    // },
+    // {
+    //     path: '/cancel',
+    //     name: 'Stripecancel',
+    //     component: () => import('@/views')
+    // }
     ],
   },
 ]

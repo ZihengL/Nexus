@@ -31,8 +31,31 @@ class TransactionsController extends BaseController
                 'donatorID' => $donatorID,
                 'donateeID' => $donateeID,
             ],
+        'success_url' => 'http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}', // Add your success URL here
+        'cancel_url' => 'http://localhost:3000/cancel', // Add your cancel URL here
         ]);
 
         return $link->url;
+    }
+
+    public function getEmbeddedLink($data)
+    {
+        ['donatorID' => $donatorID, 'donateeID' => $donateeID] = $data;
+        
+        $stripe = new \Stripe\StripeClient($_ENV['STRIPE_KEY']);
+
+        header('Content-Type: application/json');
+
+        $YOUR_DOMAIN = 'http://localhost:4242';
+
+        $checkout_session = $stripe->checkout->sessions->create([
+            'ui_mode' => 'embedded',
+            'line_items' => [[
+                'price' => '{{PRICE_ID}}',
+                'quantity' => 1,
+            ]],
+            'mode' => 'payment',
+            'return_url' => $_ENV['JWT_AUDIENCE'] . 'return.html?session_id={CHECKOUT_SESSION_ID}',
+        ]);
     }
 }
