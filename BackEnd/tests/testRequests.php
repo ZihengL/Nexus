@@ -16,6 +16,7 @@ function getURI($table, $action)
     return 'http://localhost:4208/Nexus/BackEnd/' . "table=$table&action=$action";
 }
 
+// eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI3IiwiaWF0IjoxNzEwNDY5ODY1LCJleHAiOjE3MTEwNzQ2NjUsImlzcyI6Ik5FWFVTIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo0MjA4L05leHVzL0JhY2tFbmQvIn0.bBPeeG9w6NRPHv0c-t8TN8s4eplpzAoIjbXaSYO5EY8
 $access_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjExLCJpYXQiOjE3MTA0Nzg0NTcsImV4cCI6MTcxMDQ4MjA1NywiaXNzIjoiTkVYVVMiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDgvTmV4dXMvQmFja0VuZC8ifQ.1U7lIrNlQroeAD2Nq7MC_yXjCR9-A3oDKxN45AZftQ0';
 $id = 11;
 
