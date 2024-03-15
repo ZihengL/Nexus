@@ -307,6 +307,7 @@ const openVideoBrowser = () => {
     }
 
     const newVideoFiles = newFiles.slice(0, availableSlots).map((file) => ({
+      file:file,
       name: file.name,
       size: file.size,
       type: file.type,

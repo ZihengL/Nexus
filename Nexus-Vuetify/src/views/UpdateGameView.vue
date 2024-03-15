@@ -209,7 +209,7 @@ const validFileTypes = [
   "application/java-archive", // MIME type for .jar files
 ];
 const filesAndFolders = ref([]);
-const originalImageNames = ref([]);
+const originalCarrouselImageNames = ref([]);
 
 const props = defineProps({
   pageTitle: {
@@ -335,6 +335,7 @@ const openVideoBrowser = () => {
     }
 
     const newVideoFiles = newFiles.slice(0, availableSlots).map((file) => ({
+      file:file,
       name: file.name,
       size: file.size,
       type: file.type,
@@ -348,8 +349,8 @@ const openVideoBrowser = () => {
   fileInput.click();
 };
 
+
 const openImageBrowser = () => {
-  console.log("hi");
   const fileInput = document.createElement("input");
   fileInput.type = "file";
   fileInput.multiple = true;
@@ -359,20 +360,46 @@ const openImageBrowser = () => {
     const availableSlots = state.MAX_IMG_LIST - state.imageFiles.length;
 
     if (newFiles.length > availableSlots) {
-      alert(
-        `You can only upload a maximum of ${availableSlots} more image(s).`
-      );
+      alert(`You can only upload a maximum of ${availableSlots} more image(s).`);
       return;
     }
-    const newImageFiles = newFiles.slice(0, availableSlots).map((file) => ({
-      ...file,
-      url: URL.createObjectURL(file),
-    }));
+
+    const existingNames = state.imageFiles.map(image => image.name);
+    const newImageFiles = newFiles.slice(0, availableSlots).map((file, index) => {
+      if (!validImageTypes.includes(file.type)) {
+        alert("Invalid file type.");
+        return null;
+      }
+      // Generate a new unique name for the image
+      let newName;
+      for (let i = 1; i <= 4; i++) {
+        const potentialName = `${state.gameId}_${i}.png`; // Assuming .png for simplicity, adjust as needed
+        if (!existingNames.includes(potentialName)) {
+          newName = potentialName;
+          break;
+        }
+      }
+      // If newName remains undefined, it means all slots are taken. This is a fallback case.
+      if (!newName) {
+        console.error("Could not assign a new name, all slots are taken.");
+        return null;
+      }
+
+      return {
+        ...file,
+        file,
+        url: URL.createObjectURL(file),
+        name: newName, // Use the new unique name
+        type: file.type,
+      };
+    }).filter(file => file !== null);
 
     state.imageFiles = [...state.imageFiles, ...newImageFiles];
+    console.log("New state.imageFiles after adding: ", state.imageFiles);
   };
   fileInput.click();
 };
+
 
 const openImageBrowser_forStore = () => {
   const fileInput = document.createElement("input");
@@ -400,7 +427,7 @@ const openImageBrowser_forStore = () => {
           ...file,
           file,
           url: URL.createObjectURL(file),
-          name: file.name,
+          name: `${state.gameId}_Store.png`,
           type: file.type,
         };
       })
@@ -462,28 +489,49 @@ const fetchFiles = async (gameID) => {
 };
 
 
-
 const uploadImageFiles = async (gameId) => {
-  // Determine which images are new, unchanged, or need renaming
-  const newImages = state.imageFiles.filter(image => !originalImageNames.value.includes(image.name));
-  const unchangedImages = state.imageFiles.filter(image => originalImageNames.value.includes(image.name));
-  // This example doesn't handle renamed images explicitly but you can extend it to do so
+  for (const image of state.imageFiles) {
+    // Check if the image URL does not start with the Firebase Storage URL
+    if (!image.url.startsWith("https://firebasestorage.googleapis.com/")) {
+      const fileName = image.name; 
+      const fileRef = firebaseRef(storage, `Games/${gameId}/media/${fileName}`);
+      const metadata = { contentType: image.type };
 
-  // Upload new images
-  for (const image of newImages) {
-    const fileName = `${gameId}_${image.name}`;
-    const fileRef = firebaseRef(storage, `Games/${gameId}/media/${fileName}`);
-    const metadata = { contentType: image.type };
-    try {
-      await uploadBytes(fileRef, image.file, metadata);
-      console.log(`${fileName} uploaded successfully.`);
-    } catch (error) {
-      console.error(`Failed to upload ${fileName}:`, error);
+      try {
+        await uploadBytes(fileRef, image.file, metadata); 
+        console.log(`${fileName} uploaded successfully.`);
+      } catch (error) {
+        console.error(`Failed to upload ${fileName}:`, error);
+      }
     }
   }
+};
 
-  // Log unchanged images - These are not uploaded again
-  console.log("Unchanged Images (Not Re-uploaded): ", unchangedImages.map(image => image.name));
+
+
+const upload_storeImage = async (gameId) => {
+  for (const image of state.imageStoreObject) {
+    // Check if the image URL does not start with the Firebase Storage URL
+    if (!image.url.startsWith("https://firebasestorage.googleapis.com/")) {
+      const fileName = `${gameId}_Store.png`; // Use gameId for the store image for consistency
+      const fileRef = firebaseRef(storage, `Games/${gameId}/media/${fileName}`);
+      const metadata = { contentType: image.type };
+
+      try {
+        const uploadResult = await uploadBytes(fileRef, image.file, metadata);
+        console.log(`${fileName} uploaded successfully.`);
+
+     
+        const newFileName = `${gameId}_0.png`;
+        const newFileRef = firebaseRef(storage, `Games/${gameId}/media/${newFileName}`);
+
+        await uploadBytes(newFileRef, image.file, metadata);
+        console.log(`${newFileName} duplicate created successfully.`);
+      } catch (error) {
+        console.error(`Failed to upload ${fileName}:`, error);
+      }
+    }
+  }
 };
 
 const zipFile = async (file, fileName) => {
@@ -550,16 +598,17 @@ const categorizeFiles = async (fetchedStructure) => {
       state.imageStoreObject.push(file);
     } else if (!file.name.endsWith("0.png") && file.type === "file") {
       state.imageFiles.push(file);
+      originalCarrouselImageNames.value.push(file.name);
     }
   });
 
-  mediaFolder.contents.forEach((file) => {
-    if (file.type === "file") {
-      originalImageNames.value.push(file.name);
-    }
-  });
+  // mediaFolder.contents.forEach((file) => {
+  //   if (file.type === "file") {
+  //     originalCarrouselImageNames.value.push(file.name);
+  //   }
+  // });
 
-  console.log("Original Files Fetched: ", originalImageNames.value);
+  console.log("Original Files Fetched: ", originalCarrouselImageNames.value);
   console.log("Image Files:", state.imageFiles);
   console.log("Store Image:", state.imageStoreObject);
   console.log(
@@ -575,7 +624,7 @@ function categorizeImages() {
   const renamedImages = [];
 
   state.imageFiles.forEach((image) => {
-    const originalImage = originalImageNames.value.find((name) => name === image.name);
+    const originalImage = originalCarrouselImageNames.value.find((name) => name === image.name);
     if (!originalImage) {
       newImages.push(image);
     } else if (originalImage === image.name) {
@@ -873,7 +922,7 @@ const formatData = () => {
 /*******************************************************************/
 
 const update_gamesAndTags = async () => {
-  // await updateGame();
+  await updateGame();
 
   const tagsCreationResult = await createTags();
   if (tagsCreationResult.isSuccessful == false) {
@@ -883,6 +932,7 @@ const update_gamesAndTags = async () => {
   } else {
     console.log("Game creation succeeded.");
     await eraseGamesTags();
+
   }
 };
 
@@ -891,6 +941,8 @@ const submitGame = async () => {
     await update_gamesAndTags();
     await uploadImageFiles(state.gameId);
     await uploadZipFile(state.gameId);
+    await upload_storeImage(state.gameId);
+    window.location.reload();
   }
 };
 </script>
