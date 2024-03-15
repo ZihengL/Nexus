@@ -7,7 +7,7 @@
       {{ state.errorMessage }}
     </div>
     <!-- <div>
-      <label for="title">Titre du Jeu</label> 
+      <label for="title">Titre du Jeu</label>
       <input
         class="title_readonly"
         type="text"
@@ -97,9 +97,9 @@
         @toggle-btn="openFileBrowser"
       ></btnComp>
       <div v-if="state.gameFile">
-        <p>Selected Game File: {{ state.gameFile.name }}</p>
+        <p>Sélectionner un fichier de Jeu: {{ state.gameFile.name }}</p>
         <!-- <p>File Size: {{ fileSize }} KB</p> -->
-        <p>File Type: ZIP</p>
+        <p>Type de fichier: ZIP</p>
       </div>
     </div>
     <div>
@@ -493,12 +493,12 @@ const uploadImageFiles = async (gameId) => {
   for (const image of state.imageFiles) {
     // Check if the image URL does not start with the Firebase Storage URL
     if (!image.url.startsWith("https://firebasestorage.googleapis.com/")) {
-      const fileName = image.name; 
+      const fileName = image.name;
       const fileRef = firebaseRef(storage, `Games/${gameId}/media/${fileName}`);
       const metadata = { contentType: image.type };
 
       try {
-        await uploadBytes(fileRef, image.file, metadata); 
+        await uploadBytes(fileRef, image.file, metadata);
         console.log(`${fileName} uploaded successfully.`);
       } catch (error) {
         console.error(`Failed to upload ${fileName}:`, error);
@@ -521,7 +521,7 @@ const upload_storeImage = async (gameId) => {
         const uploadResult = await uploadBytes(fileRef, image.file, metadata);
         console.log(`${fileName} uploaded successfully.`);
 
-     
+
         const newFileName = `${gameId}_0.png`;
         const newFileRef = firebaseRef(storage, `Games/${gameId}/media/${newFileName}`);
 
@@ -946,7 +946,7 @@ const submitGame = async () => {
       await uploadZipFile(state.gameId);
 
       alert("Votre jeu a été mis à jour avec succès.");
-      
+
       window.location.reload();
     } catch (error) {
       console.error("An error occurred during the game update process:", error);

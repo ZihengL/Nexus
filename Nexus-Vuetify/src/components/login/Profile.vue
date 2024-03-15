@@ -1,7 +1,7 @@
 <template>
   <!-- Created By CodingNepal -->
   <div v-if="isLoading" class="loading-state">
-    Loading...
+    Chargement...
   </div>
   <div v-else-if="leDevs && toggleLogin && toggleSignup" class="allP">
     <div
@@ -45,7 +45,7 @@
                 <label for="signup" class="slide signup" @click="toggleSignup()">Télécharger</label>
                 <div class="slider-tab"></div>
               </div>
-  
+
               <div class="form-inner">
                 <div class="login log gamesss">
                   <div
@@ -189,7 +189,7 @@ async function getUserInfos() {
       console.log("leDevs : ", leDevs.value);
 
       if (leDevs.value) {
-        
+
         storageManager.setIsConnected(true);
         const filters = {
           developerID: props.idDevl,
