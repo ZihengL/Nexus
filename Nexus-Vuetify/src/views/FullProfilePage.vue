@@ -147,6 +147,7 @@
           v-for="img, index in AllImages"
           :key="index"
           id="pic"
+          @click="sendPic(img)"
           class="roundBorderSmall one glass2  "
         >
           <input
@@ -182,6 +183,7 @@ const state = reactive({
   email: "",
   username: "",
   phoneNumber: "",
+  profile: "",
   firstPassword: "",
   secondPassword: "",
   description: "",
@@ -210,6 +212,13 @@ const updatephonenumber = (event) => {
   state.phoneNumber = formattedNumber;
 };
 
+const sendPic = (imgPath) => {
+  // Supprime "/src/assets/Avatar/" du chemin de l'image
+  const trimmedPath = imgPath.replace('/src/assets/Avatar/', '');
+  state.profile = trimmedPath;
+  // Retourne le chemin de l'image modifié
+  //return trimmedPath;
+}
 const getUserInfos = async () => {
   try {
     const dataUser = await getOne("users", "id", props.IdDev);
