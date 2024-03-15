@@ -101,7 +101,7 @@ let urlPic = null;
       //   sorting = { rating: false };
       // }
       // let reviewData = await getReviewsAndUsernames(props.idGame, sorting)
-      // if(props.sort == "0"){
+      // if(props.sort == "0") {
       //   review.value = reviewData.slice(0, props.nbMax);
       // }
       // else {
