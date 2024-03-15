@@ -117,8 +117,6 @@ class BaseController
 
         if ($credentials) {
             [$id, $access_token] = getFromData(['id', 'access_token'], $credentials, true);
-            // $id = intval($id);
-
 
             if ($this->validateUser($id, $access_token)) {
                 return $request_data;

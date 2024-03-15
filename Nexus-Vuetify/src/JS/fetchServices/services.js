@@ -342,16 +342,16 @@ export function getAllMatching(table, preppedData) {
 /***************************** STRIPE ******************************/
 /*******************************************************************/
 
-export async function getDonationLink(developerID) {
-  if (isLoggedIn()) {
-    const credentials = getCredentials();
+// export async function getDonationLink(developerID) {
+//   if (isLoggedIn()) {
+//     const credentials = getCredentials();
 
-    return await fetchData("transactions", "getLink", {
-      credentials: credentials,
-      request_data: {
-        donatorID: credentials.id,
-        donateeID: developerID,
-      },
-    });
-  }
-}
+//     return await fetchData("transactions", "getLink", {
+
+//       request_data: {
+//         donatorID: credentials.id,
+//         donateeID: developerID,
+//       },
+//     });
+//   }
+// }

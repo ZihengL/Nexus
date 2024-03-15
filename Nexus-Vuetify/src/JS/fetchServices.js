@@ -212,9 +212,14 @@ export const deleteWithValidation = async (table, data) => {
   return await actionWithValidation(table, 'delete', data);
 };
 
-export const getDonationLink = async () => {
-  return await services.getDonationLink();
-}
+export const getDonationLink = async (developerID) => {
+  const data = {
+    donatorID: StorageManager.getIdDev(),
+    donateeID: developerID
+  };
+
+  return await actionWithValidation("transactions", "getLink", data);
+};
 
 /*******************************************************************/
 /****************************** USERS ******************************/

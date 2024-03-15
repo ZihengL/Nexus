@@ -40,7 +40,7 @@
           >
         </div>
         <btnComp :contenu="'Telecharger'" @toggle-btn="downloadZipFile()" />
-        <btnComp :contenu="'Faire un don'" @toggle-btn="toggleProfile" />
+        <btnComp :contenu="'Faire un don'" @toggle-btn="getLink" />
       </div>
     </div>
 
@@ -109,7 +109,7 @@ import myAvis from "../components/game/myAvis.vue";
 import Avis from "../components/game/Avis.vue";
 import game from "../components/game/GameCarrousel.vue";
 import { defineProps, onMounted, ref, reactive } from "vue";
-import { getGameDetailsWithDeveloperNameNEW, getGameReviews } from '../JS/fetchServices';
+import { getGameDetailsWithDeveloperNameNEW, getGameReviews, getDonationLink } from '../JS/fetchServices';
 import { getStorage, ref as firebaseRef, getDownloadURL, uploadBytes} from "firebase/storage";
 
 const storage = getStorage();
@@ -150,6 +150,16 @@ const toggleSignup = () => {
     gamessShow.style.marginLeft = "-50%";
   }
 };
+
+async function getLink() {
+  const gameID = props.idGame;
+  console.log("gameID", gameID);
+
+  const result = await getDonationLink(gameID);
+  console.log("LINK", result);
+
+  window.location.href = result;
+}
 
 async function fetchGameUrl(gameId) {
   const imagePath = `Games/${gameId}/media/${gameId}_Store.png`;
