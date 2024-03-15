@@ -19,6 +19,7 @@ const StorageManager = {
       return user;
     } catch (e) {
         console.error("Error parsing JSON from localStorage", e);
+        return null;
     }
   },
   setIdDev (id) {
