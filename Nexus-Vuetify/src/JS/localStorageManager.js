@@ -50,6 +50,7 @@ const StorageManager = {
     }
   },
   setIsConnected (isConnected) {
+    console.log('isConnected', isConnected);
     localStorage.setItem(
       StorageKeys.IS_CONNECTED,
       isConnected ? 'true' : 'false'
@@ -57,7 +58,8 @@ const StorageManager = {
   },
   getIsConnected () {
     const isConnected = localStorage.getItem(StorageKeys.IS_CONNECTED)
-    return isConnected === 'true'
+    console.log('isConnected', isConnected);
+    return isConnected === 'true';
   },
   clearIdDev () {
     localStorage.removeItem(StorageKeys.ID_DEV)

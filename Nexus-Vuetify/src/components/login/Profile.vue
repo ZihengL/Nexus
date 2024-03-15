@@ -182,21 +182,21 @@ const toggleLogout = async () => {
 
 async function getUserInfos() {
   try {
-    console.log("Profile.vue props.idDevl : ", props.idDevl);
+    console.log("props.idDevl: ", props.idDevl);
     if (props.idDevl) {
-      console.log("iddevv prp: ", props.idDevl);
+      console.log("idDevl: ", props.idDevl);
       const userData = await getUser(props.idDevl);
 
-      console.log("userData : ", userData);
+      console.log("userData: ", userData);
 
       leDevs.value = userData;
-      console.log("leDevs : ", leDevs.value);
+      console.log("leDevs: ", leDevs.value);
 
       storageManager.setIsConnected(true);
        
         // console.log("dataDevs ", dataDevs);
       gameList.value = leDevs.value.games;
-      console.log("gameList ", gameList.value);
+      console.log("gameList: ", gameList.value);
     }
   } catch (error) {
     console.error("Error fetching data:", error);

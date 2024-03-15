@@ -121,8 +121,8 @@ export async function fetchData(table, action, body = null) {
   const URI = uri(table, action);
   const OPTIONS = options(body);
 
-  console.log("fetch uri", URI, "fetch options", OPTIONS);
-  console.log("fetch STRINGIFIED", JSON.stringify(body));
+  console.log("URI", URI, "BODY", body);
+  console.log("Stringified", JSON.stringify(body));
 
   const result = await fetch(URI, OPTIONS)
     .then((response) => {
