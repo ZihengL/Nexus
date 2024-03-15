@@ -214,6 +214,16 @@ $id = 10;
 
 $result = parse('users', 'login', ['email' => 'test@test', 'password' => '123']);
 
+$tokens = $result['tokens'];
+$id = $result['user']['id'];
+
+$credentials = ['id' => $id, 'access_token' => $tokens['access_token']];
+printall($result);
+
+$updateresult = parse('users', 'update', ['credentials' => $credentials, 'request_data' => ['username' => 'abcedfjkhakj']]);
+
+printall($result);
+
 
 // printall($gamestags_ctrl->getGamesWith(['users' => true, 'tags' => true]));
 
