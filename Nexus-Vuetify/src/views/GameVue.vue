@@ -49,7 +49,7 @@
           >
         </div>
         <btnComp :contenu="'Telecharger'" @toggle-btn="downloadZipFile()" />
-        <btnComp :contenu="'Faire un don'" @toggle-btn="toggleProfile" > </btnComp>
+        <btnComp :contenu="'Faire un don'" @toggle-btn="openStripePage" > </btnComp>
       </div>
     </div>
 
@@ -166,6 +166,10 @@ const toggleSignup = () => {
   if (gamessShow) {
     gamessShow.style.marginLeft = "-50%";
   }
+};
+
+const openStripePage = () => {
+console.log("Je veux faire un don")
 };
 
 async function fetchGameUrl(gameId) {
