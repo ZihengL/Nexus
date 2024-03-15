@@ -174,7 +174,7 @@ const toggleLogout = async () => {
 
 async function getUserInfos() {
   try {
-    // console.log("Profile.vue props.idDevl : ", props.idDevl);
+    console.log("Profile.vue props.idDevl : ", props.idDevl);
     if (props.idDevl) {
       console.log("iddevv prp: ", props.idDevl);
       const userData = await getUser(props.idDevl);
@@ -198,13 +198,13 @@ async function getUserInfos() {
 onMounted(async () => {
   try {
     await getUserInfos();
-    loginTokens_access_token = storageManager.getAccessToken();
-    // console.log("loginTokens_access_token  : ", loginTokens_access_token);
-    // localStorage.getItem("accessToken");
-    loginTokens_refresh_token = storageManager.getRefreshToken();
+    // loginTokens_access_token = storageManager.getAccessToken();
+    // // console.log("loginTokens_access_token  : ", loginTokens_access_token);
+    // // localStorage.getItem("accessToken");
+    // loginTokens_refresh_token = storageManager.getRefreshToken();
     // console.log("loginTokens_refresh_token : ", loginTokens_refresh_token);
     // localStorage.getItem("refreshToken");
-    urlPic = '/src/assets/Avatar/' + leDevs.value.picture;
+    //urlPic = '/src/assets/Avatar/' + leDevs.value.picture;
   } catch (error) {
     console.error("Error fetching data:", error);
   } finally {

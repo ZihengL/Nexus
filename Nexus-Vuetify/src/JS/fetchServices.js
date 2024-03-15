@@ -197,13 +197,7 @@ export const getUser = async (developerID) => {
     games: ["id", "title", "releaseDate", "ratingAverage"],
   };
   let data = await getOne("users", "id", developerID, null, joined_tables);
-
-  if (data) {
-    console.log("GETUSER", data);
-    return fetchGameImagesByDev(data);
-  }
-
-  return null;
+  return fetchGameImagesByDev(data);
 };
 
 export const getUsername = async (userID) => {
@@ -263,8 +257,8 @@ export const getGameDetailsWithDeveloperNameNEW = async (gameID) => {
     tags: ["id", "name"],
   };
 
-  let data = await getOne("games", "id", gameID, null, joined_tables);
-  console.log("tags brut : ", data);
+  let data = await getOne('games', 'id', gameID, null, joined_tables);
+  console.log('tags brut : ', data);
   return fetchOneGameImages(data);
 };
 
@@ -302,14 +296,7 @@ export const getGamesForCarousel = async () => {
   };
   let paging = { limit: 4, offset: 0 };
 
-  let data = await getAllMatching(
-    "games",
-    filters,
-    included_columns,
-    sorting,
-    joined_tables,
-    paging
-  );
+  let data = await getAllMatching('games', filters, included_columns, sorting, joined_tables, paging);
   console.log("CAROUSEL", data);
   return fetchGameImages(data);
 };
