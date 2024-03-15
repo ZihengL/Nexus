@@ -3,7 +3,7 @@
   <div v-if="isLoading" class="loading-state">
     Loading...
   </div>
-  <div v-else-if="leDevs && gameList && toggleLogin && toggleSignup" class="allP">
+  <div v-else-if="leDevs && toggleLogin && toggleSignup" class="allP">
     <div
       class="containerProfile"
       :class="isHimself ? 'container1' : 'container2'"
