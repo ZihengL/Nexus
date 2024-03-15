@@ -1,10 +1,10 @@
 <template>
-  <div v-if="user != null" :key="user.value" id="fullProfile">
+  <div v-if="user" :key="user.value" id="fullProfile">
     <form action="#" class="glass">
       <!-- <v-avatar size="10rem"> -->
-      <div class="profile-and-gallery">
+      <div class="round">
         <img
-          :src="user.picture || defaultProfilePic"
+          :src="getImage(user.picture) || defaultProfilePic"
           alt="Profile Picture"
           class="img_userProfilePic"
         />
@@ -12,20 +12,19 @@
         <!-- <v-btn icon @click="galleryDialog = true">
           <v-icon>mdi-image-multiple</v-icon>
         </v-btn> -->
-        <!-- <btnComp
-            :propClass="'changerProfileBtn'"
+         <btnComp
             :contenu="'Changer Profile'"
             @toggle-btn="galleryDialog = true"
-          /> -->
-        <button class="changerProfileBtn" @click="galleryDialog = true">
+          /> 
+        <!--<button class="changerProfileBtn" @click="galleryDialog = true">
           Changer Profile
-        </button>
+        </button>-->
       </div>
       <!-- </v-avatar> -->
       <!-- ... Signup form content ... -->
-      <div class="field-container">
-        <span class="title">Prénom</span>
-        <div class="input-group">
+      <!--<<div class="field-container">
+        <span class="title">Prénom</span> -->
+        <div class="input-group field">
           <input
             class="infos"
             :key="`name-${user.name}`"
@@ -41,11 +40,11 @@
             @toggle-btn="() => deleteInfo('name')"
           />
         </div>
-      </div>
+      <!--<</div>-->
 
-      <div class="field-container">
-        <span class="title">Nom</span>
-        <div class="input-group">
+      <!--<div class="field-container">
+        <span class="title">Nom</span> -->
+        <div class="input-group field">
           <input
             class="infos"
             :key="`lastName-${user.lastName}`"
@@ -60,11 +59,11 @@
             @toggle-btn="() => deleteInfo('lastName')"
           />
         </div>
-      </div>
+      <!--</div>-->
 
-      <div class="field-container">
-        <span class="title">Téléphone</span>
-        <div class="input-group">
+      <!--<div class="field-container">
+        <span class="title">Téléphone</span> -->
+        <div class="input-group field">
           <input
             class="infos"
             :key="`phoneNumber-${user.phoneNumber}`"
@@ -79,11 +78,11 @@
             @toggle-btn="() => deleteInfo('phoneNumber')"
           />
         </div>
-      </div>
+      <!--</div>-->
 
-      <div class="field-container">
-        <span class="title">Nom Utilisateur</span>
-        <div class="input-group">
+      <!--<div class="field-container">
+        <span class="title">Nom Utilisateur</span> -->
+        <div class="input-group  field">
           <input
             class="infos"
             :key="`username-${user.username}`"
@@ -93,13 +92,13 @@
             v-model="state.username"
           />
         </div>
-      </div>
+      <!--</div>-->
 
-      <div class="field-container">
-        <span class="title">Description</span>
-        <div class="input-group">
+      <!--<div class="field-container">
+        <span class="title">Description</span> -->
+        <div class="input-group  field area">
           <textarea
-            class="infos"
+            class="infos "
             :key="`description-${user.description}`"
             :class="{ notEmptyInput: user.description }"
             :placeholder="user.description || 'Description...'"
@@ -111,11 +110,11 @@
             @toggle-btn="() => deleteInfo('description')"
           />
         </div>
-      </div>
+      <!--</div>-->
 
-      <div class="field-container">
-        <span class="title">Mot de Passe</span>
-        <div class="input-group">
+      <!--<div class="field-container">
+        <span class="title">Mot de Passe</span> -->
+        <div class="input-group  field">
           <input
             class="infos"
             type="password"
@@ -123,11 +122,11 @@
             v-model="state.firstPassword"
           />
         </div>
-      </div>
+      <!--</div>-->
 
-      <div class="field-container">
-        <span class="title">Confirmer Mot De Passe</span>
-        <div class="input-group">
+      <!--<div class="field-container">
+        <<span class="title">Confirmer Mot De Passe</span> -->
+        <div class="input-group  field">
           <input
             class="infos"
             type="password"
@@ -136,26 +135,33 @@
             required
           />
         </div>
-      </div>
+      <!--</div>-->
 
       <btnComp :contenu="'Modifier'" @toggle-btn="updateUserInfos" />
     </form>
+
+    <div v-if="galleryDialog"  class="roundBorderSmall glass4 dialog">
+      <v-icon @click="galleryDialog = false" class="close">mdi-close</v-icon>
+      <div class="content">
+        <label
+          v-for="img, index in AllImages"
+          :key="index"
+          id="pic"
+          class="roundBorderSmall one glass2  "
+        >
+          <input
+            type="radio"
+            name="pic"
+            :value="img"
+          />
+          <img :src="img" alt="">
+          <p></p>
+        </label>
+      </div>
+    </div>
   </div>
 
-  <v-dialog v-model="galleryDialog" persistent max-width="600px">
-    <v-card>
-      <v-card-title>
-        Gallery
-        <v-spacer></v-spacer>
-        <v-btn icon @click="galleryDialog = false">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </v-card-title>
-      <v-card-text>
-        <!-- Your gallery content goes here. Use v-img inside a loop, for example -->
-      </v-card-text>
-    </v-card>
-  </v-dialog>
+
 </template>
 
 <script setup>
@@ -185,7 +191,7 @@ const state = reactive({
   MAX_LASTNAME_LENGTH: 5,
   MAX_PASSWORD_LENGTH: 5,
 });
-
+let AllImages = ref([]);
 const updatephonenumber = (event) => {
   let input = event.target.value.replace(/\D/g, "");
   let formattedNumber = "";
@@ -206,7 +212,7 @@ const updatephonenumber = (event) => {
 
 const getUserInfos = async () => {
   try {
-    const dataUser = await getOne("users", "id", storageManager.getIdDev());
+    const dataUser = await getOne("users", "id", props.IdDev);
 
     if (dataUser) {
       user.value = dataUser;
@@ -217,6 +223,27 @@ const getUserInfos = async () => {
     console.error("Error fetching user data:", error);
   }
 };
+const getImage = (image) =>{
+    console.log(' get pic,', image)
+    let urlPic = '/src/assets/Avatar/' + image;
+    console.log('pic,', urlPic)
+    return urlPic
+  }
+
+const getAllImages = async (tab) => {
+  const folderPath = '/src/assets/Avatar/';
+  //const imagePaths = [];
+  for (let i = 1; i <= 7; i++) {
+    let path = folderPath + 'Avatar_' + i + '.png';
+    console.log('path ', path);
+    tab.push(`${folderPath}Avatar_${i}.png`);
+  }
+
+    //console.log('Nombre de fichiers dans le dossier :', nb);
+  console.log('Chemins de toutes les images :', tab);
+  return tab
+};
+
 
 const updateUserInfos = async () => {
   const originalUser = user.value;
@@ -440,6 +467,8 @@ async function validateDataBeforeSending() {
 onMounted(async () => {
   try {
     await getUserInfos();
+    getAllImages(AllImages.value);
+    console.log('length ', AllImages.value.length)
   } catch (error) {
     console.error("Error fetching data:", error);
   }
@@ -458,29 +487,86 @@ onMounted(async () => {
 </script>
 
 <style lang="scss">
-
-.img_userProfilePic{
-  margin: 5%;
-}
-
-img {
-  width: 25%;
-  margin: auto;
-  // padding-top: 3%;
-  // padding-bottom: 3%;
-}
-
-.profile-and-gallery {
+.round {
+  //border-radius: 50%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  // justify-content: space-between;
-  margin-bottom: 10%;
-}
+  justify-content: space-between;
+  gap: 30%;
+  img {
+  border-radius: 50%;
+  width: 25%;
+  margin: 0%;
+  }
+  // .changerProfileBtn {
+  //   flex: 3;
+  // }
+} 
 
+.dialog {
+    position: absolute;
+    top: 10%;
+    left: 30%;
+    width: 40%;
+    margin: auto;
+  }
+  
+  .close {
+    float: right;
+  }
+  
+  .content {
+    margin: 5%;
+    display: grid;
+    grid-template-columns: auto auto auto;
+    gap: 2%;
+    padding: 2% 2% 5% 2%;
+  }
+  
+  .one {
+    padding: 2% 2% 5% 2%;
+    position: relative; /* Ajout de cette ligne */
+  }
+  
+  .one img {
+    width: 100%;
+  }
+  
+  .one p {
+    position: absolute; /* Ajout de cette ligne */
+    top: 0; /* Ajout de cette ligne */
+    left: 0; /* Ajout de cette ligne */
+    width: 100%; /* Ajout de cette ligne */
+    height: 100%; /* Ajout de cette ligne */
+
+    /* From https://css.glass */
+    background: rgba(255, 255, 255, 0.62);
+    //border-radius: 0px;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    border: 1px solid rgba(255, 255, 255, 0); /* Ajout de cette ligne */
+    display: none; /* Ajout de cette ligne */
+  }
+  
+  .one input {
+    display: none;
+  }
+  .one:hover p, .one input:checked ~ p {
+    display: block; /* Ajout de cette ligne */
+  }
+  
+.area {
+  height: auto;
+  margin: 5% auto;
+
+  textArea {
+    height: 8rem;
+  }
+}
 #fullProfile {
   width: 100%;
-  margin: 0 auto 3%;
+  margin: 0 auto 3% auto;
   padding: 5%;
   // margin-top: 10%;
   // margin-bottom: 10%;
@@ -491,7 +577,9 @@ img {
     padding: 2%;
     margin: auto;
     .field-container {
-      margin: 2%;
+      margin: 0%;
+      display: inline-block;
+      border: 2px solid red;
     }
 
     .infos {
@@ -514,7 +602,7 @@ img {
     input,
     textarea {
       flex-grow: 1; // Allow input and textarea to fill available space
-      margin-right: 2%;
+      margin-right: 0%;
       background-color: rgb(64, 86, 119);
       font-size: 1.5rem;
     }
@@ -536,6 +624,7 @@ img {
   width: 50%;
   position: relative;
   overflow: hidden;
+  margin-left: 2%;
 
   .btn-layer {
     height: 100%;
@@ -580,22 +669,22 @@ img {
   }
 }
 
-.changerProfileBtn {
-  height: 60%;
-  width: 50%;
-  // position: relative;
-  overflow: hidden;
-  // padding: 5%;
-  // display: flex;
-  align-items: center;
-  border-radius: 20px;
-  background: -webkit-linear-gradient(
-      right,
-      var(--purple),
-      var(--dark-blue),
-      var(--purple),
-      var(--dark-blue)
-    );
-    color: #ffffff;
-}
+// .changerProfileBtn {
+//   height: 60%;
+//   width: 50%;
+//   // position: relative;
+//   overflow: hidden;
+//   // padding: 5%;
+//   // display: flex;
+//   align-items: center;
+//   border-radius: 20px;
+//   background: -webkit-linear-gradient(
+//       right,
+//       var(--purple),
+//       var(--dark-blue),
+//       var(--purple),
+//       var(--dark-blue)
+//     );
+//     color: #ffffff;
+// }
 </style>

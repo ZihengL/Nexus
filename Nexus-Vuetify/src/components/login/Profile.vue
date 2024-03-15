@@ -3,7 +3,7 @@
   <div v-if="isLoading" class="loading-state">
     Loading...
   </div>
-  <div v-else-if="leDevs && gameList && toggleLogin && toggleSignup" class="allP">
+  <div v-else-if="leDevs && toggleLogin && toggleSignup" class="allP">
     <div
       class="containerProfile"
       :class="isHimself ? 'container1' : 'container2'"
@@ -37,34 +37,39 @@
         </div>
         <div class="wrapper glass roundBorderSmall">
           <div class="form-container">
-            <div v-if="isHimself" class="slide-controls roundBorderSmall">
-              <input type="radio" name="slide" id="login" v-model="isLogin" value="true" checked />
-              <input type="radio" name="slide" id="signup" v-model="isLogin" value="false" />
-              <label for="login" class="slide login" @click="toggleLogin()">Développer</label>
-              <label for="signup" class="slide signup" @click="toggleSignup()">Télécharger</label>
-              <div class="slider-tab"></div>
-            </div>
-
-            <div v-if="isHimself" class="form-inner">
-              <div class="login log gamesss">
-                <div
-                  v-for="(item, index) in gameList"
-                  :key="index"
-                  class="gamess">
-                  <liste-de-jeu
-                    :himself="props.isHimself"
-                    :idJeu="item.id"
-                    :buy="true"
-                    class="game gamess"
-                  />
+            <div v-if="isHimself && gameList.length > 0" >
+              <div class="slide-controls roundBorderSmall">
+                <input type="radio" name="slide" id="login" v-model="isLogin" value="true" checked />
+                <input type="radio" name="slide" id="signup" v-model="isLogin" value="false" />
+                <label for="login" class="slide login" @click="toggleLogin()">Développer</label>
+                <label for="signup" class="slide signup" @click="toggleSignup()">Télécharger</label>
+                <div class="slider-tab"></div>
+              </div>
+  
+              <div class="form-inner">
+                <div class="login log gamesss">
+                  <div
+                    v-for="(item, index) in gameList"
+                    :key="index"
+                    class="gamess">
+                    <liste-de-jeu
+                      :himself="props.isHimself"
+                      :idJeu="item.id"
+                      :buy="true"
+                      class="game gamess"
+                    />
+                  </div>
+                </div>
+                <div class=" sign glass roundBorderSmall">
+                  <p>En developpement ...</p>
                 </div>
               </div>
-
-              <div class=" sign glass roundBorderSmall">
-                <p>Comming soon ...</p>
+            </div>
+            <div v-else-if="isHimself && gameList.length <= 0"  class="null glass roundBorderSmall">
+              <div>
+                <p>Aucun jeu publier</p>
               </div>
             </div>
-
             <div v-else class="signup">
               <div
                 v-for="(item, index) in gameList"

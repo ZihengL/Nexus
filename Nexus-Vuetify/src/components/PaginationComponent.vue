@@ -1,7 +1,7 @@
 <template>
   <div v-if="ArrayPag.length > 0" class="pagination">
     <div>
-      <a class="glow glass2 roundBorderSmall" href="#" @click="previousPage()">
+      <a :class="isFirst ? 'first' : 'regular glow glass2'" class="roundBorderSmall" href="#" @click="previousPage()">
         < </a>
     </div>
     <div v-for="pageNb, index in ArrayPag" :key="index" class="liste" id="group1">
@@ -9,15 +9,16 @@
       <label class="glow roundBorderSmall" :for="pageNb">{{ pageNb + 1 }}</label>
     </div>
     <div>
-      <a class="glow glass2 roundBorderSmall" href="#" @click="nextPage()">
+      <a :class="isLast ? 'first' : 'regular glow glass2'"  class="roundBorderSmall"  href="#" @click="nextPage()">
         >
       </a>
     </div>
   </div>
 </template>
+
 <script setup>
   import PaginationManager from "@/JS/pagination";
-  import { defineProps, defineEmits } from "vue";
+  import { defineProps, defineEmits, ref } from "vue";
 
   const props = defineProps({
     nbPageProps: {
@@ -36,6 +37,9 @@
   let nbPageCheck = 0;
   let ArrayPag = [];
 
+  let isFirst = ref(true);
+  let isLast = ref(false);
+
   const giveNb = (id) => {
     leNbPage = id;
     nbPageCheck = leNbPage - 1;
@@ -45,6 +49,16 @@
       });
     //console.log('le nb p : ', nbPageCheck);
     PaginationManager.setStorePage(leNbPage);
+    if (leNbPage === 1) {
+      isFirst.value = true;
+      isLast.value = false;
+    } else if (leNbPage === ArrayPag.length) {
+      isFirst.value = false;
+      isLast.value = true;
+    } else {
+      isFirst.value = false;
+      isLast.value = false;
+    }
     emit("nbPage")
   }
 
@@ -77,10 +91,11 @@
   margin-top: 10%;
   padding-bottom: 5%;
 
-  div {
-    // padding-top: 10%;
-    // padding-bottom: 5%;
-    // padding: 0%;
+  .first {
+    color: rgba(255, 255, 255, 0.223);
+  }
+  .first:hover {
+    color: rgba(255, 255, 255, 0.223);
   }
 
   .liste {
