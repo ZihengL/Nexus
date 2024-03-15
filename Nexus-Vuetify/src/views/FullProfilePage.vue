@@ -145,7 +145,9 @@
         <label
           v-for="(img, index) in AllImages"
           :key="index"
-          class="roundBorderSmall one glass2"
+          id="pic"
+          @click="sendPic(img)"
+          class="roundBorderSmall one glass2  "
         >
           <!-- Hidden radio input, if needed for form submissions -->
           <input
@@ -188,6 +190,7 @@ const state = reactive({
   email: "",
   username: "",
   phoneNumber: "",
+  profile: "",
   firstPassword: "",
   secondPassword: "",
   description: "",
@@ -217,6 +220,13 @@ const updatephonenumber = (event) => {
   state.phoneNumber = formattedNumber;
 };
 
+const sendPic = (imgPath) => {
+  // Supprime "/src/assets/Avatar/" du chemin de l'image
+  const trimmedPath = imgPath.replace('/src/assets/Avatar/', '');
+  state.profile = trimmedPath;
+  // Retourne le chemin de l'image modifié
+  //return trimmedPath;
+}
 const getUserInfos = async () => {
   try {
     const dataUser = await getOne("users", "id", props.IdDev);
