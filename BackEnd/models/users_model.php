@@ -66,7 +66,7 @@ class UsersModel extends BaseModel
             if (isset($data['password'])) {
                 $new_password = $data['password'];
 
-                if(!empty($new_password) > 0)
+                if (!empty($new_password))
                     $data['password'] = password_hash($new_password, PASSWORD_DEFAULT);
             }
 
