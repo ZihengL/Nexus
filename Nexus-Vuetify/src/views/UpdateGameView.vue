@@ -6,14 +6,25 @@
     <div v-if="state.errorMessage" class="error-message">
       {{ state.errorMessage }}
     </div>
-    <div>
-      <label for="title">Titre du Jeu</label>
+    <!-- <div>
+      <label for="title">Titre du Jeu</label> 
       <input
+        class="title_readonly"
         type="text"
         id="title"
-        v-model="state.gameObject.title"
-        :placeholder="  state.gameObject.title || 'Entrer le titre du jeu...'"
+        :value="
+          'Titre du Jeu : ' +
+          (state.gameObject.title || 'Entrer le titre du jeu...')
+        "
+        readonly
       />
+    </div> -->
+
+    <div>
+      <label class="title_readonly" id="title">
+        Titre du Jeu :
+        {{ state.gameObject.title || "Entrer le titre du jeu..." }}
+      </label>
     </div>
 
     <div class="tags-creator-container">
@@ -40,7 +51,7 @@
               v-for="tag in state.tagsFromDatabase"
               :key="tag.id"
               class="tag_element_DB"
-              @click="addClickedTagToTagsArray(tag.name)"
+              @click="addClickedTagToTagsArray(tag)"
             >
               {{ tag.name }}
             </div>
@@ -55,7 +66,7 @@
               :key="`user-${index}`"
               class="tag_element"
             >
-              {{ tag }}
+              {{ tag.name }}
               <btnComp
                 :propClass="'removeBtn'"
                 :contenu="'X'"
@@ -71,7 +82,10 @@
       <textarea
         class="description"
         name="description"
-        :placeholder=" state.gameObject.description  || 'Mon jeu est super cool ;) parce que...'"
+        :placeholder="
+          state.gameObject.description ||
+          'Mon jeu est super cool ;) parce que...'
+        "
         v-on:input="validateDescriptionLength"
         v-model="state.gameObject.description"
       ></textarea>
@@ -84,13 +98,13 @@
       ></btnComp>
       <div v-if="state.gameFile">
         <p>Selected Game File: {{ state.gameFile.name }}</p>
-        <p>File Size: {{ fileSize }} KB</p>
-        <p>File Type: {{ state.gameFile.type }}</p>
+        <!-- <p>File Size: {{ fileSize }} KB</p> -->
+        <p>File Type: ZIP</p>
       </div>
     </div>
     <div>
       <btnComp
-        :contenu="'Téléverser des images (Max ' + state.MAX_IMGS + ')'"
+        :contenu="'Téléverser des images (Max ' + state.MAX_IMG_LIST + ')'"
         @toggle-btn="openImageBrowser"
       ></btnComp>
       <div class="imgList" v-if="state.imageFiles.length">
@@ -105,6 +119,29 @@
             :propClass="'removeBtn'"
             :contenu="'X'"
             @toggle-btn="() => removeItem(index, state.imageFiles)"
+          ></btnComp>
+        </div>
+      </div>
+    </div>
+    <div>
+      <btnComp
+        :contenu="
+          'Téléverser une image d\'icone (Max ' + state.MAX_IMG_STORE + ')'
+        "
+        @toggle-btn="openImageBrowser_forStore"
+      ></btnComp>
+      <div class="imgList" v-if="state.imageStoreObject.length">
+        <div
+          class="img_element"
+          v-for="(file, index) in state.imageStoreObject"
+          :key="index"
+        >
+          {{ file.name }}
+          <img :src="file.url" :alt="file.name" />
+          <btnComp
+            :propClass="'removeBtn'"
+            :contenu="'X'"
+            @toggle-btn="() => removeItem(index, state.imageStoreObject)"
           ></btnComp>
         </div>
       </div>
@@ -140,21 +177,39 @@
 </template>
 
 <script setup>
+import JSZip from "jszip";
 import btnComp from "../components/btnComponent.vue";
+import { useRoute } from "vue-router";
 import storageManager from "../JS/localStorageManager";
-import { useRoute } from 'vue-router';
-import { reactive, defineProps, computed, onMounted } from "vue";
+import { reactive, defineProps, computed, onMounted, ref } from "vue";
 import {
   create,
-  getAllMatching,
+  updateData,
   deleteData,
   getAll,
-  getOne
+  getOne,
 } from "../JS/fetchServices.js";
-const route = useRoute();
-// import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-// import { getStorage, ref as firebaseRef, getDownloadURL, uploadBytes} from "firebase/storage";
 
+// import { getStorage, ref as firebaseRef, uploadBytes } from "firebase/storage";
+import {
+  getStorage,
+  ref as firebaseRef,
+  listAll,
+  uploadBytes,
+  getDownloadURL,
+} from "firebase/storage";
+const storage = getStorage();
+const route = useRoute();
+
+
+
+const validImageTypes = ["image/jpeg", "image/png"];
+const validFileTypes = [
+  "application/x-msdownload", // MIME type for .exe files
+  "application/java-archive", // MIME type for .jar files
+];
+const filesAndFolders = ref([]);
+const originalCarrouselImageNames = ref([]);
 
 const props = defineProps({
   pageTitle: {
@@ -172,20 +227,25 @@ const props = defineProps({
 });
 
 const state = reactive({
-  gameId:"",
-  gameObject:{},
+  gameId: "",
+  gameObject: {},
   pageTitle: props.pageTitle,
+  gameTitle: "",
   tags: "",
   tagsArray: [],
+  tagsArray_original: [],
   gameFile: null,
   gameFilePath: "",
+  imageStoreObject: [],
   imageFiles: [],
   videoFiles: [],
-  MIN_IMG: 0,
-  MAX_IMGS: 10,
+  MIN_IMG_LIST: 4,
+  MIN_IMG_STORE: 1,
+  MAX_IMG_LIST: 4,
+  MAX_IMG_STORE: 1,
   MAX_VIDS: 2,
   MIN_TAG: 1,
-  MIN_DESC_LENGTH: 1,
+  MIN_DESC_LENGTH: 10,
   MAX_DESC_LENGTH: 250,
   errorMessage: "",
   creation_date: new Date().toISOString().replace("T", " ").substring(0, 16),
@@ -193,38 +253,48 @@ const state = reactive({
   tagsFromDatabase: [],
 });
 
-function addClickedTagToTagsArray(tagName) {
-  if (!state.tagsArray.includes(tagName)) {
-    state.tagsArray.push(tagName);
-  } else {
-    console.log(`${tagName} already added.`);
-  }
-}
+/*******************************************************************/
+/****************************** LIFE CYCLE ***********************/
+/*******************************************************************/
 
-const getTagsFrom_DB = async () => {
+onMounted(async () => {
   try {
-    let data = await getAll("tags");
-    state.tagsFromDatabase = data;
-    console.log("Tags from DB:", data);
+    await setDefaultValues();
   } catch (error) {
-    console.error("Error fetching tags from database:", error);
+    console.error("Error setting default values:", error);
   }
+});
+
+const removeItem = (indexToRemove, fileList) => {
+  URL.revokeObjectURL(fileList[indexToRemove].url);
+  fileList.splice(indexToRemove, 1);
 };
 
-const fileSize = computed(() => {
-  return state.gameFile ? (state.gameFile.size / 1024).toFixed(2) : "0.00";
-});
+async function setDefaultValues() {
+  const route = useRoute();
+  const gameToUpdateId = route.params.gameToUpdateId;
+  state.gameId = gameToUpdateId;
+  console.log("state.gameId : ", state.gameId);
 
-const charCountText = computed(() => {
-  let currentLength = state.description.length;
-  return `${currentLength}/${state.MAX_DESC_LENGTH} caractêres`;
-});
+  let data = await getOne("games", "id", gameToUpdateId);
+  if (data) {
+    state.gameObject = data[0];
+    console.log("state.gameObject : ", state.gameObject);
+    state.tagsArray = state.gameObject.tags;
+    state.tagsArray_original.push(JSON.parse(JSON.stringify(data)));
 
-function validateDescriptionLength() {
-  if (state.description.length > state.MAX_DESC_LENGTH) {
-    state.description = state.description.substring(0, state.MAX_DESC_LENGTH);
+    // state.tagsArray = state.gameObject.tags.map((tag) => tag.name);
+    console.log("Updated tagsArray with names: ", state.tagsArray);
+    await getTagsFrom_DB();
+
+    await fetchFiles(state.gameObject.id);
+    categorizeFiles(filesAndFolders.value);
   }
 }
+
+/*******************************************************************/
+/****************************** OPEN BROWSER ***********************/
+/*******************************************************************/
 
 const openFileBrowser = () => {
   console.log("selected game file");
@@ -265,6 +335,7 @@ const openVideoBrowser = () => {
     }
 
     const newVideoFiles = newFiles.slice(0, availableSlots).map((file) => ({
+      file:file,
       name: file.name,
       size: file.size,
       type: file.type,
@@ -278,15 +349,66 @@ const openVideoBrowser = () => {
   fileInput.click();
 };
 
+
 const openImageBrowser = () => {
-  console.log("hi");
   const fileInput = document.createElement("input");
   fileInput.type = "file";
   fileInput.multiple = true;
   fileInput.accept = "image/*";
   fileInput.onchange = (e) => {
     const newFiles = Array.from(e.target.files);
-    const availableSlots = state.MAX_IMGS - state.imageFiles.length;
+    const availableSlots = state.MAX_IMG_LIST - state.imageFiles.length;
+
+    if (newFiles.length > availableSlots) {
+      alert(`You can only upload a maximum of ${availableSlots} more image(s).`);
+      return;
+    }
+
+    const existingNames = state.imageFiles.map(image => image.name);
+    const newImageFiles = newFiles.slice(0, availableSlots).map((file, index) => {
+      if (!validImageTypes.includes(file.type)) {
+        alert("Invalid file type.");
+        return null;
+      }
+      // Generate a new unique name for the image
+      let newName;
+      for (let i = 1; i <= 4; i++) {
+        const potentialName = `${state.gameId}_${i}.png`; // Assuming .png for simplicity, adjust as needed
+        if (!existingNames.includes(potentialName)) {
+          newName = potentialName;
+          break;
+        }
+      }
+      // If newName remains undefined, it means all slots are taken. This is a fallback case.
+      if (!newName) {
+        console.error("Could not assign a new name, all slots are taken.");
+        return null;
+      }
+
+      return {
+        ...file,
+        file,
+        url: URL.createObjectURL(file),
+        name: newName, // Use the new unique name
+        type: file.type,
+      };
+    }).filter(file => file !== null);
+
+    state.imageFiles = [...state.imageFiles, ...newImageFiles];
+    console.log("New state.imageFiles after adding: ", state.imageFiles);
+  };
+  fileInput.click();
+};
+
+
+const openImageBrowser_forStore = () => {
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.multiple = false;
+  fileInput.accept = "image/*";
+  fileInput.onchange = (e) => {
+    const newFiles = Array.from(e.target.files);
+    const availableSlots = state.MAX_IMG_STORE - state.imageStoreObject.length;
 
     if (newFiles.length > availableSlots) {
       alert(
@@ -294,129 +416,270 @@ const openImageBrowser = () => {
       );
       return;
     }
-    const newImageFiles = newFiles.slice(0, availableSlots).map((file) => ({
-      ...file,
-      url: URL.createObjectURL(file),
-    }));
+    const newImage_forStore = newFiles
+      .slice(0, availableSlots)
+      .map((file) => {
+        if (!validImageTypes.includes(file.type)) {
+          alert("Invalid file type.");
+          return null;
+        }
+        return {
+          ...file,
+          file,
+          url: URL.createObjectURL(file),
+          name: `${state.gameId}_Store.png`,
+          type: file.type,
+        };
+      })
+      .filter((file) => file !== null);
+    console.log("newImageFiles : ", newImage_forStore);
 
-    state.imageFiles = [...state.imageFiles, ...newImageFiles];
+    state.imageStoreObject = [...state.imageStoreObject, ...newImage_forStore];
   };
   fileInput.click();
 };
 
-const removeItem = (indexToRemove, fileList) => {
-  URL.revokeObjectURL(fileList[indexToRemove].url);
-  fileList.splice(indexToRemove, 1);
+/*******************************************************************/
+/***************************** FIREBASE *****************************/
+/*******************************************************************/
+
+async function fetchFilesAndFolders(folderPath) {
+  const folderRef = firebaseRef(storage, folderPath);
+  try {
+    const response = await listAll(folderRef);
+    // Fetch details for individual files
+    const filesDetails = await Promise.all(
+      response.items.map(async (itemRef) => {
+        const url = await getDownloadURL(itemRef);
+        return {
+          type: "file",
+          item: itemRef,
+          name: itemRef.name,
+          url: url,
+        };
+      })
+    );
+
+    // Recursively fetch contents for each subfolder
+    const foldersDetails = await Promise.all(
+      response.prefixes.map(async (subFolderRef) => {
+        const subFolderPath = subFolderRef.fullPath;
+        return {
+          type: "folder",
+          name: subFolderRef.name,
+          path: subFolderPath,
+          contents: await fetchFilesAndFolders(subFolderPath), // Recursive call
+        };
+      })
+    );
+
+    return [...filesDetails, ...foldersDetails];
+  } catch (error) {
+    console.error("Error fetching files and folders:", error);
+    return []; // Return an empty array in case of error
+  }
+}
+
+// Example of how to use fetchFilesAndFolders within a Vue component
+const fetchFiles = async (gameID) => {
+  let folderPath = `Games/${gameID}`;
+  filesAndFolders.value = await fetchFilesAndFolders(folderPath);
+  console.log("filesAndFolders.value: ", filesAndFolders.value);
+
 };
 
-const formatData = () => {
-  if (!state.gameTitle) {
-    state.errorMessage = "Game title is required.";
-    return false;
-  } else if (state.tagsArray.length < state.MIN_TAG) {
-    state.errorMessage = `At least ${state.MIN_TAG} tags are required.`;
-    return false;
-  } else if (state.imageFiles.length < state.MIN_IMG) {
-    state.errorMessage = `At least ${state.MIN_IMG} images are required.`;
-    return false;
-  } else if (state.description.trim().length < state.MIN_DESC_LENGTH) {
-    state.errorMessage = "Description is required.";
-    return false;
-  } else {
-    state.errorMessage = "";
-    console.log("Submitting:", {
-      gameTitle: state.gameTitle,
-      tags: state.tagsArray,
-      description: state.description,
-      gameFilePath: state.gameFilePath,
-      imageFiles: state.imageFiles,
-    });
-    return true;
+
+const uploadImageFiles = async (gameId) => {
+  for (const image of state.imageFiles) {
+    // Check if the image URL does not start with the Firebase Storage URL
+    if (!image.url.startsWith("https://firebasestorage.googleapis.com/")) {
+      const fileName = image.name; 
+      const fileRef = firebaseRef(storage, `Games/${gameId}/media/${fileName}`);
+      const metadata = { contentType: image.type };
+
+      try {
+        await uploadBytes(fileRef, image.file, metadata); 
+        console.log(`${fileName} uploaded successfully.`);
+      } catch (error) {
+        console.error(`Failed to upload ${fileName}:`, error);
+      }
+    }
   }
 };
 
-// // Method to upload a file
-// const uploadZipFile = async () => {
-//   // Example file to upload, you might want to replace this with actual file selection logic
-//   const file = new Blob(["This is a test ZIP file content"], { type: 'application/zip' });
-//   const fileName = `${props.idGame}/${gameInfos.leGame.title}.zip`; // Example file name, replace as needed
-//   console.log(fileName);
-//   const fileRef = firebaseRef(storage, `Games/${fileName}`);
 
-//   try {
-//     await uploadBytes(fileRef, file);
-//     console.log(`${fileName} uploaded successfully`);
-//   } catch (error) {
-//     console.error("Failed to upload file:", error);
-//   }
-// };
 
-function updateTagsArray() {
-  let newTags = state.tags
-    .split(",")
-    .map(tag => tag.trim())
-    .filter(Boolean); 
+const upload_storeImage = async (gameId) => {
+  for (const image of state.imageStoreObject) {
+    // Check if the image URL does not start with the Firebase Storage URL
+    if (!image.url.startsWith("https://firebasestorage.googleapis.com/")) {
+      const fileName = `${gameId}_Store.png`; // Use gameId for the store image for consistency
+      const fileRef = firebaseRef(storage, `Games/${gameId}/media/${fileName}`);
+      const metadata = { contentType: image.type };
 
-  newTags.forEach(newTag => {
-    if (!state.tagsArray.includes(newTag)) {
-      state.tagsArray.push(newTag);
-    } else {
-      console.log(`${newTag} already added.`);
+      try {
+        const uploadResult = await uploadBytes(fileRef, image.file, metadata);
+        console.log(`${fileName} uploaded successfully.`);
+
+     
+        const newFileName = `${gameId}_0.png`;
+        const newFileRef = firebaseRef(storage, `Games/${gameId}/media/${newFileName}`);
+
+        await uploadBytes(newFileRef, image.file, metadata);
+        console.log(`${newFileName} duplicate created successfully.`);
+      } catch (error) {
+        console.error(`Failed to upload ${fileName}:`, error);
+      }
+    }
+  }
+};
+
+const zipFile = async (file, fileName) => {
+  const zip = new JSZip();
+  // Add a file to the zip. The first argument is the filename inside the zip
+  // The second argument is the content of the file
+  zip.file(fileName, file);
+
+  try {
+    const content = await zip.generateAsync({ type: "blob" });
+
+    return content;
+  } catch (error) {
+    console.error("Failed to zip the file:", error);
+    throw error;
+  }
+};
+
+const uploadZipFile = async (gameId) => {
+  if (!state.gameFile || !state.gameFile.file || !state.gameTitle) {
+    console.error("No file selected for upload");
+    return;
+  }
+
+  const zippedFileName = `${state.gameTitle}.zip`;
+
+  const fileRef = firebaseRef(storage, `Games/${gameId}/${zippedFileName}`);
+
+  try {
+    const zippedFileBlob = await zipFile(state.gameFile.file, zippedFileName);
+
+    const metadata = {
+      contentType: "application/zip",
+    };
+
+    await uploadBytes(fileRef, zippedFileBlob, metadata);
+    console.log(`${zippedFileBlob} uploaded successfully`);
+  } catch (error) {
+    console.error("Failed to upload zipped file:", error);
+  }
+};
+
+const categorizeFiles = async (fetchedStructure) => {
+  state.imageFiles = [];
+  state.imageStoreObject = [];
+  state.gameFile = null;
+
+  const zipFile = fetchedStructure.find((file) => file.name.endsWith(".zip"));
+  if (zipFile) {
+    console.log("ZIP file found at root:", zipFile);
+    state.gameFile = zipFile;
+    // const blob = await fetchZipFileBlob(zipFile.url);
+    // const unzippedFiles = await unzipBlob(blob);
+    // console.log("unzippedFiles : ", unzippedFiles);
+  }
+
+  const mediaFolder = fetchedStructure.find(
+    (folder) => folder.name === "media"
+  );
+  if (!mediaFolder || !mediaFolder.contents) return;
+
+  mediaFolder.contents.forEach((file) => {
+    if (file.name.endsWith("_Store.png")) {
+      state.imageStoreObject.push(file);
+    } else if (!file.name.endsWith("0.png") && file.type === "file") {
+      state.imageFiles.push(file);
+      originalCarrouselImageNames.value.push(file.name);
     }
   });
 
-  state.tags = "";
+  // mediaFolder.contents.forEach((file) => {
+  //   if (file.type === "file") {
+  //     originalCarrouselImageNames.value.push(file.name);
+  //   }
+  // });
 
+  console.log("Original Files Fetched: ", originalCarrouselImageNames.value);
+  console.log("Image Files:", state.imageFiles);
+  console.log("Store Image:", state.imageStoreObject);
+  console.log(
+    "Game File (ZIP):",
+    state.gameFile ? state.gameFile.url : "No ZIP file found"
+  );
+};
+
+
+function categorizeImages() {
+  const newImages = [];
+  const unchangedImages = [];
+  const renamedImages = [];
+
+  state.imageFiles.forEach((image) => {
+    const originalImage = originalCarrouselImageNames.value.find((name) => name === image.name);
+    if (!originalImage) {
+      newImages.push(image);
+    } else if (originalImage === image.name) {
+      unchangedImages.push(image);
+    } else {
+      renamedImages.push({ oldName: originalImage, newName: image.name });
+    }
+  });
+
+  return { newImages, unchangedImages, renamedImages };
 }
 
-// const update_gamesAndTags = async () => {
-//   // await createGame();
+async function fetchZipFileBlob(url) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error("Failed to fetch ZIP file");
+  return response.blob();
+}
 
-//   // const tagsCreationResult = await createTags();
-//   if (tagsCreationResult.isSuccessful ==false) {
-//     console.error(
-//       "Game couldn't be added because tags were not successfully created."
-//     );
-//     // await deleteGame();
-//   } else {
-//     console.log("Game creation succeeded.");
-//   }
-// };
+async function unzipBlob(blob) {
+  const zip = new JSZip();
+  const zipContents = await zip.loadAsync(blob);
+  const fileContents = {};
 
-// const createGame = async () => {
-//   let jsonObject = {
-//     title: state.gameTitle,
-//     developerID: props.gameToUpdateId,
-//     description: state.description,
-//     releaseDate: state.creation_date,
-//     ratingAverage: 0,
-//   };
-//   let wasGameCreated = await create("games", jsonObject);
-//   console.log("wasGameCreated:", wasGameCreated);
-// };
+  // Iterate over each file and extract its contents
+  zipContents.forEach(async (relativePath, fileEntry) => {
+    if (!fileEntry.dir) {
+      // Ensure it's not a directory
+      const fileData = await fileEntry.async("blob"); // Get the file as a Blob
+      fileContents[relativePath] = fileData;
+      // You can also use fileEntry.async("string") if you know it's a text file
 
-// const createTags = async () => {
-//   const gameId = await get_CreatedGameID();
-//   if (!gameId) {
-//     console.error("Failed to get game ID");
-//     return false;
-//   }
+      console.log(`Extracted file: ${relativePath}`); // Log file path
+      // Process the file here (e.g., display it, upload it, etc.)
+    }
+  });
 
-//   let allTagsCreated = true;
-//   for (const tag of state.tagsArray) {
-//     const jsonObject = {
-//       name: tag,
-//       gameId: gameId,
-//     };
-//     const result = await create("tags", jsonObject);
-//     console.log("Tag was created:", result);
-//     if (result.isSuccessful == false) {
-//       allTagsCreated = false;
-//       break;
-//     }
-//   }
-//   return allTagsCreated;
-// };
+  return fileContents; // Returns an object with filenames as keys and their contents as Blob
+}
+
+/*******************************************************************/
+/***************************** GAMES *****************************/
+/*******************************************************************/
+
+const updateGame = async () => {
+  let jsonObject = {
+    id: state.gameId,
+    description: state.gameObject.description,
+    tokens: {
+      access_token: storageManager.getAccessToken(),
+      refresh_token: storageManager.getRefreshToken(),
+    },
+  };
+  let wasGameUpdated = await updateData("games", jsonObject);
+  console.log("wasGameUpdated:", wasGameUpdated);
+};
 
 // const deleteGame = async () => {
 //   const gameId = await get_CreatedGameID();
@@ -456,41 +719,232 @@ function updateTagsArray() {
 //   }
 // }
 
-const submitGame = async () => {
-  if (formatData()) {
-    await update_gamesAndTags();
+/*******************************************************************/
+/***************************** TAGS *****************************/
+/*******************************************************************/
+
+function updateTagsArray() {
+  let newTags = state.tags
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter(Boolean);
+
+  newTags.forEach((newTagName) => {
+    const isTagPresent = state.tagsArray.some((tag) => tag.name === newTagName);
+
+    if (!isTagPresent) {
+      state.tagsArray.push({ name: newTagName });
+    } else {
+      console.log(`${newTagName} already added.`);
+    }
+  });
+
+  // Clear the input string after processing
+  state.tags = "";
+}
+
+function addClickedTagToTagsArray(clickedTag) {
+  const isTagPresent = state.tagsArray.some((tag) => tag.id === clickedTag.id);
+
+  if (!isTagPresent) {
+    state.tagsArray.push(clickedTag);
+  } else {
+    console.log(`${clickedTag.name} is already added.`);
+  }
+}
+
+const getTagsFrom_DB = async () => {
+  try {
+    let data = await getAll("tags");
+    state.tagsFromDatabase = data;
+    console.log("Tags from DB:", data);
+  } catch (error) {
+    console.error("Error fetching tags from database:", error);
   }
 };
 
-// async function setDefaultValues() {
-//   if (props.mode === "update" && props.initialData) {
-//     state.gameTitle = props.initialData.gameTitle || "";
-//     state.tags = props.initialData.tags.join(", ") || "";
-//     state.description = props.initialData.description || "";
-//     // and so on for other fields...
-//   }
-// }
-
-onMounted(async () => {
-  try {
-    const route = useRoute();
-    const gameToUpdateId = route.params.gameToUpdateId; 
-    state.gameId = gameToUpdateId;
-    console.log("state.gameId : ", state.gameId);
-
-    let data = await getOne("games", "id", gameToUpdateId);
-    if (data) {
-      state.gameObject = data[0];
-      console.log("state.gameObject : ", state.gameObject);
-    
-      state.tagsArray = state.gameObject.tags.map(tag => tag.name);
-      console.log("Updated tagsArray with names: ", state.tagsArray);
-      await getTagsFrom_DB();
-    }
-  } catch (error) {
-    console.error("Error setting default values:", error);
+const eraseGamesTags = async () => {
+  const gameId = state.gameId;
+  if (!gameId) {
+    console.error("Failed to get game ID");
+    return false;
   }
+
+  let game = await getOne("games", "id", gameId);
+
+  if (game) {
+    const originalTags = game[0].tags;
+
+    // Find tags that are in the original list but not in the current tags array
+    const tagsToRemove = originalTags.filter(
+      (originalTag) =>
+        !state.tagsArray.some((newTag) => newTag.id === originalTag.id)
+    );
+
+    console.log("originalTags: ", originalTags);
+    console.log("tagsToRemove: ", tagsToRemove);
+    console.log("state.tagsArray: ", state.tagsArray);
+
+    let gamesTagsList = await getAll("gamestags", "gameId", gameId);
+    if (gamesTagsList) {
+      console.log("gamesTagsList : ", gamesTagsList);
+
+      for (const tagToRemove of tagsToRemove) {
+        const gamesTagsListElement = gamesTagsList.find(
+          (element) => element.tagId === tagToRemove.id
+        );
+        if (gamesTagsListElement) {
+          // console.log("gamesTagsListElement : ", gamesTagsListElement);
+          await deleteGameTag(gamesTagsListElement);
+        }
+      }
+    }
+
+
+    return true; // If the function completes successfully
+  }
+};
+
+async function deleteGameTag(gamesTagsListElement) {
+  console.log("gamesTagsListElement : ", gamesTagsListElement);
+  if (gamesTagsListElement) {
+    let delete_data = {
+      id: gamesTagsListElement.id,
+      tokens: {
+        access_token: storageManager.getAccessToken(),
+        refresh_token: storageManager.getRefreshToken(),
+      },
+    };
+    console.log("delete_data : ", delete_data);
+
+    const response = await deleteData("gamestags", delete_data);
+
+    if (response) {
+      console.log(`Tag ${gamesTagsListElement.tagId} removed successfully.`);
+    } else {
+      console.error(`Failed to remove tag ${gamesTagsListElement.tagId}.`);
+    }
+  }
+}
+
+
+const createTags = async () => {
+  const gameId = state.gameId;
+  if (!gameId) {
+    console.error("Failed to get game ID");
+    return false;
+  }
+
+  let allTagsCreated = true;
+  let errors = []; // Array to collect errors
+
+  for (const tag of state.tagsArray) {
+    if (tag && tag.name && state.gameId) {
+      const jsonObject = {
+        name: tag.name,
+        gameId: state.gameId,
+      };
+      try {
+        const result = await create("tags", jsonObject);
+        console.log("Tag was created:", tag.name, result);
+      } catch (error) {
+        console.error(`Failed to create tag ${tag.name}:`, error);
+        errors.push({ tagName: tag.name, error: error }); // Collect errors
+        allTagsCreated = false; // Mark as false if any tag creation failed
+      }
+    }
+  }
+
+  if (errors.length > 0) {
+    // Handle or log errors here
+    console.error("Errors occurred during tag creation:", errors);
+  }
+
+  return allTagsCreated;
+};
+
+/*******************************************************************/
+/***************************** VALIDATE *****************************/
+/*******************************************************************/
+
+const fileSize = computed(() => {
+  return state.gameFile ? (state.gameFile.size / 1024).toFixed(2) : "0.00";
 });
+
+const charCountText = computed(() => {
+  let currentLength = state.description.length;
+  return `${currentLength}/${state.MAX_DESC_LENGTH} caractêres`;
+});
+
+function validateDescriptionLength() {
+  if (state.description.length > state.MAX_DESC_LENGTH) {
+    state.description = state.description.substring(0, state.MAX_DESC_LENGTH);
+  }
+}
+
+const formatData = () => {
+  // console.log("state.gameObject.description.trim().length : ", state.gameObject.description.trim().length)
+  if (!state.gameObject.title) {
+    state.errorMessage = "Game title is required.";
+    return false;
+  } else if (state.tagsArray.length < state.MIN_TAG) {
+    state.errorMessage = `At least ${state.MIN_TAG} tags are required.`;
+    return false;
+  } else if (state.imageFiles.length < state.MIN_IMG_LIST) {
+    state.errorMessage = `At least ${state.MIN_IMG_LIST} images are required.`;
+    return false;
+  } else if (
+    state.gameObject.description.trim().length < state.MIN_DESC_LENGTH
+  ) {
+    state.errorMessage = `Description between  ${state.MIN_DESC_LENGTH} and  ${state.MAX_DESC_LENGTH} characters is required.`;
+    return false;
+  } else if (state.imageStoreObject.length < state.MAX_IMG_STORE) {
+    state.errorMessage = `At least ${state.MAX_IMG_STORE} images are required for the store.`;
+    return false;
+  } else if (state.gameFile == null) {
+    state.errorMessage = `A Game File is required`;
+    return false;
+  } else {
+    state.errorMessage = "";
+    console.log("Submitting:", {
+      gameTitle: state.gameObject.title,
+      tags: state.tagsArray,
+      description: state.gameObject.description,
+      gameFileUrl: state.gameFile.url,
+      imageFiles: state.imageFiles,
+    });
+    return true;
+  }
+};
+
+/*******************************************************************/
+/************************* UPDATE GAMES AND TAGS ******************/
+/*******************************************************************/
+
+const update_gamesAndTags = async () => {
+  await updateGame();
+
+  const tagsCreationResult = await createTags();
+  if (tagsCreationResult.isSuccessful == false) {
+    console.error(
+      "Game couldn't be added because tags were not successfully created."
+    );
+  } else {
+    console.log("Game creation succeeded.");
+    await eraseGamesTags();
+
+  }
+};
+
+const submitGame = async () => {
+  if (formatData()) {
+    await update_gamesAndTags();
+    await uploadImageFiles(state.gameId);
+    await uploadZipFile(state.gameId);
+    await upload_storeImage(state.gameId);
+    // window.location.reload();
+  }
+};
 </script>
 
 <style scoped lang="scss">
@@ -519,9 +973,18 @@ textarea {
   padding: 0.5rem;
   margin-bottom: 0.5rem;
   border-radius: 0.5rem;
-  width: 100%; 
+  width: 100%;
 }
 
+.title_readonly {
+  background-color: transparent;
+  text-align: center;
+  font-size: 2em;
+  font-weight: bolder;
+  /* margin-bottom: 0.5rem; */
+  /* color: #0062cc; */
+  /* margin : 0.5em 0; */
+}
 
 .error-message {
   color: #ff3860;
@@ -572,7 +1035,7 @@ textarea {
 .tags-from-db-container {
   display: flex;
   align-items: center;
- 
+
   gap: 0.5rem;
   flex-direction: column;
 }
@@ -587,14 +1050,14 @@ textarea {
   display: flex;
   align-items: center;
   width: 100%;
-   gap: 0.5rem;
+  gap: 0.5rem;
   flex-direction: column;
 }
 
 .tags-display-container {
   flex-direction: column;
   justify-items: center;
- 
+
   margin-top: 1rem;
   display: flex;
   gap: 0.5rem;
@@ -634,14 +1097,14 @@ textarea {
 
 img {
   width: auto;
-  height: 5rem; 
+  height: 5rem;
   object-fit: cover;
 }
 
 video {
-  width: 100%; 
-  max-width: 20rem; 
-  height: auto; 
+  width: 100%;
+  max-width: 20rem;
+  height: auto;
 }
 
 .vid_item {
@@ -652,10 +1115,10 @@ video {
 }
 
 textarea {
-  min-height: 10rem;  
+  min-height: 10rem;
 }
 
- .btnComp {
+.btnComp {
   background-color: #0062cc;
   border: none;
   color: white;
@@ -668,13 +1131,13 @@ textarea {
   background-color: #004da2;
 }
 
- @media (max-width: 768px) {
+@media (max-width: 768px) {
   .tags-display-container {
     flex-direction: column;
   }
 
   video {
-    width: 100%;  
+    width: 100%;
   }
 }
 </style>
