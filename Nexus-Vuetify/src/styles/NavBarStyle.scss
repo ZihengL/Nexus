@@ -2,7 +2,7 @@
   .navContent {
     width: 74%;
     margin: auto;
-    display: flex; 
+    display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
@@ -12,24 +12,28 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 0.5%;
+      padding: 1%;
       text-decoration: none;
-  
+
       img {
         width: 65%;
       }
-      
+
       .navText {
         margin-left: 10%;
-        color: var(--light-trans);
+        color: var(--light-gray);
+        font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+          sans-serif;
+        font-weight: bold;
+        font-size: large;
       }
     }
     .logo:hover {
-      img{
+      img {
         cursor: pointer;
       }
     }
-  
+
     .link {
       width: 90%;
       height: 60%;
@@ -37,7 +41,7 @@
       align-items: center;
       gap: 1%;
       margin: 0%;
-  
+
       .router {
         flex: 1;
         margin: 0%;
@@ -48,10 +52,10 @@
         flex-direction: column;
         border-radius: 3px;
         text-decoration: none;
-        color: black;
+        color: var(--light);
         font-weight: bold;
         font-size: 1rem;
-  
+
         .link-btn {
           margin: auto;
           color: var(--light-trans);
@@ -70,27 +74,21 @@
       .iconLog {
         font-size: 4rem;
       }
-      .router-link-exact-active{
+      .router-link-exact-active {
         font-weight: bolder;
         font-size: 1.3rem;
         padding-bottom: 0.4%;
         .link-btn {
           //border-bottom: 3px solid var(--marin);
           //border-bottom: 3px solid var(--light);
-          color: var(--light);       
-          text-shadow:
-              0 0 1.5px #ffffff3d,
-              0 0 2.5px #ffffff3d,
-              0 0 5px #ffffff3d,
-              0 0 10px rgba(0, 255, 170, 0.100),
-              0 0 20px rgba(0, 255, 170, 0.100),
-              0 0 25px rgba(0, 255, 170, 0.100),
-              0 0 30px rgba(0, 255, 170, 0.100),
-              0 0 33px rgba(0, 255, 170, 0.100);
+          color: var(--light);
+          text-shadow: 0 0 1.5px #ffffff3d, 0 0 2.5px #ffffff3d,
+            0 0 5px #ffffff3d, 0 0 10px rgba(0, 255, 170, 0.1),
+            0 0 20px rgba(0, 255, 170, 0.1), 0 0 25px rgba(0, 255, 170, 0.1),
+            0 0 30px rgba(0, 255, 170, 0.1), 0 0 33px rgba(0, 255, 170, 0.1);
           animation: neonGlow 0.5s ease-in-out infinite alternate;
         }
       }
-      
     }
   }
 }

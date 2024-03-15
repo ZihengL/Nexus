@@ -1,7 +1,7 @@
 <template>
   <div v-if="review" class="AvisComp roundBorderSmall">
     <div class="absolute" v-if="review.length > 0">
-      <h2 v-if="props.sort == '0'" >Les mieux notees</h2>
+      <h2 v-if="props.sort == '0'" >Les mieux notées</h2>
       <ul>
         <li v-for="(avis, index) in review" :key="index" class="glass roundBorderSmall padding">
           <div class="containerStar">
@@ -147,7 +147,7 @@ let urlPic = null;
 
   h2 {
     color: var(--light);
-    margin-bottom: 3%;
+    margin-bottom: 4%;
 
   }
 

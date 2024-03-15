@@ -20,6 +20,8 @@
     --text-size: 3rem;
     --btn-text-size: 1.5rem;
     --footer-text-size: 1.05rem;
+    --light-gray: #c5c3c0;
+    --marine-blue: #171d25;
 }
 
 * {
@@ -208,8 +210,8 @@ body {
                         color: var(--light);
                         padding-left: 0;
                         border-radius: 0px;
-                        font-size: 20px;
-                        font-weight: 500;
+                        font-size: 16px;
+                        font-weight: bolder;
                         cursor: pointer;
                     }
                 }

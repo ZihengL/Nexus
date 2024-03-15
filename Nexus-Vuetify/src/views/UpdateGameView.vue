@@ -183,7 +183,7 @@ import { useRoute } from "vue-router";
 import storageManager from "../JS/localStorageManager";
 import { reactive, defineProps, computed, onMounted, ref } from "vue";
 import {
-  create,
+  createWithValidation,
   updateData,
   deleteData,
   getAll,
@@ -670,12 +670,14 @@ async function unzipBlob(blob) {
 
 const updateGame = async () => {
   let jsonObject = {
-    id: state.gameId,
-    description: state.gameObject.description,
-    tokens: {
+    credentials: {
+      id: storageManager.getIdDev(),
       access_token: storageManager.getAccessToken(),
-      refresh_token: storageManager.getRefreshToken(),
     },
+    request_data: {
+      id: state.gameId,
+      description: state.gameObject.description,
+    }
   };
   let wasGameUpdated = await updateData("games", jsonObject);
   console.log("wasGameUpdated:", wasGameUpdated);
@@ -845,7 +847,7 @@ const createTags = async () => {
         gameId: state.gameId,
       };
       try {
-        const result = await create("tags", jsonObject);
+        const result = await createWithValidation("tags", jsonObject);
         console.log("Tag was created:", tag.name, result);
       } catch (error) {
         console.error(`Failed to create tag ${tag.name}:`, error);
