@@ -168,7 +168,7 @@ import btnComp from "../components/btnComponent.vue";
 import storageManager from "../JS/localStorageManager";
 import { reactive, defineProps, computed, onMounted } from "vue";
 import {
-  create,
+  actionWithValidation,
   getAllMatching,
   deleteData,
   getAll,
@@ -578,7 +578,7 @@ const createGame = async () => {
       releaseDate: state.creation_date,
       ratingAverage: 0,
     };
-    let wasGameCreated = await create("games", jsonObject);
+    let wasGameCreated = await actionWithValidation("games", "create", jsonObject);
     console.log("wasGameCreated:", wasGameCreated);
   }
 
@@ -599,7 +599,7 @@ const createTags = async () => {
       name: tag,
       gameId: gameId,
     };
-    const result = await create("tags", jsonObject);
+    const result = await actionWithValidation("tags", "create", jsonObject);
     console.log("Tag was created:", result);
     if (result.isSuccessful == false) {
       allTagsCreated = false;
@@ -680,7 +680,7 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 #pageContainer {
   display: flex;
   flex-direction: column;

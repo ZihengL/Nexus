@@ -28,7 +28,7 @@ const StorageManager = {
   getIdDev () {
     let data = localStorage.getItem(StorageKeys.ID_DEV);
     // console.log('get id d ', data);
-    return data;
+    return parseInt(data);
   },
   setAccessToken (token) {
     localStorage.setItem(StorageKeys.ACCESS_TOKEN, token)
