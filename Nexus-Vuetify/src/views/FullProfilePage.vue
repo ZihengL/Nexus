@@ -137,7 +137,7 @@
       </div>
       <!--</div>-->
 
-      <btnComp :contenu="'Modifier'" @toggle-btn="updateUserInfos" />
+      <btnComp :contenu="'Confimer les Modifications'" @toggle-btn="updateUserInfos" />
     </form>
     <div v-if="galleryDialog" class="roundBorderSmall glass4 dialog">
       <v-icon @click="galleryDialog = false" class="close">mdi-close</v-icon>
