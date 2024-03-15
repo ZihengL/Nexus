@@ -168,7 +168,7 @@ import btnComp from "../components/btnComponent.vue";
 import storageManager from "../JS/localStorageManager";
 import { reactive, defineProps, computed, onMounted } from "vue";
 import {
-  actionWithValidation,
+  create,
   getAllMatching,
   deleteData,
   getAll,
@@ -218,7 +218,7 @@ const state = reactive({
   MAX_IMG_STORE: 1,
   MAX_VIDS: 2,
   MIN_TAG: 1,
-  MIN_DESC_LENGTH: 0,
+  MIN_DESC_LENGTH: 10,
   MAX_DESC_LENGTH: 250,
   errorMessage: "",
   creation_date: new Date().toISOString().replace("T", " ").substring(0, 16),
@@ -307,6 +307,7 @@ const openVideoBrowser = () => {
     }
 
     const newVideoFiles = newFiles.slice(0, availableSlots).map((file) => ({
+      file:file,
       name: file.name,
       size: file.size,
       type: file.type,
@@ -412,12 +413,15 @@ const formatData = () => {
     state.errorMessage = `At least ${state.MIN_IMG_LIST} images are required.`;
     return false;
   } else if (state.description.trim().length < state.MIN_DESC_LENGTH) {
-    state.errorMessage = "Description is required.";
+    state.errorMessage = `Description between  ${state.MIN_DESC_LENGTH} and  ${state.MAX_DESC_LENGTH} characters is required.`;
     return false;
   } else if (state.imageStoreObject.length < state.MAX_IMG_STORE) {
     state.errorMessage = `At least ${state.MAX_IMG_STORE} images are required for the store.`;
     return false;
-  }
+  } else if (state.gameFile == null) {
+    state.errorMessage = `A Game File is required`;
+    return false;
+  } 
    else {
     state.errorMessage = "";
     console.log("Submitting:", {
@@ -556,7 +560,7 @@ const create_gameAndTags = async () => {
   
     await uploadImageFiles(gameId);
     await uploadZipFile(gameId);
-    window.location.reload();
+    // window.location.reload();
   }
   }
 
@@ -574,8 +578,7 @@ const createGame = async () => {
       releaseDate: state.creation_date,
       ratingAverage: 0,
     };
-    //let wasGameCreated = await create("games", jsonObject);
-    let wasGameCreated = await actionWithValidation("games", jsonObject);
+    let wasGameCreated = await create("games", jsonObject);
     console.log("wasGameCreated:", wasGameCreated);
   }
 
@@ -596,8 +599,7 @@ const createTags = async () => {
       name: tag,
       gameId: gameId,
     };
-    //const result = await create("tags", jsonObject);
-    const result = await actionWithValidation("tags", jsonObject);
+    const result = await create("tags", jsonObject);
     console.log("Tag was created:", result);
     if (result.isSuccessful == false) {
       allTagsCreated = false;
