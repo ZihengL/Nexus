@@ -150,19 +150,58 @@ export const getAllMatching = async (
   return null;
 };
 
-export const create = async (table, createData) => {
+
+export const createData = async (table, createData) => {
   const data = await services.fetchData(table, "create", createData);
   return data;
 };
 
+export const updateData = async (table, updateData) => {
+  const data = await services.fetchData(table, 'update', updateData);
+  return data;
+}
+
 export const deleteData = async (table, deleteData) => {
   const data = await services.fetchData(table, "delete", deleteData);
   return data;
+}
+
+// export const deleteData = async (table, deleteData) => {
+//   const data = await services.fetchData(table, "delete", deleteData);
+//   return data;
+// };
+
+// export const updateData = async (table, updateData) => {
+//   const data = await services.updateWithValidation(table, updateData);
+//   return data;
+// };
+
+export const actionWithValidation = async (table, action, data) => {
+  return await services.fetchData(table, action, {
+    credentials: services.getValidationCredentials(),
+    request_data: data,
+  });
+}
+
+export const createWithValidation = async (table, createData) => {
+  return await createData(table, {
+    credentials: services.getValidationCredentials(),
+    request_data: createData,
+  });
 };
 
-export const updateData = async (table, updateData) => {
-  const data = await services.updateWithValidation(table, updateData);
-  return data;
+export const updateWithValidation = async (table, updateData) => {
+  return await updateData(table, {
+    credentials: services.getValidationCredentials(),
+    request_data: updateData,
+  });
+};
+
+export const deleteWithValidation = async (table, deleteData) => {
+  return await deleteData(table, {
+    credentials: services.getValidationCredentials(),
+    request_data: deleteData,
+  });
 };
 
 /*******************************************************************/
