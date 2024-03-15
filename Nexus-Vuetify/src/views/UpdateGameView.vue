@@ -353,7 +353,7 @@ const openVideoBrowser = () => {
 const openImageBrowser = () => {
   const fileInput = document.createElement("input");
   fileInput.type = "file";
-  fileInput.multiple = false;
+  fileInput.multiple = true;
   fileInput.accept = "image/*";
   fileInput.onchange = (e) => {
     const newFiles = Array.from(e.target.files);
@@ -404,7 +404,7 @@ const openImageBrowser = () => {
 const openImageBrowser_forStore = () => {
   const fileInput = document.createElement("input");
   fileInput.type = "file";
-  fileInput.multiple = true;
+  fileInput.multiple = false;
   fileInput.accept = "image/*";
   fileInput.onchange = (e) => {
     const newFiles = Array.from(e.target.files);
@@ -942,7 +942,7 @@ const submitGame = async () => {
     await uploadImageFiles(state.gameId);
     await uploadZipFile(state.gameId);
     await upload_storeImage(state.gameId);
-    window.location.reload();
+    // window.location.reload();
   }
 };
 </script>

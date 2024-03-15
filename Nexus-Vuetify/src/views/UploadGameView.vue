@@ -560,7 +560,7 @@ const create_gameAndTags = async () => {
   
     await uploadImageFiles(gameId);
     await uploadZipFile(gameId);
-    window.location.reload();
+    // window.location.reload();
   }
   }
 
