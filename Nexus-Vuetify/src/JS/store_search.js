@@ -2,14 +2,14 @@ import * as services from './fetchServices'
 
 export const searchOn_titleOrUsername = async titleOrDevName => {
   let games = await services.getAllGamesWithDeveloperNameNEW()
-    console.log('games 1: ', games)
+    // console.log('games 1: ', games)
   const searchQuery = titleOrDevName.toLowerCase()
 
 
 
   const searchedGames = games.filter(game => {
-    console.log('searchedgames', game);
-    console.log('username', game.users[0].username.toLowerCase());
+    // console.log('searchedgames', game);
+    // console.log('username', game.users[0].username.toLowerCase());
     const titleLower = game.title ? game.title.toLowerCase() : ''
     const devNameLower = game.users[0] ? game.users[0].username.toLowerCase() : ''
 
@@ -39,13 +39,13 @@ if (sortingValue && typeof sortingValue === 'object' && Object.keys(sortingValue
     [key]:sortingValue[key]
   }
 
-  console.log("sortingvalue", keys);
+  // console.log("sortingvalue", keys);
 }
   let games = titleOrDevName
     ? await searchOn_titleOrUsername(titleOrDevName)
     : await services.getAllGamesWithDeveloperNameNEW(null, null, null, sorting)
 
-  console.log('games 2: ', games)
+  // console.log('games 2: ', games)
 
   if (tags.length > 0) {
     games = games.filter(game =>
@@ -56,8 +56,6 @@ if (sortingValue && typeof sortingValue === 'object' && Object.keys(sortingValue
       )
     );
   }
-
-  console.log(games);
 
   if (sortingValue === "devName") {
     games.sort((a, b) => {
