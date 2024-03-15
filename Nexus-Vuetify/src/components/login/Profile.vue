@@ -3,7 +3,7 @@
   <div v-if="isLoading" class="loading-state">
     Loading...
   </div>
-  <div v-else-if="leDevs && gameList && toggleLogin && toggleSignup" class="allP">
+  <div v-else-if="leDevs && toggleLogin && toggleSignup" class="allP">
     <div
       class="containerProfile"
       :class="isHimself ? 'container1' : 'container2'"
@@ -37,16 +37,16 @@
         </div>
         <div class="wrapper glass roundBorderSmall">
           <div class="form-container">
-            <div v-if="isHimself && gameList.length > 0" class="slide-controls roundBorderSmall">
-              <div>
+            <div v-if="isHimself && gameList.length > 0" >
+              <div class="slide-controls roundBorderSmall">
                 <input type="radio" name="slide" id="login" v-model="isLogin" value="true" checked />
                 <input type="radio" name="slide" id="signup" v-model="isLogin" value="false" />
                 <label for="login" class="slide login" @click="toggleLogin()">Développer</label>
                 <label for="signup" class="slide signup" @click="toggleSignup()">Télécharger</label>
                 <div class="slider-tab"></div>
-                            </div>
-                
-                            <div class="form-inner">
+              </div>
+  
+              <div class="form-inner">
                 <div class="login log gamesss">
                   <div
                     v-for="(item, index) in gameList"

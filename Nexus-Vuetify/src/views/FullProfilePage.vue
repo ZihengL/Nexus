@@ -1,5 +1,5 @@
 <template>
-  <div v-if="user != null && AllImages.length > 0" :key="user.value" id="fullProfile">
+  <div v-if="user" :key="user.value" id="fullProfile">
     <form action="#" class="glass">
       <!-- <v-avatar size="10rem"> -->
       <div class="round">
@@ -96,9 +96,9 @@
 
       <!--<div class="field-container">
         <span class="title">Description</span> -->
-        <div class="input-group  field">
+        <div class="input-group  field area">
           <textarea
-            class="infos"
+            class="infos "
             :key="`description-${user.description}`"
             :class="{ notEmptyInput: user.description }"
             :placeholder="user.description || 'Description...'"
@@ -140,22 +140,22 @@
       <btnComp :contenu="'Modifier'" @toggle-btn="updateUserInfos" />
     </form>
 
-    <div v-if="galleryDialog"  class="glass4  roundBorderSmall dialog">
+    <div v-if="galleryDialog"  class="roundBorderSmall glass4 dialog">
       <v-icon @click="galleryDialog = false" class="close">mdi-close</v-icon>
       <div class="content">
         <label
           v-for="img, index in AllImages"
           :key="index"
-          :class="{ 'filter-label': true, glow: true, checked: genre.checked }"
-          class="roundBorderSmall one"
+          id="pic"
+          class="roundBorderSmall one glass2  "
         >
           <input
-            @change="handleUserInteraction"
-            type="checkbox"
-            :name="img"
+            type="radio"
+            name="pic"
             :value="img"
           />
           <img :src="img" alt="">
+          <p></p>
         </label>
       </div>
     </div>
@@ -212,7 +212,7 @@ const updatephonenumber = (event) => {
 
 const getUserInfos = async () => {
   try {
-    const dataUser = await getOne("users", "id", storageManager.getIdDev());
+    const dataUser = await getOne("users", "id", props.IdDev);
 
     if (dataUser) {
       user.value = dataUser;
@@ -230,19 +230,18 @@ const getImage = (image) =>{
     return urlPic
   }
 
-const getAllImages = async () => {
+const getAllImages = async (tab) => {
   const folderPath = '/src/assets/Avatar/';
-  const imagePaths = [];
+  //const imagePaths = [];
   for (let i = 1; i <= 7; i++) {
     let path = folderPath + 'Avatar_' + i + '.png';
     console.log('path ', path);
-    imagePaths.push(`${folderPath}Avatar_${i}.png`);
+    tab.push(`${folderPath}Avatar_${i}.png`);
   }
 
     //console.log('Nombre de fichiers dans le dossier :', nb);
-  console.log('Chemins de toutes les images :', imagePaths);
-  return imagePaths;
-
+  console.log('Chemins de toutes les images :', tab);
+  return tab
 };
 
 
@@ -468,8 +467,8 @@ async function validateDataBeforeSending() {
 onMounted(async () => {
   try {
     await getUserInfos();
-    AllImages.value = getAllImages();
-    console.log('length ', AllImages.value)
+    getAllImages(AllImages.value);
+    console.log('length ', AllImages.value.length)
   } catch (error) {
     console.error("Error fetching data:", error);
   }
@@ -506,31 +505,65 @@ onMounted(async () => {
 } 
 
 .dialog {
-  position: absolute;
-  top: 10%;
-  left: 15%;
-  width: 70%;
-  margin: auto;
-
+    position: absolute;
+    top: 10%;
+    left: 30%;
+    width: 40%;
+    margin: auto;
+  }
+  
   .close {
     float: right;
   }
+  
   .content {
     margin: 5%;
-    border: 2px solid red;
     display: grid;
     grid-template-columns: auto auto auto;
     gap: 2%;
     padding: 2% 2% 5% 2%;
-
-     .one {
+  }
+  
+  .one {
     padding: 2% 2% 5% 2%;
-      
-      border: 2px solid red;
-     }
+    position: relative; /* Ajout de cette ligne */
+  }
+  
+  .one img {
+    width: 100%;
+  }
+  
+  .one p {
+    position: absolute; /* Ajout de cette ligne */
+    top: 0; /* Ajout de cette ligne */
+    left: 0; /* Ajout de cette ligne */
+    width: 100%; /* Ajout de cette ligne */
+    height: 100%; /* Ajout de cette ligne */
+
+    /* From https://css.glass */
+    background: rgba(255, 255, 255, 0.62);
+    //border-radius: 0px;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    border: 1px solid rgba(255, 255, 255, 0); /* Ajout de cette ligne */
+    display: none; /* Ajout de cette ligne */
+  }
+  
+  .one input {
+    display: none;
+  }
+  .one:hover p, .one input:checked ~ p {
+    display: block; /* Ajout de cette ligne */
+  }
+  
+.area {
+  height: auto;
+  margin: 5% auto;
+
+  textArea {
+    height: 8rem;
   }
 }
-
 #fullProfile {
   width: 100%;
   margin: 0 auto 3% auto;
