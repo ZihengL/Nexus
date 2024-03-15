@@ -9,7 +9,7 @@
         <span v-if="props.himself && !props.buy"> Joué à {{ LeGame_title }} le 17/04/2022
         </span>
         <span v-if="props.himself && props.buy">
-          Titre : {{ LeGame_title || 'Erreur Titre Introuvable' }} - Televerser le : {{ formattedReleaseDate }}
+          Titre : {{ LeGame_title || 'Erreur Titre Introuvable' }} - Téléverser le : {{ formattedReleaseDate }}
         </span>
         <span v-else>{{ LeGame_title }}</span>
         <br />

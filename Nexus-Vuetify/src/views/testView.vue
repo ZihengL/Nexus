@@ -6,11 +6,11 @@
     <v-btn class="bordered-btn" @click="getOne">Get One</v-btn>
     <v-btn class="bordered-btn" @click="login">Login</v-btn>
     <v-btn class="bordered-btn" @click="logout">Logout</v-btn>
-    <v-btn class="bordered-btn" @click="register">register</v-btn>
-    <v-btn class="bordered-btn" @click="filter">filter</v-btn>
-    <v-btn class="bordered-btn" @click="deleteData">delete</v-btn>
-    <v-btn class="bordered-btn" @click="updateData">update</v-btn>
-    <v-btn class="bordered-btn" @click="createData">create</v-btn>
+    <v-btn class="bordered-btn" @click="register">Register</v-btn>
+    <v-btn class="bordered-btn" @click="filter">Filter</v-btn>
+    <v-btn class="bordered-btn" @click="deleteData">Delete</v-btn>
+    <v-btn class="bordered-btn" @click="updateData">Update</v-btn>
+    <v-btn class="bordered-btn" @click="createData">Create</v-btn>
   </div>
   <div>
     <ReviewsListComponent
