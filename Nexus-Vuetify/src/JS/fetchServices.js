@@ -38,6 +38,8 @@ function parseJoins(result, keys) {
     if (Object.hasOwn(result, detailsKey)) {
       if (result[detailsKey] !== null) {
         result[keys[i]] = parseDetails(result[detailsKey]);
+      } else {
+        result[keys[i]] = null;
       }
 
       delete result[detailsKey];
@@ -208,7 +210,7 @@ export const getUser = async (developerID) => {
   let data = await getOne("users", "id", developerID, null, joined_tables);
   console.log("GETUSER", data);
 
-  if (Object.hasOwn(data, 'games'))
+  if (data.games)
     return fetchGameImagesByDev(data);
 
   return data;
