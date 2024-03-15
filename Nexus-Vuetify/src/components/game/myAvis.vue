@@ -71,6 +71,7 @@ const createReview = async () => {
         }
         console.log("REVIEW ", data)
         let reviewIsCreated = await actionWithValidation("reviews", "create", data);
+        console.log("reviewIsCreated : ", reviewIsCreated);
         if (reviewIsCreated == true) {
           window.location.reload();
         }

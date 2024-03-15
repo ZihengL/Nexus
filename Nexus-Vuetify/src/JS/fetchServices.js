@@ -196,7 +196,7 @@ export const actionWithValidation = async (table, action, data) => {
 
   const res = await services.fetchData(table, action, dataWithCreds);
 
-  console.log(res);
+  console.log('retour rev ', res);
   return res;
 };
 
