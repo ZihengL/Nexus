@@ -49,7 +49,7 @@
           >
         </div>
         <btnComp :contenu="'Telecharger'" @toggle-btn="downloadZipFile()" />
-        <btnComp :contenu="'Faire un don'" @toggle-btn="toggleProfile" />
+        <btnComp :contenu="'Faire un don'" @toggle-btn="toggleProfile" > </btnComp>
       </div>
     </div>
 
