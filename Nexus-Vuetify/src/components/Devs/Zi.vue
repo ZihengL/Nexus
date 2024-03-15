@@ -1,16 +1,16 @@
 <template>
-  <div class="amazon">
+  <div class="zi">
     <div class="profile">
       <img src="/src/assets/Dev_Picture/amazigh.png" alt="Amazigh">
     </div>
     <div class="info">
-      <h1>Amazigh</h1>
-      <h2>Développeur Front-End</h2>
+      <h1>ZI HENG LIU</h1>
+      <h2>Développeur Back-end</h2>
       <p>Développeur web junior, qui s'intéresse beaucoup à la création de sites innovants, mais
         aussi a l'interaction client.
       </p>
       <div class="all-info">
-      <a href="https://github.com/FrontEndJuniorDev" target="_blank" class="info-link">Visitez mon Github</a>
+      <a href="https://github.com/ZihengL" target="_blank" class="info-link">Github</a>
       <a href="amazighmaloum04@gmail.com" target="_blank" class="info-link">me contacter</a>
     </div>
     </div>
@@ -25,7 +25,8 @@
   align-items: center;
 }
 
-.amazon {
+.zi {
+  margin-top: 5%;
   display: flex;
   align-items: center; 
   gap: 10%; 
@@ -66,6 +67,7 @@
 }
 
 .info {
+  text-align: left;
   max-width: 100%; 
   margin-top: 0%;
 }
@@ -76,7 +78,8 @@
 }
 
 .info h1 {
-  color: #333; 
+  color: var(--light-gray);
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   font-size: 2.5em; 
   margin-bottom: 2%;
 }
