@@ -164,7 +164,7 @@ async function fetchGameUrl(gameId) {
 }
 
 const downloadZipFile = async () => {
-  const fileName = `${props.idGame}/${gameInfos.leGame.title}.zip`; // Use reactive properties directly
+  const fileName = `${gameInfos.leGame.id}/${gameInfos.leGame.title}.zip`; // Use reactive properties directly
   console.log(fileName);
   const fileRef = firebaseRef(storage, `Games/${fileName}`);
 
@@ -182,7 +182,7 @@ const downloadZipFile = async () => {
   } catch (error) {
     console.error("Failed to download file:", error);
   }
-};
+}
 
 onMounted(async () => {
   try {
@@ -197,13 +197,13 @@ onMounted(async () => {
     // gameInfos.tags = gameInfos.leGame.tags;
     // gameInfos.devName = gameInfos.leGame.devName;
 
-    // let sorting1 = { timestamp: false };
-    // let sorting2 = { timestamp: true };
-    // let sorting0 = { rating: false };
+    let sorting1 = { timestamp: false };
+    let sorting2 = { timestamp: true };
+    let sorting0 = { rating: false };
 
-    // dataReview1 = await getGameReviews(props.idGame, sorting1);
-    // dataReview2 = await getGameReviews(props.idGame, sorting2);
-    // dataReview0 = await getGameReviews(props.idGame, sorting0);
+    dataReview1 = await getGameReviews(props.idGame, sorting1);
+    dataReview2 = await getGameReviews(props.idGame, sorting2);
+    dataReview0 = await getGameReviews(props.idGame, sorting0);
     
     reviewTemp.value = dataReview0.length;
   } catch (error) {
