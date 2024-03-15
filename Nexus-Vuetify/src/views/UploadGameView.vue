@@ -218,7 +218,7 @@ const state = reactive({
   MAX_IMG_STORE: 1,
   MAX_VIDS: 2,
   MIN_TAG: 1,
-  MIN_DESC_LENGTH: 0,
+  MIN_DESC_LENGTH: 10,
   MAX_DESC_LENGTH: 250,
   errorMessage: "",
   creation_date: new Date().toISOString().replace("T", " ").substring(0, 16),
@@ -412,12 +412,15 @@ const formatData = () => {
     state.errorMessage = `At least ${state.MIN_IMG_LIST} images are required.`;
     return false;
   } else if (state.description.trim().length < state.MIN_DESC_LENGTH) {
-    state.errorMessage = "Description is required.";
+    state.errorMessage = `Description between  ${state.MIN_DESC_LENGTH} and  ${state.MAX_DESC_LENGTH} characters is required.`;
     return false;
   } else if (state.imageStoreObject.length < state.MAX_IMG_STORE) {
     state.errorMessage = `At least ${state.MAX_IMG_STORE} images are required for the store.`;
     return false;
-  }
+  } else if (state.gameFile == null) {
+    state.errorMessage = `A Game File is required`;
+    return false;
+  } 
    else {
     state.errorMessage = "";
     console.log("Submitting:", {

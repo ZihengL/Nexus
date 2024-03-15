@@ -98,13 +98,13 @@
       ></btnComp>
       <div v-if="state.gameFile">
         <p>Selected Game File: {{ state.gameFile.name }}</p>
-        <p>File Size: {{ fileSize }} KB</p>
-        <p>File Type: {{ state.gameFile.type }}</p>
+        <!-- <p>File Size: {{ fileSize }} KB</p> -->
+        <p>File Type: ZIP</p>
       </div>
     </div>
     <div>
       <btnComp
-        :contenu="'Téléverser des images (Max ' + state. MAX_IMG_LIST + ')'"
+        :contenu="'Téléverser des images (Max ' + state.MAX_IMG_LIST + ')'"
         @toggle-btn="openImageBrowser"
       ></btnComp>
       <div class="imgList" v-if="state.imageFiles.length">
@@ -184,7 +184,7 @@ import storageManager from "../JS/localStorageManager";
 import { reactive, defineProps, computed, onMounted, ref } from "vue";
 import {
   create,
-  getAllMatching,
+  updateData,
   deleteData,
   getAll,
   getOne,
@@ -256,6 +256,7 @@ const state = reactive({
 onMounted(async () => {
   try {
     await setDefaultValues();
+    await eraseGamesTags();
   } catch (error) {
     console.error("Error setting default values:", error);
   }
@@ -277,7 +278,7 @@ async function setDefaultValues() {
     state.gameObject = data[0];
     console.log("state.gameObject : ", state.gameObject);
     state.tagsArray = state.gameObject.tags;
-    state.tagsArray_original = JSON.parse(JSON.stringify(data));
+    state.tagsArray_original.push(JSON.parse(JSON.stringify(data)));
 
     // state.tagsArray = state.gameObject.tags.map((tag) => tag.name);
     console.log("Updated tagsArray with names: ", state.tagsArray);
@@ -352,7 +353,7 @@ const openImageBrowser = () => {
   fileInput.accept = "image/*";
   fileInput.onchange = (e) => {
     const newFiles = Array.from(e.target.files);
-    const availableSlots = state. MAX_IMG_LIST - state.imageFiles.length;
+    const availableSlots = state.MAX_IMG_LIST - state.imageFiles.length;
 
     if (newFiles.length > availableSlots) {
       alert(
@@ -546,44 +547,83 @@ const uploadZipFile = async (gameId) => {
   }
 };
 
-const categorizeFiles = (fetchedStructure) => {
+const categorizeFiles = async (fetchedStructure) => {
+  state.imageFiles = [];
+  state.imageStoreObject = [];
+  state.gameFile = null;
+
+  const zipFile = fetchedStructure.find((file) => file.name.endsWith(".zip"));
+  if (zipFile) {
+    console.log("ZIP file found at root:", zipFile);
+    state.gameFile = zipFile;
+    // const blob = await fetchZipFileBlob(zipFile.url);
+    // const unzippedFiles = await unzipBlob(blob);
+    // console.log("unzippedFiles : ", unzippedFiles);
+  }
+
   const mediaFolder = fetchedStructure.find(
     (folder) => folder.name === "media"
   );
   if (!mediaFolder || !mediaFolder.contents) return;
-  state.imageFiles = [];
-  state.imageStoreObject = [];
 
   mediaFolder.contents.forEach((file) => {
     if (file.name.endsWith("_Store.png")) {
       state.imageStoreObject.push(file);
     } else if (!file.name.endsWith("0.png") && file.type === "file") {
       state.imageFiles.push(file);
-    } else if (file.name.endsWith(".zip")) {
-      console.log("ZIP file found:", file.name, file.url);
-      state.gameFile = file;
     }
   });
 
   console.log("Image Files:", state.imageFiles);
   console.log("Store Image:", state.imageStoreObject);
+  console.log(
+    "Game File (ZIP):",
+    state.gameFile ? state.gameFile.url : "No ZIP file found"
+  );
 };
 
+async function fetchZipFileBlob(url) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error("Failed to fetch ZIP file");
+  return response.blob();
+}
+
+async function unzipBlob(blob) {
+  const zip = new JSZip();
+  const zipContents = await zip.loadAsync(blob);
+  const fileContents = {};
+
+  // Iterate over each file and extract its contents
+  zipContents.forEach(async (relativePath, fileEntry) => {
+    if (!fileEntry.dir) {
+      // Ensure it's not a directory
+      const fileData = await fileEntry.async("blob"); // Get the file as a Blob
+      fileContents[relativePath] = fileData;
+      // You can also use fileEntry.async("string") if you know it's a text file
+
+      console.log(`Extracted file: ${relativePath}`); // Log file path
+      // Process the file here (e.g., display it, upload it, etc.)
+    }
+  });
+
+  return fileContents; // Returns an object with filenames as keys and their contents as Blob
+}
 /*******************************************************************/
 /***************************** GAMES *****************************/
 /*******************************************************************/
 
-// const updateGame = async () => {
-//   let jsonObject = {
-//     title: state.gameTitle,
-//     developerID: props.gameToUpdateId,
-//     description: state.description,
-//     releaseDate: state.creation_date,
-//     ratingAverage: 0,
-//   };
-//   let wasGameCreated = await create("games", jsonObject);
-//   console.log("wasGameCreated:", wasGameCreated);
-// };
+const updateGame = async () => {
+  let jsonObject = {
+    id: state.gameId,
+    description:state.gameObject.description,
+    tokens: {
+      access_token: storageManager.getAccessToken(),
+      refresh_token: storageManager.getRefreshToken(),
+    },
+  };
+  let wasGameCreated = await updateData("games", jsonObject);
+  console.log("wasGameCreated:", wasGameCreated);
+};
 
 // const deleteGame = async () => {
 //   const gameId = await get_CreatedGameID();
@@ -633,22 +673,27 @@ function updateTagsArray() {
     .map((tag) => tag.trim())
     .filter(Boolean);
 
-  newTags.forEach((newTag) => {
-    if (!state.tagsArray.includes(newTag)) {
-      state.tagsArray.push(newTag);
+  newTags.forEach((newTagName) => {
+    const isTagPresent = state.tagsArray.some((tag) => tag.name === newTagName);
+
+    if (!isTagPresent) {
+      state.tagsArray.push({ name: newTagName });
     } else {
-      console.log(`${newTag} already added.`);
+      console.log(`${newTagName} already added.`);
     }
   });
 
+  // Clear the input string after processing
   state.tags = "";
 }
 
-function addClickedTagToTagsArray(tagName) {
-  if (!state.tagsArray.includes(tagName)) {
-    state.tagsArray.push(tagName);
+function addClickedTagToTagsArray(clickedTag) {
+  const isTagPresent = state.tagsArray.some((tag) => tag.id === clickedTag.id);
+
+  if (!isTagPresent) {
+    state.tagsArray.push(clickedTag);
   } else {
-    console.log(`${tagName} already added.`);
+    console.log(`${clickedTag.name} is already added.`);
   }
 }
 
@@ -662,28 +707,93 @@ const getTagsFrom_DB = async () => {
   }
 };
 
-// const createTags = async () => {
-//   const gameId = await get_CreatedGameID();
-//   if (!gameId) {
-//     console.error("Failed to get game ID");
-//     return false;
-//   }
+const eraseGamesTags = async () => {
+  const gameId = state.gameId;
+  if (!gameId) {
+    console.error("Failed to get game ID");
+    return false;
+  }
 
-//   let allTagsCreated = true;
-//   for (const tag of state.tagsArray) {
-//     const jsonObject = {
-//       name: tag,
-//       gameId: gameId,
-//     };
-//     const result = await create("tags", jsonObject);
-//     console.log("Tag was created:", result);
-//     if (result.isSuccessful == false) {
-//       allTagsCreated = false;
-//       break;
-//     }
-//   }
-//   return allTagsCreated;
-// };
+  let game = await getOne("games", "id", gameId);
+
+  if (game) {
+    const originalTags = game[0].tags;
+
+    // Find tags that are in the original list but not in the current tags array
+    const tagsToRemove = originalTags.filter(
+      (originalTag) =>
+        !state.tagsArray.some((newTag) => newTag.id === originalTag.id)
+    );
+
+    console.log("originalTags: ", originalTags);
+    console.log("tagsToRemove: ", tagsToRemove);
+    console.log("state.tagsArray: ", state.tagsArray);
+
+    let gamesTagsList = await getAll("gamestags", "gameId", gameId);
+    if (gamesTagsList) {
+      console.log("gamesTagsList : ", gamesTagsList);
+
+      for (const tagToRemove of tagsToRemove) {
+        const gamesTagsListElement = gamesTagsList.find(
+          (element) => element.tagId === tagToRemove.id
+        );
+        if (gamesTagsListElement) {
+          console.log("gamesTagsListElement : ", gamesTagsListElement)
+          // await deleteGameTag(gamesTagsListElement);
+        }
+      }
+    }
+
+    // Remove each tag not present in the new set
+    // for (const tag of tagsToRemove) {
+    // await deleteTag(tag.id);
+    // console.log(`Tag removed: ${tag.name}`);
+    // }
+
+    return true; // If the function completes successfully
+  }
+};
+
+async function deleteGameTag(gamesTagsListElement) {
+
+  let delete_data = {
+    id: gamesTagsListElement.id,
+    tokens: {
+      access_token: storageManager.getAccessToken(),
+      refresh_token: storageManager.getRefreshToken(),
+    },
+  };
+  console.log("delete_data : ", delete_data);
+
+  const response = await deleteData("gamestags", delete_data);
+  if (response.success) {
+    console.log(`Tag ${gamesTagsListElement.tagId} removed successfully.`);
+  } else {
+    console.error(`Failed to remove tag ${gamesTagsListElement.tagId}.`);
+  }
+}
+const createTags = async () => {
+  const gameId = state.gameId;
+  if (!gameId) {
+    console.error("Failed to get game ID");
+    return false;
+  }
+
+  let allTagsCreated = true;
+  for (const tag of state.tagsArray) {
+    const jsonObject = {
+      name: tag.name,
+      gameId: gameId,
+    };
+    const result = await create("tags", jsonObject);
+    console.log("Tag was created:", tag.name);
+    // if (result.isSuccessful == false) {
+    //   allTagsCreated = false;
+    //   break;
+    // }
+  }
+  return allTagsCreated;
+};
 
 /*******************************************************************/
 /***************************** VALIDATE *****************************/
@@ -705,7 +815,7 @@ function validateDescriptionLength() {
 }
 
 const formatData = () => {
-  console.log("state.gameObject.description.trim().length : ", state.gameObject.description.trim().length)
+  // console.log("state.gameObject.description.trim().length : ", state.gameObject.description.trim().length)
   if (!state.gameObject.title) {
     state.errorMessage = "Game title is required.";
     return false;
@@ -715,11 +825,16 @@ const formatData = () => {
   } else if (state.imageFiles.length < state.MIN_IMG_LIST) {
     state.errorMessage = `At least ${state.MIN_IMG_LIST} images are required.`;
     return false;
-  } else if (state.gameObject.description.trim().length < state.MIN_DESC_LENGTH) {
+  } else if (
+    state.gameObject.description.trim().length < state.MIN_DESC_LENGTH
+  ) {
     state.errorMessage = `Description between  ${state.MIN_DESC_LENGTH} and  ${state.MAX_DESC_LENGTH} characters is required.`;
     return false;
   } else if (state.imageStoreObject.length < state.MAX_IMG_STORE) {
     state.errorMessage = `At least ${state.MAX_IMG_STORE} images are required for the store.`;
+    return false;
+  } else if (state.gameFile == null) {
+    state.errorMessage = `A Game File is required`;
     return false;
   } else {
     state.errorMessage = "";
@@ -738,23 +853,26 @@ const formatData = () => {
 /************************* UPDATE GAMES AND TAGS ******************/
 /*******************************************************************/
 
-// const update_gamesAndTags = async () => {
-//   // await updateGame();
+const update_gamesAndTags = async () => {
+  await updateGame();
 
-//   // const tagsCreationResult = await createTags();
-//   if (tagsCreationResult.isSuccessful ==false) {
-//     console.error(
-//       "Game couldn't be added because tags were not successfully created."
-//     );
-//     // await deleteGame();
-//   } else {
-//     console.log("Game creation succeeded.");
-//   }
-// };
+  const tagsCreationResult = await createTags();
+  if (tagsCreationResult.isSuccessful ==false) {
+    console.error(
+      "Game couldn't be added because tags were not successfully created."
+    );
+  } else {
+    console.log("Game creation succeeded.");
+    await eraseGamesTags();
+  }
+};
 
 const submitGame = async () => {
   if (formatData()) {
     await update_gamesAndTags();
+    await uploadImageFiles(state.gameId);
+    await uploadZipFile(state.gameId);
+
   }
 };
 </script>
