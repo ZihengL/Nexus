@@ -142,7 +142,6 @@ import {
   uploadBytes,
 } from "firebase/storage";
 
-const storage = getStorage();
 let UrlGameImg = ref("");
 const gameInfos = reactive({
   leGame: {},
