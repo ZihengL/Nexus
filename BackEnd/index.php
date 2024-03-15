@@ -246,7 +246,7 @@ function handleUpdate($centralController, $decodedData, $controllerName, $crud_a
 {
     $data = $decodedData['updateData'];
 
-    // echo "<br> update data : <br>";
+    // echo "<br> update data : ".  print_r($data, true) ." <br>";
     // print_r($data);
     return $centralController->$controllerName->$crud_action($data["id"], $data);
 }

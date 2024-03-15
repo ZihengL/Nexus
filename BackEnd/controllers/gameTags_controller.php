@@ -28,4 +28,24 @@ class GameTagsController extends BaseController
         }
         return $this->createResponse(false, 'Failed to create tag');
     }
+
+    public function delete($data, $jwts = null)
+    {
+        // $jwts = $data["tokens"];
+        $id = $data["id"];
+        // if ($jwts = $this->authenticate($id, $jwts)) {
+            if( $id ){
+                return $this->model->delete($id);
+            }
+         
+            // $this->getTokensController()->deleteAllFromUser($id, $jwts);
+
+            // return $jwts;
+        // }
+
+        return false;
+    }
+
+
+
 }

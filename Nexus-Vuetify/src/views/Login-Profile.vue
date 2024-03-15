@@ -34,12 +34,12 @@ let idDev = ref(null);
 const emit = defineEmits(["changeCon","showProfile"]);
 
 onMounted(() => {
-  console.log("onMounted  props.connectedView : ", props.connectedView);
-  console.log("onMounted  storageManager.getIdDev() : ", storageManager.getIdDev());
-  console.log("storageManager.getIsConnected() : ", storageManager.getIsConnected());
+  // console.log("onMounted  props.connectedView : ", props.connectedView);
+  // console.log("onMounted  storageManager.getIdDev() : ", storageManager.getIdDev());
+  // console.log("storageManager.getIsConnected() : ", storageManager.getIsConnected());
   if (storageManager.getIdDev()) {
     idDev.value = storageManager.getIdDev()
-    console.log("onMounted  storageManager.getIdDev() : ", storageManager.getIdDev());
+    // console.log("onMounted  storageManager.getIdDev() : ", storageManager.getIdDev());
     emit("showProfile")
   }
 });
@@ -51,12 +51,9 @@ watch(
   }
 );
 
-watch(idDev, (newValue, oldValue) => {
-  console.log("idDev.value changed from", oldValue, "to", newValue);
-});
 
 const changeConnexion = () => {
-  console.log("login-Profile changeConnexion idDev.value : ", idDev.value);
+  // console.log("login-Profile changeConnexion idDev.value : ", idDev.value);
   if (idDev.value) {
     emit("changeCon");
     // Save isConnected state to localStorage
@@ -69,12 +66,10 @@ const toggleProfileForm = (devId) => {
     storageManager.clearIdDev()
     idDev.value = devId.id;
     storageManager.setIdDev(idDev.value);
-    console.log("login-Profile toggleProfileForm idDev.value : ", idDev.value);
-    console.log("login-Profile toggleProfileForm storageManager.getIdDev() : ", storageManager.getIdDev());
+    // console.log("login-Profile toggleProfileForm idDev.value : ", idDev.value);
+    // console.log("login-Profile toggleProfileForm storageManager.getIdDev() : ", storageManager.getIdDev());
     changeConnexion();
-  } else {
-    console.log("toggleProfileForm called with invalid idDev:", devId);
-  }
+  } 
 };
 
 const toggleLoginForm = () => {

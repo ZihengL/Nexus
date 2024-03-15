@@ -1,4 +1,4 @@
-import { fetchData } from "./fetch.js";
+import { getAllMatching } from "./fetchServices.js";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 const storage = getStorage();
@@ -67,12 +67,12 @@ export default {
   async mounted() {
     try {
       const filters = { ratingAverage: { gt: 1, lte: 7 } };
-      const sorting = { ratingAverage: true };
+      const sorting = { id: true };
       const includedColumns = ["id", "developerID", "title", "files"];
 
-      const jsonBody = { filters, sorting, includedColumns };
+      // const jsonBody = { filters, sorting, includedColumns };
 
-    fetchData("games", "getAllMatching", null, null, null, null,jsonBody, "POST")
+      getAllMatching("games", filters, includedColumns, sorting)
       .then((data) => {
         if (!Array.isArray(data)) {
           throw new Error("Fetched data is not an array");

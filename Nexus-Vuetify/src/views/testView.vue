@@ -6,24 +6,27 @@
     <v-btn class="bordered-btn" @click="getOne">Get One</v-btn>
     <v-btn class="bordered-btn" @click="login">Login</v-btn>
     <v-btn class="bordered-btn" @click="logout">Logout</v-btn>
-    <v-btn class="bordered-btn" @click="register">register</v-btn>
-    <v-btn class="bordered-btn" @click="filter">filter</v-btn>
-    <v-btn class="bordered-btn" @click="deleteData">delete</v-btn>
-    <v-btn class="bordered-btn" @click="updateData">update</v-btn>
-    <v-btn class="bordered-btn" @click="createData">create</v-btn>
+    <v-btn class="bordered-btn" @click="register">Register</v-btn>
+    <v-btn class="bordered-btn" @click="filter">Filter</v-btn>
+    <v-btn class="bordered-btn" @click="deleteData">Delete</v-btn>
+    <v-btn class="bordered-btn" @click="updateData">Update</v-btn>
+    <v-btn class="bordered-btn" @click="createData">Create</v-btn>
   </div>
   <div>
-   <!-- <ReviewsListComponent :sorting="{timestamp: false}"></ReviewsListComponent>-->
+    <ReviewsListComponent
+      :sorting="{ timestamp: false }"
+    ></ReviewsListComponent>
   </div>
 </template>
 
 <script>
 import { fetchData } from "../JS/fetch";
-//import ReviewsListComponent from "../components/reviewsListComponent.vue";
+// import ReviewsListComponent from "../components/reviewsListComponent.vue";
+import storageManager from "../JS/localStorageManager";
 
 export default {
   components: {
-    //ReviewsListComponent,
+    // ReviewsListComponent,
   },
   data() {
     return {
@@ -82,7 +85,6 @@ export default {
         "GET"
       );
 
-
       /////////////////GET ONE USER///////////////////////////
       // let results = fetchData(
       //   "users",
@@ -96,7 +98,7 @@ export default {
       // );
       console.log(results);
     },
-    
+
     logout() {
       const access_token = localStorage.getItem("accessToken");
       const refresh_token = localStorage.getItem("refreshToken");
@@ -338,13 +340,36 @@ export default {
 
       ////////////////////DELETE TAG/////////////////////////
 
+      // const deleteData = {
+      //   gameId: "10",
+      //   name: "chocolate",
+      // };
+      // const body = { deleteData };
+      // let results = fetchData(
+      //   "tags",
+      //   "delete",
+      //   null,
+      //   null,
+      //   null,
+      //   null,
+      //   body,
+      //   "POST"
+      // );
+      // console.log(results);
+
+      ////////////////////DELETE GAMESTAGS/////////////////////////
+
       const deleteData = {
-        gameId: "10",
-        name: "chocolate",
+        id: 79,
+        tokens: {
+          access_token: storageManager.getAccessToken(),
+          refresh_token: storageManager.getRefreshToken(),
+        },
       };
+
       const body = { deleteData };
       let results = fetchData(
-        "tags",
+        "gamestags",
         "delete",
         null,
         null,

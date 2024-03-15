@@ -12,9 +12,16 @@
       display: flex;
       justify-content: center;
       align-items: center;
-  
+      padding: 0.5%;
+      text-decoration: none;
+
       img {
-        width: 70%;
+        width: 65%;
+      }
+
+      .navText {
+        margin-left: 10%;
+        color: var(--light-trans);
       }
     }
     .logo:hover {
@@ -60,7 +67,9 @@
           color: var(--light);
         }
       }
-      
+      .iconLog {
+        font-size: 4rem;
+      }
       .router-link-exact-active{
         font-weight: bolder;
         font-size: 1.3rem;

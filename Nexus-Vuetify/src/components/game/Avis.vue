@@ -1,5 +1,5 @@
 <template>
-  <div v-if="review" class="Recent roundBorderSmall">
+  <div v-if="review" class="AvisComp roundBorderSmall">
     <div class="absolute" v-if="review.length > 0">
       <ul>
         <li v-for="(avis, index) in review" :key="index" class="glass roundBorderSmall padding">
@@ -20,25 +20,67 @@
           </div>
         </li>
       </ul>
-
     </div>
   </div>
 </template>
 
 <script setup>
-  import { defineProps, ref, onMounted, defineEmits } from "vue";
-import { getOne, getReviewsAndUsernames } from '../../JS/fetchServices';
-import storageManager from '../../JS/localStorageManager';
-import defaultProfilePic from '../../assets/Dev_Picture/defaultProfilePic.png';
-//import { forEach } from "core-js/core/array";
+  import { defineProps, ref, onMounted, defineEmits, watch } from "vue";
+  import { getOne, getReviewsAndUsernames } from '../../JS/fetchServices';
+  import storageManager from '../../JS/localStorageManager';
+  import defaultProfilePic from '../../assets/Dev_Picture/defaultProfilePic.png';
 
-  const props = defineProps(["idGame", "sort"]);
+  //const props = defineProps(["idGame", "sort", "nbMax"]);
+  const props = defineProps({
+    idGame: {
+      type: String,
+      default: "1",
+    },
+    sort: {
+      type: String,
+      default: "1",
+    },
+    nbMax: {
+      type: Number,  // Correction ici
+      default: 3,
+    },
+    taille: {
+      type: Number,  // Correction ici
+      default: 150,
+    },
+  });
+
+  let nb = props.taille;
 
   let review = ref(null);
   const defaultPic = ref(defaultProfilePic);
 
+  const nbMax = props.nbMax;
+  let nbPage = null;
+  let paginationNb = 1;
+
+
+  const setOverflow = (threshold) => {
+    const avisComposant = document.querySelector(".AvisComp");
+
+
+    if (avisComposant) {
+      if (threshold < 4) {
+        console.log(' yep');
+        avisComposant.style.overflowX = 'hidden';
+        avisComposant.style.overflowY = 'hidden';
+      } else {
+        console.log(' nope');
+        avisComposant.style.overflowX = 'hidden';
+        avisComposant.style.overflowY = "scroll";
+      }
+    } else {
+      console.error("Element with class 'AvisComp' not found.");
+    }
+  };
+  
   onMounted(async () => {
-    try {      
+    try {
       let sorting = null;
       if(props.sort == "1"){
         sorting = { timestamp: false };
@@ -50,23 +92,45 @@ import defaultProfilePic from '../../assets/Dev_Picture/defaultProfilePic.png';
         sorting = { rating: false };
       }
       let reviewData = await getReviewsAndUsernames(props.idGame, sorting)
-      //let reviewData = await getReviewsAndUsernames(props.idGame)
-      review.value = reviewData;
-      //console.log('review : ', review.value)
-     
+      if(props.sort == "0"){
+        review.value = reviewData.slice(0, props.nbMax);
+      }
+      else {
+        review.value = reviewData;
+      }
+
+      if(review.value.length == 1){
+        let nbHeight = nb;
+        setOverflow(1);
+      }
+      else if(review.value.length == 2){
+        let nbHeight = nb * 2;
+        setOverflow(2);
+      }
+      else if(review.value.length == 3){
+        let nbHeight = nb * 3;
+        setOverflow(3);
+      }
+      else {
+        let nbHeight = nb * 4;
+        setOverflow(4);
+      }
+
 
     } catch (error) {
       console.error("Error during component mounting:", error);
     }
   });
+  
+
 </script>
 
 <style lang="scss">
 //@import "../../styles/settings.scss";
 
-.Recent {
-  //flex-basis: 200%;
-  position: relative;
+.AvisComp  {
+  //position: relative;
+
 
   .padding {
     padding: 10px;
@@ -83,7 +147,7 @@ import defaultProfilePic from '../../assets/Dev_Picture/defaultProfilePic.png';
 
 
     li {
-      width: 100%;
+      width: 99%;
       padding: 2%;
 
       color: var(--light);
