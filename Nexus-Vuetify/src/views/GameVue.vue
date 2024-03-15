@@ -26,7 +26,9 @@
         <div class="devs">
           <p>
             <b>Développeur :</b>
-            <a :href="`/Dev/${props.idGame}`" class="developerProfileLink">  {{ gameInfos.devName }} </a>
+            <a :href="`/Dev/${props.idGame}`" class="developerProfileLink">
+              {{ gameInfos.devName }}
+            </a>
             <!-- <router-link
               :to="{
                 name: 'DeveloperProfile',
@@ -36,7 +38,6 @@
             >
               {{ gameInfos.devName }}
             </router-link> -->
-
           </p>
         </div>
         <div class="tags">
@@ -49,7 +50,16 @@
           >
         </div>
         <btnComp :contenu="'Telecharger'" @toggle-btn="downloadZipFile()" />
-        <btnComp :contenu="'Faire un don'" @toggle-btn="openStripePage" > </btnComp>
+        <stripe-checkout
+          ref="checkoutRef"
+          :pk="stripePublicKey"
+          :line-items="lineItems"
+          :success-url="successURL"
+          :cancel-url="cancelURL"
+          mode="payment"
+          @loading="v =>loading = v"
+        />
+        <btnComp :contenu="'Faire un don'" @click="triggerCheckout" />
       </div>
     </div>
 
@@ -113,6 +123,8 @@
 </template>
 
 <script setup>
+// import axios from 'axios';
+import { StripeCheckout } from "@vue-stripe/vue-stripe";
 import btnComp from "../components/btnComponent.vue";
 import myAvis from "../components/game/myAvis.vue";
 import Avis from "../components/game/Avis.vue";
@@ -142,6 +154,17 @@ const gameInfos = reactive({
 });
 
 const defaultPath = "/src/assets/image/img1.png";
+//Stripe public key
+const stripePublicKey =
+  "pk_test_51OqJWVBFJdNNb6QWZ3Kembv8gI0yUUYYzjLmTlW0GzQTeJ9Gpv2P8uMPAjcPdCck2DDCPL9Vblmk7bWZj59lYoG500dyhHonpH";
+const lineItems = [{
+  price: 'price_1Oue6xBFJdNNb6QWGGj8cO7i',
+  quantity:1 
+}]
+
+const successURL = "http://localhost:3000/success"
+const cancelURL = "http://localhost:3000/error"
+
 const props = defineProps({
   idGame: {
     type: Number,
@@ -168,9 +191,38 @@ const toggleSignup = () => {
   }
 };
 
-const openStripePage = () => {
-console.log("Je veux faire un don")
-};
+const checkoutRef = ref(null);
+
+function triggerCheckout() {
+  console.log("Je veut faire une donation")
+  checkoutRef.value.redirectToCheckout();
+}
+
+// const openStripePage = async () => {
+//   if (!stripe.value) {
+//     console.error("Stripe has not been initialized correctly.");
+//     return;
+//   }
+
+//   try {
+//     const response = await fetch(
+//       "/your-backend-endpoint/create-checkout-session",
+//       {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//           // Include other headers as needed
+//         },
+//         // Include any necessary body or credentials, if required
+//       }
+//     );
+//     if (!response.ok) throw new Error("Network response was not ok.");
+//     const session = await response.json();
+//     await stripe.value.redirectToCheckout({ sessionId: session.id });
+//   } catch (error) {
+//     console.error("Failed to redirect to checkout:", error.message);
+//   }
+// };
 
 async function fetchGameUrl(gameId) {
   const imagePath = `Games/${gameId}/media/${gameId}_Store.png`;
@@ -216,6 +268,9 @@ onMounted(async () => {
 
     const dataReview = await getReviews(props.idGame);
     reviewTemp.value = dataReview.length;
+    // if (window.Stripe) {
+    //   stripe.value = window.Stripe(stripePublicKey); // Replace with your actual publishable key
+    // }
   } catch (error) {
     console.error("Error during component mounting:", error);
   }
@@ -226,13 +281,12 @@ onMounted(async () => {
 <style src="../styles/GameVueStyle.scss" lang="scss"></style>
 <style scoped>
 .developerProfileLink {
-    color: #ffffff; 
-  }
-  
-  .developerProfileLink:hover {
-    color: #ffffff;
-    font-weight: bolder;
-    /* text-shadow: 0 0 7px #fff,  0 0 21px #fff; */
-  }
+  color: #ffffff;
+}
 
+.developerProfileLink:hover {
+  color: #ffffff;
+  font-weight: bolder;
+  /* text-shadow: 0 0 7px #fff,  0 0 21px #fff; */
+}
 </style>

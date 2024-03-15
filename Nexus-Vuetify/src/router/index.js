@@ -2,7 +2,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import 'vuetify/dist/vuetify.css';
 
-
 const routes = [
   {
     path: '/',
@@ -99,6 +98,22 @@ const routes = [
         // this generates a separate chunk (Home-[hash].js) for this route
         // which is lazy-loaded when the route is visited.
         component: () => import('@/views/UpdateGameView.vue'),
+      },
+      {
+        path: '/success',
+        name: 'success',
+        // route level code-splitting
+        // this generates a separate chunk (Home-[hash].js) for this route
+        // which is lazy-loaded when the route is visited.        
+        component: () => import('@/views/succes.vue'),
+      },
+      {
+        path: '/error',
+        name: 'error',
+        // route level code-splitting
+        // this generates a separate chunk (Home-[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () => import('@/views/error.vue'),
       },
     ],
   },
