@@ -1,16 +1,16 @@
 <template>
   <!-- Created By CodingNepal -->
   <div v-if="isLoading" class="loading-state">
-    Loading...
+    Chargement...
   </div>
-  <div v-else-if="leDevs && gameList && toggleLogin && toggleSignup" class="allP">
+  <div v-else-if="leDevs && toggleLogin && toggleSignup" class="allP">
     <div
       class="containerProfile"
       :class="isHimself ? 'container1' : 'container2'"
     >
       <div class="wrapper2">
         <div class="description glass roundBorderSmall">
-          <div :class="isHimself ? 'imgContainerFull' : 'imgContainer'">
+          <div :class="isHimself ? 'imgContainerFull' : 'imgContainer'" class="round">
             <img
               :src="leDevs.picture || defaultProfilePic"
               alt="Photo de Profile"
@@ -21,7 +21,7 @@
             <!-- <h3>efew4w</h3> -->
             <h3>{{ leDevs.username }}</h3>
             <br />
-            <p>description</p>
+            <p>{{ leDevs.description || 'Aucune Description...' }}</p>
           </div>
           <div class="button" v-show="isHimself">
             <router-link
@@ -37,34 +37,39 @@
         </div>
         <div class="wrapper glass roundBorderSmall">
           <div class="form-container">
-            <div v-if="isHimself" class="slide-controls roundBorderSmall">
-              <input type="radio" name="slide" id="login" v-model="isLogin" value="true" checked />
-              <input type="radio" name="slide" id="signup" v-model="isLogin" value="false" />
-              <label for="login" class="slide login" @click="toggleLogin()">Développer</label>
-              <label for="signup" class="slide signup" @click="toggleSignup()">Télécharger</label>
-              <div class="slider-tab"></div>
-            </div>
+            <div v-if="isHimself && gameList.length > 0" >
+              <div class="slide-controls roundBorderSmall">
+                <input type="radio" name="slide" id="login" v-model="isLogin" value="true" checked />
+                <input type="radio" name="slide" id="signup" v-model="isLogin" value="false" />
+                <label for="login" class="slide login" @click="toggleLogin()">Développer</label>
+                <label for="signup" class="slide signup" @click="toggleSignup()">Télécharger</label>
+                <div class="slider-tab"></div>
+              </div>
 
-            <div v-if="isHimself" class="form-inner">
-              <div class="login log gamesss">
-                <div
-                  v-for="(item, index) in gameList"
-                  :key="index"
-                  class="gamess">
-                  <liste-de-jeu
-                    :himself="props.isHimself"
-                    :idJeu="item.id"
-                    :buy="true"
-                    class="game gamess"
-                  />
+              <div class="form-inner">
+                <div class="login log gamesss">
+                  <div
+                    v-for="(item, index) in gameList"
+                    :key="index"
+                    class="gamess">
+                    <liste-de-jeu
+                      :himself="props.isHimself"
+                      :idJeu="item.id"
+                      :buy="true"
+                      class="game gamess"
+                    />
+                  </div>
+                </div>
+                <div class=" sign glass roundBorderSmall">
+                  <p>En développement ...</p>
                 </div>
               </div>
-
-              <div class=" sign glass roundBorderSmall">
-                <p>Comming soon ...</p>
+            </div>
+            <div v-else-if="isHimself && gameList.length <= 0"  class="null glass roundBorderSmall">
+              <div>
+                <p>Aucun jeu publier</p>
               </div>
             </div>
-
             <div v-else class="signup">
               <div
                 v-for="(item, index) in gameList"
@@ -184,7 +189,7 @@ async function getUserInfos() {
       console.log("leDevs : ", leDevs.value);
 
       if (leDevs.value) {
-        
+
         storageManager.setIsConnected(true);
         const filters = {
           developerID: props.idDevl,
@@ -199,9 +204,9 @@ async function getUserInfos() {
           includedColumns,
           sorting
         );
-        // console.log("dataDevs ", dataDevs);
+        console.log("dataDevs ", dataDevs);
         gameList.value = dataDevs;
-        // console.log("gameList ", gameList);
+        console.log("gameList ", gameList);
       }
     }
   } catch (error) {

@@ -1,8 +1,9 @@
 <template>
   <nav class="navBar">
     <div class="navContent">
-      <router-link to="/" class="logo" @mouseover="changeUrl" @mouseleave="rechangeUrl">
+      <router-link to="/" class="logo glow" @mouseover="changeUrl" @mouseleave="rechangeUrl">
         <img :src="hover ? logo2URL : logoURL" alt="Vue" />
+        <span  class="navText" text>Nexus</span>
       </router-link>
       <div class="link">
         <v-spacer></v-spacer>

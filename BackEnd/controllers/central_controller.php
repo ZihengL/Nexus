@@ -23,7 +23,7 @@ class CentralController
     public $users_controller;
     public $games_controller;
     public $reviews_controller;
-    public $gamestags_contoller;
+    public $gamestags_controller;
     public $tags_controller;
 
     public $google_client_manager;
@@ -44,7 +44,7 @@ class CentralController
         $this->users_controller = new UsersController($this, $pdo);
         $this->games_controller = new GamesController($this, $pdo);
         $this->reviews_controller = new ReviewsController($this, $pdo);
-        $this->gamestags_contoller = new GameTagsController($this, $pdo);
+        $this->gamestags_controller = new GameTagsController($this, $pdo);
         $this->tags_controller = new TagsController($this, $pdo);
 
         // $this->google_client_manager = GoogleClientManager::getInstance($this);

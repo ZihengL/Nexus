@@ -4,9 +4,10 @@
     <div class="tag">
       <h4>{{ filter_data.tags_container_title }}</h4>
       <div class="checkbox-group">
-        <!--  -->
         <label
-          v-for="genre in filter_data.genres.slice(0, 6)"
+          v-for="genre in filter_data.isTagsExpanded
+            ? filter_data.genres
+            : filter_data.genres.slice(0, 6)"
           :key="genre.id"
           :class="{ 'filter-label': true, glow: true, checked: genre.checked }"
           class="roundBorderSmall label"
@@ -21,6 +22,15 @@
           <span>{{ genre.name }}</span>
         </label>
       </div>
+      <btnComp
+        :contenu="
+          filter_data.isTagsExpanded
+            ? 'Voir Moins de Genres'
+            : 'Voir Tous Les Genres'
+        "
+        @toggle-btn="seeAll_theTags"
+        class="seeAllTags"
+      ></btnComp>
       <div class="search-container roundBorderSmall glass">
         <input
           v-model="filter_data.searchInput"
@@ -46,10 +56,6 @@
       </select>
     </div>
 
-    <!-- <v-btn elevation="2" variant="tonal" class="" @click="returnFiltersData">
-        Rechercher
-      </v-btn> -->
-
     <btnComp :contenu="'Rechercher'" @toggle-btn="handleUserInteraction" />
   </div>
 </template>
@@ -66,6 +72,7 @@ const props = defineProps({
 const emit = defineEmits(["update:filters"]);
 
 const filter_data = reactive({
+  isTagsExpanded: false,
   genres: [
     { id: 1, name: "simulation", checked: false },
     { id: 2, name: "chocolate", checked: false },
@@ -92,13 +99,16 @@ function handleUserInteraction() {
   returnFiltersData();
 }
 
-
 async function getTags() {
   const fetchedGenres = await getAll("tags");
   filter_data.genres = fetchedGenres.map((genre) => ({
     ...genre,
     checked: false,
   }));
+}
+
+function seeAll_theTags() {
+  filter_data.isTagsExpanded = !filter_data.isTagsExpanded;
 }
 
 function returnFiltersData() {
@@ -111,8 +121,7 @@ function returnFiltersData() {
     sorting: filter_data.selectedSort,
   };
 
-    emit("update:filters", data);
-  
+  emit("update:filters", data);
 }
 
 watch(
@@ -146,11 +155,12 @@ watch(
 watch(
   () => filter_data.genres.map((genre) => genre.checked),
   (newVal, oldVal) => {
-    if (filter_data.userInteracted) { // change the game list once any of the tags have been checked
-    if (newVal.some((checked, index) => checked !== oldVal[index])) {
-      returnFiltersData();
-    }}
-   
+    if (filter_data.userInteracted) {
+      // change the game list once any of the tags have been checked
+      if (newVal.some((checked, index) => checked !== oldVal[index])) {
+        returnFiltersData();
+      }
+    }
   },
   { deep: true }
 );
@@ -161,6 +171,12 @@ onMounted(async () => {
 </script>
 
 <style lang="scss">
+.seeAllTags {
+  margin: 10% 0;
+  color: blue;
+  font-weight: bolder;
+}
+
 .label {
   /* From https://css.glass */
   background: rgba(255, 255, 255, 0.06);
@@ -222,7 +238,7 @@ input[type="checkbox"] {
   padding: 20px;
   margin: 2% auto;
   width: auto;
-  gap: 10px;
+  gap: 20px;
 }
 
 .filter-container h3 {

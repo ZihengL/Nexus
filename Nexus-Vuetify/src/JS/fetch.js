@@ -51,7 +51,7 @@ export function fetchData (
     .then(response => {
       if (!response.ok) { 
         // return Promise.reject(response);
-        return response.text().then(errorData => Promise.reject(errorData));
+        return response.json().then(errorData => Promise.reject(errorData));
       }
       //  console.log(" response : ", response.text());
 
