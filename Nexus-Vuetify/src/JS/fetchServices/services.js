@@ -168,7 +168,7 @@ export async function fetchDelete(table, data) {
 /*************************** OTHER FETCH ***************************/
 /*******************************************************************/
 
-export const refreshInterval = 55 * 60 * 1000; // 55 mins
+export const refreshInterval = 55 * 60 * 1000;
 export const tokenRefreshInterval = setInterval(refreshToken, refreshInterval);
 
 export async function refreshToken() {

@@ -2,8 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1:3306
--- Generation Time: Mar 15, 2024 at 07:39 AM
+-- Host: 127.0.0.1
+-- Generation Time: Mar 15, 2024 at 08:51 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -62,12 +62,12 @@ CREATE TABLE `games` (
 --
 
 INSERT INTO `games` (`id`, `developerID`, `stripeID`, `title`, `description`, `files`, `media`, `releaseDate`, `ratingAverage`) VALUES
-(1, 3, 0, 'Fantastic Adventure', 'Embark on an epic journey', 'adventure.exe', 'b', '2024-01-26', 2.5),
-(2, 4, 0, 'Space Odyssey', 'Explore the depths of outer space', 'space.exe', 'a,b', '2024-02-06', 4),
+(1, 3, 0, 'Fantastic Adventure', 'Embark on an epic journey', 'adventure.exe', 'b', '2024-01-26', 4),
+(2, 4, 0, 'Space Odyssey', 'Explore the depths of outer space', 'space.exe', 'a,b', '2024-02-06', 1.75),
 (3, 2, 0, 'Medieval Kingdoms', 'Rule your own kingdom', 'kingdoms.exe', 'a', '2024-01-17', 4.25),
-(4, 4, 0, 'Super Cat', 'Flying kitty', 'kitty.exe', '', '2024-01-14', 2.5),
-(5, 6, 0, 'restaurant', 'cooking', '', '', '2024-02-24', 0),
-(6, 6, 76, 'doggo fights', 'bonk', '', '', '2024-02-24', 1);
+(4, 4, 0, 'Super Cat', 'Flying kitty', 'kitty.exe', '', '2024-01-14', 4),
+(5, 6, 0, 'restaurant', 'cooking', '', '', '2024-02-24', 1.75),
+(6, 6, 76, 'doggo fights', 'bonk', '', '', '2024-02-24', 3.5);
 
 -- --------------------------------------------------------
 
@@ -138,7 +138,9 @@ INSERT INTO `reviews` (`id`, `userID`, `gameID`, `timestamp`, `rating`, `comment
 (24, 1, 5, '2024-02-25', 1, 'This is a review comment'),
 (17, 2, 4, '2024-02-22', 2.5, 'This is a review comment update'),
 (25, 11, 2, '0000-00-00', 3, 'asdjkahsdjkashdasjklhdas'),
-(44, 12, 1, '2024-03-15', 2.5, 'asdasdasdasas');
+(54, 12, 1, '2024-03-15', 4, 'asdsadsa'),
+(59, 12, 2, '2024-03-15', 0.5, 'fgrewrwqeqw'),
+(56, 12, 6, '2024-03-15', 3.5, 'asdsadasdas');
 
 -- --------------------------------------------------------
 
@@ -317,7 +319,14 @@ INSERT INTO `tokens` (`id`, `sub`, `exp`, `sha`) VALUES
 (275, 11, 1711083296, '619be902cfc84cebff99d561761a1549b126320ab6f7004b04ba805659faa2be'),
 (276, 11, 1711083348, 'a9e2cc913c7bdf2512985265c84cad86155d191379546387bbddd900b8b7d4f2'),
 (277, 11, 1711083420, '2b44afa70041e5430e43020d1e9b580355422fe3b4da324165f9e69db4dada33'),
-(279, 12, 1711087745, 'bc98e31af691f4875a072ffa09a583ba9fb125a3ec3e1d9c590a0ce7ba3e290c');
+(279, 12, 1711087745, 'bc98e31af691f4875a072ffa09a583ba9fb125a3ec3e1d9c590a0ce7ba3e290c'),
+(280, 12, 1711112684, 'a0977e3e7def66f2fc4df412fe065ad732db8318f5cfc34bcaea369de140dcba'),
+(282, 11, 1711115297, '70b69a1c50fcb59360068f88088b8cb54ec2d66db4a3ef22dcc8857ad8c141b7'),
+(287, 4, 1711121547, '9fda886eafebbf83e27a5127abfcd2c6c53df88832342ac271885a5e97e2b418'),
+(289, 4, 1711123548, '30feba2501710b5d5401ce836f8736c4afb717c90d4df16472ade44e6e8cc7fc'),
+(291, 4, 1711123653, 'f00ab5776c7b6d7b46dfa0a6b496f807f9eb85fef6bbb9e74dd84ede1e89539e'),
+(292, 4, 1711124232, '5c34a8468380976897edbb1cafca664e0f2f8526f5cfc7f136627d830b0a29da'),
+(293, 12, 1711124318, '2abe3d0e359d518fa539f0aef342c87e07445d820b2b08d544fbd66a543a83ca');
 
 -- --------------------------------------------------------
 
@@ -345,7 +354,7 @@ CREATE TABLE `users` (
   `password` varchar(100) NOT NULL,
   `email` varchar(500) NOT NULL,
   `phoneNumber` bigint(20) DEFAULT NULL,
-  `picture` varchar(500) DEFAULT NULL,
+  `picture` varchar(500) NOT NULL DEFAULT 'Avatar_1.png',
   `isAdmin` tinyint(1) DEFAULT 0,
   `isOnline` tinyint(1) NOT NULL DEFAULT 0,
   `description` varchar(500) DEFAULT NULL,
@@ -359,16 +368,16 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `email`, `phoneNumber`, `picture`, `isAdmin`, `isOnline`, `description`, `name`, `lastName`, `creationDate`) VALUES
-(1, 'john_doe', '$2y$10$nmakzte3PwS/95V/K2cqUO/EN8nxutO6BYnXVWqBXB63gcvAYdbne', 'john.doe@example.com', 1234567890, 'cvatar_path', 0, 0, '', '', '', '0000-00-00'),
-(2, 'alice_smith', '$2y$10$bD0KtNARFKLJ3e51sxTqv..X91IkIbkASHxccYPWcUhNezNRcjJx6', 'alice.smith@example.com', 987654321, 'avatar_alice.jpg', 0, 0, '', '', '', '0000-00-00'),
-(3, 'bob_jones', '$2y$10$QroH2ylQrU3aqx7zeLMS2eUhuPAgT1byd89aeyv5zpv2vo4B/Vf5C', 'bob.jones@example.com', 555666777, 'avatar_bob.png', 0, 0, '', '', '', '0000-00-00'),
-(4, 'emma_davis', '$2y$10$roDD0M7SrdDJFKwSYhI4qePO1XkHs7C4h5Sn/pEjD6si9RD/OfTqe', 'emma.davis@example.com', 111222333, 'avatar_emma.jpg', 0, 0, '', '', '', '0000-00-00'),
-(5, 'jane_doe', '$2y$10$nZV2jn6b1ExK9MHQOZmKY.hjmFnmWanw2XRu5p8.uaj0K5Wie0zzO', 'jane.doe@example.com', 2234567890, 'bvatar_path ', 0, 0, '0', '0', '0', '0000-00-00'),
-(6, 'john_doe', '$2y$10$xpynWrLMrU.CS/gkl.HszuvgpMtDxQ4QuiFxEIuB4Kxug99zI5gDy', 'addaasda', 33344555, 'avatar_path ', 0, 0, '', '', '', '0000-00-00'),
-(7, 'tostitos', '$2y$10$Sj0mvySDyMjwOdGIO96hmO4DMybe9bxktLb.C/m1rJRjagjRan43.', 'b', NULL, 'avatar_path ', NULL, 0, NULL, NULL, NULL, '0000-00-00'),
-(9, 'playgroundtest', '$2y$10$ateRNXpi6B7lY7DhPV.4kepnBU1mdeevwRMcuj1DWFptjO2aZBizm', 'testUser@email', NULL, NULL, NULL, 0, NULL, NULL, NULL, '2024-03-06'),
-(11, '1111131231232121312', '$2y$10$I6cqvdjn76FRmLoSoAa5B.ZVG0pSIH.j7Ny5E61bkHq2SAKkF2pkG', 'test@test', NULL, NULL, NULL, 1, NULL, '123', '', '2024-03-08'),
-(12, 'a', '$2y$10$nkOaq3CLcQBa.lrx5.8GCeYEHDLZb/LL6ZQwlbv9ZncIiKTLgHRrq', 'a@a', NULL, NULL, 0, 1, NULL, NULL, NULL, '2024-03-15');
+(1, 'john_doe', '$2y$10$nmakzte3PwS/95V/K2cqUO/EN8nxutO6BYnXVWqBXB63gcvAYdbne', 'john.doe@example.com', 1234567890, 'Avatar_1.png', 0, 0, '', '', '', '0000-00-00'),
+(2, 'alice_smith', '$2y$10$bD0KtNARFKLJ3e51sxTqv..X91IkIbkASHxccYPWcUhNezNRcjJx6', 'alice.smith@example.com', 987654321, 'Avatar_1.png', 0, 0, '', '', '', '0000-00-00'),
+(3, 'bob_jones', '$2y$10$QroH2ylQrU3aqx7zeLMS2eUhuPAgT1byd89aeyv5zpv2vo4B/Vf5C', 'bob.jones@example.com', 555666777, 'Avatar_1.png', 0, 0, '', '', '', '0000-00-00'),
+(4, 'emma_davis', '$2y$10$roDD0M7SrdDJFKwSYhI4qePO1XkHs7C4h5Sn/pEjD6si9RD/OfTqe', 'emma.davis@example.com', 111222333, 'Avatar_1.png', 0, 1, '', '', '', '0000-00-00'),
+(5, 'jane_doe', '$2y$10$nZV2jn6b1ExK9MHQOZmKY.hjmFnmWanw2XRu5p8.uaj0K5Wie0zzO', 'jane.doe@example.com', 2234567890, 'Avatar_1.png', 0, 0, '0', '0', '0', '0000-00-00'),
+(6, 'john_doe', '$2y$10$xpynWrLMrU.CS/gkl.HszuvgpMtDxQ4QuiFxEIuB4Kxug99zI5gDy', 'addaasda', 33344555, 'Avatar_1.png', 0, 0, '', '', '', '0000-00-00'),
+(7, 'tostitos', '$2y$10$Sj0mvySDyMjwOdGIO96hmO4DMybe9bxktLb.C/m1rJRjagjRan43.', 'b', NULL, 'Avatar_1.png', NULL, 0, NULL, NULL, NULL, '0000-00-00'),
+(9, 'playgroundtest', '$2y$10$ateRNXpi6B7lY7DhPV.4kepnBU1mdeevwRMcuj1DWFptjO2aZBizm', 'testUser@email', NULL, 'Avatar_1.png', NULL, 0, NULL, NULL, NULL, '2024-03-06'),
+(11, '1111131231232121312', '$2y$10$I6cqvdjn76FRmLoSoAa5B.ZVG0pSIH.j7Ny5E61bkHq2SAKkF2pkG', 'test@test', NULL, 'Avatar_1.png', NULL, 0, NULL, '123', '', '2024-03-08'),
+(12, 'ggg', '$2y$10$nkOaq3CLcQBa.lrx5.8GCeYEHDLZb/LL6ZQwlbv9ZncIiKTLgHRrq', 'a@a', NULL, 'Avatar_1.png', 0, 1, NULL, NULL, NULL, '2024-03-15');
 
 -- --------------------------------------------------------
 
@@ -482,7 +491,7 @@ ALTER TABLE `notification`
 -- AUTO_INCREMENT for table `reviews`
 --
 ALTER TABLE `reviews`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 
 --
 -- AUTO_INCREMENT for table `tags`
@@ -494,7 +503,7 @@ ALTER TABLE `tags`
 -- AUTO_INCREMENT for table `tokens`
 --
 ALTER TABLE `tokens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=280;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=294;
 
 --
 -- AUTO_INCREMENT for table `transactions`
