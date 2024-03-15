@@ -80,10 +80,10 @@ const createReview = async () => {
           gameID: props.gameID,
           rating: state.ratingValue,
           comment: state.comment,
-          tokens: {
-            access_token: storageManager.getAccessToken(),
-            refresh_token: storageManager.getRefreshToken(),
-          }
+          // tokens: {
+          //   access_token: storageManager.getAccessToken(),
+          //   refresh_token: storageManager.getRefreshToken(),
+          // }
         }
         let reviewIsCreated = await actionWithValidation("reviews", "update", data);
         if(reviewIsCreated == true){
