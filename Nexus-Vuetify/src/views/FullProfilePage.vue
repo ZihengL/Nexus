@@ -4,7 +4,7 @@
       <!-- <v-avatar size="10rem"> -->
       <div class="round">
         <img
-          :src="selectedImage || user.picture"
+          :src="selectedImage || user.picture || defaultProfilePic"
           alt="Profile Picture"
           class="img_userProfilePic"
         />
