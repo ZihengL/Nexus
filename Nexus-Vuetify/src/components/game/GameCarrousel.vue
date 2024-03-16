@@ -27,8 +27,21 @@
       ></li>
     </ul>
   </div>
-  <div v-else class="no-content">
-      Aucune vidéo ou image disponible.
+  <div
+    v-else
+    class="no-content"
+    style="
+      text-align: center;
+      padding: 20px;
+      font-size: 1.2em;
+      color: #fff;
+      background-color: rgba(0, 0, 0, 0.5);
+      margin: auto;
+      width: 90%;
+      border-radius: 10px;
+    "
+  >
+    Aucune vidéo ou image disponible.
   </div>
 </template>
 
@@ -140,18 +153,6 @@ onBeforeUnmount(() => {
 });
 </script>
 <style scoped>
-.no-content {
-  text-align: center;
-  padding: 20px;
-  font-size: 1.2em;
-  color: #fff;
-  background-color: rgba(0, 0, 0, 0.5);
-  margin: auto;
-  width: 90%;
-  border-radius: 10px;
-}
-
-
 .slider {
   width: 1300px;
   max-width: 100vw;
