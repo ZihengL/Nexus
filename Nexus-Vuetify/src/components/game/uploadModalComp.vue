@@ -1,46 +1,45 @@
 <template>
-    <div v-if="isVisible" class="modal-overlay">
-      <div class="modal-content">
-        <h3>Progrès de Téléchargement</h3>
-        <div v-for="(progress, fileName) in uploadProgress" :key="fileName">
-          {{ fileName }}: {{ progress }}%
-        </div>
-        <button @click="hideModal">Fermer</button>
+  <div v-if="props.isVisible" class="modal-overlay">
+    <div class="modal-content">
+      <h3>Progrès de Téléchargement</h3>
+      <div v-for="(progress, fileName) in props.uploadProgress" :key="fileName">
+        {{ fileName }}: {{ progress }}%
       </div>
+      <!-- <button @click="hideModal">Fermer</button> -->
     </div>
-  </template>
-  
-  <script>
-  export default {
-    props: {
-      isVisible: Boolean,
-      uploadProgress: Object
-    },
-    methods: {
-      hideModal() {
-        this.$emit('update:isVisible', false);
-      }
-    }
-  };
-  </script>
-  
-  <style>
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .modal-content {
-    background: white;
-    padding: 20%;
-    border-radius: 5%;
-  }
-  </style>
-  
+  </div>
+</template>
+
+<script setup>
+const props = defineProps({
+  isVisible: Boolean,
+  uploadProgress: Object,
+});
+
+const emit = defineEmits(["update:isVisible"]);
+
+const hideModal = () => {
+  emit("update:isVisible", false);
+};
+</script>
+
+<style>
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure the modal is above other content */
+}
+
+.modal-content {
+  background: white;
+  padding: 1.25rem;
+  border-radius: 0.625rem;
+}
+</style>
