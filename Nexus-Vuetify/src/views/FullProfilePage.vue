@@ -137,17 +137,22 @@
       </div>
       <!--</div>-->
 
-      <btnComp :contenu="'Confimer les Modifications'" @toggle-btn="updateUserInfos" />
+      <btnComp
+        :contenu="'Confimer les Modifications'"
+        @toggle-btn="updateUserInfos"
+      />
     </form>
     <div v-if="galleryDialog" class="roundBorderSmall glass4 dialog">
-      <v-icon @click="galleryDialog = false" class="close glow">mdi-close</v-icon>
+      <v-icon @click="galleryDialog = false" class="close glow"
+        >mdi-close</v-icon
+      >
       <div class="content">
         <label
           v-for="(img, index) in AllImages"
           :key="index"
           id="pic"
           @click="sendPic(img)"
-          class="roundBorderSmall one glass2  "
+          class="roundBorderSmall one glass2"
         >
           <!-- Hidden radio input, if needed for form submissions -->
           <input
@@ -167,7 +172,11 @@
         </label>
       </div>
       <!-- Confirmation Button -->
-      <button @click="confirmImage()" class="confirm-btn">Confirmer</button>
+      <btnComp
+        :contenu="'Confirmer'"
+        @toggle-btn="confirmImage()"
+        class="confirm-btn"
+      />
     </div>
   </div>
 </template>
@@ -197,7 +206,7 @@ const state = reactive({
   erroMsg: "",
   MAX_DESC_LENGTH: 250,
   MAX_NAME_LENGTH: 5,
-  MIN_DESC_LENGTH : 10,
+  MIN_DESC_LENGTH: 10,
   MAX_LASTNAME_LENGTH: 5,
   MAX_PASSWORD_LENGTH: 5,
 });
@@ -222,11 +231,11 @@ const updatephonenumber = (event) => {
 
 const sendPic = (imgPath) => {
   // Supprime "/src/assets/Avatar/" du chemin de l'image
-  const trimmedPath = imgPath.replace('/src/assets/Avatar/', '');
+  const trimmedPath = imgPath.replace("/src/assets/Avatar/", "");
   state.profile = trimmedPath;
   // Retourne le chemin de l'image modifié
   //return trimmedPath;
-}
+};
 const getUserInfos = async () => {
   try {
     const dataUser = await getOne("users", "id", props.IdDev);
@@ -258,7 +267,7 @@ const selectImage = (img) => {
 
 const confirmImage = () => {
   if (selectedImage.value) {
-    console.log(selectedImage.value); 
+    console.log(selectedImage.value);
 
     galleryDialog.value = false;
   } else {
@@ -293,8 +302,6 @@ const updateUserInfos = async () => {
           refresh_token: storageManager.getRefreshToken(),
         };
 
-
-        
         console.error(" updatedUser : ", updatedUser);
         let userIsUpdated = await updateData("users", updatedUser);
         if (userIsUpdated != false) {
@@ -359,7 +366,7 @@ function validateDescription(currentValue, originalValue, maxDescLength) {
   if (currentValue.length > maxDescLength) {
     console.error("Mauvaise longueur de description");
     return null;
-  } else if(currentValue.length < state.MIN_DESC_LENGTH) {
+  } else if (currentValue.length < state.MIN_DESC_LENGTH) {
     console.error("Mauvaise longueur de description");
     return null;
   } else if (currentValue !== originalValue) {
@@ -447,7 +454,7 @@ async function validateDataBeforeSending() {
   });
 
   //Profile Picture
-  updatedUser.picture = `${selectedImage.value || user.value.picture}`
+  updatedUser.picture = `${selectedImage.value || user.value.picture}`;
 
   // Username
   const usernameResult = validateUsername(
@@ -481,7 +488,7 @@ async function validateDataBeforeSending() {
   if (sanitizedNumber) {
     updatedUser.phoneNumber = sanitizedNumber;
   }
-  
+
   console.log("updatedUser : ", updatedUser);
   let final_updatedUser = compareAndUpdateUser(updatedUser, state.userToUpdate);
 
@@ -532,18 +539,17 @@ onMounted(async () => {
 </script>
 
 <style lang="scss">
-
 .confirm-btn {
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  cursor: pointer;
-  padding: 5% 10%;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 1em;
-  margin-top: 2%;
+  // background-color: #4CAF50;
+  // color: white;
+  // border: none;
+  // cursor: pointer;
+  // padding: 5% 10%;
+  // text-align: center;
+  // text-decoration: none;
+  // display: inline-block;
+  // font-size: 1em;
+  // margin-top: 2%;
   margin-bottom: 10%;
 }
 

@@ -174,11 +174,13 @@
       @toggle-btn="submitGame"
     ></btnComp>
   </div>
+  <uploadProgressModal :isVisible="state.showModal" :uploadProgress="state.uploadProgress" />
 </template>
 
 <script setup>
 import JSZip from "jszip";
 import btnComp from "../components/btnComponent.vue";
+import uploadProgressModal from "../components/game/uploadModalComp.vue";
 import { useRoute } from "vue-router";
 import storageManager from "../JS/localStorageManager";
 import { reactive, defineProps, computed, onMounted, ref } from "vue";
@@ -195,14 +197,12 @@ import {
   getStorage,
   ref as firebaseRef,
   listAll,
+  uploadBytesResumable,
   uploadBytes,
   getDownloadURL,
 } from "firebase/storage";
 const storage = getStorage();
 const route = useRoute();
-
-
-
 const validImageTypes = ["image/jpeg", "image/png"];
 const validFileTypes = [
   "application/x-msdownload", // MIME type for .exe files
@@ -229,6 +229,8 @@ const props = defineProps({
 const state = reactive({
   gameId: "",
   gameObject: {},
+  uploadProgress: {},
+  showModal: false,
   pageTitle: props.pageTitle,
   gameTitle: "",
   tags: "",
@@ -243,6 +245,7 @@ const state = reactive({
   MIN_IMG_STORE: 1,
   MAX_IMG_LIST: 4,
   MAX_IMG_STORE: 1,
+  MIN_VIDS : 1,
   MAX_VIDS: 2,
   MIN_TAG: 1,
   MIN_DESC_LENGTH: 10,
@@ -279,7 +282,9 @@ async function setDefaultValues() {
   let data = await getOne("games", "id", gameToUpdateId);
   if (data) {
     state.gameObject = data[0];
+    state.gameTitle = state.gameObject.title
     console.log("state.gameObject : ", state.gameObject);
+    console.log("state.gameTitle : ", state.gameTitle);
     state.tagsArray = state.gameObject.tags;
     state.tagsArray_original.push(JSON.parse(JSON.stringify(data)));
 
@@ -306,6 +311,7 @@ const openFileBrowser = () => {
     const fileUrl = URL.createObjectURL(file);
 
     state.gameFile = {
+      file:file,
       name: file.name,
       size: file.size,
       type: file.type,
@@ -322,33 +328,49 @@ const openVideoBrowser = () => {
   const fileInput = document.createElement("input");
   fileInput.type = "file";
   fileInput.multiple = true;
-  fileInput.accept = "video/*";
+  fileInput.accept = "video/*"; // Keep as is to accept all video formats
   fileInput.onchange = (e) => {
     const newFiles = Array.from(e.target.files);
-    const availableSlots = state.MAX_VIDS - state.videoFiles.length;
+    const availableSlots = state.MAX_VIDS - state.videoFiles.length; // Limit to 2 videos
 
     if (newFiles.length > availableSlots) {
-      alert(
-        `You can only upload a maximum of ${availableSlots} more video(s).`
-      );
+      alert(`Vous ne pouvez télécharger que ${availableSlots} vidéos supplémentaire(s) au maximum.`);
       return;
     }
 
-    const newVideoFiles = newFiles.slice(0, availableSlots).map((file) => ({
-      file:file,
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      lastModified: file.lastModified,
-      url: URL.createObjectURL(file),
-    }));
+    const existingNames = state.videoFiles.map(video => video.name);
+    const newVideoFiles = newFiles.slice(0, availableSlots).map((file, index) => {
+      // Extract the file extension to preserve the original format
+      const fileExtension = file.name.split('.').pop();
+      let newName;
+      // Attempt to generate a unique name based on the available slots
+      for (let i = 1; i <= 2; i++) {
+        const potentialName = `${state.gameId}_vid_${i}.${fileExtension}`;
+        if (!existingNames.includes(potentialName)) {
+          newName = potentialName;
+          break;
+        }
+      }
+
+      if (!newName) {
+        console.error("Could not assign a new name, all slots are taken.");
+        return null;
+      }
+
+      return {
+        ...file,
+        file,
+        url: URL.createObjectURL(file),
+        name: newName, // Use the new unique name
+        type: file.type,
+      };
+    }).filter(file => file !== null);
 
     state.videoFiles = [...state.videoFiles, ...newVideoFiles];
     console.log("Updated state.videoFiles : ", state.videoFiles);
   };
   fileInput.click();
 };
-
 
 const openImageBrowser = () => {
   const fileInput = document.createElement("input");
@@ -360,7 +382,7 @@ const openImageBrowser = () => {
     const availableSlots = state.MAX_IMG_LIST - state.imageFiles.length;
 
     if (newFiles.length > availableSlots) {
-      alert(`You can only upload a maximum of ${availableSlots} more image(s).`);
+      alert(`Vous ne pouvez télécharger que ${availableSlots} image(s) supplémentaire(s) au maximum.`);
       return;
     }
 
@@ -370,16 +392,16 @@ const openImageBrowser = () => {
         alert("Invalid file type.");
         return null;
       }
-      // Generate a new unique name for the image
+      
       let newName;
       for (let i = 1; i <= 4; i++) {
-        const potentialName = `${state.gameId}_${i}.png`; // Assuming .png for simplicity, adjust as needed
+        const potentialName = `${state.gameId}_${i}.png`; 
         if (!existingNames.includes(potentialName)) {
           newName = potentialName;
           break;
         }
       }
-      // If newName remains undefined, it means all slots are taken. This is a fallback case.
+   
       if (!newName) {
         console.error("Could not assign a new name, all slots are taken.");
         return null;
@@ -389,7 +411,7 @@ const openImageBrowser = () => {
         ...file,
         file,
         url: URL.createObjectURL(file),
-        name: newName, // Use the new unique name
+        name: newName, 
         type: file.type,
       };
     }).filter(file => file !== null);
@@ -412,7 +434,7 @@ const openImageBrowser_forStore = () => {
 
     if (newFiles.length > availableSlots) {
       alert(
-        `You can only upload a maximum of ${availableSlots} more image(s).`
+        `Vous ne pouvez télécharger que ${availableSlots} image(s) supplémentaire(s) au maximum.`
       );
       return;
     }
@@ -489,89 +511,86 @@ const fetchFiles = async (gameID) => {
 };
 
 
-const uploadImageFiles = async (gameId) => {
-  for (const image of state.imageFiles) {
-    // Check if the image URL does not start with the Firebase Storage URL
+const uploadImageFiles = async (gameId, onProgress) => {
+  // Filter images that are not already uploaded to Firebase
+  const imagesToUpload = state.imageFiles.filter(image => 
+    !image.url.startsWith('http://') && !image.url.startsWith('https://firebasestorage.googleapis.com/')
+  );
+
+  const uploadPromises = imagesToUpload.map((image, index) => {
+    const fileName = image.name;
+    const fileRef = firebaseRef(storage, `Games/${gameId}/media/${fileName}`);
+    const uploadTask = uploadBytesResumable(fileRef, image.file);
+
+    return new Promise((resolve, reject) => {
+      uploadTask.on('state_changed', (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        // Adjust the index if needed, or use a different identifier for tracking progress
+        onProgress(index, progress, image.name); // Call the progress callback with the updated index if necessary
+      }, reject, () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          // Optionally, update the image object or state to include the new download URL
+          image.url = downloadURL; // Update the image URL in your state if necessary
+          resolve(downloadURL); // Resolve the promise with the download URL
+        });
+      });
+    });
+  });
+
+  await Promise.all(uploadPromises);
+};
+
+
+
+const upload_storeImage = async (gameId, onProgress) => {
+  const uploadPromises = state.imageStoreObject.map((image, index) => {
     if (!image.url.startsWith("https://firebasestorage.googleapis.com/")) {
-      const fileName = image.name;
+      const fileName = `${gameId}_Store.png`;
       const fileRef = firebaseRef(storage, `Games/${gameId}/media/${fileName}`);
-      const metadata = { contentType: image.type };
-
-      try {
-        await uploadBytes(fileRef, image.file, metadata);
-        console.log(`${fileName} uploaded successfully.`);
-      } catch (error) {
-        console.error(`Failed to upload ${fileName}:`, error);
-      }
+      const uploadTask = uploadBytesResumable(fileRef, image.file);
+      
+      return new Promise((resolve, reject) => {
+        uploadTask.on('state_changed', (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          onProgress(index, progress, fileName); // Report progress
+        }, reject, () => {
+          getDownloadURL(uploadTask.snapshot.ref).then(resolve);
+        });
+      });
     }
-  }
+  });
+
+  await Promise.all(uploadPromises.filter(p => p !== undefined));
 };
 
 
-
-const upload_storeImage = async (gameId) => {
-  for (const image of state.imageStoreObject) {
-    // Check if the image URL does not start with the Firebase Storage URL
-    if (!image.url.startsWith("https://firebasestorage.googleapis.com/")) {
-      const fileName = `${gameId}_Store.png`; // Use gameId for the store image for consistency
-      const fileRef = firebaseRef(storage, `Games/${gameId}/media/${fileName}`);
-      const metadata = { contentType: image.type };
-
-      try {
-        const uploadResult = await uploadBytes(fileRef, image.file, metadata);
-        console.log(`${fileName} uploaded successfully.`);
-
-
-        const newFileName = `${gameId}_0.png`;
-        const newFileRef = firebaseRef(storage, `Games/${gameId}/media/${newFileName}`);
-
-        await uploadBytes(newFileRef, image.file, metadata);
-        console.log(`${newFileName} duplicate created successfully.`);
-      } catch (error) {
-        console.error(`Failed to upload ${fileName}:`, error);
-      }
-    }
-  }
-};
-
-const zipFile = async (file, fileName) => {
-  const zip = new JSZip();
-  // Add a file to the zip. The first argument is the filename inside the zip
-  // The second argument is the content of the file
-  zip.file(fileName, file);
-
-  try {
-    const content = await zip.generateAsync({ type: "blob" });
-
-    return content;
-  } catch (error) {
-    console.error("Failed to zip the file:", error);
-    throw error;
-  }
-};
-
-const uploadZipFile = async (gameId) => {
-  if (!state.gameFile || !state.gameFile.file || !state.gameTitle) {
-    console.error("No file selected for upload");
+const uploadZipFile = async (gameId, onProgress) => {
+  // Check if the ZIP file is already uploaded based on its URL
+  if (!state.gameFile || !state.gameFile.file || (state.gameFile.url && state.gameFile.url.startsWith('https://firebasestorage.googleapis.com/'))) {
+    console.error("No ZIP file selected for upload or it's already uploaded");
     return;
   }
 
   const zippedFileName = `${state.gameTitle}.zip`;
-
   const fileRef = firebaseRef(storage, `Games/${gameId}/${zippedFileName}`);
+  const uploadTask = uploadBytesResumable(fileRef, state.gameFile.file);
 
-  try {
-    const zippedFileBlob = await zipFile(state.gameFile.file, zippedFileName);
-
-    const metadata = {
-      contentType: "application/zip",
-    };
-
-    await uploadBytes(fileRef, zippedFileBlob, metadata);
-    console.log(`${zippedFileBlob} uploaded successfully`);
-  } catch (error) {
-    console.error("Failed to upload zipped file:", error);
-  }
+  return new Promise((resolve, reject) => {
+    uploadTask.on('state_changed', 
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        onProgress(0, progress, zippedFileName); // Assuming only one ZIP file needs progress updates
+      }, 
+      (error) => reject(error), 
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          // Update the ZIP file's URL in state to reflect that it's now hosted on Firebase
+          state.gameFile.url = downloadURL;
+          resolve(downloadURL);
+        });
+      }
+    );
+  });
 };
 
 const categorizeFiles = async (fetchedStructure) => {
@@ -596,20 +615,21 @@ const categorizeFiles = async (fetchedStructure) => {
   mediaFolder.contents.forEach((file) => {
     if (file.name.endsWith("_Store.png")) {
       state.imageStoreObject.push(file);
-    } else if (!file.name.endsWith("0.png") && file.type === "file") {
+    } else if (!file.name.endsWith("0.png") && file.type === "file" && !file.name.includes("vid")) {
       state.imageFiles.push(file);
       originalCarrouselImageNames.value.push(file.name);
     }
   });
 
-  // mediaFolder.contents.forEach((file) => {
-  //   if (file.type === "file") {
-  //     originalCarrouselImageNames.value.push(file.name);
-  //   }
-  // });
+  mediaFolder.contents.forEach((file) => {
+  if (file.name.includes("vid")) {
+    state.videoFiles.push(file);
+  }
+});
 
   console.log("Original Files Fetched: ", originalCarrouselImageNames.value);
   console.log("Image Files:", state.imageFiles);
+  console.log("state.videoFiles:", state.videoFiles);
   console.log("Store Image:", state.imageStoreObject);
   console.log(
     "Game File (ZIP):",
@@ -664,6 +684,44 @@ async function unzipBlob(blob) {
   return fileContents; // Returns an object with filenames as keys and their contents as Blob
 }
 
+const uploadSelectedVideos = async (gameId, onProgress) => {
+  // Assuming state.videoFiles is an array of video file objects
+  const uploadPromises = state.videoFiles.map((video, index) => {
+    if (!video.url.startsWith('https://firebasestorage.googleapis.com/')) {
+      const fileName = video.name; // Assuming video.name is the filename
+      const videoRef = firebaseRef(storage, `Games/${gameId}/media/${fileName}`);
+      const uploadTask = uploadBytesResumable(videoRef, video.file); // Start the upload
+
+      return new Promise((resolve, reject) => {
+        uploadTask.on('state_changed', 
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            onProgress(index, progress, fileName); // Call the progress callback with the current progress
+          }, 
+          error => reject(error), 
+          () => {
+            getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => {
+              console.log(`${fileName} available at ${downloadURL}`);
+              resolve(downloadURL); // Resolve the promise with the download URL
+            });
+          }
+        );
+      });
+    } else {
+      // For already uploaded videos, resolve immediately
+      return Promise.resolve(video.url);
+    }
+  });
+
+  try {
+    const downloadURLs = await Promise.all(uploadPromises);
+    console.log("All videos uploaded successfully:", downloadURLs);
+    // Here, you could update your application's state or UI based on the successful uploads
+  } catch (error) {
+    console.error("Error uploading one or more videos:", error);
+    // Handle the error appropriately in your application
+  }
+};
 /*******************************************************************/
 /***************************** GAMES *****************************/
 /*******************************************************************/
@@ -904,6 +962,9 @@ const formatData = () => {
   } else if (state.gameFile == null) {
     state.errorMessage = "Un fichier de jeu est requis.";
     return false;
+  }  else if (state.videoFiles.length < state.MIN_VIDS) {
+    state.errorMessage = `Au moins ${state.MIN_VIDS} videos est/sont requis.`;
+    return false;
   } else {
     state.errorMessage = "";
     console.log("Submitting:", {
@@ -938,20 +999,41 @@ const update_gamesAndTags = async () => {
 };
 
 const submitGame = async () => {
-  if (formatData()) {
-    try {
-      await update_gamesAndTags();
-      await uploadImageFiles(state.gameId);
-      await upload_storeImage(state.gameId);
-      await uploadZipFile(state.gameId);
+  if (!formatData()) {
+    return; // Exit if data is not formatted correctly
+  }
 
-      alert("Votre jeu a été mis à jour avec succès.");
+  state.showModal = true; // Show the modal right away
+  state.uploadProgress = {}; // Reset or initialize your upload progress tracking
 
-      window.location.reload();
-    } catch (error) {
-      console.error("An error occurred during the game update process:", error);
-      alert("Une erreur s'est produite lors de la mise à jour du jeu. Veuillez réessayer.");
-    }
+  // Function to handle progress updates
+  const handleProgress = (fileIndex, progress, fileName) => {
+    state.uploadProgress[fileName] = progress;
+    // Here you could also trigger a UI update to reflect progress changes
+  };
+
+  try {
+    // Prepare your upload promises, passing the handleProgress function
+    const uploadPromises = [
+      uploadImageFiles(state.gameId, handleProgress),
+      upload_storeImage(state.gameId, handleProgress),
+      uploadZipFile(state.gameId, handleProgress), // Assume uploadZipFile is adapted to report progress
+      uploadSelectedVideos(state.gameId, handleProgress) // Assume it's adapted to report progress
+    ];
+
+    // Wait for all uploads to complete
+    await Promise.all(uploadPromises);
+
+    // After all uploads are complete, you can hide the modal or update the state to indicate completion
+    console.log("All files uploaded successfully");
+    alert("Tous les fichiers ont été téléversés avec succès.");
+    state.showModal = false; 
+    window.location.reload(); 
+    // Consider using Vue Router for navigation if you're in a Single Page Application
+  } catch (error) {
+    console.error("An error occurred during the game update process:", error);
+    alert("Une erreur s'est produite lors de la mise à jour du jeu. Veuillez réessayer.");
+    state.showModal = false; // Hide the modal in case of error
   }
 };
 </script>
