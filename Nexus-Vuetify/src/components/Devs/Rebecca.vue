@@ -126,7 +126,7 @@
 }
 
 .info h2 {
-  color: var(--light-gray);
+  color: gray;
   margin-left: 20px;
   font-size: 1.5em;
   margin-bottom: 3%;
