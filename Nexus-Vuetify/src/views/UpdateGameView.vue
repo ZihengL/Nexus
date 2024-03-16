@@ -174,11 +174,13 @@
       @toggle-btn="submitGame"
     ></btnComp>
   </div>
+  <uploadProgressModal :isVisible="state.showModal" :uploadProgress="state.uploadProgress" />
 </template>
 
 <script setup>
 import JSZip from "jszip";
 import btnComp from "../components/btnComponent.vue";
+import uploadProgressModal from "../components/game/uploadModalComp.vue";
 import { useRoute } from "vue-router";
 import storageManager from "../JS/localStorageManager";
 import { reactive, defineProps, computed, onMounted, ref } from "vue";
@@ -195,14 +197,12 @@ import {
   getStorage,
   ref as firebaseRef,
   listAll,
+  uploadBytesResumable,
   uploadBytes,
   getDownloadURL,
 } from "firebase/storage";
 const storage = getStorage();
 const route = useRoute();
-
-
-
 const validImageTypes = ["image/jpeg", "image/png"];
 const validFileTypes = [
   "application/x-msdownload", // MIME type for .exe files
@@ -229,6 +229,8 @@ const props = defineProps({
 const state = reactive({
   gameId: "",
   gameObject: {},
+  uploadProgress: {},
+  showModal: false,
   pageTitle: props.pageTitle,
   gameTitle: "",
   tags: "",
@@ -322,33 +324,49 @@ const openVideoBrowser = () => {
   const fileInput = document.createElement("input");
   fileInput.type = "file";
   fileInput.multiple = true;
-  fileInput.accept = "video/*";
+  fileInput.accept = "video/*"; // Keep as is to accept all video formats
   fileInput.onchange = (e) => {
     const newFiles = Array.from(e.target.files);
-    const availableSlots = state.MAX_VIDS - state.videoFiles.length;
+    const availableSlots = state.MAX_VIDS - state.videoFiles.length; // Limit to 2 videos
 
     if (newFiles.length > availableSlots) {
-      alert(
-        `You can only upload a maximum of ${availableSlots} more video(s).`
-      );
+      alert(`Vous ne pouvez télécharger que ${availableSlots} vidéos supplémentaire(s) au maximum.`);
       return;
     }
 
-    const newVideoFiles = newFiles.slice(0, availableSlots).map((file) => ({
-      file:file,
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      lastModified: file.lastModified,
-      url: URL.createObjectURL(file),
-    }));
+    const existingNames = state.videoFiles.map(video => video.name);
+    const newVideoFiles = newFiles.slice(0, availableSlots).map((file, index) => {
+      // Extract the file extension to preserve the original format
+      const fileExtension = file.name.split('.').pop();
+      let newName;
+      // Attempt to generate a unique name based on the available slots
+      for (let i = 1; i <= 2; i++) {
+        const potentialName = `${state.gameId}_vid_${i}.${fileExtension}`;
+        if (!existingNames.includes(potentialName)) {
+          newName = potentialName;
+          break;
+        }
+      }
+
+      if (!newName) {
+        console.error("Could not assign a new name, all slots are taken.");
+        return null;
+      }
+
+      return {
+        ...file,
+        file,
+        url: URL.createObjectURL(file),
+        name: newName, // Use the new unique name
+        type: file.type,
+      };
+    }).filter(file => file !== null);
 
     state.videoFiles = [...state.videoFiles, ...newVideoFiles];
     console.log("Updated state.videoFiles : ", state.videoFiles);
   };
   fileInput.click();
 };
-
 
 const openImageBrowser = () => {
   const fileInput = document.createElement("input");
@@ -360,7 +378,7 @@ const openImageBrowser = () => {
     const availableSlots = state.MAX_IMG_LIST - state.imageFiles.length;
 
     if (newFiles.length > availableSlots) {
-      alert(`You can only upload a maximum of ${availableSlots} more image(s).`);
+      alert(`Vous ne pouvez télécharger que ${availableSlots} image(s) supplémentaire(s) au maximum.`);
       return;
     }
 
@@ -370,16 +388,16 @@ const openImageBrowser = () => {
         alert("Invalid file type.");
         return null;
       }
-      // Generate a new unique name for the image
+      
       let newName;
       for (let i = 1; i <= 4; i++) {
-        const potentialName = `${state.gameId}_${i}.png`; // Assuming .png for simplicity, adjust as needed
+        const potentialName = `${state.gameId}_${i}.png`; 
         if (!existingNames.includes(potentialName)) {
           newName = potentialName;
           break;
         }
       }
-      // If newName remains undefined, it means all slots are taken. This is a fallback case.
+   
       if (!newName) {
         console.error("Could not assign a new name, all slots are taken.");
         return null;
@@ -389,7 +407,7 @@ const openImageBrowser = () => {
         ...file,
         file,
         url: URL.createObjectURL(file),
-        name: newName, // Use the new unique name
+        name: newName, 
         type: file.type,
       };
     }).filter(file => file !== null);
@@ -412,7 +430,7 @@ const openImageBrowser_forStore = () => {
 
     if (newFiles.length > availableSlots) {
       alert(
-        `You can only upload a maximum of ${availableSlots} more image(s).`
+        `Vous ne pouvez télécharger que ${availableSlots} image(s) supplémentaire(s) au maximum.`
       );
       return;
     }
@@ -596,20 +614,21 @@ const categorizeFiles = async (fetchedStructure) => {
   mediaFolder.contents.forEach((file) => {
     if (file.name.endsWith("_Store.png")) {
       state.imageStoreObject.push(file);
-    } else if (!file.name.endsWith("0.png") && file.type === "file") {
+    } else if (!file.name.endsWith("0.png") && file.type === "file" && !file.name.includes("vid")) {
       state.imageFiles.push(file);
       originalCarrouselImageNames.value.push(file.name);
     }
   });
 
-  // mediaFolder.contents.forEach((file) => {
-  //   if (file.type === "file") {
-  //     originalCarrouselImageNames.value.push(file.name);
-  //   }
-  // });
+  mediaFolder.contents.forEach((file) => {
+  if (file.name.includes("vid")) {
+    state.videoFiles.push(file);
+  }
+});
 
   console.log("Original Files Fetched: ", originalCarrouselImageNames.value);
   console.log("Image Files:", state.imageFiles);
+  console.log("state.videoFiles:", state.videoFiles);
   console.log("Store Image:", state.imageStoreObject);
   console.log(
     "Game File (ZIP):",
@@ -664,6 +683,53 @@ async function unzipBlob(blob) {
   return fileContents; // Returns an object with filenames as keys and their contents as Blob
 }
 
+const uploadSelectedVideos = async (gameId) => {
+  // Filter out videos already uploaded to Firebase
+  const videosToUpload = state.videoFiles.filter(video => !video.url.startsWith('https://firebasestorage.googleapis.com'));
+
+  if (videosToUpload.length === 0) {
+    console.log("No new videos to upload.");
+    return;
+  }
+
+  state.showModal = true; // Show the modal
+  state.uploadProgress = {}; // Reset the uploadProgress object
+
+  let uploadTasks = []; // Store promises here
+
+  for (const video of videosToUpload) {
+    const fileName = video.name; // Assuming video.name is the filename
+    const videoRef = firebaseRef(storage, `Games/${gameId}/media/${fileName}`);
+
+    const uploadTaskPromise = new Promise((resolve, reject) => {
+      const uploadTask = uploadBytesResumable(videoRef, video.file);
+
+      uploadTask.on('state_changed', (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        state.uploadProgress[fileName] = progress.toFixed(0); // Update progress
+      }, error => {
+        console.error(`Upload failed for ${fileName}:`, error);
+        reject(error);
+      }, () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          console.log(`File available at ${downloadURL}`);
+          resolve(downloadURL); // Resolve the promise with the download URL
+        });
+      });
+    });
+
+    uploadTasks.push(uploadTaskPromise);
+  }
+
+  Promise.all(uploadTasks).then(downloadURLs => {
+    alert("All videos have been uploaded successfully.");
+    state.showModal = false; 
+    window.location.reload(); 
+  }).catch(error => {
+    console.error("Error uploading one or more videos: ", error);
+    state.showModal = false; // It might be a good idea to keep the modal open or handle this differently
+  });
+};
 /*******************************************************************/
 /***************************** GAMES *****************************/
 /*******************************************************************/
@@ -938,22 +1004,31 @@ const update_gamesAndTags = async () => {
 };
 
 const submitGame = async () => {
-  if (formatData()) {
-    try {
-      await update_gamesAndTags();
-      await uploadImageFiles(state.gameId);
-      await upload_storeImage(state.gameId);
-      await uploadZipFile(state.gameId);
+  if (!formatData()) {
+    return; // Exit if data is not formatted correctly
+  }
 
-      alert("Votre jeu a été mis à jour avec succès.");
+  try {
+    await update_gamesAndTags();
 
-      window.location.reload();
-    } catch (error) {
-      console.error("An error occurred during the game update process:", error);
-      alert("Une erreur s'est produite lors de la mise à jour du jeu. Veuillez réessayer.");
+    const uploadPromises = [
+      uploadImageFiles(state.gameId),
+      upload_storeImage(state.gameId),
+      uploadZipFile(state.gameId),
+    ];
+
+    if (state.videoFiles.length > 0) {
+      const videosUploadPromise = uploadSelectedVideos(state.gameId);
+      uploadPromises.push(videosUploadPromise);
     }
+
+    await Promise.all(uploadPromises);
+  } catch (error) {
+    console.error("An error occurred during the game update process:", error);
+    alert("Une erreur s'est produite lors de la mise à jour du jeu. Veuillez réessayer.");
   }
 };
+
 </script>
 
 <style scoped lang="scss">
