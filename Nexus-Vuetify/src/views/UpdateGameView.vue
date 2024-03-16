@@ -327,7 +327,7 @@ const openFileBrowser = () => {
 const openVideoBrowser = () => {
   const fileInput = document.createElement("input");
   fileInput.type = "file";
-  fileInput.multiple = true;
+  fileInput.multiple = false;
   fileInput.accept = "video/*"; // Keep as is to accept all video formats
   fileInput.onchange = (e) => {
     const newFiles = Array.from(e.target.files);
@@ -375,7 +375,7 @@ const openVideoBrowser = () => {
 const openImageBrowser = () => {
   const fileInput = document.createElement("input");
   fileInput.type = "file";
-  fileInput.multiple = true;
+  fileInput.multiple = false;
   fileInput.accept = "image/*";
   fileInput.onchange = (e) => {
     const newFiles = Array.from(e.target.files);
