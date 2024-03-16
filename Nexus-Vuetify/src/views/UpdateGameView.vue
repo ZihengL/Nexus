@@ -487,8 +487,10 @@ const deleteRemovedVideos = async () => {
     try {
       await deleteObject(fileRef);
       console.log(`Deleted video file: ${url}`);
+      alert(`fichier vidéo : ${url} supprimé avec succès`)
     } catch (error) {
       console.error(`Failed to delete video file: ${url}`, error);
+      alert(`Échec de la suppression du fichier vidéo : ${url}`, error);
     }
   }
 
@@ -719,7 +721,7 @@ async function unzipBlob(blob) {
 
 const uploadSelectedVideos = async (gameId, onProgress) => {
   
-  await deleteRemovedVideos();
+ 
   // Assuming state.videoFiles is an array of video file objects
   const uploadPromises = state.videoFiles.map((video, index) => {
     if (!video.url.startsWith('https://firebasestorage.googleapis.com/')) {
@@ -1041,6 +1043,7 @@ const submitGame = async () => {
   state.showModal = true; // Show the modal right away
   state.uploadProgress = {}; // Reset or initialize your upload progress tracking
 
+  await deleteRemovedVideos();
   // Function to handle progress updates
   const handleProgress = (fileIndex, progress, fileName) => {
     state.uploadProgress[fileName] = progress;
@@ -1061,7 +1064,7 @@ const submitGame = async () => {
 
     // After all uploads are complete, you can hide the modal or update the state to indicate completion
     console.log("All files uploaded successfully");
-    alert("Tous les fichiers ont été téléversés avec succès.");
+    alert("Tous les fichiers ont été modifiés avec succès.");
     state.showModal = false; 
     window.location.reload(); 
     // Consider using Vue Router for navigation if you're in a Single Page Application
