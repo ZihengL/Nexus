@@ -27,6 +27,9 @@
       ></li>
     </ul>
   </div>
+  <div v-else class="no-content">
+      Aucune vidéo ou image disponible.
+  </div>
 </template>
 
 <script setup>
@@ -137,6 +140,18 @@ onBeforeUnmount(() => {
 });
 </script>
 <style scoped>
+.no-content {
+  text-align: center;
+  padding: 20px;
+  font-size: 1.2em;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.5);
+  margin: auto;
+  width: 90%;
+  border-radius: 10px;
+}
+
+
 .slider {
   width: 1300px;
   max-width: 100vw;
@@ -195,9 +210,9 @@ onBeforeUnmount(() => {
     }
   }
   .dots {
-    margin-top: 50%;
-    position: relative;
-    bottom: 8%;
+    margin-top: 10%;
+    position: absolute;
+    bottom: 0%;
     left: 0;
     color: #000000;
     width: 100%;
@@ -212,7 +227,7 @@ onBeforeUnmount(() => {
       width: 10px;
       height: 10px;
       background-color: #ffffff;
-      margin: 10px;
+      margin: 20px;
       border-radius: 20px;
       transition: 0.5s;
     }
