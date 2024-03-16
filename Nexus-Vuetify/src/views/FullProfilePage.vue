@@ -342,6 +342,8 @@ function validateField(field, currentValue, originalValue) {
     return currentValue;
   } else if (!currentValue && currentValue == originalValue) {
     return currentValue;
+  }else if (!currentValue && currentValue != originalValue) {
+    return originalValue;
   }
   return null;
 }
