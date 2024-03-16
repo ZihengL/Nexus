@@ -3,11 +3,11 @@
     <div class="list" ref="sliderList">
       <div v-for="(media, index) in tabImgGame" :key="index" class="item">
         <img
-          v-if="['png', 'jpg', 'jpeg', 'image'].includes(media.type)"
+          v-if="media.type === 'image'"
           :src="media.src"
           :alt="`Image ${index}`"
         />
-        <video v-else controls>
+        <video v-else controls @play="handleVideoPlay" @ended="handleVideoEnd">
           <source :src="media.src" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
@@ -19,10 +19,10 @@
     </div>
     <ul class="dots">
       <li
-        :class="{ active: active === index }"
         v-for="(dot, index) in tabImgGame"
         :key="index"
-        @click="goToSlide(index)"
+        :class="{ active: active === index }"
+        @click="() => goToSlide(index)"
         class="glow2"
       ></li>
     </ul>
@@ -30,13 +30,7 @@
 </template>
 
 <script setup>
-import {
-  onMounted,
-  onBeforeUnmount,
-  ref as vueRef,
-  nextTick,
-  defineProps,
-} from "vue";
+import { onMounted, onBeforeUnmount, ref, nextTick, defineProps } from "vue";
 import {
   getStorage,
   ref as firebaseRef,
@@ -48,97 +42,56 @@ import {
 const storage = getStorage();
 
 const props = defineProps({
-  idJeux: {
-    type: Number,
-  },
+  idJeux: Number,
 });
 
-const defaultPath = "/src/assets/image/img1.png";
-const tabImgGame = vueRef([]);
-const sliderList = vueRef(null);
-
-let active = vueRef(0);
+const tabImgGame = ref([]);
+const sliderList = ref(null);
+let active = ref(0);
 let lengthItems = 0;
 let refreshInterval;
 
-async function fetchAllGameMedia(gameId) {
+const fetchAllGameMedia = async (gameId) => {
   const mediaPath = `Games/${gameId}/media`;
   const mediaRef = firebaseRef(storage, mediaPath);
 
   try {
     const mediaList = await listAll(mediaRef);
     for (const itemRef of mediaList.items) {
-      // Filter out "_Store.png" and "{gameId}_0" files
       if (
         !itemRef.name.endsWith("_Store.png") &&
         !itemRef.name.endsWith(`${gameId}_0.png`)
       ) {
-        try {
-          const url = await getDownloadURL(itemRef);
-          const metadata = await getMetadata(itemRef);
+        const url = await getDownloadURL(itemRef);
+        const metadata = await getMetadata(itemRef);
 
-          tabImgGame.value.push({
-            id: gameId,
-            src: url,
-            type: metadata.contentType.startsWith("image/") ? "image" : "video",
-            size: metadata.size,
-            contentType: metadata.contentType,
-          });
-        } catch (error) {
-          console.error(
-            `Error fetching media ${itemRef.name} for ${gameId}:`,
-            error
-          );
-        }
+        tabImgGame.value.push({
+          id: gameId,
+          src: url,
+          type: metadata.contentType.startsWith("image/") ? "image" : "video",
+        });
       }
     }
-    console.log("tabImgGame.value : ", tabImgGame.value);
   } catch (error) {
     console.error(`Error listing media for ${gameId}:`, error);
   }
-}
+};
 
-// async function fetchCarouselGameMedia(gameId, index) {
-//   const imagePath = `Games/${gameId}/media/${gameId}_${index}.png`;
-//   const imageRef = firebaseRef(storage, imagePath);
-//   try {
-//     const url = await getDownloadURL(imageRef);
-//     console.log("Firebase URL image: ", url);
+const reloadSlider = () => {
+  const items = sliderList.value.querySelectorAll(".item");
+  const dots = document.querySelectorAll(".dots li");
 
-//     const metadata = await getMetadata(imageRef);
-//     console.log("Metadata: ", metadata);
+  sliderList.value.style.transform = `translateX(-${
+    items[active.value].offsetLeft
+  }px)`;
 
-//     tabImgGame.value.push({
-//       id: gameId,
-//       src: url,
-//       type: metadata.contentType.startsWith('image/') ? 'image' : 'video',
-//       size: metadata.size,
-//       contentType: metadata.contentType,
-//     });
-//   } catch (error) {
-//     console.error(`Error fetching image for ${gameId}:`, error);
-//     tabImgGame.value.push({ id: gameId, src: defaultPath, type: 'image' });
-//   }
-// }
-
-onMounted(async () => {
-  // for (let index = 1; index <= 4; index++) {
-  //   await fetchCarouselGameMedia(props.idJeux, index);
-  // }
-  await fetchAllGameMedia(props.idJeux);
-  if (tabImgGame.value.length > 0) {
-    await nextTick(); // Ensure the DOM is updated
-    lengthItems = sliderList.value.querySelectorAll(".item").length - 1;
-
-    refreshInterval = setInterval(() => {
-      nextFunc();
-    }, 3000);
+  dots.forEach((dot) => dot.classList.remove("active"));
+  if (dots.length > 0) {
+    dots[active.value].classList.add("active");
   }
-});
 
-onBeforeUnmount(() => {
-  clearInterval(refreshInterval);
-});
+  resetCarouselInterval();
+};
 
 const nextFunc = () => {
   active.value = active.value + 1 <= lengthItems ? active.value + 1 : 0;
@@ -150,35 +103,39 @@ const prevFunc = () => {
   reloadSlider();
 };
 
-const reloadSlider = () => {
-  const items = sliderList.value.querySelectorAll(".item");
-  const dots = document.querySelectorAll(".dots li");
+const goToSlide = (index) => {
+  active.value = index;
+  reloadSlider();
+};
 
-  sliderList.value.style.transform = `translateX(-${
-    items[active.value].offsetLeft
-  }px)`;
-
-  const lastActiveDot = document.querySelector(".dots li.active");
-  if (lastActiveDot) {
-    lastActiveDot.classList.remove("active");
-  }
-
-  if (dots.length > 0) {
-    dots[active.value].classList.add("active");
-  }
-
+const resetCarouselInterval = () => {
   clearInterval(refreshInterval);
   refreshInterval = setInterval(() => {
     nextFunc();
   }, 3000);
 };
 
-const goToSlide = (index) => {
-  active.value = index;
-  reloadSlider();
+const handleVideoPlay = () => {
+  clearInterval(refreshInterval);
 };
-</script>
 
+const handleVideoEnd = () => {
+  setTimeout(() => {
+    resetCarouselInterval();
+  }, 5000); // Wait for 5 seconds after video ends to resume the carousel
+};
+
+onMounted(async () => {
+  await fetchAllGameMedia(props.idJeux);
+  await nextTick(); // Ensure the DOM is updated after fetching media
+  lengthItems = sliderList.value.querySelectorAll(".item").length - 1;
+  resetCarouselInterval();
+});
+
+onBeforeUnmount(() => {
+  clearInterval(refreshInterval);
+});
+</script>
 <style scoped>
 .slider {
   width: 1300px;
@@ -187,7 +144,7 @@ const goToSlide = (index) => {
   margin: auto;
   position: relative;
   overflow: hidden;
-  background-color: rgba(0, 0, 0, 0.5); 
+  background-color: rgba(0, 0, 0, 0.5);
 
   .list {
     /* position: absolute;
@@ -201,16 +158,16 @@ const goToSlide = (index) => {
     /* transition: 1s; */
 
     .item {
-      flex: 0 0 100%; 
-      display: flex; 
-      justify-content: center; 
+      flex: 0 0 100%;
+      display: flex;
+      justify-content: center;
       align-items: center;
-      overflow: hidden; 
+      overflow: hidden;
     }
 
     .item img,
     .item video {
-      max-width: 100%; 
+      max-width: 100%;
       max-height: 60vh;
       object-fit: contain;
     }
@@ -238,7 +195,8 @@ const goToSlide = (index) => {
     }
   }
   .dots {
-    position: absolute;
+    margin-top: 50%;
+    position: relative;
     bottom: 8%;
     left: 0;
     color: #000000;
@@ -247,7 +205,7 @@ const goToSlide = (index) => {
     padding: 0;
     display: flex;
     justify-content: center;
-    background-color: rgba(0, 0, 0, 0.5); 
+    background-color: rgba(0, 0, 0, 0.5);
 
     li {
       list-style: none;
