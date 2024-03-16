@@ -245,6 +245,7 @@ const state = reactive({
   MIN_IMG_STORE: 1,
   MAX_IMG_LIST: 4,
   MAX_IMG_STORE: 1,
+  MIN_VIDS : 1,
   MAX_VIDS: 2,
   MIN_TAG: 1,
   MIN_DESC_LENGTH: 10,
@@ -722,7 +723,7 @@ const uploadSelectedVideos = async (gameId) => {
   }
 
   Promise.all(uploadTasks).then(downloadURLs => {
-    alert("All videos have been uploaded successfully.");
+    alert("Tous les fichiers été téléversés avec succês.");
     state.showModal = false; 
     window.location.reload(); 
   }).catch(error => {
@@ -969,6 +970,9 @@ const formatData = () => {
     return false;
   } else if (state.gameFile == null) {
     state.errorMessage = "Un fichier de jeu est requis.";
+    return false;
+  }  else if (state.videoFiles.length < state.MIN_VIDS) {
+    state.errorMessage = `Au moins ${state.MIN_VIDS} videos est/sont requis.`;
     return false;
   } else {
     state.errorMessage = "";

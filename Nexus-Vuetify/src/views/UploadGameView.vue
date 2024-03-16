@@ -160,9 +160,11 @@
       @toggle-btn="submitGame"
     ></btnComp>
   </div>
+  <uploadProgressModal :isVisible="state.showModal" :uploadProgress="state.uploadProgress" />
 </template>
 
 <script setup>
+import uploadProgressModal from "../components/game/uploadModalComp.vue";
 import JSZip from "jszip";
 import btnComp from "../components/btnComponent.vue";
 import storageManager from "../JS/localStorageManager";
@@ -175,7 +177,7 @@ import {
 } from "../JS/fetchServices.js";
 const storage = getStorage();
 // import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { getStorage, ref as firebaseRef, uploadBytes } from "firebase/storage";
+import { getStorage, ref as firebaseRef, uploadBytes, getDownloadURL, uploadBytesResumable} from "firebase/storage";
 const validImageTypes = ["image/jpeg", "image/png"];
 const validFileTypes = [
   "application/x-msdownload", // MIME type for .exe files
@@ -203,6 +205,8 @@ const props = defineProps({
 });
 
 const state = reactive({
+  uploadProgress: {},
+  showModal: false,
   pageTitle: props.pageTitle,
   gameTitle: "",
   tags: "",
@@ -216,6 +220,7 @@ const state = reactive({
   MIN_IMG_STORE: 1,
   MAX_IMG_LIST: 4,
   MAX_IMG_STORE: 1,
+  MIN_VIDS : 1,
   MAX_VIDS: 2,
   MIN_TAG: 1,
   MIN_DESC_LENGTH: 10,
@@ -294,25 +299,23 @@ const openVideoBrowser = () => {
   const fileInput = document.createElement("input");
   fileInput.type = "file";
   fileInput.multiple = true;
-  fileInput.accept = "video/*";
+  fileInput.accept = "video/*"; // Keep as is to accept all video formats
   fileInput.onchange = (e) => {
     const newFiles = Array.from(e.target.files);
-    const availableSlots = state.MAX_VIDS - state.videoFiles.length;
+    const availableSlots = state.MAX_VIDS - state.videoFiles.length; // Assume state.MAX_VIDS is 2
 
     if (newFiles.length > availableSlots) {
-      alert(
-        `You can only upload a maximum of ${availableSlots} more video(s).`
-      );
+      alert(`Vous ne pouvez télécharger que ${availableSlots} vidéos supplémentaire(s) au maximum.`);
       return;
     }
 
-    const newVideoFiles = newFiles.slice(0, availableSlots).map((file) => ({
-      file:file,
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      lastModified: file.lastModified,
+    // No need to check for unique names, just process the files as they are
+    const newVideoFiles = newFiles.slice(0, availableSlots).map(file => ({
+      ...file,
+      file,
       url: URL.createObjectURL(file),
+      name: file.name, // Keep the original name
+      type: file.type,
     }));
 
     state.videoFiles = [...state.videoFiles, ...newVideoFiles];
@@ -320,6 +323,7 @@ const openVideoBrowser = () => {
   };
   fileInput.click();
 };
+
 
 const openImageBrowser = () => {
   const fileInput = document.createElement("input");
@@ -417,6 +421,9 @@ const formatData = () => {
     return false;
   } else if (state.imageStoreObject.length < state.MAX_IMG_STORE) {
     state.errorMessage = `Au moins ${state.MAX_IMG_STORE} images est/sont requise(s) pour la boutique.`;
+    return false;
+   } else if (state.videoFiles.length < state.MIN_VIDS) {
+    state.errorMessage = `Au moins ${state.MIN_VIDS} videos est/sont requis.`;
     return false;
   } else if (state.gameFile == null) {
     state.errorMessage = "Un fichier de jeu est requis.";
@@ -527,6 +534,61 @@ const uploadZipFile = async (gameId) => {
   }
 };
 
+const uploadSelectedVideos = async (gameId) => {
+  // Filter out videos already uploaded to Firebase
+  const videosToUpload = state.videoFiles.filter(video => !video.url.startsWith('https://firebasestorage.googleapis.com'));
+
+  if (videosToUpload.length === 0) {
+    console.log("No new videos to upload.");
+    return;
+  }
+
+  state.showModal = true; // Show the modal
+  state.uploadProgress = {}; // Reset the uploadProgress object
+
+  let uploadTasks = []; // Store promises here
+
+  videosToUpload.forEach((video, index) => {
+    // Use original file name or generate a unique one
+    const fileExtension = video.name.split('.').pop();
+    const fileName = `${gameId}_vid_${index + 1}.${fileExtension}`;
+    const videoRef = firebaseRef(storage, `Games/${gameId}/media/${fileName}`);
+
+    const uploadTaskPromise = new Promise((resolve, reject) => {
+      const uploadTask = uploadBytesResumable(videoRef, video.file);
+      uploadTask.on('state_changed',
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          state.uploadProgress[fileName] = progress.toFixed(0); // Update progress
+        }, 
+        (error) => {
+          console.error(`Upload failed for ${fileName}:`, error);
+          reject(error);
+        }, 
+        () => {
+          uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+            console.log(`File available at ${downloadURL}`);
+            resolve(downloadURL); // Resolve the promise with the download URL
+          });
+        }
+      );
+    });
+
+    uploadTasks.push(uploadTaskPromise);
+  });
+
+  Promise.all(uploadTasks).then(downloadURLs => {
+    alert("Tous les fichiers ont été téléversés avec succès.");
+    state.showModal = false; 
+    // Consider updating the application state with new video URLs or refreshing relevant components
+    // window.location.reload(); // You might want to avoid reloading and instead update the UI directly
+  }).catch(error => {
+    console.error("Error uploading one or more videos: ", error);
+    state.showModal = false; 
+    // Here, you could show an error message or handle the upload error in a user-friendly way
+  });
+};
+
 function updateTagsArray() {
   let newTags = state.tags
     .split(",")
@@ -560,9 +622,7 @@ const create_gameAndTags = async () => {
       try {
         await uploadImageFiles(gameId);
         await uploadZipFile(gameId);
-        alert("Le téléversement a été fait avec succès, veuillez rafraîchir votre page.");
-        // Refresh the page
-        window.location.reload();
+        await uploadSelectedVideos(gameId)
       } catch (error) {
         console.error("Error during file upload:", error);
         alert("An error occurred during file upload. Please try again.");
