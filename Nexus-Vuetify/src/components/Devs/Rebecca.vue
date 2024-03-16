@@ -1,7 +1,7 @@
 <template>
   <div class="Rebecca">
     <div class="profile">
-      <img src="/src/assets/Dev_Picture/rebPic.jpg" alt="Amazigh" />
+      <img src="/src/assets/Dev_Picture/rebPic.jpg" alt="Rebecca" />
     </div>
     <div class="info">
       <h1 class="myName">Rebecca</h1>
@@ -69,7 +69,7 @@
   left: 0;
   top: 0;
   font-size: 16px;
-  color: var(--light-gray);
+  color: gray;
   transform: scaleX(1);
   transform: scaleY(1);
 }
