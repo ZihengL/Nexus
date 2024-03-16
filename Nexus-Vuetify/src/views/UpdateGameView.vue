@@ -1002,7 +1002,7 @@ const submitGame = async () => {
   if (!formatData()) {
     return; // Exit if data is not formatted correctly
   }
-
+  await update_gamesAndTags();
   state.showModal = true; // Show the modal right away
   state.uploadProgress = {}; // Reset or initialize your upload progress tracking
 

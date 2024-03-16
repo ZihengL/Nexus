@@ -288,7 +288,7 @@ const openFileBrowser = () => {
     const file = e.target.files[0];
 
     if (!file || !validFileTypes.includes(file.type)) {
-      alert("Invalid file type selected. Please select an executable file.");
+      alert("Type de fichier invalide sélectionné. Veuillez sélectionner un fichier exécutable.");
       return; // Exit the function if the file type is not valid
     }
 
@@ -312,7 +312,7 @@ const openFileBrowser = () => {
 const openVideoBrowser = () => {
   const fileInput = document.createElement("input");
   fileInput.type = "file";
-  fileInput.multiple = false;
+  fileInput.multiple = true;
   fileInput.accept = "video/*"; // Keep as is to accept all video formats
   fileInput.onchange = (e) => {
     const newFiles = Array.from(e.target.files);
@@ -343,7 +343,7 @@ const openVideoBrowser = () => {
 const openImageBrowser = () => {
   const fileInput = document.createElement("input");
   fileInput.type = "file";
-  fileInput.multiple = false;
+  fileInput.multiple = true;
   fileInput.accept = "image/*";
   fileInput.onchange = (e) => {
     const newFiles = Array.from(e.target.files);
@@ -351,7 +351,7 @@ const openImageBrowser = () => {
 
     if (newFiles.length > availableSlots) {
       alert(
-        `You can only upload a maximum of ${availableSlots} more image(s).`
+        `Vous ne pouvez télécharger qu'un maximum de ${availableSlots} image(s) supplémentaire(s).`
       );
       return;
     }
@@ -359,7 +359,7 @@ const openImageBrowser = () => {
       .slice(0, availableSlots)
       .map((file) => {
         if (!validImageTypes.includes(file.type)) {
-          alert("Invalid file type.");
+          alert("Type de fichier invalide.");
           return null;
         }
         return {
@@ -389,7 +389,7 @@ const openImageBrowser_forStore = () => {
 
     if (newFiles.length > availableSlots) {
       alert(
-        `You can only upload a maximum of ${availableSlots} more image(s).`
+        `Vous ne pouvez télécharger que ${availableSlots} image(s) supplémentaire(s) au maximum.`
       );
       return;
     }
@@ -397,7 +397,7 @@ const openImageBrowser_forStore = () => {
       .slice(0, availableSlots)
       .map((file) => {
         if (!validImageTypes.includes(file.type)) {
-          alert("Invalid file type.");
+          alert("Type de fichier invalide.");
           return null;
         }
         return {
@@ -801,7 +801,7 @@ async function get_CreatedGameID() {
 
 async function submitGame() {
   if (!formatData()) {
-    alert("Please ensure all required fields are correctly filled out.");
+    alert("Veuillez vous assurer que tous les champs obligatoires sont correctement remplis.");
     return; // Exit if data is not properly formatted
   }
 
@@ -829,12 +829,12 @@ async function submitGame() {
     ]);
 
     // If everything completes successfully, show a success message
-    alert("Game and all associated files have been successfully uploaded!");
+    alert("Le jeu et tous les fichiers associés ont été téléversés avec succès !");
     window.location.reload(); // Reload the window to reflect changes
   } catch (error) {
     // Handle errors: log them and show an error message
-    console.error("An error occurred during the game upload process:", error);
-    alert("An error occurred during the upload. Please try again.");
+    console.error("Une erreur s'est produite lors du processus de téléversement du jeu :", error);
+  alert("Une erreur s'est produite lors du téléversement. Veuillez réessayer.");
   } finally {
     state.showModal = false; // Ensure the progress modal is hidden after completion or error
   }
