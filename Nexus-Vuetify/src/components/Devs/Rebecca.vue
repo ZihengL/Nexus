@@ -1,5 +1,5 @@
 <template>
-  <div class="amazon">
+  <div class="Rebecca">
     <div class="profile">
       <img src="/src/assets/Dev_Picture/rebPic.jpg" alt="Amazigh" />
     </div>
@@ -23,31 +23,39 @@
           class="info-link"
           >Visitez mon Github</a
         >
-        <a href="rebeccadmombrun@outlook.com" target="_blank" class="info-link"
-          >me contacter : rebeccadmombrun@outlook.com</a
+        <a href="mailto:rebeccadmombrun@outlook.com" target="_blank" class="info-link"
+          >me contacter </a
         >
       </div>
     </div>
   </div>
 </template>
-
-<style>
-
+<style scoped>
 .all-info {
   display: flex;
-  gap: 20px; /* Adjusted spacing */
-  justify-content: center;
-  align-items: center;
-  padding: 5%;
+  height: 100%;
+  gap: 20px;
+  color: rgb(6, 6, 136);
+  /* justify-content: center; */
+  /* align-items: center; */
 }
 
-.amazon {
+.Rebecca {
+  margin: 25px;
   display: flex;
   align-items: center;
-  gap: 10%;
+  gap: 30px;
+  padding: 20px;
+  /* background: -webkit-linear-gradient(right, var(--purple), var(--dark-blue), var(--purple), var(--dark-blue)); */
+  background: -webkit-linear-gradient(orange, yellow, white);
+  /* background-color: linear-gradient(orange, yellow, white); */
+  border-radius: 20px;
+  border-width: 5px;
+  padding-right: 40px;
 }
+
 .info-link {
-  color: #007bff;
+  color: var(--light-gray);
   text-decoration: none;
   font-weight: bold;
   position: relative;
@@ -56,12 +64,12 @@
 }
 
 .info-link::after {
-  content: "→";
+  content: '→';
   position: absolute;
   left: 0;
   top: 0;
   font-size: 16px;
-  color: #007bff;
+  color: var(--light-gray);
   transform: scaleX(1);
   transform: scaleY(1);
 }
@@ -75,13 +83,24 @@
   animation: slideInLeft 1.5s ease-out;
 }
 
-.profile img {
-  width: 250px;
-  height: auto;
-  border-radius: 10%;
+.profile {
+  img {
+    object-fit: cover;
+    min-width: 30rem;
+    height: 80%;
+    align-self: left;
+    border-radius: 20px 4px 4px 4px;
+  }
+
+  a {
+    color: blue;
+    font-size: 16px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  }
 }
 
 .info {
+  text-align: left;
   max-width: 100%;
   margin-top: 0%;
 }
@@ -89,25 +108,35 @@
 .info h1,
 .info h2,
 .info p {
+  margin-bottom: 15px;
   animation: fadeIn 1.5s ease-out;
   animation: slideInLeft 1.5s ease-out;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 .info h1 {
-  color: #ffffff;
-  font-size: 2.5em;
-  margin-bottom: 2%;
+  color: var(--light-gray);
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 5em;
+  text-shadow: 0px 3px 0px #63615d,
+    -10px 14px 10px rgba(0, 0, 0, 0.15),
+    -10px 24px 2px rgba(0, 0, 0, 0.1),
+    -10px 34px 30px rgba(0, 0, 0, 0.1);
+
 }
 
 .info h2 {
-  color: #666;
+  color: var(--light-gray);
+  margin-left: 20px;
   font-size: 1.5em;
-  margin-bottom: 2%;
+  margin-bottom: 3%;
 }
 
 .info p {
-  font-size: 30px;
-  color: #999;
+  font-size: 20px;
+  margin-left: 20px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  color: var(--light-gray);
 }
 
 @keyframes slideInLeft {
@@ -115,6 +144,7 @@
     transform: translateY(100%);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -126,6 +156,7 @@
     transform: translateX(100%);
     opacity: 0;
   }
+
   to {
     transform: translateX(0);
     opacity: 1;
@@ -136,12 +167,9 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
 }
 </style>
-
-<script>
-// Script content remains unchanged
-</script>
