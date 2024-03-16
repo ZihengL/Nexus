@@ -467,6 +467,11 @@ const openImageBrowser_forStore = () => {
 /***************************** FIREBASE *****************************/
 /*******************************************************************/
 
+function extractPathFromDownloadURL(downloadURL) {
+    const url = new URL(downloadURL);
+    const path = url.pathname.split('/o/')[1].split('?')[0];
+    return decodeURIComponent(path);
+}
 
 
 const deleteRemovedVideos = async () => {
@@ -484,13 +489,15 @@ const deleteRemovedVideos = async () => {
   // Delete the videos no longer present
   for (const url of urlsToDelete) {
     const fileRef = firebaseRef(storage, url);
+    
+    let decodedUrl = extractPathFromDownloadURL(url)
     try {
       await deleteObject(fileRef);
       console.log(`Deleted video file: ${url}`);
-      alert(`fichier vidéo : ${url} supprimé avec succès`)
+      alert(`fichier vidéo : ${decodedUrl} supprimé avec succès`)
     } catch (error) {
       console.error(`Failed to delete video file: ${url}`, error);
-      alert(`Échec de la suppression du fichier vidéo : ${url}`, error);
+      alert(`Échec de la suppression du fichier vidéo : ${decodedUrl}`, error);
     }
   }
 
