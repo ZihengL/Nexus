@@ -193,6 +193,8 @@ let user = ref(null);
 let galleryDialog = ref(false);
 
 const state = reactive({
+  erased_name:false,
+  erased_lastName:false,
   userToUpdate: "",
   name: "",
   lastName: "",
@@ -323,6 +325,12 @@ const updateUserInfos = async () => {
 };
 
 const deleteInfo = (field) => {
+if(field == "name"  ){
+  state.erased_name = true
+}else if (field == "lastName" ){
+  state.erased_lastName = true
+}
+
   const fieldValue = user.value[field];
   const isConfirmed = confirm(
     `Êtes-vous sûr de vouloir supprimer ${fieldValue}?`
@@ -336,16 +344,30 @@ const deleteInfo = (field) => {
 };
 
 function validateField(field, currentValue, originalValue) {
-  if (!currentValue && !originalValue) {
+  if(state.erased_name){
+    if (!currentValue && !originalValue) {
     return "";
   } else if (currentValue && currentValue !== originalValue) {
     return currentValue;
   } else if (!currentValue && currentValue == originalValue) {
     return currentValue;
-  }else if (!currentValue && currentValue != originalValue) {
+  }else if (!currentValue && (currentValue != originalValue) && !state.erased_name) {
     return originalValue;
   }
   return null;
+  }else{
+    if (!currentValue && !originalValue) {
+    return "";
+  } else if (currentValue && currentValue !== originalValue) {
+    return currentValue;
+  } else if (!currentValue && currentValue == originalValue) {
+    return currentValue;
+  }else if (!currentValue && (currentValue != originalValue) && !state.erased_lastName) {
+    return originalValue;
+  }
+  return null;
+  }
+ 
 }
 
 function validateUsername(currentValue, originalValue) {
