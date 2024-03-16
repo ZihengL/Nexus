@@ -199,6 +199,7 @@ import {
   listAll,
   uploadBytesResumable,
   uploadBytes,
+  deleteObject,
   getDownloadURL,
 } from "firebase/storage";
 const storage = getStorage();
@@ -227,6 +228,7 @@ const props = defineProps({
 });
 
 const state = reactive({
+  originalVideoFiles : [],
   gameId: "",
   gameObject: {},
   uploadProgress: {},
@@ -465,6 +467,36 @@ const openImageBrowser_forStore = () => {
 /***************************** FIREBASE *****************************/
 /*******************************************************************/
 
+
+
+const deleteRemovedVideos = async () => {
+  // Your Firebase storage initialization (ensure this is set up correctly)
+  const storage = getStorage();
+
+  // Determine which videos to delete
+  const urlsToDelete = state.originalVideoFiles.filter(originalFile =>
+    !state.videoFiles.some(currentFile => currentFile.url === originalFile.url) &&
+    originalFile.url.startsWith('https://')
+  ).map(file => file.url);
+
+  console.log("urlsToDelete : " ,  urlsToDelete)
+
+  // Delete the videos no longer present
+  for (const url of urlsToDelete) {
+    const fileRef = firebaseRef(storage, url);
+    try {
+      await deleteObject(fileRef);
+      console.log(`Deleted video file: ${url}`);
+    } catch (error) {
+      console.error(`Failed to delete video file: ${url}`, error);
+    }
+  }
+
+  // Update the original list to reflect current state
+  // state.originalVideoFiles = [...state.videoFiles];
+};
+
+
 async function fetchFilesAndFolders(folderPath) {
   const folderRef = firebaseRef(storage, folderPath);
   try {
@@ -626,6 +658,7 @@ const categorizeFiles = async (fetchedStructure) => {
     state.videoFiles.push(file);
   }
 });
+state.originalVideoFiles =  JSON.parse(JSON.stringify(state.videoFiles));
 
   console.log("Original Files Fetched: ", originalCarrouselImageNames.value);
   console.log("Image Files:", state.imageFiles);
@@ -685,13 +718,15 @@ async function unzipBlob(blob) {
 }
 
 const uploadSelectedVideos = async (gameId, onProgress) => {
+  
+  await deleteRemovedVideos();
   // Assuming state.videoFiles is an array of video file objects
   const uploadPromises = state.videoFiles.map((video, index) => {
     if (!video.url.startsWith('https://firebasestorage.googleapis.com/')) {
       const fileName = video.name; // Assuming video.name is the filename
       const videoRef = firebaseRef(storage, `Games/${gameId}/media/${fileName}`);
       const uploadTask = uploadBytesResumable(videoRef, video.file); // Start the upload
-
+    
       return new Promise((resolve, reject) => {
         uploadTask.on('state_changed', 
           (snapshot) => {
