@@ -38,8 +38,10 @@ const hideModal = () => {
 }
 
 .modal-content {
-  background: white;
-  padding: 1.25rem;
-  border-radius: 0.625rem;
+  background: -webkit-linear-gradient(right, var(--purple), var(--dark-blue), var(--purple), var(--dark-blue));
+  font-size: 2rem;
+  padding: 2rem;
+  color: white;
+  border-radius: 1rem;
 }
 </style>
