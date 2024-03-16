@@ -27,7 +27,7 @@
   </div>
 </template>
 
-<style>
+<style scoped>
 .all-info {
   display: flex;
   height: 100%;
