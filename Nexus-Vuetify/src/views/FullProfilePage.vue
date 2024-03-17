@@ -330,19 +330,23 @@ const updateUserInfos = async () => {
 };
 
 const deleteInfo = (field) => {
-  if (field == "name") {
-    state.erased_name = true;
-  } else if (field == "lastName") {
-    state.erased_lastName = true;
+  if (!user.value.hasOwnProperty(field)) {
+    console.log(`Field "${field}" does not exist.`);
+    return; 
   }
 
   const fieldValue = user.value[field];
-  const isConfirmed = confirm(
-    `Êtes-vous sûr de vouloir supprimer ${fieldValue}?`
-  );
+  const isConfirmed = confirm(`Êtes-vous sûr de vouloir supprimer ${fieldValue}?`);
+
   if (!isConfirmed) {
     console.log("Deletion canceled by the user.");
     return;
+  }
+
+  if (field === "name") {
+    state.erased_name = true;
+  } else if (field === "lastName") {
+    state.erased_lastName = true;
   }
 
   user.value[field] = null;
