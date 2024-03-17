@@ -43,7 +43,7 @@
             />
           </div>
           <div class="pass-link glow">
-           <!-- <a href="#">Mot de passe oublier ?</a>-->
+            <!-- <a href="#">Mot de passe oublier ?</a>-->
           </div>
           <btnComp :contenu="'Se connecter'" @toggle-btn="toggleProfileLog()" />
           <div class="signup-link">
@@ -69,7 +69,11 @@
             />
           </div>
           <div class="field">
-            <input type="text" v-model="telSign" placeholder="Téléphone" />
+            <input
+              @input="updatephonenumber"
+              v-model="telSign"
+              placeholder="Téléphone"
+            />
           </div>
           <div class="field">
             <input
@@ -107,7 +111,7 @@
 
 <script setup>
 import loginScript from "../../JS/LoginScript.js";
-import storageManager from "../../JS/localStorageManager.js"
+import storageManager from "../../JS/localStorageManager.js";
 import { ref, onMounted, defineEmits } from "vue";
 import { loginService, registerService, getOne } from "../../JS/fetchServices";
 import { fetchData } from "../../JS/fetch";
@@ -135,6 +139,38 @@ const toggleLogin = () => {
   formInner.style.height = "45svh";
 };
 
+function validatePhoneNumber(phoneNumber) {
+  if (phoneNumber) {
+    return phoneNumber.replace(/\D/g, "");
+  }
+  return null;
+}
+
+const updatephonenumber = (event) => {
+  let input = event.target.value.replace(/\D/g, "");
+  let formattedNumber = "";
+
+  if (input.length > 3 && input.length <= 6) {
+    formattedNumber = `(${input.slice(0, 3)}) ${input.slice(3)}`;
+  } else if (input.length > 6) {
+    formattedNumber = `(${input.slice(0, 3)}) ${input.slice(
+      3,
+      6
+    )}-${input.slice(6, 10)}`;
+  } else {
+    formattedNumber = input;
+  }
+
+  telSign.value = formattedNumber;
+};
+
+function sanitizePhoneNumber(phoneNumber) {
+  if (phoneNumber) {
+    return phoneNumber.replace(/\D/g, "");
+  }
+  return null;
+}
+
 const toggleSignup = () => {
   isLogin.value = false;
   //console.log("c'est false");
@@ -151,21 +187,21 @@ const toggleProfileLog = async () => {
   //const login = { login };
   try {
     const loginResponse = await loginService(login);
-    const devId = await getOne("users", "email", email.value, ["id"])
-    console.log('loginRegister devId : ', devId.id)
+    const devId = await getOne("users", "email", email.value, ["id"]);
+    console.log("loginRegister devId : ", devId.id);
 
     console.log("Login successful : ", loginResponse);
-    if (devId && (loginResponse !== false)) {
-       // console.log("loginResponse : ", loginResponse);
+    if (devId && loginResponse !== false) {
+      // console.log("loginResponse : ", loginResponse);
       loginTokens_access_token = loginResponse.access_token;
       loginTokens_refresh_token = loginResponse.refresh_token;
-      storageManager.setAccessToken(loginResponse.access_token)
+      storageManager.setAccessToken(loginResponse.access_token);
       // localStorage.setItem("accessToken", loginResponse.access_token);
-      storageManager.setRefreshToken(loginResponse.refresh_token)
+      storageManager.setRefreshToken(loginResponse.refresh_token);
       // localStorage.setItem("refreshToken", loginResponse.refresh_token);
 
       // localStorage.setItem("idDev", devId);
-      storageManager.setIdDev(devId)
+      storageManager.setIdDev(devId);
 
       // console.log("devId : ", devId);
       emit("showProfile", devId);
@@ -175,7 +211,6 @@ const toggleProfileLog = async () => {
   }
 };
 
-
 const validateSignupData = () => {
   let errors = [];
 
@@ -183,9 +218,11 @@ const validateSignupData = () => {
   if (!email.value) errors.push("Email is required.");
   if (!usernameSign.value) errors.push("Username is required.");
   if (!password.value) errors.push("Password is required.");
-  if (!passwordConfSign.value) errors.push("Password confirmation is required.");
+  if (!passwordConfSign.value)
+    errors.push("Password confirmation is required.");
 
-  if (password.value !== passwordConfSign.value) errors.push("Passwords do not match.");
+  if (password.value !== passwordConfSign.value)
+    errors.push("Passwords do not match.");
 
   if (errors.length > 0) {
     console.error("Validation errors:", errors.join("\n"));
@@ -196,13 +233,16 @@ const validateSignupData = () => {
 
 const toggleProfileSign = async () => {
   if (validateSignupData()) {
+    let phoneN = sanitizePhoneNumber(telSign.value);
+    console.log("phoneN : ", phoneN)
+
     const createData = {
       email: email.value,
       username: usernameSign.value,
       password: password.value,
       lastName: lastnameSign.value ? lastnameSign.value : null,
       name: firstnameSign.value ? firstnameSign.value : null,
-      phoneNumber: telSign.value ? telSign.value : null,
+      phoneNumber: phoneN ?? null,
     };
 
     console.log("createData:", createData);
@@ -210,7 +250,7 @@ const toggleProfileSign = async () => {
     try {
       let isRegistered = await registerService(createData);
       console.log("isRegistered :", isRegistered);
-      if(isRegistered){
+      if (isRegistered) {
         // toggleProfileLog()
       }
       toggleProfileLog();
@@ -226,7 +266,7 @@ const toggleProfileSign = async () => {
 onMounted(() => {
   // console.log("onMounted  storageManager.getIdDev() : ", storageManager.getIdDev());
   if (storageManager.getIdDev()) {
-    emit("showProfile")
+    emit("showProfile");
   }
   loginScript.init({ toggleLogin, toggleSignup });
 });

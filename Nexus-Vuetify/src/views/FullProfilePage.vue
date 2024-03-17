@@ -71,6 +71,7 @@
           placeholder="Numero de Téléphone"
           v-model="state.phoneNumber"
           @input="updatephonenumber"
+          pattern="[0-9]*"
         />
         <btnComp
           :propClass="'newbtnClass'"
@@ -143,7 +144,7 @@
       />
     </form>
     <div v-if="galleryDialog" class="roundBorderSmall glass4 dialog">
-      <v-icon @click="galleryDialog = false" class="close glow"
+      <v-icon @click="closeDialog" class="close glow"
         >mdi-close</v-icon
       >
       <div class="content">
@@ -267,20 +268,29 @@ const selectImage = (img) => {
   console.log("Clicked selectedImage.value : ", selectedImage);
 };
 
+
+
 const confirmImage = () => {
   if (selectedImage.value) {
-    console.log(selectedImage.value);
-
+    console.log("selectedImage.value :" , selectedImage.value);
+    user.value.picture = selectedImage.value
+    selectedImage.value = null; 
     galleryDialog.value = false;
   } else {
     console.log("No image selected");
   }
 };
 
+
+const closeDialog = () => {
+  galleryDialog.value = false; // Close the dialog
+  selectedImage.value = null; // Reset the preview image to avoid showing the unconfirmed preview next time
+};
+
 const getAllImages = async (tab) => {
   const folderPath = "/src/assets/Avatar/";
   //const imagePaths = [];
-  for (let i = 1; i <= 7; i++) {
+  for (let i = 1; i <= 8; i++) {
     let path = folderPath + "Avatar_" + i + ".png";
     console.log("path ", path);
     tab.push(`${folderPath}Avatar_${i}.png`);
