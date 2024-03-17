@@ -66,7 +66,7 @@ export default {
   },
   async mounted() {
     try {
-      const filters = { ratingAverage: { gt: 1, lte: 7 } };
+      const filters = { ratingAverage: { gte:0 } };
       const sorting = { id: true };
       const includedColumns = ["id", "developerID", "title", "files"];
 
@@ -77,7 +77,7 @@ export default {
         if (!Array.isArray(data)) {
           throw new Error("Fetched data is not an array");
         }
-        //console.log('data : ' , data)
+        console.log('data : ' , data)
         return this.fetchGameImages(data.slice(0, 4));
       })
       .then((carouselItemsWithImages) => {
