@@ -420,6 +420,12 @@ function validatePasswords(firstPassword, secondPassword) {
     secondPassword.trim().length > 0
   ) {
     return firstPassword;
+  } else if (firstPassword !== secondPassword) {
+    alert("Les mots de passe ne correspondent pas. MOT DE PASSE NON MODIFIÉ");
+    console.error(
+      "Les mots de passe ne correspondent pas. MOT DE PASSE NON MODIFIÉ"
+    );
+    return null;
   } else {
     console.error("Les mots de passe ne correspondent pas ou sont vides.");
     return null;
