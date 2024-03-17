@@ -144,9 +144,7 @@
       />
     </form>
     <div v-if="galleryDialog" class="roundBorderSmall glass4 dialog">
-      <v-icon @click="closeDialog" class="close glow"
-        >mdi-close</v-icon
-      >
+      <v-icon @click="closeDialog" class="close glow">mdi-close</v-icon>
       <div class="content">
         <label
           v-for="(img, index) in AllImages"
@@ -194,8 +192,8 @@ let user = ref(null);
 let galleryDialog = ref(false);
 
 const state = reactive({
-  erased_name:false,
-  erased_lastName:false,
+  erased_name: false,
+  erased_lastName: false,
   userToUpdate: "",
   name: "",
   lastName: "",
@@ -268,19 +266,16 @@ const selectImage = (img) => {
   console.log("Clicked selectedImage.value : ", selectedImage);
 };
 
-
-
 const confirmImage = () => {
   if (selectedImage.value) {
-    console.log("selectedImage.value :" , selectedImage.value);
-    user.value.picture = selectedImage.value
-    selectedImage.value = null; 
+    console.log("selectedImage.value :", selectedImage.value);
+    user.value.picture = selectedImage.value;
+    selectedImage.value = null;
     galleryDialog.value = false;
   } else {
     console.log("No image selected");
   }
 };
-
 
 const closeDialog = () => {
   galleryDialog.value = false; // Close the dialog
@@ -335,11 +330,11 @@ const updateUserInfos = async () => {
 };
 
 const deleteInfo = (field) => {
-if(field == "name"  ){
-  state.erased_name = true
-}else if (field == "lastName" ){
-  state.erased_lastName = true
-}
+  if (field == "name") {
+    state.erased_name = true;
+  } else if (field == "lastName") {
+    state.erased_lastName = true;
+  }
 
   const fieldValue = user.value[field];
   const isConfirmed = confirm(
@@ -354,39 +349,45 @@ if(field == "name"  ){
 };
 
 function validateField(field, currentValue, originalValue) {
-  if(field == 'name'){
-    console.log("current value : ",field, currentValue )
+  if (field == "name") {
+    console.log("current value : ", field, currentValue);
     if (!currentValue && !originalValue) {
-    return "";
-  } else if (currentValue && currentValue !== originalValue) {
-    return currentValue;
-  } else if (!currentValue && currentValue == originalValue) {
-    return currentValue;
-  }else if (!currentValue && (currentValue != originalValue) && !state.erased_name) {
-    return originalValue;
-  }
-  return null;
-  }else if (field == 'lastName'){
-    console.log("current value : ",field, currentValue )
+      return "";
+    } else if (currentValue && currentValue !== originalValue) {
+      return currentValue;
+    } else if (!currentValue && currentValue == originalValue) {
+      return currentValue;
+    } else if (
+      !currentValue &&
+      currentValue != originalValue &&
+      !state.erased_name
+    ) {
+      return originalValue;
+    }
+    return null;
+  } else if (field == "lastName") {
+    console.log("current value : ", field, currentValue);
     if (!currentValue && !originalValue) {
-    return "";
-  } else if (currentValue && currentValue !== originalValue) {
-    return currentValue;
-  } else if (!currentValue && currentValue == originalValue) {
-    return currentValue;
-  }else if (!currentValue && (currentValue != originalValue) && !state.erased_lastName) {
-    return originalValue;
+      return "";
+    } else if (currentValue && currentValue !== originalValue) {
+      return currentValue;
+    } else if (!currentValue && currentValue == originalValue) {
+      return currentValue;
+    } else if (
+      !currentValue &&
+      currentValue != originalValue &&
+      !state.erased_lastName
+    ) {
+      return originalValue;
+    }
+    return null;
   }
-  return null;
-  }
- 
 }
 
 function validateUsername(currentValue, originalValue) {
   if (currentValue && currentValue !== originalValue) {
     return currentValue;
   } else {
-    alert("Nom d'utilisateur ne peut pas être vide")
     console.error("Nom d'utilisateur ne peut pas être vide");
     return null;
   }
@@ -491,7 +492,13 @@ async function validateDataBeforeSending() {
   });
 
   //Profile Picture
-  updatedUser.picture = `${selectedImage.value || user.value.picture}`;
+  if (selectedImage.value) {
+    updatedUser.picture = selectedImage.value;
+  } else if (user.value.picture) {
+    updatedUser.picture = user.value.picture;
+  } else {
+    updatedUser.picture = null;
+  }
 
   // Username
   const usernameResult = validateUsername(
