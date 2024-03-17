@@ -200,9 +200,9 @@ const toggleProfileSign = async () => {
       email: email.value,
       username: usernameSign.value,
       password: password.value,
-      lastname: lastnameSign.value ? lastnameSign.value : null,
-      firstname: firstnameSign.value ? firstnameSign.value : null,
-      tel: telSign.value ? telSign.value : null,
+      lastName: lastnameSign.value ? lastnameSign.value : null,
+      name: firstnameSign.value ? firstnameSign.value : null,
+      phoneNumber: telSign.value ? telSign.value : null,
     };
 
     console.log("createData:", createData);

@@ -344,7 +344,8 @@ if(field == "name"  ){
 };
 
 function validateField(field, currentValue, originalValue) {
-  if(state.erased_name){
+  if(field == 'name'){
+    console.log("current value : ",field, currentValue )
     if (!currentValue && !originalValue) {
     return "";
   } else if (currentValue && currentValue !== originalValue) {
@@ -355,7 +356,8 @@ function validateField(field, currentValue, originalValue) {
     return originalValue;
   }
   return null;
-  }else{
+  }else if (field == 'lastName'){
+    console.log("current value : ",field, currentValue )
     if (!currentValue && !originalValue) {
     return "";
   } else if (currentValue && currentValue !== originalValue) {
@@ -374,6 +376,7 @@ function validateUsername(currentValue, originalValue) {
   if (currentValue && currentValue !== originalValue) {
     return currentValue;
   } else {
+    alert("Nom d'utilisateur ne peut pas être vide")
     console.error("Nom d'utilisateur ne peut pas être vide");
     return null;
   }
