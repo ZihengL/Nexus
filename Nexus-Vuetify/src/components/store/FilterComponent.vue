@@ -109,6 +109,10 @@ async function getTags() {
 
 function seeAll_theTags() {
   filter_data.isTagsExpanded = !filter_data.isTagsExpanded;
+  if(!filter_data.isTagsExpanded){
+    filter_data.genres.sort((a, b) => b.checked - a.checked);
+  }
+  
 }
 
 function returnFiltersData() {
