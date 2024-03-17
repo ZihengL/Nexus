@@ -270,6 +270,14 @@ onMounted(async () => {
   }
 });
 
+const tagsNotInDatabase = computed(() => {
+  return state.tagsArray.filter(
+    tagFromArray => !state.tagsFromDatabase.some(
+      tagFromDB => tagFromDB.name === tagFromArray.name
+    )
+  ); 
+});
+
 const removeItem = (indexToRemove, fileList) => {
   URL.revokeObjectURL(fileList[indexToRemove].url);
   fileList.splice(indexToRemove, 1);
@@ -879,9 +887,11 @@ const eraseGamesTags = async () => {
 
     // Find tags that are in the original list but not in the current tags array
     const tagsToRemove = originalTags.filter(
-      (originalTag) =>
-        !state.tagsArray.some((newTag) => newTag.id === originalTag.id)
-    );
+  (originalTag) =>
+    !state.tagsArray.some((newTag) => newTag.name === originalTag.name) &&
+    !tagsNotInDatabase.value.includes(originalTag.name)
+);
+
 
     console.log("originalTags: ", originalTags);
     console.log("tagsToRemove: ", tagsToRemove);
