@@ -71,6 +71,7 @@
           placeholder="Numero de Téléphone"
           v-model="state.phoneNumber"
           @input="updatephonenumber"
+          pattern="[0-9]*"
         />
         <btnComp
           :propClass="'newbtnClass'"
@@ -143,9 +144,7 @@
       />
     </form>
     <div v-if="galleryDialog" class="roundBorderSmall glass4 dialog">
-      <v-icon @click="galleryDialog = false" class="close glow"
-        >mdi-close</v-icon
-      >
+      <v-icon @click="closeDialog" class="close glow">mdi-close</v-icon>
       <div class="content">
         <label
           v-for="(img, index) in AllImages"
@@ -193,8 +192,8 @@ let user = ref(null);
 let galleryDialog = ref(false);
 
 const state = reactive({
-  erased_name:false,
-  erased_lastName:false,
+  erased_name: false,
+  erased_lastName: false,
   userToUpdate: "",
   name: "",
   lastName: "",
@@ -269,18 +268,24 @@ const selectImage = (img) => {
 
 const confirmImage = () => {
   if (selectedImage.value) {
-    console.log(selectedImage.value);
-
+    console.log("selectedImage.value :", selectedImage.value);
+    user.value.picture = selectedImage.value;
+    selectedImage.value = null;
     galleryDialog.value = false;
   } else {
     console.log("No image selected");
   }
 };
 
+const closeDialog = () => {
+  galleryDialog.value = false; // Close the dialog
+  selectedImage.value = null; // Reset the preview image to avoid showing the unconfirmed preview next time
+};
+
 const getAllImages = async (tab) => {
   const folderPath = "/src/assets/Avatar/";
   //const imagePaths = [];
-  for (let i = 1; i <= 7; i++) {
+  for (let i = 1; i <= 8; i++) {
     let path = folderPath + "Avatar_" + i + ".png";
     console.log("path ", path);
     tab.push(`${folderPath}Avatar_${i}.png`);
@@ -325,49 +330,62 @@ const updateUserInfos = async () => {
 };
 
 const deleteInfo = (field) => {
-if(field == "name"  ){
-  state.erased_name = true
-}else if (field == "lastName" ){
-  state.erased_lastName = true
-}
+  if (!user.value.hasOwnProperty(field)) {
+    console.log(`Field "${field}" does not exist.`);
+    return; 
+  }
 
   const fieldValue = user.value[field];
-  const isConfirmed = confirm(
-    `Êtes-vous sûr de vouloir supprimer ${fieldValue}?`
-  );
+  const isConfirmed = confirm(`Êtes-vous sûr de vouloir supprimer ${fieldValue}?`);
+
   if (!isConfirmed) {
     console.log("Deletion canceled by the user.");
     return;
+  }
+
+  if (field === "name") {
+    state.erased_name = true;
+  } else if (field === "lastName") {
+    state.erased_lastName = true;
   }
 
   user.value[field] = null;
 };
 
 function validateField(field, currentValue, originalValue) {
-  if(state.erased_name){
+  if (field == "name") {
+    console.log("current value : ", field, currentValue);
     if (!currentValue && !originalValue) {
-    return "";
-  } else if (currentValue && currentValue !== originalValue) {
-    return currentValue;
-  } else if (!currentValue && currentValue == originalValue) {
-    return currentValue;
-  }else if (!currentValue && (currentValue != originalValue) && !state.erased_name) {
-    return originalValue;
-  }
-  return null;
-  }else{
+      return "";
+    } else if (currentValue && currentValue !== originalValue) {
+      return currentValue;
+    } else if (!currentValue && currentValue == originalValue) {
+      return currentValue;
+    } else if (
+      !currentValue &&
+      currentValue != originalValue &&
+      !state.erased_name
+    ) {
+      return originalValue;
+    }
+    return null;
+  } else if (field == "lastName") {
+    console.log("current value : ", field, currentValue);
     if (!currentValue && !originalValue) {
-    return "";
-  } else if (currentValue && currentValue !== originalValue) {
-    return currentValue;
-  } else if (!currentValue && currentValue == originalValue) {
-    return currentValue;
-  }else if (!currentValue && (currentValue != originalValue) && !state.erased_lastName) {
-    return originalValue;
+      return "";
+    } else if (currentValue && currentValue !== originalValue) {
+      return currentValue;
+    } else if (!currentValue && currentValue == originalValue) {
+      return currentValue;
+    } else if (
+      !currentValue &&
+      currentValue != originalValue &&
+      !state.erased_lastName
+    ) {
+      return originalValue;
+    }
+    return null;
   }
-  return null;
-  }
- 
 }
 
 function validateUsername(currentValue, originalValue) {
@@ -406,6 +424,12 @@ function validatePasswords(firstPassword, secondPassword) {
     secondPassword.trim().length > 0
   ) {
     return firstPassword;
+  } else if (firstPassword !== secondPassword) {
+    alert("Les mots de passe ne correspondent pas. MOT DE PASSE NON MODIFIÉ");
+    console.error(
+      "Les mots de passe ne correspondent pas. MOT DE PASSE NON MODIFIÉ"
+    );
+    return null;
   } else {
     console.error("Les mots de passe ne correspondent pas ou sont vides.");
     return null;
@@ -478,7 +502,13 @@ async function validateDataBeforeSending() {
   });
 
   //Profile Picture
-  updatedUser.picture = `${selectedImage.value || user.value.picture}`;
+  if (selectedImage.value) {
+    updatedUser.picture = selectedImage.value;
+  } else if (user.value.picture) {
+    updatedUser.picture = user.value.picture;
+  } else {
+    updatedUser.picture = null;
+  }
 
   // Username
   const usernameResult = validateUsername(
